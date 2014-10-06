@@ -1,4 +1,4 @@
-package vk.client.nethergrim.vkclient;
+package vk.client.nethergrim.t;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;
