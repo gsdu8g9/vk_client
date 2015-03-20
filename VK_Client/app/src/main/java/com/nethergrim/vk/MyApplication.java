@@ -32,6 +32,24 @@ public class MyApplication extends Application {
             public void onAccessDenied(VKError authorizationError) {
                 Log.e("TAG", "access denied (auth error) " + authorizationError.errorMessage);
             }
+
+            @Override
+            public void onReceiveNewToken(VKAccessToken newToken) {
+                super.onReceiveNewToken(newToken);
+                Log.e("TAG", "received new token: " + newToken.email);
+            }
+
+            @Override
+            public void onAcceptUserToken(VKAccessToken token) {
+                super.onAcceptUserToken(token);
+                Log.e("TAG", "user toket accepted: " + token.email);
+            }
+
+            @Override
+            public void onRenewAccessToken(VKAccessToken token) {
+                super.onRenewAccessToken(token);
+                Log.e("TAG", "onRenewAccessToken: " + token.email);
+            }
         };
         VKSdk.initialize(vkSdkListener, Constants.VK_APP_ID);
         String[] fingerprints = VKUtil.getCertificateFingerprint(this, this.getPackageName());
