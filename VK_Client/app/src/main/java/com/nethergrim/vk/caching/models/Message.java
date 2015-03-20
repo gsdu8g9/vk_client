@@ -105,12 +105,4 @@ public class Message extends AbstractModel {
         this.deleted = deleted;
     }
 
-
-    //    id: 360658,
-//    date: 1394122091,
-//    out: 0,
-//    user_id: 85635407,
-//    read_state: 0,
-//    title: ' ... ',
-//    body: 'hey'
 }

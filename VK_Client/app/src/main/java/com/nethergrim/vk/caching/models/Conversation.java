@@ -5,14 +5,14 @@ package com.nethergrim.vk.caching.models;
  */
 public class Conversation extends AbstractModel {
 
-    private int unreadCount;
+    private long unreadCount;
     private Message lastMessage;
 
-    public int getUnreadCount() {
+    public long getUnreadCount() {
         return unreadCount;
     }
 
-    public void setUnreadCount(int unreadCount) {
+    public void setUnreadCount(long unreadCount) {
         this.unreadCount = unreadCount;
     }
 
