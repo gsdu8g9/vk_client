@@ -30,6 +30,7 @@ public class WebResponseMapper {
                 }
                 if (json.has("message")) {
                     conversation.setLastMessage(getMessage(json.getJSONObject("message")));
+                    conversation.setUserId(conversation.getLastMessage().getUserId());
                 }
                 result.add(conversation);
             }

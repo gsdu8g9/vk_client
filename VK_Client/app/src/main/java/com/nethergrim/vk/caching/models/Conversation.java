@@ -7,6 +7,7 @@ public class Conversation extends AbstractModel {
 
     private long unreadCount;
     private Message lastMessage;
+    private long userId;
 
     public long getUnreadCount() {
         return unreadCount;
@@ -22,5 +23,13 @@ public class Conversation extends AbstractModel {
 
     public void setLastMessage(Message lastMessage) {
         this.lastMessage = lastMessage;
+    }
+
+    public long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(long userId) {
+        this.userId = userId;
     }
 }
