@@ -47,11 +47,6 @@ public class MessagesFragment extends AbstractFragment {
                 Log.e("TAG", "error");
             }
 
-            @Override
-            public void onProgress(VKRequest.VKProgressType progressType, long bytesLoaded, long bytesTotal) {
-                super.onProgress(progressType, bytesLoaded, bytesTotal);
-                Log.e("TAG", "on progress");
-            }
         });
     }
 }
