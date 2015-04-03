@@ -1,21 +1,26 @@
 package com.nethergrim.vk.caching.models;
 
+import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
+
 /**
  * @author andreydrobyazko on 3/20/15.
  */
-public class Message extends AbstractModel {
+public class Message extends RealmObject {
 
-    long id;
-    long userId;
-    long fromId;
-    long date;
-    boolean isRead;
-    boolean out;
-    String title = "";
-    String body = "";
-    boolean emoji;
-    boolean important;
-    boolean deleted;
+    @PrimaryKey
+    private long id;
+
+    private long userId;
+    private long fromId;
+    private long date;
+    private boolean isRead;
+    private boolean out;
+    private String title = "";
+    private String body = "";
+    private boolean emoji;
+    private boolean important;
+    private boolean deleted;
 
     public long getId() {
         return id;

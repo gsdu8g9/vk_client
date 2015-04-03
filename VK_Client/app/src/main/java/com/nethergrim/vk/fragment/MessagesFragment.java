@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import com.nethergrim.vk.Constants;
 import com.nethergrim.vk.R;
 import com.nethergrim.vk.caching.models.Conversation;
 import com.nethergrim.vk.web.WebResponseMapper;
@@ -19,28 +20,33 @@ import com.vk.sdk.api.VKResponse;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+
 /**
  * @author andreydrobyazko on 3/20/15.
  */
 public class MessagesFragment extends AbstractFragment {
 
-    private ListView mListView;
+    @InjectView(R.id.list)
+    ListView mListView;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_messages, container, false);
+        View v = inflater.inflate(R.layout.fragment_messages, container, false);
+        ButterKnife.inject(this, v);
+        return v;
     }
 
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        this.mListView = (ListView) view.findViewById(R.id.list);
+    public void onResume() {
+        super.onResume();
         loadData();
     }
 
     private void loadData() {
-        VKRequest request = new VKRequest("messages.getDialogs");
+        VKRequest request = new VKRequest(Constants.Requests.MESSAGES_GET_DIALOGS);
         request.executeWithListener(new VKRequest.VKRequestListener() {
             @Override
             public void onComplete(VKResponse response) {

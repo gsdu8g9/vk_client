@@ -15,4 +15,8 @@ public class Constants {
             VKScope.MESSAGES,
             VKScope.NOTIFICATIONS
     };
+
+    public static interface Requests{
+        String MESSAGES_GET_DIALOGS = "messages.getDialogs";
+    }
 }

@@ -1,12 +1,16 @@
 package com.nethergrim.vk.caching.models;
 
+import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
+
 /**
  * @author andreydrobyazko on 3/20/15.
  */
-public class Conversation extends AbstractModel {
+public class Conversation extends RealmObject {
 
     private long unreadCount;
     private Message lastMessage;
+    @PrimaryKey
     private long userId;
 
     public long getUnreadCount() {
