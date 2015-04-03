@@ -1,4 +1,4 @@
-package com.nethergrim.vk.modules;
+package com.nethergrim.vk.inject;
 
 import dagger.ObjectGraph;
 

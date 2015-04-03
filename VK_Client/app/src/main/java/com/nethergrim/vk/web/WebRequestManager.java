@@ -10,5 +10,5 @@ import java.util.List;
 
 public interface WebRequestManager {
 
-    public List<Conversation> getConversations(int limit, int offset, boolean onlyUnread, int previewLenght);
+    public void getConversations(int limit, int offset, boolean onlyUnread, int previewLenght, WebCallback<List<Conversation>> callback);
 }
