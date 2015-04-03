@@ -12,6 +12,8 @@ import android.widget.ListView;
 import com.nethergrim.vk.Constants;
 import com.nethergrim.vk.R;
 import com.nethergrim.vk.caching.models.Conversation;
+import com.nethergrim.vk.modules.Injector;
+import com.nethergrim.vk.web.WebRequestManager;
 import com.nethergrim.vk.web.WebResponseMapper;
 import com.vk.sdk.api.VKError;
 import com.vk.sdk.api.VKRequest;
@@ -19,6 +21,8 @@ import com.vk.sdk.api.VKResponse;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.inject.Inject;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -30,6 +34,9 @@ public class MessagesFragment extends AbstractFragment {
 
     @InjectView(R.id.list)
     ListView mListView;
+
+    @Inject
+    WebRequestManager mWM;
 
     @Nullable
     @Override
@@ -46,6 +53,16 @@ public class MessagesFragment extends AbstractFragment {
     }
 
     private void loadData() {
+        Injector.getInstance().inject(this);
+        if (mWM != null){
+            Log.e("TAG", "mwrm != null");
+            List<Conversation> conversations = mWM.getConversations(0,0,false,0);
+            if (conversations != null){
+                Log.e("TAG", "conversations != null size: " + conversations.size());
+            }
+        } else {
+            Log.e("TAG", "MWRM NULL");
+        }
         VKRequest request = new VKRequest(Constants.Requests.MESSAGES_GET_DIALOGS);
         request.executeWithListener(new VKRequest.VKRequestListener() {
             @Override
