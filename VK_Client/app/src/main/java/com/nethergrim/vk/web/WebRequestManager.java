@@ -1,8 +1,7 @@
 package com.nethergrim.vk.web;
 
-import com.nethergrim.vk.caching.models.Conversation;
-
-import java.util.List;
+import com.nethergrim.vk.models.ConversationsList;
+import com.nethergrim.vk.callbacks.WebCallback;
 
 /**
  * @author andreydrobyazko on 4/3/15.
@@ -10,5 +9,5 @@ import java.util.List;
 
 public interface WebRequestManager {
 
-    public void getConversations(int limit, int offset, boolean onlyUnread, int previewLenght, WebCallback<List<Conversation>> callback);
+    public void getConversations(int limit, int offset, boolean onlyUnread, int previewLenght, final WebCallback<ConversationsList> callback);
 }

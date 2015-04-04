@@ -21,6 +21,8 @@ android {
     android {
         packagingOptions {
             exclude 'META-INF/services/javax.annotation.processing.Processor'
+            exclude 'META-INF/LICENSE'
+            exclude 'META-INF/NOTICE'
         }
     }
 }
@@ -33,7 +35,7 @@ apt {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile fileTree(include: ['*.jar'], dir: 'libs')
     compile project(':vksdk_library')
     compile 'com.android.support:appcompat-v7:22.0.0'
     compile 'com.jakewharton:butterknife:6.1.0'
@@ -41,4 +43,7 @@ dependencies {
     compile files('lib/realm-0.80.0.jar')
     compile 'com.squareup.dagger:dagger:1.2.2'
     apt 'com.squareup.dagger:dagger-compiler:1.2.2'
+    compile files('lib/jackson-annotations-2.5.0.jar')
+    compile files('lib/jackson-core-2.5.0.jar')
+    compile files('lib/jackson-databind-2.5.0.jar')
 }

@@ -1,4 +1,6 @@
-package com.nethergrim.vk.caching.models;
+package com.nethergrim.vk.models;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
@@ -6,21 +8,25 @@ import io.realm.annotations.PrimaryKey;
 /**
  * @author andreydrobyazko on 3/20/15.
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Message extends RealmObject {
 
     @PrimaryKey
     private long id;
 
-    private long userId;
+    private long user_id;
     private long fromId;
     private long date;
-    private boolean isRead;
+    private boolean read_state;
     private boolean out;
     private String title = "";
     private String body = "";
     private boolean emoji;
     private boolean important;
     private boolean deleted;
+
+    public Message() {
+    }
 
     public long getId() {
         return id;
@@ -30,12 +36,12 @@ public class Message extends RealmObject {
         this.id = id;
     }
 
-    public long getUserId() {
-        return userId;
+    public long getUser_id() {
+        return user_id;
     }
 
-    public void setUserId(long userId) {
-        this.userId = userId;
+    public void setUser_id(long user_id) {
+        this.user_id = user_id;
     }
 
     public long getFromId() {
@@ -54,12 +60,12 @@ public class Message extends RealmObject {
         this.date = date;
     }
 
-    public boolean isRead() {
-        return isRead;
+    public boolean isRead_state() {
+        return read_state;
     }
 
-    public void setRead(boolean isRead) {
-        this.isRead = isRead;
+    public void setRead_state(boolean read_state) {
+        this.read_state = read_state;
     }
 
     public boolean isOut() {
@@ -109,5 +115,4 @@ public class Message extends RealmObject {
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
     }
-
 }

@@ -14,6 +14,25 @@ import io.realm.Realm;
  */
 public abstract class AbstractFragment extends Fragment {
 
+
+    protected Realm realm;
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        realm = getRealm();
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        realm = null;
+    }
+
+    protected boolean checkRealm(){
+        return realm != null;
+    }
+
     protected Realm getRealm(){
         Activity activity = getActivity();
         if (activity != null && activity instanceof AbstractActivity){
