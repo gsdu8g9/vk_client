@@ -1,18 +1,32 @@
 package com.nethergrim.vk.json;
 
-import com.nethergrim.vk.caching.models.ConversationsList;
+import android.util.Log;
 
-import org.boon.json.JsonParser;
-import org.boon.json.JsonParserFactory;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nethergrim.vk.models.ConversationsList;
+
+import java.io.IOException;
+
 
 /**
  * Created by nethergrim on 04.04.2015.
  */
 public class JsonDeserializerImpl implements JsonDeserializer {
 
+    private ObjectMapper mapper;
+    private static final String TAG = JsonDeserializerImpl.class.getName();
+
+    public JsonDeserializerImpl() {
+        mapper = new ObjectMapper();
+    }
+
     @Override
     public ConversationsList getConversations(String s) {
-        JsonParser parser = new JsonParserFactory().create();
-        return (ConversationsList) parser.parse(s);
+        try {
+            return mapper.readValue(s, ConversationsList.class);
+        } catch (IOException e) {
+            Log.e(TAG, e.getMessage());
+        }
+        return null;
     }
 }

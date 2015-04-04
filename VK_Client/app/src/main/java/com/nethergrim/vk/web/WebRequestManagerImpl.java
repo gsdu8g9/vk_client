@@ -1,8 +1,9 @@
 package com.nethergrim.vk.web;
 
 import com.nethergrim.vk.Constants;
-import com.nethergrim.vk.caching.models.ConversationsList;
+import com.nethergrim.vk.models.ConversationsList;
 import com.nethergrim.vk.callbacks.WebCallback;
+import com.nethergrim.vk.inject.Injector;
 import com.nethergrim.vk.json.JsonDeserializer;
 import com.vk.sdk.api.VKError;
 import com.vk.sdk.api.VKParameters;
@@ -21,6 +22,10 @@ public class WebRequestManagerImpl implements WebRequestManager {
 
     @Inject
     JsonDeserializer mJsonDeserializer;
+
+    public WebRequestManagerImpl() {
+        Injector.getInstance().inject(this);
+    }
 
     @Override
     public void getConversations(int limit, int offset, boolean onlyUnread, int previewLenght, final WebCallback<ConversationsList> callback){

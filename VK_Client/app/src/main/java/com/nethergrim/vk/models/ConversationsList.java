@@ -1,6 +1,6 @@
-package com.nethergrim.vk.caching.models;
+package com.nethergrim.vk.models;
 
-import java.util.List;
+import java.util.ArrayList;
 
 /**
  * Created by nethergrim on 04.04.2015.
@@ -9,7 +9,7 @@ public class ConversationsList {
 
     private long count;
     private int unread_dialogs;
-    private List<Conversation> items;
+    private ArrayList<Conversation> items;
 
     public long getCount() {
         return count;
@@ -27,11 +27,11 @@ public class ConversationsList {
         this.unread_dialogs = unread_dialogs;
     }
 
-    public List<Conversation> getItems() {
+    public ArrayList<Conversation> getItems() {
         return items;
     }
 
-    public void setItems(List<Conversation> items) {
+    public void setItems(ArrayList<Conversation> items) {
         this.items = items;
     }
 }

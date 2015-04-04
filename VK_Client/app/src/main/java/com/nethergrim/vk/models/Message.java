@@ -1,4 +1,4 @@
-package com.nethergrim.vk.caching.models;
+package com.nethergrim.vk.models;
 
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;

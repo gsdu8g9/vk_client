@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 
 import com.nethergrim.vk.R;
-import com.nethergrim.vk.caching.models.ConversationsList;
+import com.nethergrim.vk.models.ConversationsList;
 import com.nethergrim.vk.callbacks.WebCallback;
 import com.nethergrim.vk.web.WebRequestManager;
 import com.vk.sdk.api.VKError;
