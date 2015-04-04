@@ -1,4 +1,4 @@
-package com.nethergrim.vk.web;
+package com.nethergrim.vk.callbacks;
 
 import com.vk.sdk.api.VKError;
 

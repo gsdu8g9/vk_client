@@ -1,39 +1,28 @@
 package com.nethergrim.vk.caching.models;
 
 import io.realm.RealmObject;
-import io.realm.annotations.PrimaryKey;
 
 /**
  * @author andreydrobyazko on 3/20/15.
  */
 public class Conversation extends RealmObject {
 
-    private long unreadCount;
-    private Message lastMessage;
-    @PrimaryKey
-    private long userId;
+    private long unread;
+    private Message message;
 
-    public long getUnreadCount() {
-        return unreadCount;
+    public long getUnread() {
+        return unread;
     }
 
-    public void setUnreadCount(long unreadCount) {
-        this.unreadCount = unreadCount;
+    public void setUnread(long unread) {
+        this.unread = unread;
     }
 
-    public Message getLastMessage() {
-        return lastMessage;
+    public Message getMessage() {
+        return message;
     }
 
-    public void setLastMessage(Message lastMessage) {
-        this.lastMessage = lastMessage;
-    }
-
-    public long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(long userId) {
-        this.userId = userId;
+    public void setMessage(Message message) {
+        this.message = message;
     }
 }

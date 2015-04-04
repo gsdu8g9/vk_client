@@ -2,13 +2,17 @@ package com.nethergrim.vk.fragment;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
 import com.nethergrim.vk.R;
+import com.nethergrim.vk.caching.models.ConversationsList;
+import com.nethergrim.vk.callbacks.WebCallback;
 import com.nethergrim.vk.web.WebRequestManager;
+import com.vk.sdk.api.VKError;
 
 import javax.inject.Inject;
 
@@ -18,7 +22,7 @@ import butterknife.InjectView;
 /**
  * @author andreydrobyazko on 3/20/15.
  */
-public class MessagesFragment extends AbstractFragment {
+public class MessagesFragment extends AbstractFragment implements WebCallback<ConversationsList> {
 
     @InjectView(R.id.list)
     ListView mListView;
@@ -40,7 +44,19 @@ public class MessagesFragment extends AbstractFragment {
     }
 
     private void loadData() {
-        // TODO load conversation, and display them in listview
+        // TODO load conversation, save to db, and display them in listview
+        mWM.getConversations(20, 0, false, 0, this);
     }
 
+    @Override
+    public void onResponseSucceed(ConversationsList response) {
+        if (response != null){
+            Log.e("TAG", "response not null! size: " + response.getItems().size());
+        }
+    }
+
+    @Override
+    public void onResponseFailed(VKError e) {
+        Log.e("TAG","e: " + e.errorMessage);
+    }
 }
