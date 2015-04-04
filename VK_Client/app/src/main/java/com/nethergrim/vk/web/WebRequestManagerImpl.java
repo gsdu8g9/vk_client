@@ -1,6 +1,7 @@
 package com.nethergrim.vk.web;
 
 import com.nethergrim.vk.Constants;
+import com.nethergrim.vk.models.Conversation;
 import com.nethergrim.vk.models.ConversationsList;
 import com.nethergrim.vk.callbacks.WebCallback;
 import com.nethergrim.vk.inject.Injector;
@@ -12,6 +13,7 @@ import com.vk.sdk.api.VKResponse;
 
 import org.json.JSONException;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -49,9 +51,19 @@ public class WebRequestManagerImpl implements WebRequestManager {
             @Override
             public void onComplete(VKResponse response) {
                 super.onComplete(response);
-                ConversationsList result = null;
+                ConversationsList result ;
                 try {
                     result = mJsonDeserializer.getConversations(response.json.getString("response"));
+
+                    // setting userId to every conversation
+                    if (result != null){
+                        ArrayList<Conversation> conversations = result.getResults();
+                        if (conversations != null){
+                            for (Conversation conversation : conversations) {
+                                conversation.setUser_id(conversation.getMessage().getUser_id());
+                            }
+                        }
+                    }
                     if (callback != null){
                         callback.onResponseSucceed(result);
                     }

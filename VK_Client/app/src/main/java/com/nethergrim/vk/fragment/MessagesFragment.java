@@ -9,8 +9,8 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 
 import com.nethergrim.vk.R;
-import com.nethergrim.vk.models.ConversationsList;
 import com.nethergrim.vk.callbacks.WebCallback;
+import com.nethergrim.vk.models.ConversationsList;
 import com.nethergrim.vk.web.WebRequestManager;
 import com.vk.sdk.api.VKError;
 
@@ -44,14 +44,17 @@ public class MessagesFragment extends AbstractFragment implements WebCallback<Co
     }
 
     private void loadData() {
-        // TODO load conversation, save to db, and display them in listview
         mWM.getConversations(20, 0, false, 0, this);
     }
 
     @Override
     public void onResponseSucceed(ConversationsList response) {
-        if (response != null){
-            Log.e("TAG", "response not null! size: " + response.getResults().size());
+        if (response != null && checkRealm()){
+            long start = System.currentTimeMillis();
+            realm.beginTransaction();
+            realm.copyToRealmOrUpdate(response.getResults());
+            realm.commitTransaction();
+            Log.e("TAG","saved " + response.getResults().size() + " Conversations to Realm in: " + String.valueOf(System.currentTimeMillis() - start));
         }
     }
 
