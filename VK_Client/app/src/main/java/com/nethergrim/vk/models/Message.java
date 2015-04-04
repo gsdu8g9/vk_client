@@ -1,11 +1,14 @@
 package com.nethergrim.vk.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
 /**
  * @author andreydrobyazko on 3/20/15.
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Message extends RealmObject {
 
     @PrimaryKey
@@ -21,6 +24,9 @@ public class Message extends RealmObject {
     private boolean emoji;
     private boolean important;
     private boolean deleted;
+
+    public Message() {
+    }
 
     public long getId() {
         return id;

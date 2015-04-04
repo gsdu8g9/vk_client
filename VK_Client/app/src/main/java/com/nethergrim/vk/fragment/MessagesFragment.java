@@ -51,7 +51,7 @@ public class MessagesFragment extends AbstractFragment implements WebCallback<Co
     @Override
     public void onResponseSucceed(ConversationsList response) {
         if (response != null){
-            Log.e("TAG", "response not null! size: " + response.getItems().size());
+            Log.e("TAG", "response not null! size: " + response.getResults().size());
         }
     }
 

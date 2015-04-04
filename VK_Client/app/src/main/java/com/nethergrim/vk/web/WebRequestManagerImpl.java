@@ -10,6 +10,8 @@ import com.vk.sdk.api.VKParameters;
 import com.vk.sdk.api.VKRequest;
 import com.vk.sdk.api.VKResponse;
 
+import org.json.JSONException;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -47,9 +49,14 @@ public class WebRequestManagerImpl implements WebRequestManager {
             @Override
             public void onComplete(VKResponse response) {
                 super.onComplete(response);
-                ConversationsList result = mJsonDeserializer.getConversations(response.responseString);
-                if (callback != null){
-                    callback.onResponseSucceed(result);
+                ConversationsList result = null;
+                try {
+                    result = mJsonDeserializer.getConversations(response.json.getString("response"));
+                    if (callback != null){
+                        callback.onResponseSucceed(result);
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
             }
 
