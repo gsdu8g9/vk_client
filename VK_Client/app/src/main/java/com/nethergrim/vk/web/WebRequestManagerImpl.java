@@ -10,6 +10,7 @@ import com.nethergrim.vk.json.JsonDeserializer;
 import com.nethergrim.vk.models.Conversation;
 import com.nethergrim.vk.models.ConversationsList;
 import com.nethergrim.vk.models.ListOfUsers;
+import com.nethergrim.vk.models.User;
 import com.vk.sdk.api.VKError;
 import com.vk.sdk.api.VKParameters;
 import com.vk.sdk.api.VKRequest;
@@ -18,6 +19,7 @@ import com.vk.sdk.api.VKResponse;
 import org.json.JSONException;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -61,14 +63,21 @@ public class WebRequestManagerImpl implements WebRequestManager {
                     result = mJsonDeserializer.getConversations(response.json.getString("response"));
 
                     // setting userId and date to every conversation
+
                     if (result != null){
+                        List<Long> userIds = new ArrayList<>();
                         ArrayList<Conversation> conversations = result.getResults();
                         if (conversations != null){
                             for (Conversation conversation : conversations) {
                                 conversation.setUser_id(conversation.getMessage().getUser_id());
                                 conversation.setDate(conversation.getMessage().getDate());
+                                userIds.add(conversation.getUser_id());
                             }
                         }
+
+
+
+                        getUsers(userIds, new ArrayList<String>(Arrays.asList(User.Fields.bdate, User.Fields.onlin, User.Fields.photo_200)), null, null);
                     }
                     if (callback != null){
                         callback.onResponseSucceed(result);
@@ -90,7 +99,7 @@ public class WebRequestManagerImpl implements WebRequestManager {
     }
 
     @Override
-    public void getUsers(List<Integer> ids, List<String> fields, String nameCase, final WebCallback<ListOfUsers> callback) {
+    public void getUsers(List<Long> ids, List<String> fields, String nameCase, final WebCallback<ListOfUsers> callback) {
         Map<String, Object> params = new HashMap<>();
 
         if (ids != null){
@@ -99,7 +108,7 @@ public class WebRequestManagerImpl implements WebRequestManager {
             }
 
             StringBuilder sb = new StringBuilder();
-            for (Integer id : ids) {
+            for (Long id : ids) {
                 sb.append(id);
                 sb.append(", ");
             }
@@ -124,7 +133,7 @@ public class WebRequestManagerImpl implements WebRequestManager {
             @Override
             public void onComplete(VKResponse response) {
                 super.onComplete(response);
-
+                Log.e("TAG", "loaded users!");
 
 
                 // TODo

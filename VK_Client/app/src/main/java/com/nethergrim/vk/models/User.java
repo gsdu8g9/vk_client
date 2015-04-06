@@ -303,4 +303,12 @@ public class User extends RealmObject {
     public void setIs_friend(int is_friend) {
         this.is_friend = is_friend;
     }
+
+    public static interface Fields{
+        String sex = "sex";
+        String bdate = "bdate";
+        String country = "country";
+        String onlin = "online";
+        String photo_200 = "photo_200";
+    }
 }
