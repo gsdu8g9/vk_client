@@ -31,9 +31,6 @@ public class ConversationsAdapter  extends RecyclerView.Adapter<ConversationView
     @Override
     public void onBindViewHolder(ConversationViewHolder conversationViewHolder, int i) {
         Conversation conversation = data.get(i);
-
-
-
         conversationViewHolder.textDetails.setText(conversation.getMessage().getBody());
         conversationViewHolder.textDate.setText(DateUtils.getRelativeTimeSpanString(conversation.getMessage().getDate() * 1000, System.currentTimeMillis(), 0L, DateUtils.FORMAT_ABBREV_ALL));
     }

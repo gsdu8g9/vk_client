@@ -55,12 +55,13 @@ public class WebRequestManagerImpl implements WebRequestManager {
                 try {
                     result = mJsonDeserializer.getConversations(response.json.getString("response"));
 
-                    // setting userId to every conversation
+                    // setting userId and date to every conversation
                     if (result != null){
                         ArrayList<Conversation> conversations = result.getResults();
                         if (conversations != null){
                             for (Conversation conversation : conversations) {
                                 conversation.setUser_id(conversation.getMessage().getUser_id());
+                                conversation.setDate(conversation.getMessage().getDate());
                             }
                         }
                     }

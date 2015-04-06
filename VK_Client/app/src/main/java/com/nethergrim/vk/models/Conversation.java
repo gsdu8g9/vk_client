@@ -16,6 +16,7 @@ public class Conversation extends RealmObject {
 
     @PrimaryKey
     private long user_id;
+    private long date;
 
     public Conversation() {
     }
@@ -42,5 +43,13 @@ public class Conversation extends RealmObject {
 
     public void setUser_id(long user_id) {
         this.user_id = user_id;
+    }
+
+    public long getDate() {
+        return date;
+    }
+
+    public void setDate(long date) {
+        this.date = date;
     }
 }

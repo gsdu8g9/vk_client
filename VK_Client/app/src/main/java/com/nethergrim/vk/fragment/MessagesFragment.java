@@ -21,12 +21,13 @@ import javax.inject.Inject;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import io.realm.RealmChangeListener;
 import io.realm.RealmResults;
 
 /**
  * @author andreydrobyazko on 3/20/15.
  */
-public class MessagesFragment extends AbstractFragment implements WebCallback<ConversationsList> {
+public class MessagesFragment extends AbstractFragment implements WebCallback<ConversationsList>, RealmChangeListener {
 
     @InjectView(R.id.list)
     RecyclerView mRecyclerView;
@@ -55,7 +56,8 @@ public class MessagesFragment extends AbstractFragment implements WebCallback<Co
         mRecyclerView.setHasFixedSize(true);
         if (checkRealm()){
             realm.setAutoRefresh(true);
-            RealmResults<Conversation> data = realm.where(Conversation.class).findAllSorted("user_id", false);
+            realm.addChangeListener(this);
+            RealmResults<Conversation> data = realm.where(Conversation.class).findAllSorted("date", false);
             mAdapter = new ConversationsAdapter(data);
             mRecyclerView.setAdapter(mAdapter);
         }
@@ -69,17 +71,21 @@ public class MessagesFragment extends AbstractFragment implements WebCallback<Co
     @Override
     public void onResponseSucceed(ConversationsList response) {
         if (response != null && checkRealm()){
-            long start = System.currentTimeMillis();
             realm.beginTransaction();
             realm.copyToRealmOrUpdate(response.getResults());
             realm.commitTransaction();
-            mAdapter.notifyDataSetChanged();
-            Log.e("TAG","saved " + response.getResults().size() + " Conversations to Realm in: " + String.valueOf(System.currentTimeMillis() - start));
         }
     }
 
     @Override
     public void onResponseFailed(VKError e) {
         Log.e("TAG", "e: " + e.errorMessage);
+    }
+
+    @Override
+    public void onChange() {
+        if (mAdapter != null){
+            mAdapter.notifyDataSetChanged();
+        }
     }
 }
