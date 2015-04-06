@@ -1,0 +1,306 @@
+package com.nethergrim.vk.models;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
+
+/**
+ * @author andreydrobyazko on 4/6/15.
+ */
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class User extends RealmObject {
+
+    @PrimaryKey
+    private long id;
+
+    @JsonProperty("first_name")
+    private String firstName;
+
+    @JsonProperty("last_name")
+    private String lastName;
+
+
+    private boolean deactivated;
+
+    @JsonProperty("hidden")
+    private int hidden;
+
+    @JsonProperty("photo_id")
+    private String photoId;
+
+    private int verified;
+
+    private int blacklisted;
+
+    private int sex;
+
+    @JsonProperty("bdate")
+    private String dateOfBirth;
+
+
+    @JsonProperty("home_town")
+    private String homeTown;
+
+    private String photo_50;
+
+    private String photo_100;
+
+    private String photo_200_orig;
+
+    private String photo_200;
+
+    private String photo_400_orig;
+
+    private String photo_max;
+
+    private String photo_max_orig;
+
+    private int online;
+
+    private String domain;
+
+    private int has_mobile;
+
+    private String site;
+
+    private String status;
+
+    private int followers_count;
+
+    private int common_count;
+
+    private String nickname;
+
+    private int relation;
+
+    private int is_friend;
+
+    public User() {
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public boolean isDeactivated() {
+        return deactivated;
+    }
+
+    public void setDeactivated(boolean deactivated) {
+        this.deactivated = deactivated;
+    }
+
+    public int getHidden() {
+        return hidden;
+    }
+
+    public void setHidden(int hidden) {
+        this.hidden = hidden;
+    }
+
+    public String getPhotoId() {
+        return photoId;
+    }
+
+    public void setPhotoId(String photoId) {
+        this.photoId = photoId;
+    }
+
+    public int getVerified() {
+        return verified;
+    }
+
+    public void setVerified(int verified) {
+        this.verified = verified;
+    }
+
+    public int getBlacklisted() {
+        return blacklisted;
+    }
+
+    public void setBlacklisted(int blacklisted) {
+        this.blacklisted = blacklisted;
+    }
+
+    public int getSex() {
+        return sex;
+    }
+
+    public void setSex(int sex) {
+        this.sex = sex;
+    }
+
+    public String getDateOfBirth() {
+        return dateOfBirth;
+    }
+
+    public void setDateOfBirth(String dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
+    }
+
+    public String getHomeTown() {
+        return homeTown;
+    }
+
+    public void setHomeTown(String homeTown) {
+        this.homeTown = homeTown;
+    }
+
+    public String getPhoto_50() {
+        return photo_50;
+    }
+
+    public void setPhoto_50(String photo_50) {
+        this.photo_50 = photo_50;
+    }
+
+    public String getPhoto_100() {
+        return photo_100;
+    }
+
+    public void setPhoto_100(String photo_100) {
+        this.photo_100 = photo_100;
+    }
+
+    public String getPhoto_200_orig() {
+        return photo_200_orig;
+    }
+
+    public void setPhoto_200_orig(String photo_200_orig) {
+        this.photo_200_orig = photo_200_orig;
+    }
+
+    public String getPhoto_200() {
+        return photo_200;
+    }
+
+    public void setPhoto_200(String photo_200) {
+        this.photo_200 = photo_200;
+    }
+
+    public String getPhoto_400_orig() {
+        return photo_400_orig;
+    }
+
+    public void setPhoto_400_orig(String photo_400_orig) {
+        this.photo_400_orig = photo_400_orig;
+    }
+
+    public String getPhoto_max() {
+        return photo_max;
+    }
+
+    public void setPhoto_max(String photo_max) {
+        this.photo_max = photo_max;
+    }
+
+    public String getPhoto_max_orig() {
+        return photo_max_orig;
+    }
+
+    public void setPhoto_max_orig(String photo_max_orig) {
+        this.photo_max_orig = photo_max_orig;
+    }
+
+    public int getOnline() {
+        return online;
+    }
+
+    public void setOnline(int online) {
+        this.online = online;
+    }
+
+    public String getDomain() {
+        return domain;
+    }
+
+    public void setDomain(String domain) {
+        this.domain = domain;
+    }
+
+    public int getHas_mobile() {
+        return has_mobile;
+    }
+
+    public void setHas_mobile(int has_mobile) {
+        this.has_mobile = has_mobile;
+    }
+
+    public String getSite() {
+        return site;
+    }
+
+    public void setSite(String site) {
+        this.site = site;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public int getFollowers_count() {
+        return followers_count;
+    }
+
+    public void setFollowers_count(int followers_count) {
+        this.followers_count = followers_count;
+    }
+
+    public int getCommon_count() {
+        return common_count;
+    }
+
+    public void setCommon_count(int common_count) {
+        this.common_count = common_count;
+    }
+
+    public String getNickname() {
+        return nickname;
+    }
+
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
+    public int getRelation() {
+        return relation;
+    }
+
+    public void setRelation(int relation) {
+        this.relation = relation;
+    }
+
+    public int getIs_friend() {
+        return is_friend;
+    }
+
+    public void setIs_friend(int is_friend) {
+        this.is_friend = is_friend;
+    }
+}
