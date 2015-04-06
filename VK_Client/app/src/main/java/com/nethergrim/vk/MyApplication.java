@@ -3,6 +3,7 @@ package com.nethergrim.vk;
 import android.app.Application;
 import android.util.Log;
 
+import com.kisstools.KissTools;
 import com.vk.sdk.VKAccessToken;
 import com.vk.sdk.VKSdk;
 import com.vk.sdk.VKSdkListener;
@@ -17,6 +18,7 @@ public class MyApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        KissTools.setContext(this);
         VKSdkListener vkSdkListener = new VKSdkListener() {
             @Override
             public void onCaptchaError(VKError captchaError) {

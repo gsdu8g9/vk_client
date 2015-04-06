@@ -1,6 +1,7 @@
 package com.nethergrim.vk.adapter;
 
 import android.support.v7.widget.RecyclerView;
+import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
@@ -32,8 +33,9 @@ public class ConversationsAdapter  extends RecyclerView.Adapter<ConversationView
         Conversation conversation = data.get(i);
 
 
+
         conversationViewHolder.textDetails.setText(conversation.getMessage().getBody());
-        conversationViewHolder.textDate.setText(String.valueOf(conversation.getMessage().getDate()));
+        conversationViewHolder.textDate.setText(DateUtils.getRelativeTimeSpanString(conversation.getMessage().getDate() * 1000, System.currentTimeMillis(), 0L, DateUtils.FORMAT_ABBREV_ALL));
     }
 
     @Override

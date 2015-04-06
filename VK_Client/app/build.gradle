@@ -47,4 +47,5 @@ dependencies {
     compile files('lib/jackson-core-2.5.0.jar')
     compile files('lib/jackson-databind-2.5.0.jar')
     compile 'com.android.support:recyclerview-v7:22.0.0'
+    compile project(':kissTools')
 }
