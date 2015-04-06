@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
 
-import com.nethergrim.vk.activity.AbstractActivity;
 import com.nethergrim.vk.inject.Injector;
 
 import io.realm.Realm;
@@ -20,7 +19,7 @@ public abstract class AbstractFragment extends Fragment {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        realm = getRealm();
+        realm = Realm.getInstance(activity);
     }
 
     @Override
@@ -31,15 +30,6 @@ public abstract class AbstractFragment extends Fragment {
 
     protected boolean checkRealm(){
         return realm != null;
-    }
-
-    protected Realm getRealm(){
-        Activity activity = getActivity();
-        if (activity != null && activity instanceof AbstractActivity){
-            AbstractActivity abstractActivity = (AbstractActivity) activity;
-            return abstractActivity.getRealm();
-        }
-        return null;
     }
 
     @Override

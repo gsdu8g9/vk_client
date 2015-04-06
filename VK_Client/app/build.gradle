@@ -35,7 +35,7 @@ apt {
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
+    compile fileTree(dir: 'libs', include: ['*.jar'])
     compile project(':vksdk_library')
     compile 'com.android.support:appcompat-v7:22.0.0'
     compile 'com.jakewharton:butterknife:6.1.0'
@@ -46,4 +46,5 @@ dependencies {
     compile files('lib/jackson-annotations-2.5.0.jar')
     compile files('lib/jackson-core-2.5.0.jar')
     compile files('lib/jackson-databind-2.5.0.jar')
+    compile 'com.android.support:recyclerview-v7:22.0.0'
 }

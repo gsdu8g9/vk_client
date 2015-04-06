@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:paddingTop="@dimen/conversation_item_padding_vertical"
+    android:paddingLeft="@dimen/conversation_item_padding_horizontal"
+    android:layout_height="@dimen/conversation_item_height">
+
+
+    <ImageView
+        android:id="@+id/image_avatar"
+        android:layout_width="@dimen/conversation_avatar_size"
+        android:layout_gravity="center_vertical"
+        android:layout_height="@dimen/conversation_avatar_size" />
+
+    <TextView
+        android:id="@+id/text_name"
+        android:layout_width="wrap_content"
+        android:textSize="@dimen/text_size_big"
+        android:layout_marginLeft="@dimen/conversation_avatar_size"
+        android:paddingLeft="@dimen/conversation_item_padding_horizontal"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/text_details"
+        android:layout_width="wrap_content"
+        android:layout_marginLeft="@dimen/conversation_avatar_size"
+        android:layout_marginTop="@dimen/conversation_item_padding_horizontal"
+        android:paddingTop="@dimen/conversation_item_padding_vertical"
+        android:textSize="@dimen/text_size_small"
+        android:gravity="top|left"
+        android:maxLines="2"
+        android:paddingRight="@dimen/conversation_item_padding_horizontal"
+        android:ellipsize="end"
+        android:paddingLeft="@dimen/conversation_item_padding_horizontal"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_gravity="top|right"
+        android:id="@+id/text_date"
+        android:textSize="@dimen/text_size_small"
+        android:paddingRight="@dimen/conversation_item_padding_horizontal"
+        android:textColor="@color/secondary_text"
+        android:layout_height="wrap_content" />
+
+    <View
+        android:layout_width="match_parent"
+        android:background="@color/divider_color"
+        android:layout_gravity="bottom|right"
+        android:layout_marginLeft="@dimen/conversation_avatar_size"
+        android:layout_height="@dimen/divider_size"/>
+
+</FrameLayout>

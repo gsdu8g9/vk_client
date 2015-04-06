@@ -2,14 +2,17 @@ package com.nethergrim.vk.fragment;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
 
 import com.nethergrim.vk.R;
+import com.nethergrim.vk.adapter.ConversationsAdapter;
 import com.nethergrim.vk.callbacks.WebCallback;
+import com.nethergrim.vk.models.Conversation;
 import com.nethergrim.vk.models.ConversationsList;
 import com.nethergrim.vk.web.WebRequestManager;
 import com.vk.sdk.api.VKError;
@@ -18,6 +21,7 @@ import javax.inject.Inject;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import io.realm.RealmResults;
 
 /**
  * @author andreydrobyazko on 3/20/15.
@@ -25,9 +29,10 @@ import butterknife.InjectView;
 public class MessagesFragment extends AbstractFragment implements WebCallback<ConversationsList> {
 
     @InjectView(R.id.list)
-    ListView mListView;
+    RecyclerView mRecyclerView;
     @Inject
     WebRequestManager mWM;
+    private ConversationsAdapter mAdapter;
 
     @Nullable
     @Override
@@ -38,8 +43,22 @@ public class MessagesFragment extends AbstractFragment implements WebCallback<Co
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
+    public void onDestroyView() {
+        super.onDestroyView();
+        ButterKnife.reset(this);
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
+        mRecyclerView.setHasFixedSize(true);
+        if (checkRealm()){
+            realm.setAutoRefresh(true);
+            RealmResults<Conversation> data = realm.where(Conversation.class).findAllSorted("user_id", false);
+            mAdapter = new ConversationsAdapter(data);
+            mRecyclerView.setAdapter(mAdapter);
+        }
         loadData();
     }
 
@@ -54,12 +73,13 @@ public class MessagesFragment extends AbstractFragment implements WebCallback<Co
             realm.beginTransaction();
             realm.copyToRealmOrUpdate(response.getResults());
             realm.commitTransaction();
+            mAdapter.notifyDataSetChanged();
             Log.e("TAG","saved " + response.getResults().size() + " Conversations to Realm in: " + String.valueOf(System.currentTimeMillis() - start));
         }
     }
 
     @Override
     public void onResponseFailed(VKError e) {
-        Log.e("TAG","e: " + e.errorMessage);
+        Log.e("TAG", "e: " + e.errorMessage);
     }
 }
