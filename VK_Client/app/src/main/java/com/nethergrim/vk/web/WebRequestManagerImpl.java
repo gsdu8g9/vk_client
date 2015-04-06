@@ -65,19 +65,13 @@ public class WebRequestManagerImpl implements WebRequestManager {
                     // setting userId and date to every conversation
 
                     if (result != null){
-                        List<Long> userIds = new ArrayList<>();
                         ArrayList<Conversation> conversations = result.getResults();
                         if (conversations != null){
                             for (Conversation conversation : conversations) {
                                 conversation.setUser_id(conversation.getMessage().getUser_id());
                                 conversation.setDate(conversation.getMessage().getDate());
-                                userIds.add(conversation.getUser_id());
                             }
                         }
-
-
-
-                        getUsers(userIds, new ArrayList<String>(Arrays.asList(User.Fields.bdate, User.Fields.onlin, User.Fields.photo_200)), null, null);
                     }
                     if (callback != null){
                         callback.onResponseSucceed(result);
@@ -134,9 +128,15 @@ public class WebRequestManagerImpl implements WebRequestManager {
             public void onComplete(VKResponse response) {
                 super.onComplete(response);
                 Log.e("TAG", "loaded users!");
-
-
-                // TODo
+                ListOfUsers listOfUsers = mJsonDeserializer.getListOfUsers(response.responseString);
+                if (listOfUsers != null && listOfUsers.getResponse() != null){
+                    Log.e("TAG", "loaded " + listOfUsers.getResponse().size() + " users");
+                    if (callback != null){
+                        callback.onResponseSucceed(listOfUsers);
+                    }
+                } else {
+                    Log.e("TAG", "ERROR");
+                }
             }
 
             @Override
@@ -147,11 +147,17 @@ public class WebRequestManagerImpl implements WebRequestManager {
                 }
             }
         });
+    }
 
-
-
-
-
+    @Override
+    public void getUsersForConversations(ConversationsList list, WebCallback<ListOfUsers> callback){
+        if (list != null && list.getResults() != null){
+            List<Long> ids = new ArrayList<>();
+            for (Conversation conversation : list.getResults()) {
+                ids.add(conversation.getUser_id());
+            }
+            getUsers(ids, Arrays.asList(User.Fields.photo_200, User.Fields.onlin, User.Fields.sex), null, callback);
+        }
     }
 
 

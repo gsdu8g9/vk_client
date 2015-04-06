@@ -14,6 +14,7 @@ import com.nethergrim.vk.adapter.ConversationsAdapter;
 import com.nethergrim.vk.callbacks.WebCallback;
 import com.nethergrim.vk.models.Conversation;
 import com.nethergrim.vk.models.ConversationsList;
+import com.nethergrim.vk.models.ListOfUsers;
 import com.nethergrim.vk.web.WebRequestManager;
 import com.vk.sdk.api.VKError;
 
@@ -74,6 +75,20 @@ public class MessagesFragment extends AbstractFragment implements WebCallback<Co
             realm.beginTransaction();
             realm.copyToRealmOrUpdate(response.getResults());
             realm.commitTransaction();
+            mWM.getUsersForConversations(response, new WebCallback<ListOfUsers>() {
+                @Override
+                public void onResponseSucceed(ListOfUsers response) {
+                    Log.e("TAG", "response succeed!!");
+                    realm.beginTransaction();
+                    realm.copyToRealmOrUpdate(response.getResponse());
+                    realm.commitTransaction();
+                }
+
+                @Override
+                public void onResponseFailed(VKError e) {
+                    Log.e("TAG", "error: " + e.errorMessage);
+                }
+            });
         }
     }
 
