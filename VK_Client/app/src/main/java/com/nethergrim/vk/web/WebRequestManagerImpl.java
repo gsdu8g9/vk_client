@@ -1,11 +1,15 @@
 package com.nethergrim.vk.web;
 
+import android.util.Log;
+
+import com.kisstools.utils.StringUtil;
 import com.nethergrim.vk.Constants;
-import com.nethergrim.vk.models.Conversation;
-import com.nethergrim.vk.models.ConversationsList;
 import com.nethergrim.vk.callbacks.WebCallback;
 import com.nethergrim.vk.inject.Injector;
 import com.nethergrim.vk.json.JsonDeserializer;
+import com.nethergrim.vk.models.Conversation;
+import com.nethergrim.vk.models.ConversationsList;
+import com.nethergrim.vk.models.ListOfUsers;
 import com.vk.sdk.api.VKError;
 import com.vk.sdk.api.VKParameters;
 import com.vk.sdk.api.VKRequest;
@@ -15,6 +19,7 @@ import org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -81,6 +86,62 @@ public class WebRequestManagerImpl implements WebRequestManager {
                 }
             }
         });
+
+    }
+
+    @Override
+    public void getUsers(List<Integer> ids, List<String> fields, String nameCase, final WebCallback<ListOfUsers> callback) {
+        Map<String, Object> params = new HashMap<>();
+
+        if (ids != null){
+            if (ids.size() > 1000){
+                throw  new IllegalArgumentException("you want to fetch too much users. Max is 1000");
+            }
+
+            StringBuilder sb = new StringBuilder();
+            for (Integer id : ids) {
+                sb.append(id);
+                sb.append(", ");
+            }
+            String idsValues = StringUtil.cutText(sb.toString(), sb.toString().length() - 2);
+            Log.e("TAG", "ids: " + idsValues);
+            params.put("user_ids", idsValues);
+        }
+
+        if (fields != null){
+            StringBuilder sb = new StringBuilder();
+            for (String field : fields) {
+                sb.append(field);
+                sb.append(", ");
+            }
+            String idsValues = StringUtil.cutText(sb.toString(), sb.toString().length() - 2);
+            Log.e("TAG", "fields: " + idsValues);
+            params.put("fields", idsValues);
+        }
+
+        VKRequest vkRequest = new VKRequest(Constants.Requests.GET_USERS, new VKParameters(params));
+        vkRequest.executeWithListener(new VKRequest.VKRequestListener() {
+            @Override
+            public void onComplete(VKResponse response) {
+                super.onComplete(response);
+
+
+
+                // TODo
+            }
+
+            @Override
+            public void onError(VKError error) {
+                super.onError(error);
+                if (callback != null){
+                    callback.onResponseFailed(error);
+                }
+            }
+        });
+
+
+
+
 
     }
 
