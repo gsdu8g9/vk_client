@@ -32,6 +32,7 @@
         android:paddingRight="@dimen/conversation_item_padding_horizontal"
         android:ellipsize="end"
         android:paddingLeft="@dimen/conversation_item_padding_horizontal"
+        android:textColor="@color/secondary_text"
         android:layout_height="wrap_content" />
 
     <TextView

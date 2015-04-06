@@ -11,7 +11,7 @@
     <dimen name="text_size_small">14dp</dimen>
 
 
-    <dimen name="divider_size">0.5dp</dimen>
+    <dimen name="divider_size">1dp</dimen>
 
     <!--            Conversations         -->
     <dimen name="conversation_item_height">70dp</dimen>
