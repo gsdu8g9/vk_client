@@ -15,10 +15,17 @@ import com.vk.sdk.util.VKUtil;
  */
 public class MyApplication extends Application {
 
+    private static MyApplication _app;
+
+    public synchronized static MyApplication getInstance(){
+        return _app;
+    }
+
     @Override
     public void onCreate() {
         super.onCreate();
         KissTools.setContext(this);
+        _app = this;
         VKSdkListener vkSdkListener = new VKSdkListener() {
             @Override
             public void onCaptchaError(VKError captchaError) {

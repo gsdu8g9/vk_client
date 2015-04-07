@@ -8,15 +8,24 @@ import android.view.ViewGroup;
 
 import com.nethergrim.vk.R;
 import com.nethergrim.vk.adapter.viewholders.ConversationViewHolder;
+import com.nethergrim.vk.inject.Injector;
 import com.nethergrim.vk.models.Conversation;
+import com.nethergrim.vk.models.User;
+import com.nethergrim.vk.web.ImageLoader;
+
+import javax.inject.Inject;
 
 import io.realm.Realm;
+import io.realm.RealmChangeListener;
 import io.realm.RealmResults;
 
 /**
  * @author andreydrobyazko on 4/6/15.
  */
-public class ConversationsAdapter  extends RecyclerView.Adapter<ConversationViewHolder> {
+public class ConversationsAdapter  extends RecyclerView.Adapter<ConversationViewHolder> implements RealmChangeListener {
+
+    @Inject
+    ImageLoader il;
 
     private RealmResults<Conversation> data;
     private Realm realm;
@@ -24,6 +33,7 @@ public class ConversationsAdapter  extends RecyclerView.Adapter<ConversationView
     public ConversationsAdapter(RealmResults<Conversation> data) {
         this.data = data;
         setHasStableIds(true);
+        Injector.getInstance().inject(this);
     }
 
     private void createRealm(Context context){
@@ -34,6 +44,7 @@ public class ConversationsAdapter  extends RecyclerView.Adapter<ConversationView
     public ConversationViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         if (realm == null){
             createRealm(viewGroup.getContext());
+            realm.addChangeListener(this);
         }
         return new ConversationViewHolder(LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.vh_conversation, viewGroup, false));
     }
@@ -43,6 +54,12 @@ public class ConversationsAdapter  extends RecyclerView.Adapter<ConversationView
         Conversation conversation = data.get(i);
         conversationViewHolder.textDetails.setText(conversation.getMessage().getBody());
         conversationViewHolder.textDate.setText(DateUtils.getRelativeTimeSpanString(conversation.getMessage().getDate() * 1000, System.currentTimeMillis(), 0L, DateUtils.FORMAT_ABBREV_ALL));
+
+        User user = realm.where(User.class).equalTo("id", conversation.getUser_id()).findFirst();
+        if (user != null){
+            il.displayAvatar(user.getPhoto_200(), conversationViewHolder.imageAvatar);
+            conversationViewHolder.textName.setText(user.getFirstName() + " " + user.getLastName());
+        }
 
     }
 
@@ -56,5 +73,19 @@ public class ConversationsAdapter  extends RecyclerView.Adapter<ConversationView
         return data.get(position).getUser_id();
     }
 
+    public void closeRealm(){
+        if (realm != null){
+            try {
+                realm.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
+
+    @Override
+    public void onChange() {
+        notifyDataSetChanged();
+    }
 }

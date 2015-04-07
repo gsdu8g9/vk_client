@@ -1,8 +1,12 @@
 package com.nethergrim.vk.inject;
 
+import com.nethergrim.vk.MyApplication;
+import com.nethergrim.vk.adapter.ConversationsAdapter;
 import com.nethergrim.vk.fragment.MessagesFragment;
 import com.nethergrim.vk.json.JsonDeserializer;
 import com.nethergrim.vk.json.JsonDeserializerImpl;
+import com.nethergrim.vk.web.ImageLoader;
+import com.nethergrim.vk.web.ImageLoaderImpl;
 import com.nethergrim.vk.web.WebRequestManager;
 import com.nethergrim.vk.web.WebRequestManagerImpl;
 
@@ -14,7 +18,7 @@ import dagger.Provides;
 /**
  * @author andreydrobyazko on 4/3/15.
  */
-@Module( injects = {MessagesFragment.class, WebRequestManagerImpl.class})
+@Module( injects = {MessagesFragment.class, WebRequestManagerImpl.class, ConversationsAdapter.class})
 public class ProviderModule {
 
     @Provides @Singleton
@@ -25,5 +29,10 @@ public class ProviderModule {
     @Provides @Singleton
     JsonDeserializer provideJsonDeserializer(){
         return new JsonDeserializerImpl();
+    }
+
+    @Provides @Singleton
+    ImageLoader provideImageLoader(){
+        return new ImageLoaderImpl(MyApplication.getInstance());
     }
 }

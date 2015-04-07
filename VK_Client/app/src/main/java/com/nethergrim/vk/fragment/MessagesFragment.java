@@ -22,13 +22,12 @@ import javax.inject.Inject;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
-import io.realm.RealmChangeListener;
 import io.realm.RealmResults;
 
 /**
  * @author andreydrobyazko on 3/20/15.
  */
-public class MessagesFragment extends AbstractFragment implements WebCallback<ConversationsList>, RealmChangeListener {
+public class MessagesFragment extends AbstractFragment implements WebCallback<ConversationsList> {
 
     @InjectView(R.id.list)
     RecyclerView mRecyclerView;
@@ -48,6 +47,9 @@ public class MessagesFragment extends AbstractFragment implements WebCallback<Co
     public void onDestroyView() {
         super.onDestroyView();
         ButterKnife.reset(this);
+        if (mAdapter != null){
+            mAdapter.closeRealm();
+        }
     }
 
     @Override
@@ -57,7 +59,6 @@ public class MessagesFragment extends AbstractFragment implements WebCallback<Co
         mRecyclerView.setHasFixedSize(true);
         if (checkRealm()){
             realm.setAutoRefresh(true);
-            realm.addChangeListener(this);
             RealmResults<Conversation> data = realm.where(Conversation.class).findAllSorted("date", false);
             mAdapter = new ConversationsAdapter(data);
             mRecyclerView.setAdapter(mAdapter);
@@ -97,10 +98,5 @@ public class MessagesFragment extends AbstractFragment implements WebCallback<Co
         Log.e("TAG", "e: " + e.errorMessage);
     }
 
-    @Override
-    public void onChange() {
-        if (mAdapter != null){
-            mAdapter.notifyDataSetChanged();
-        }
-    }
+
 }
