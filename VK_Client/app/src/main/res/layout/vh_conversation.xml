@@ -16,7 +16,8 @@
         android:layout_centerVertical="true"
         android:layout_gravity="center_vertical"
         android:layout_marginEnd="@dimen/conversation_item_padding_horizontal"
-        android:layout_marginRight="@dimen/conversation_item_padding_horizontal" />
+        android:layout_marginRight="@dimen/conversation_item_padding_horizontal"
+        android:contentDescription="@string/user_avatar" />
 
     <TextView
         android:id="@+id/text_name"
@@ -26,9 +27,9 @@
         android:layout_toEndOf="@+id/image_avatar"
         android:layout_toLeftOf="@+id/text_date"
         android:layout_toRightOf="@+id/image_avatar"
+        android:layout_toStartOf="@+id/text_date"
         android:ellipsize="end"
         android:singleLine="true"
-        android:text="Andrew Drobyazko"
         android:textSize="@dimen/text_size_big" />
 
     <TextView
@@ -41,7 +42,6 @@
         android:layout_toRightOf="@+id/image_avatar"
         android:ellipsize="end"
         android:maxLines="@integer/conversation_item_max_message_lines"
-        android:text="My message to you: mm m m m m m m m m m m"
         android:textColor="@color/secondary_text"
         android:textSize="@dimen/text_size_small" />
 
@@ -54,7 +54,6 @@
         android:layout_alignParentTop="true"
         android:ellipsize="end"
         android:singleLine="true"
-        android:text="Yesterday"
         android:textColor="@color/secondary_text"
         android:textSize="@dimen/text_size_small" />
 

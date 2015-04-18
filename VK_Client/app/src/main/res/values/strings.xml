@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">VK чат</string>
+    <string name="user_avatar">Аватар Пользователя</string>
 
 
 </resources>
