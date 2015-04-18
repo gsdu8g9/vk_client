@@ -22,7 +22,7 @@ public class User extends RealmObject {
     private String lastName;
 
 
-    private boolean deactivated;
+    private String deactivated;
 
     @JsonProperty("hidden")
     private int hidden;
@@ -104,11 +104,11 @@ public class User extends RealmObject {
         this.lastName = lastName;
     }
 
-    public boolean isDeactivated() {
+    public String getDeactivated() {
         return deactivated;
     }
 
-    public void setDeactivated(boolean deactivated) {
+    public void setDeactivated(String deactivated) {
         this.deactivated = deactivated;
     }
 
@@ -304,7 +304,7 @@ public class User extends RealmObject {
         this.is_friend = is_friend;
     }
 
-    public static interface Fields{
+    public static interface Fields {
         String sex = "sex";
         String bdate = "bdate";
         String country = "country";

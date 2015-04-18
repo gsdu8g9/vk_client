@@ -9,6 +9,8 @@ import android.graphics.Paint;
 import android.graphics.Shader;
 import android.widget.ImageView;
 
+import com.nethergrim.vk.R;
+import com.nethergrim.vk.models.User;
 import com.squareup.picasso.Picasso;
 
 /**
@@ -24,7 +26,28 @@ public class ImageLoaderImpl implements ImageLoader {
 
     @Override
     public void displayAvatar(String url, ImageView imageView) {
-        Picasso.with(context).load(url).fit().centerCrop().noFade().config(Bitmap.Config.RGB_565).transform(new RoundedTransformation()).into(imageView);
+        if (url != null && url.length() > 0 && url.contains("http")) {
+            Picasso.with(context).load(url).fit().centerCrop().noFade().config(Bitmap.Config.RGB_565).transform(new RoundedTransformation()).into(imageView);
+        }
+    }
+
+    @Override
+    public void diaplyAvatar(User user, ImageView imageView) {
+        if (user == null) {
+            throw new IllegalArgumentException("User is null");
+        }
+        boolean deactivated = user.getDeactivated() != null && user.getDeactivated().length() > 0;
+        if (deactivated) {
+            Picasso.with(context).load(R.drawable.ic_deactivated_200).fit().centerCrop().noFade().config(Bitmap.Config.RGB_565).transform(new RoundedTransformation()).into(imageView);
+        } else {
+            String url = user.getPhoto_200();
+            if (url != null && url.length() > 0 && url.contains("http")) {
+                Picasso.with(context).load(url).fit().centerCrop().noFade().config(Bitmap.Config.RGB_565).transform(new RoundedTransformation()).into(imageView);
+            } else {
+                Picasso.with(context).load(R.drawable.ic_action_account_circle).fit().centerCrop().noFade().config(Bitmap.Config.RGB_565).transform(new RoundedTransformation()).into(imageView);
+            }
+        }
+
     }
 
     public class RoundedTransformation implements com.squareup.picasso.Transformation {

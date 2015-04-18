@@ -16,6 +16,7 @@ import com.nethergrim.vk.models.Conversation;
 import com.nethergrim.vk.models.ConversationsList;
 import com.nethergrim.vk.models.ListOfUsers;
 import com.nethergrim.vk.views.DividerItemDecoration;
+import com.nethergrim.vk.views.RecyclerviewPageScroller;
 import com.nethergrim.vk.web.WebRequestManager;
 import com.vk.sdk.api.VKError;
 
@@ -28,8 +29,9 @@ import io.realm.RealmResults;
 /**
  * @author andreydrobyazko on 3/20/15.
  */
-public class MessagesFragment extends AbstractFragment implements WebCallback<ConversationsList> {
+public class MessagesFragment extends AbstractFragment implements WebCallback<ConversationsList>, RecyclerviewPageScroller.OnRecyclerViewScrolledToPageListener {
 
+    public static final int DEFAULT_PAGE_SIZE = 20;
     @InjectView(R.id.list)
     RecyclerView mRecyclerView;
     @Inject
@@ -64,12 +66,14 @@ public class MessagesFragment extends AbstractFragment implements WebCallback<Co
             mAdapter = new ConversationsAdapter(data);
             mRecyclerView.setAdapter(mAdapter);
             mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
+            mRecyclerView.setOnScrollListener(new RecyclerviewPageScroller(DEFAULT_PAGE_SIZE, this, 5));
         }
-        loadData();
+        loadPage(0);
     }
 
-    private void loadData() {
-        mWM.getConversations(20, 0, false, 0, this);
+    private void loadPage(int pageNumber) {
+        Log.e("TAG", "loading page: " + pageNumber);
+        mWM.getConversations(DEFAULT_PAGE_SIZE, pageNumber * DEFAULT_PAGE_SIZE, false, 0, this);
     }
 
     @Override
@@ -81,7 +85,6 @@ public class MessagesFragment extends AbstractFragment implements WebCallback<Co
             mWM.getUsersForConversations(response, new WebCallback<ListOfUsers>() {
                 @Override
                 public void onResponseSucceed(ListOfUsers response) {
-                    Log.e("TAG", "response succeed!!");
                     realm.beginTransaction();
                     realm.copyToRealmOrUpdate(response.getResponse());
                     realm.commitTransaction();
@@ -90,6 +93,7 @@ public class MessagesFragment extends AbstractFragment implements WebCallback<Co
                 @Override
                 public void onResponseFailed(VKError e) {
                     Log.e("TAG", "error: " + e.errorMessage);
+                    // TODO handle
                 }
             });
         }
@@ -98,7 +102,12 @@ public class MessagesFragment extends AbstractFragment implements WebCallback<Co
     @Override
     public void onResponseFailed(VKError e) {
         Log.e("TAG", "e: " + e.errorMessage);
+        // TODO handle
     }
 
 
+    @Override
+    public void onRecyclerViewScrolledToPage(int pageNumber) {
+        loadPage(pageNumber);
+    }
 }

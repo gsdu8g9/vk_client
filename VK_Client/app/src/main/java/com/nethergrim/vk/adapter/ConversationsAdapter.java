@@ -57,7 +57,7 @@ public class ConversationsAdapter  extends RecyclerView.Adapter<ConversationView
 
         User user = realm.where(User.class).equalTo("id", conversation.getUser_id()).findFirst();
         if (user != null){
-            il.displayAvatar(user.getPhoto_200(), conversationViewHolder.imageAvatar);
+            il.diaplyAvatar(user, conversationViewHolder.imageAvatar);
             conversationViewHolder.textName.setText(user.getFirstName() + " " + user.getLastName());
         }
 
