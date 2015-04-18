@@ -15,6 +15,7 @@ import com.nethergrim.vk.callbacks.WebCallback;
 import com.nethergrim.vk.models.Conversation;
 import com.nethergrim.vk.models.ConversationsList;
 import com.nethergrim.vk.models.ListOfUsers;
+import com.nethergrim.vk.views.DividerItemDecoration;
 import com.nethergrim.vk.web.WebRequestManager;
 import com.vk.sdk.api.VKError;
 
@@ -47,7 +48,7 @@ public class MessagesFragment extends AbstractFragment implements WebCallback<Co
     public void onDestroyView() {
         super.onDestroyView();
         ButterKnife.reset(this);
-        if (mAdapter != null){
+        if (mAdapter != null) {
             mAdapter.closeRealm();
         }
     }
@@ -57,11 +58,12 @@ public class MessagesFragment extends AbstractFragment implements WebCallback<Co
         super.onViewCreated(view, savedInstanceState);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
         mRecyclerView.setHasFixedSize(true);
-        if (checkRealm()){
+        if (checkRealm()) {
             realm.setAutoRefresh(true);
             RealmResults<Conversation> data = realm.where(Conversation.class).findAllSorted("date", false);
             mAdapter = new ConversationsAdapter(data);
             mRecyclerView.setAdapter(mAdapter);
+            mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
         }
         loadData();
     }
@@ -72,7 +74,7 @@ public class MessagesFragment extends AbstractFragment implements WebCallback<Co
 
     @Override
     public void onResponseSucceed(ConversationsList response) {
-        if (response != null && checkRealm()){
+        if (response != null && checkRealm()) {
             realm.beginTransaction();
             realm.copyToRealmOrUpdate(response.getResults());
             realm.commitTransaction();
