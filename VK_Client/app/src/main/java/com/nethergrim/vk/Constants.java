@@ -18,5 +18,6 @@ public class Constants {
 
     public static interface Requests{
         String MESSAGES_GET_DIALOGS = "messages.getDialogs";
+        String GET_USERS = "users.get";
     }
 }

@@ -3,4 +3,22 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="action_bar_height">48dp</dimen>
+    <dimen name="margin_small">4dp</dimen>
+
+
+    <!--           Text          -->
+    <dimen name="text_size_regular">16sp</dimen>
+    <dimen name="text_size_big">18sp</dimen>
+    <dimen name="text_size_small">14sp</dimen>
+
+
+    <dimen name="divider_size">1dp</dimen>
+
+    <!--            Conversations         -->
+    <dimen name="conversation_item_height">64dp</dimen>
+    <dimen name="conversation_item_padding_vertical">8dp</dimen>
+    <dimen name="conversation_item_padding_horizontal">16dp</dimen>
+    <dimen name="conversation_avatar_size">48dp</dimen>
+    <integer name="conversation_item_max_message_lines">1</integer>
+
 </resources>
