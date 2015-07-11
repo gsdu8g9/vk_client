@@ -1,5 +1,6 @@
 package com.nethergrim.vk.fragment;
 
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
@@ -15,10 +16,10 @@ import com.nethergrim.vk.callbacks.WebCallback;
 import com.nethergrim.vk.models.Conversation;
 import com.nethergrim.vk.models.ConversationsList;
 import com.nethergrim.vk.models.ListOfUsers;
-import com.nethergrim.vk.views.DividerItemDecoration;
 import com.nethergrim.vk.views.RecyclerviewPageScroller;
 import com.nethergrim.vk.web.WebRequestManager;
 import com.vk.sdk.api.VKError;
+import com.yqritc.recyclerviewflexibledivider.HorizontalDividerItemDecoration;
 
 import javax.inject.Inject;
 
@@ -65,7 +66,9 @@ public class MessagesFragment extends AbstractFragment implements WebCallback<Co
             RealmResults<Conversation> data = realm.where(Conversation.class).findAllSorted("date", false);
             mAdapter = new ConversationsAdapter(data);
             mRecyclerView.setAdapter(mAdapter);
-            mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
+            Resources res = view.getResources();
+            int additionalLeftMarginForDividers = 2 * (res.getDimensionPixelSize(R.dimen.conversation_item_padding_horizontal)) + res.getDimensionPixelSize(R.dimen.conversation_avatar_size);
+            mRecyclerView.addItemDecoration(new HorizontalDividerItemDecoration.Builder(view.getContext()).margin(additionalLeftMarginForDividers, 0).build());
             mRecyclerView.setOnScrollListener(new RecyclerviewPageScroller(DEFAULT_PAGE_SIZE, this, 5));
         }
         loadPage(0);
