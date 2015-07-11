@@ -5,10 +5,10 @@ import com.nethergrim.vk.adapter.ConversationsAdapter;
 import com.nethergrim.vk.fragment.MessagesFragment;
 import com.nethergrim.vk.json.JsonDeserializer;
 import com.nethergrim.vk.json.JsonDeserializerImpl;
-import com.nethergrim.vk.web.ImageLoader;
-import com.nethergrim.vk.web.ImageLoaderImpl;
 import com.nethergrim.vk.web.WebRequestManager;
 import com.nethergrim.vk.web.WebRequestManagerImpl;
+import com.nethergrim.vk.web.images.GlideImageLoaderImpl;
+import com.nethergrim.vk.web.images.ImageLoader;
 
 import javax.inject.Singleton;
 
@@ -33,6 +33,6 @@ public class ProviderModule {
 
     @Provides @Singleton
     ImageLoader provideImageLoader(){
-        return new ImageLoaderImpl(MyApplication.getInstance());
+        return new GlideImageLoaderImpl(MyApplication.getInstance());
     }
 }
