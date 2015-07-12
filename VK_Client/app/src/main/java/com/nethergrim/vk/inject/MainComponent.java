@@ -16,4 +16,5 @@ import javax.inject.Singleton;
 )
 
 public interface MainComponent {
+    void inject(Class clazz);
 }

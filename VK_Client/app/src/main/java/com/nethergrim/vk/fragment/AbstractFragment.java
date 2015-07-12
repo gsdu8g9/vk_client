@@ -32,6 +32,6 @@ public abstract class AbstractFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        Injector.getInstance().inject(this);
+//        Injector.getInstance().inject(this); TODO fix it
     }
 }

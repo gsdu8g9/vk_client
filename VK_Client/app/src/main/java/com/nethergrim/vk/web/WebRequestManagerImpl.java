@@ -27,7 +27,7 @@ public class WebRequestManagerImpl implements WebRequestManager {
     JsonDeserializer mJsonDeserializer;
 
     public WebRequestManagerImpl() {
-//        Injector.getInstance().inject(this);
+//        Injector.getInstance().inject(this); TODO fix it
     }
 
     @Override

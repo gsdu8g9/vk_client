@@ -30,7 +30,7 @@ public class ConversationsAdapter  extends RecyclerView.Adapter<ConversationView
     public ConversationsAdapter(RealmResults<Conversation> data) {
         this.data = data;
         setHasStableIds(true);
-//        Injector.getInstance().inject(this);
+//        Injector.getInstance().inject(this); TODO fix it
     }
 
     private void createRealm(Context context){
