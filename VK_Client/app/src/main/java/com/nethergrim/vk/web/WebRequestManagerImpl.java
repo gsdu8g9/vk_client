@@ -1,11 +1,9 @@
 package com.nethergrim.vk.web;
 
 import android.util.Log;
-
 import com.kisstools.utils.StringUtil;
 import com.nethergrim.vk.Constants;
 import com.nethergrim.vk.callbacks.WebCallback;
-import com.nethergrim.vk.inject.Injector;
 import com.nethergrim.vk.json.JsonDeserializer;
 import com.nethergrim.vk.models.Conversation;
 import com.nethergrim.vk.models.ConversationsList;
@@ -15,16 +13,10 @@ import com.vk.sdk.api.VKError;
 import com.vk.sdk.api.VKParameters;
 import com.vk.sdk.api.VKRequest;
 import com.vk.sdk.api.VKResponse;
-
 import org.json.JSONException;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import javax.inject.Inject;
+import java.util.*;
 
 /**
  * @author andreydrobyazko on 4/3/15.
@@ -35,7 +27,7 @@ public class WebRequestManagerImpl implements WebRequestManager {
     JsonDeserializer mJsonDeserializer;
 
     public WebRequestManagerImpl() {
-        Injector.getInstance().inject(this);
+//        Injector.getInstance().inject(this);
     }
 
     @Override

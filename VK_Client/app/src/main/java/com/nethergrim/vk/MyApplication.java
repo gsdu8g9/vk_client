@@ -2,8 +2,10 @@ package com.nethergrim.vk;
 
 import android.app.Application;
 import android.util.Log;
-
 import com.kisstools.KissTools;
+import com.nethergrim.vk.inject.DaggerMainComponent;
+import com.nethergrim.vk.inject.MainComponent;
+import com.nethergrim.vk.inject.ProviderModule;
 import com.vk.sdk.VKAccessToken;
 import com.vk.sdk.VKSdk;
 import com.vk.sdk.VKSdkListener;
@@ -17,7 +19,7 @@ public class MyApplication extends Application {
 
     private static MyApplication _app;
 
-    public synchronized static MyApplication getInstance(){
+    public synchronized static MyApplication getInstance() {
         return _app;
     }
 
@@ -51,7 +53,7 @@ public class MyApplication extends Application {
             @Override
             public void onAcceptUserToken(VKAccessToken token) {
                 super.onAcceptUserToken(token);
-                Log.e("TAG", "user toket accepted: " + token.email);
+                Log.e("TAG", "user token accepted: " + token.email);
             }
 
             @Override
@@ -65,6 +67,13 @@ public class MyApplication extends Application {
         for (String fingerprint : fingerprints) {
             Log.e("TAG", "key fingerprint: " + fingerprint);
         }
+
+        initDagger2();
+    }
+
+    private void initDagger2() {
+        MainComponent mainComponent = DaggerMainComponent.builder().providerModule(new ProviderModule()).build();
+
     }
 
 }

@@ -5,19 +5,16 @@ import android.support.v7.widget.RecyclerView;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
-
 import com.nethergrim.vk.R;
 import com.nethergrim.vk.adapter.viewholders.ConversationViewHolder;
-import com.nethergrim.vk.inject.Injector;
 import com.nethergrim.vk.models.Conversation;
 import com.nethergrim.vk.models.User;
 import com.nethergrim.vk.web.images.ImageLoader;
-
-import javax.inject.Inject;
-
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
 import io.realm.RealmResults;
+
+import javax.inject.Inject;
 
 /**
  * @author andreydrobyazko on 4/6/15.
@@ -33,7 +30,7 @@ public class ConversationsAdapter  extends RecyclerView.Adapter<ConversationView
     public ConversationsAdapter(RealmResults<Conversation> data) {
         this.data = data;
         setHasStableIds(true);
-        Injector.getInstance().inject(this);
+//        Injector.getInstance().inject(this);
     }
 
     private void createRealm(Context context){
