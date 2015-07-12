@@ -11,7 +11,7 @@ import com.nethergrim.vk.adapter.viewholders.ConversationViewHolder;
 import com.nethergrim.vk.inject.Injector;
 import com.nethergrim.vk.models.Conversation;
 import com.nethergrim.vk.models.User;
-import com.nethergrim.vk.web.ImageLoader;
+import com.nethergrim.vk.web.images.ImageLoader;
 
 import javax.inject.Inject;
 
@@ -57,7 +57,7 @@ public class ConversationsAdapter  extends RecyclerView.Adapter<ConversationView
 
         User user = realm.where(User.class).equalTo("id", conversation.getUser_id()).findFirst();
         if (user != null){
-            il.diaplyAvatar(user, conversationViewHolder.imageAvatar);
+            il.displayUserAvatar(user, conversationViewHolder.imageAvatar);
             conversationViewHolder.textName.setText(user.getFirstName() + " " + user.getLastName());
         }
 

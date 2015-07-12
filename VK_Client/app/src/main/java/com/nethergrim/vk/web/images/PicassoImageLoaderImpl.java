@@ -1,4 +1,4 @@
-package com.nethergrim.vk.web;
+package com.nethergrim.vk.web.images;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -7,6 +7,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Shader;
+import android.support.annotation.NonNull;
 import android.widget.ImageView;
 
 import com.nethergrim.vk.R;
@@ -16,26 +17,16 @@ import com.squareup.picasso.Picasso;
 /**
  * @author andreydrobyazko on 4/7/15.
  */
-public class ImageLoaderImpl implements ImageLoader {
+public class PicassoImageLoaderImpl implements ImageLoader {
 
     private Context context;
 
-    public ImageLoaderImpl(Context context) {
+    public PicassoImageLoaderImpl(Context context) {
         this.context = context;
     }
 
     @Override
-    public void displayAvatar(String url, ImageView imageView) {
-        if (url != null && url.length() > 0 && url.contains("http")) {
-            Picasso.with(context).load(url).fit().centerCrop().noFade().config(Bitmap.Config.RGB_565).transform(new RoundedTransformation()).into(imageView);
-        }
-    }
-
-    @Override
-    public void diaplyAvatar(User user, ImageView imageView) {
-        if (user == null) {
-            throw new IllegalArgumentException("User is null");
-        }
+    public void displayUserAvatar(@NonNull User user,@NonNull  ImageView imageView) {
         boolean deactivated = user.getDeactivated() != null && user.getDeactivated().length() > 0;
         if (deactivated) {
             Picasso.with(context).load(R.drawable.ic_deactivated_200).fit().centerCrop().noFade().config(Bitmap.Config.RGB_565).transform(new RoundedTransformation()).into(imageView);
@@ -74,8 +65,6 @@ public class ImageLoaderImpl implements ImageLoader {
             paint1.setStyle(Paint.Style.STROKE);
             paint1.setAntiAlias(true);
             canvas.drawCircle((source.getWidth()) / 2, (source.getHeight()) / 2, radius - 2, paint1);
-
-
             return output;
         }
 

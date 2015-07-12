@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">VK чат</string>
     <string name="user_avatar">Аватар Пользователя</string>
+    <string name="nothing_here_yet">Здесь пока что ничего нет</string>
 
 
 </resources>

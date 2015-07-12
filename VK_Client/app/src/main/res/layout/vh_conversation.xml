@@ -7,7 +7,7 @@
     android:paddingTop="@dimen/conversation_item_padding_vertical">
 
 
-    <ImageView
+    <com.nethergrim.vk.views.CircularImageView
         android:id="@+id/image_avatar"
         android:layout_width="@dimen/conversation_avatar_size"
         android:layout_height="@dimen/conversation_avatar_size"
