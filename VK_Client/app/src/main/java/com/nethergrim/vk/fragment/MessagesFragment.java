@@ -9,6 +9,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.nethergrim.vk.R;
 import com.nethergrim.vk.adapter.ConversationsAdapter;
@@ -35,6 +37,11 @@ public class MessagesFragment extends AbstractFragment implements WebCallback<Co
     public static final int DEFAULT_PAGE_SIZE = 20;
     @InjectView(R.id.list)
     RecyclerView mRecyclerView;
+    @InjectView(R.id.progressBar2)
+    ProgressBar mProgressBar;
+    @InjectView(R.id.textViewNothingHere)
+    TextView mNothingHereTextView;
+
     @Inject
     WebRequestManager mWM;
     private ConversationsAdapter mAdapter;
@@ -70,6 +77,10 @@ public class MessagesFragment extends AbstractFragment implements WebCallback<Co
             int additionalLeftMarginForDividers = 2 * (res.getDimensionPixelSize(R.dimen.conversation_item_padding_horizontal)) + res.getDimensionPixelSize(R.dimen.conversation_avatar_size);
             mRecyclerView.addItemDecoration(new HorizontalDividerItemDecoration.Builder(view.getContext()).margin(additionalLeftMarginForDividers, 0).build());
             mRecyclerView.setOnScrollListener(new RecyclerviewPageScroller(DEFAULT_PAGE_SIZE, this, 5));
+            if (mAdapter.getItemCount() == 0) {
+                mProgressBar.setVisibility(View.VISIBLE);
+                mNothingHereTextView.setVisibility(View.GONE);
+            }
         }
         loadPage(0);
     }
@@ -85,6 +96,10 @@ public class MessagesFragment extends AbstractFragment implements WebCallback<Co
             realm.beginTransaction();
             realm.copyToRealmOrUpdate(response.getResults());
             realm.commitTransaction();
+            if (response.getResults().isEmpty() && mAdapter != null && mAdapter.getItemCount() == 0) {
+                mProgressBar.setVisibility(View.GONE);
+                mNothingHereTextView.setVisibility(View.VISIBLE);
+            }
             mWM.getUsersForConversations(response, new WebCallback<ListOfUsers>() {
                 @Override
                 public void onResponseSucceed(ListOfUsers response) {
