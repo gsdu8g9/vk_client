@@ -18,6 +18,7 @@ import com.vk.sdk.util.VKUtil;
 public class MyApplication extends Application {
 
     private static MyApplication _app;
+    private MainComponent mainComponent;
 
     public synchronized static MyApplication getInstance() {
         return _app;
@@ -64,16 +65,19 @@ public class MyApplication extends Application {
         };
         VKSdk.initialize(vkSdkListener, Constants.VK_APP_ID);
         String[] fingerprints = VKUtil.getCertificateFingerprint(this, this.getPackageName());
-        for (String fingerprint : fingerprints) {
-            Log.e("TAG", "key fingerprint: " + fingerprint);
+        if (fingerprints != null) {
+            for (String fingerprint : fingerprints) {
+                Log.e("TAG", "key fingerprint: " + fingerprint);
+            }
         }
-
         initDagger2();
     }
 
     private void initDagger2() {
-        MainComponent mainComponent = DaggerMainComponent.builder().providerModule(new ProviderModule()).build();
-
+        mainComponent = DaggerMainComponent.builder().providerModule(new ProviderModule()).build();
     }
 
+    public MainComponent getMainComponent() {
+        return mainComponent;
+    }
 }

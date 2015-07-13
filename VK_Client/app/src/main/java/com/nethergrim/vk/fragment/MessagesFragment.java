@@ -11,7 +11,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+import com.nethergrim.vk.MyApplication;
 import com.nethergrim.vk.R;
 import com.nethergrim.vk.adapter.ConversationsAdapter;
 import com.nethergrim.vk.callbacks.WebCallback;
@@ -22,12 +24,9 @@ import com.nethergrim.vk.views.RecyclerviewPageScroller;
 import com.nethergrim.vk.web.WebRequestManager;
 import com.vk.sdk.api.VKError;
 import com.yqritc.recyclerviewflexibledivider.HorizontalDividerItemDecoration;
+import io.realm.RealmResults;
 
 import javax.inject.Inject;
-
-import butterknife.ButterKnife;
-import butterknife.InjectView;
-import io.realm.RealmResults;
 
 /**
  * @author andreydrobyazko on 3/20/15.
@@ -45,6 +44,12 @@ public class MessagesFragment extends AbstractFragment implements WebCallback<Co
     @Inject
     WebRequestManager mWM;
     private ConversationsAdapter mAdapter;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        MyApplication.getInstance().getMainComponent().inject(this);
+    }
 
     @Nullable
     @Override

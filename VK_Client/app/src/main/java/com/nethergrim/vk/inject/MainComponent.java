@@ -1,5 +1,8 @@
 package com.nethergrim.vk.inject;
 
+import com.nethergrim.vk.adapter.ConversationsAdapter;
+import com.nethergrim.vk.fragment.MessagesFragment;
+import com.nethergrim.vk.web.WebRequestManagerImpl;
 import dagger.Component;
 
 import javax.inject.Singleton;
@@ -16,5 +19,9 @@ import javax.inject.Singleton;
 )
 
 public interface MainComponent {
-    void inject(Class clazz);
+    void inject(MessagesFragment mf);
+
+    void inject(WebRequestManagerImpl o);
+
+    void inject(ConversationsAdapter o);
 }

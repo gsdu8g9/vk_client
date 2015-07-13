@@ -2,7 +2,6 @@ package com.nethergrim.vk.fragment;
 
 import android.app.Activity;
 import android.app.Fragment;
-import android.os.Bundle;
 import io.realm.Realm;
 
 /**
@@ -29,9 +28,4 @@ public abstract class AbstractFragment extends Fragment {
         return realm != null;
     }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-//        Injector.getInstance().inject(this); TODO fix it
-    }
 }
