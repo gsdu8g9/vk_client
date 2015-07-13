@@ -3,6 +3,7 @@ package com.nethergrim.vk.fragment;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -31,7 +32,7 @@ import javax.inject.Inject;
 /**
  * @author andreydrobyazko on 3/20/15.
  */
-public class MessagesFragment extends AbstractFragment implements WebCallback<ConversationsList>, RecyclerviewPageScroller.OnRecyclerViewScrolledToPageListener {
+public class MessagesFragment extends AbstractFragment implements WebCallback<ConversationsList>, RecyclerviewPageScroller.OnRecyclerViewScrolledToPageListener, SwipeRefreshLayout.OnRefreshListener {
 
     public static final int DEFAULT_PAGE_SIZE = 20;
     @InjectView(R.id.list)
@@ -40,6 +41,8 @@ public class MessagesFragment extends AbstractFragment implements WebCallback<Co
     ProgressBar mProgressBar;
     @InjectView(R.id.textViewNothingHere)
     TextView mNothingHereTextView;
+    @InjectView(R.id.refresh_layout)
+    SwipeRefreshLayout mSwipeRefreshLayout;
 
     @Inject
     WebRequestManager mWM;
@@ -88,16 +91,18 @@ public class MessagesFragment extends AbstractFragment implements WebCallback<Co
             }
         }
         loadPage(0);
+        mSwipeRefreshLayout.setOnRefreshListener(this);
+        mSwipeRefreshLayout.setColorSchemeResources(R.color.primary);
     }
 
     private void loadPage(int pageNumber) {
-        Log.e("TAG", "loading page: " + pageNumber);
         mWM.getConversations(DEFAULT_PAGE_SIZE, pageNumber * DEFAULT_PAGE_SIZE, false, 0, this);
     }
 
     @Override
     public void onResponseSucceed(ConversationsList response) {
         if (response != null && checkRealm()) {
+            mSwipeRefreshLayout.setRefreshing(false);
             realm.beginTransaction();
             realm.copyToRealmOrUpdate(response.getResults());
             realm.commitTransaction();
@@ -132,5 +137,10 @@ public class MessagesFragment extends AbstractFragment implements WebCallback<Co
     @Override
     public void onRecyclerViewScrolledToPage(int pageNumber) {
         loadPage(pageNumber);
+    }
+
+    @Override
+    public void onRefresh() {
+        loadPage(0);
     }
 }
