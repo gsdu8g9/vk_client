@@ -7,6 +7,7 @@ import com.vk.sdk.api.VKError;
  */
 public interface WebCallback<T> {
 
-    public void onResponseSucceed(T response);
-    public void onResponseFailed(VKError e);
+    void onResponseSucceed(T response);
+
+    void onResponseFailed(VKError e);
 }

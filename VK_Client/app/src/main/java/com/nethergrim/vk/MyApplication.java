@@ -11,6 +11,8 @@ import com.vk.sdk.VKSdk;
 import com.vk.sdk.VKSdkListener;
 import com.vk.sdk.api.VKError;
 import com.vk.sdk.util.VKUtil;
+import io.realm.Realm;
+import io.realm.RealmConfiguration;
 
 /**
  * @author andreydrobyazko on 3/20/15.
@@ -71,10 +73,19 @@ public class MyApplication extends Application {
             }
         }
         initDagger2();
+        initRealm();
     }
 
     private void initDagger2() {
         mainComponent = DaggerMainComponent.builder().providerModule(new ProviderModule()).build();
+    }
+
+    private void initRealm() {
+        RealmConfiguration config = new RealmConfiguration.Builder(this)
+                .name("vk_main_realm")
+                .schemaVersion(1)
+                .build();
+        Realm.setDefaultConfiguration(config);
     }
 
     public MainComponent getMainComponent() {
