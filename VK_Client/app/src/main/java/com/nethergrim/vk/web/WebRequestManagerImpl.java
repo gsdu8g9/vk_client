@@ -1,11 +1,10 @@
 package com.nethergrim.vk.web;
 
 import android.util.Log;
-
 import com.kisstools.utils.StringUtil;
 import com.nethergrim.vk.Constants;
+import com.nethergrim.vk.MyApplication;
 import com.nethergrim.vk.callbacks.WebCallback;
-import com.nethergrim.vk.inject.Injector;
 import com.nethergrim.vk.json.JsonDeserializer;
 import com.nethergrim.vk.models.Conversation;
 import com.nethergrim.vk.models.ConversationsList;
@@ -15,16 +14,10 @@ import com.vk.sdk.api.VKError;
 import com.vk.sdk.api.VKParameters;
 import com.vk.sdk.api.VKRequest;
 import com.vk.sdk.api.VKResponse;
-
 import org.json.JSONException;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import javax.inject.Inject;
+import java.util.*;
 
 /**
  * @author andreydrobyazko on 4/3/15.
@@ -35,22 +28,22 @@ public class WebRequestManagerImpl implements WebRequestManager {
     JsonDeserializer mJsonDeserializer;
 
     public WebRequestManagerImpl() {
-        Injector.getInstance().inject(this);
+        MyApplication.getInstance().getMainComponent().inject(this);
     }
 
     @Override
-    public void getConversations(int limit, int offset, boolean onlyUnread, int previewLenght, final WebCallback<ConversationsList> callback){
+    public void getConversations(int limit, int offset, boolean onlyUnread, int previewLenght, final WebCallback<ConversationsList> callback) {
         Map<String, Object> params = new HashMap<>();
-        if (offset > 0){
+        if (offset > 0) {
             params.put("offset", offset);
         }
-        if (limit != 0){
+        if (limit != 0) {
             params.put("count", limit);
         }
-        if (onlyUnread){
+        if (onlyUnread) {
             params.put("unread", 1);
         }
-        if (previewLenght > 0){
+        if (previewLenght > 0) {
             params.put("preview_length", previewLenght);
         }
         VKRequest request = new VKRequest(Constants.Requests.MESSAGES_GET_DIALOGS, new VKParameters(params));
@@ -58,22 +51,22 @@ public class WebRequestManagerImpl implements WebRequestManager {
             @Override
             public void onComplete(VKResponse response) {
                 super.onComplete(response);
-                ConversationsList result ;
+                ConversationsList result;
                 try {
                     result = mJsonDeserializer.getConversations(response.json.getString("response"));
 
                     // setting userId and date to every conversation
 
-                    if (result != null){
+                    if (result != null) {
                         ArrayList<Conversation> conversations = result.getResults();
-                        if (conversations != null){
+                        if (conversations != null) {
                             for (Conversation conversation : conversations) {
                                 conversation.setUser_id(conversation.getMessage().getUser_id());
                                 conversation.setDate(conversation.getMessage().getDate());
                             }
                         }
                     }
-                    if (callback != null){
+                    if (callback != null) {
                         callback.onResponseSucceed(result);
                     }
                 } catch (JSONException e) {
@@ -84,7 +77,7 @@ public class WebRequestManagerImpl implements WebRequestManager {
             @Override
             public void onError(VKError error) {
                 super.onError(error);
-                if (callback != null){
+                if (callback != null) {
                     callback.onResponseFailed(error);
                 }
             }
@@ -96,9 +89,9 @@ public class WebRequestManagerImpl implements WebRequestManager {
     public void getUsers(List<Long> ids, List<String> fields, String nameCase, final WebCallback<ListOfUsers> callback) {
         Map<String, Object> params = new HashMap<>();
 
-        if (ids != null){
-            if (ids.size() > 1000){
-                throw  new IllegalArgumentException("you want to fetch too much users. Max is 1000");
+        if (ids != null) {
+            if (ids.size() > 1000) {
+                throw new IllegalArgumentException("you want to fetch too much users. Max is 1000");
             }
 
             StringBuilder sb = new StringBuilder();
@@ -111,7 +104,7 @@ public class WebRequestManagerImpl implements WebRequestManager {
             params.put("user_ids", idsValues);
         }
 
-        if (fields != null){
+        if (fields != null) {
             StringBuilder sb = new StringBuilder();
             for (String field : fields) {
                 sb.append(field);
@@ -129,9 +122,9 @@ public class WebRequestManagerImpl implements WebRequestManager {
                 super.onComplete(response);
                 Log.e("TAG", "loaded users!");
                 ListOfUsers listOfUsers = mJsonDeserializer.getListOfUsers(response.responseString);
-                if (listOfUsers != null && listOfUsers.getResponse() != null){
+                if (listOfUsers != null && listOfUsers.getResponse() != null) {
                     Log.e("TAG", "loaded " + listOfUsers.getResponse().size() + " users");
-                    if (callback != null){
+                    if (callback != null) {
                         callback.onResponseSucceed(listOfUsers);
                     }
                 } else {
@@ -142,7 +135,7 @@ public class WebRequestManagerImpl implements WebRequestManager {
             @Override
             public void onError(VKError error) {
                 super.onError(error);
-                if (callback != null){
+                if (callback != null) {
                     callback.onResponseFailed(error);
                 }
             }
@@ -150,8 +143,8 @@ public class WebRequestManagerImpl implements WebRequestManager {
     }
 
     @Override
-    public void getUsersForConversations(ConversationsList list, WebCallback<ListOfUsers> callback){
-        if (list != null && list.getResults() != null){
+    public void getUsersForConversations(ConversationsList list, WebCallback<ListOfUsers> callback) {
+        if (list != null && list.getResults() != null) {
             List<Long> ids = new ArrayList<>();
             for (Conversation conversation : list.getResults()) {
                 ids.add(conversation.getUser_id());
