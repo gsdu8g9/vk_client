@@ -23,26 +23,19 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationViewH
 
     @Inject
     ImageLoader il;
+    Realm realm;
 
     private RealmResults<Conversation> data;
-    private Realm realm;
 
     public ConversationsAdapter(RealmResults<Conversation> data) {
         this.data = data;
+        realm = Realm.getDefaultInstance();
         setHasStableIds(true);
         MyApplication.getInstance().getMainComponent().inject(this);
     }
 
-    private void createRealm() {
-        realm = Realm.getDefaultInstance();
-    }
-
     @Override
     public ConversationViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
-        if (realm == null) {
-            createRealm();
-            realm.addChangeListener(this);
-        }
         return new ConversationViewHolder(LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.vh_conversation, viewGroup, false));
     }
 
@@ -57,7 +50,6 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationViewH
             il.displayUserAvatar(user, conversationViewHolder.imageAvatar);
             conversationViewHolder.textName.setText(user.getFirstName() + " " + user.getLastName());
         }
-
     }
 
     @Override
@@ -69,17 +61,6 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationViewH
     public long getItemId(int position) {
         return data.get(position).getUser_id();
     }
-
-    public void closeRealm() {
-        if (realm != null) {
-            try {
-                realm.close();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
 
     @Override
     public void onChange() {
