@@ -1,6 +1,5 @@
 package com.nethergrim.vk.web;
 
-import android.util.Log;
 import com.kisstools.utils.StringUtil;
 import com.nethergrim.vk.Constants;
 import com.nethergrim.vk.MyApplication;
@@ -100,7 +99,6 @@ public class WebRequestManagerImpl implements WebRequestManager {
                 sb.append(", ");
             }
             String idsValues = StringUtil.cutText(sb.toString(), sb.toString().length() - 2);
-            Log.e("TAG", "ids: " + idsValues);
             params.put("user_ids", idsValues);
         }
 
@@ -111,7 +109,6 @@ public class WebRequestManagerImpl implements WebRequestManager {
                 sb.append(", ");
             }
             String idsValues = StringUtil.cutText(sb.toString(), sb.toString().length() - 2);
-            Log.e("TAG", "fields: " + idsValues);
             params.put("fields", idsValues);
         }
 
@@ -120,15 +117,9 @@ public class WebRequestManagerImpl implements WebRequestManager {
             @Override
             public void onComplete(VKResponse response) {
                 super.onComplete(response);
-                Log.e("TAG", "loaded users!");
                 ListOfUsers listOfUsers = mJsonDeserializer.getListOfUsers(response.responseString);
-                if (listOfUsers != null && listOfUsers.getResponse() != null) {
-                    Log.e("TAG", "loaded " + listOfUsers.getResponse().size() + " users");
-                    if (callback != null) {
-                        callback.onResponseSucceed(listOfUsers);
-                    }
-                } else {
-                    Log.e("TAG", "ERROR");
+                if (listOfUsers != null && listOfUsers.getResponse() != null && callback != null) {
+                    callback.onResponseSucceed(listOfUsers);
                 }
             }
 
