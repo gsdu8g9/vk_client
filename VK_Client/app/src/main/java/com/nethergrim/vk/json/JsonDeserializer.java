@@ -8,7 +8,7 @@ import com.nethergrim.vk.models.ListOfUsers;
  */
 public interface JsonDeserializer {
 
-    public ConversationsList getConversations(String s);
+    ConversationsList getConversations(String s);
 
-    public ListOfUsers getListOfUsers(String s);
+    ListOfUsers getListOfUsers(String s);
 }

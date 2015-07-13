@@ -15,7 +15,7 @@ public abstract class AbstractFragment extends Fragment {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        realm = Realm.getInstance(activity);
+        realm = Realm.getDefaultInstance();
     }
 
     @Override

@@ -1,6 +1,5 @@
 package com.nethergrim.vk.adapter;
 
-import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
@@ -34,14 +33,14 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationViewH
         MyApplication.getInstance().getMainComponent().inject(this);
     }
 
-    private void createRealm(Context context) {
-        realm = Realm.getInstance(context);
+    private void createRealm() {
+        realm = Realm.getDefaultInstance();
     }
 
     @Override
     public ConversationViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         if (realm == null) {
-            createRealm(viewGroup.getContext());
+            createRealm();
             realm.addChangeListener(this);
         }
         return new ConversationViewHolder(LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.vh_conversation, viewGroup, false));
