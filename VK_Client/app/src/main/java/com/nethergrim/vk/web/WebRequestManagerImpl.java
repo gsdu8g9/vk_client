@@ -141,11 +141,15 @@ public class WebRequestManagerImpl implements WebRequestManager {
     @Override
     public void getUsersForConversations(ConversationsList list, WebCallback<ListOfUsers> callback) {
         if (list != null && list.getResults() != null) {
-            List<Long> ids = new ArrayList<>();
+            List<Long> ids = new ArrayList<>(list.getResults().size());
             for (Conversation conversation : list.getResults()) {
-                ids.add(conversation.getMessage().getFromId());
+                if (ConversationUtils.isConversationAGroupChat(conversation)) {
+                    ids.add(conversation.getMessage().getFrom_id());
+                } else {
+                    ids.add(conversation.getId());
+                }
             }
-            getUsers(ids, Arrays.asList(User.Fields.photo_200, User.Fields.onlin, User.Fields.sex), null, callback);
+            getUsers(ids, Arrays.asList(User.Fields.photo_200, User.Fields.online, User.Fields.sex), null, callback);
         }
     }
 

@@ -25,7 +25,7 @@ public class Message extends RealmObject {
     /**
      * идентификатор автора сообщения.
      */
-    private long fromId;
+    private long from_id;
     /**
      * дата отправки сообщения в формате unixtime.
      * положительное число
@@ -268,12 +268,12 @@ public class Message extends RealmObject {
         this.user_id = user_id;
     }
 
-    public long getFromId() {
-        return fromId;
+    public long getFrom_id() {
+        return from_id;
     }
 
-    public void setFromId(long fromId) {
-        this.fromId = fromId;
+    public void setFrom_id(long from_id) {
+        this.from_id = from_id;
     }
 
     public long getDate() {

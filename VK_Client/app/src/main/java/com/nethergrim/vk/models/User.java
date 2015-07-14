@@ -332,7 +332,7 @@ public class User extends RealmObject {
         String sex = "sex";
         String bdate = "bdate";
         String country = "country";
-        String onlin = "online";
+        String online = "online";
         String photo_200 = "photo_200";
     }
 }
