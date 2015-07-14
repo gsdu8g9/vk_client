@@ -1,6 +1,7 @@
 package com.nethergrim.vk.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
@@ -71,7 +72,7 @@ public class Message extends RealmObject {
     /**
      * массив медиа-вложений (см. Описание формата медиа-вложений).
      */
-    private Attachment[] attachments;
+    private RealmList<Attachment> attachments;
     /**
      * массив пересланных сообщений (если есть).
      */
@@ -139,11 +140,7 @@ public class Message extends RealmObject {
     public Message() {
     }
 
-    public Attachment[] getAttachments() {
-        return attachments;
-    }
-
-    public void setAttachments(Attachment[] attachments) {
+    public void setAttachments(RealmList<Attachment> attachments) {
         this.attachments = attachments;
     }
 

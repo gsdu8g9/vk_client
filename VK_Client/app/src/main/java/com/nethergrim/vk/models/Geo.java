@@ -22,6 +22,9 @@ public class Geo extends RealmObject {
     @PrimaryKey
     private String coordinates;
 
+    public Geo() {
+    }
+
     public String getType() {
         return type;
     }

@@ -10,7 +10,20 @@ import io.realm.RealmObject;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Attachment extends RealmObject {
 
+    /**
+     * Возможны следующие значения поля type:
+     * photo — фотография;
+     * video — видеозапись;
+     * audio — аудиозапись;
+     * doc — документ;
+     * wall — запись на стене;
+     * wall_reply — комментарий к записи на стене;
+     * sticker — стикер.
+     */
     private String type;
+
+    public Attachment() {
+    }
 
     public String getType() {
         return type;
