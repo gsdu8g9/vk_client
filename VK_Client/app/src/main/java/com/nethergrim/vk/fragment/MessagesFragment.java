@@ -66,9 +66,6 @@ public class MessagesFragment extends AbstractFragment implements WebCallback<Co
     public void onDestroyView() {
         super.onDestroyView();
         ButterKnife.reset(this);
-        if (mAdapter != null) {
-            mAdapter.closeRealm();
-        }
     }
 
     @Override
@@ -113,9 +110,13 @@ public class MessagesFragment extends AbstractFragment implements WebCallback<Co
             mWM.getUsersForConversations(response, new WebCallback<ListOfUsers>() {
                 @Override
                 public void onResponseSucceed(ListOfUsers response) {
-                    realm.beginTransaction();
-                    realm.copyToRealmOrUpdate(response.getResponse());
-                    realm.commitTransaction();
+                    if (checkRealm()) {
+                        realm.beginTransaction();
+                        realm.copyToRealmOrUpdate(response.getResponse());
+                        realm.commitTransaction();
+                        mAdapter.notifyDataSetChanged();
+                        mProgressBar.setVisibility(View.GONE);
+                    }
                 }
 
                 @Override
