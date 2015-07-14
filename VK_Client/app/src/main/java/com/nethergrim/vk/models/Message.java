@@ -26,7 +26,9 @@ public class Message extends RealmObject {
      */
     private long fromId;
     /**
-     * */
+     * дата отправки сообщения в формате unixtime.
+     * положительное число
+     */
     private long date;
 
     /**
@@ -58,78 +60,71 @@ public class Message extends RealmObject {
      * содержатся ли в сообщении emoji-смайлы.
      */
     private int emoji;
-
     /**
      * является ли сообщение важным.
      */
     private int important;
-
     /**
      * удалено ли сообщение.
      */
     private int deleted;
-
-
+    /**
+     * массив медиа-вложений (см. Описание формата медиа-вложений).
+     */
+    private Attachment[] attachments;
+    /**
+     * массив пересланных сообщений (если есть).
+     */
+    private Message[] fwd_messages;
     /**
      * Айди чата (group conversation).
      * идентификатор беседы.
      */
     private String chat_id;
-
     /**
      * настройки уведомлений для беседы, если они есть.
      * sound и disabled_until
      */
     private PushSettings push_settings;
-
     /**
      * идентификатор создателя беседы.
      * положительное число
      */
     private int admin_id;
-
     /**
      * количество участников беседы.
      * положительное число
      */
     private int users_count;
-
     /**
      * идентификаторы авторов последних сообщений беседы.
      */
     private long[] chat_active;
-
     /**
      * поле передано, если это служебное сообщение
      * строка, может быть chat_photo_update или chat_photo_remove, а с версии 5.14 еще и chat_create, chat_title_update, chat_invite_user, chat_kick_user
      */
     private String action;
-
     /**
      * идентификатор пользователя (если > 0) или email (если < 0), которого пригласили или исключили
      * число, для служебных сообщений с action равным chat_invite_user или chat_kick_user
      */
     private long action_mid;
-
     /**
      * email, который пригласили или исключили
      * строка, для служебных сообщений с action равным chat_invite_user или chat_kick_user и отрицательным action_mid
      */
     private String action_email;
-
     /**
      * название беседы
      * строка, для служебных сообщений с action равным chat_create или chat_title_update
      */
     private String action_text;
-
     /**
      * url копии фотографии беседы шириной 50px.
      * строка
      */
     private String photo_50;
-
-
     /**
      * url копии фотографии беседы шириной 100px.
      * строка
@@ -142,6 +137,22 @@ public class Message extends RealmObject {
     private String photo_200;
 
     public Message() {
+    }
+
+    public Attachment[] getAttachments() {
+        return attachments;
+    }
+
+    public void setAttachments(Attachment[] attachments) {
+        this.attachments = attachments;
+    }
+
+    public Message[] getFwd_messages() {
+        return fwd_messages;
+    }
+
+    public void setFwd_messages(Message[] fwd_messages) {
+        this.fwd_messages = fwd_messages;
     }
 
     public String getPhoto_200() {
