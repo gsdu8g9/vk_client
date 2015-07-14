@@ -1,7 +1,6 @@
 package com.nethergrim.vk.json;
 
 import android.util.Log;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nethergrim.vk.models.ConversationsList;
 import com.nethergrim.vk.models.ListOfUsers;
@@ -10,12 +9,12 @@ import java.io.IOException;
 
 
 /**
- * Created by nethergrim on 04.04.2015.
+ * @author nethergrim on 04.04.2015.
  */
 public class JsonDeserializerImpl implements JsonDeserializer {
 
-    private ObjectMapper mapper;
     private static final String TAG = JsonDeserializerImpl.class.getName();
+    private ObjectMapper mapper;
 
     public JsonDeserializerImpl() {
         mapper = new ObjectMapper();

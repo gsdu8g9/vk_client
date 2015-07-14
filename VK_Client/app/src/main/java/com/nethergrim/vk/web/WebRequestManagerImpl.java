@@ -9,6 +9,7 @@ import com.nethergrim.vk.models.Conversation;
 import com.nethergrim.vk.models.ConversationsList;
 import com.nethergrim.vk.models.ListOfUsers;
 import com.nethergrim.vk.models.User;
+import com.nethergrim.vk.utils.ConversationUtils;
 import com.vk.sdk.api.VKError;
 import com.vk.sdk.api.VKParameters;
 import com.vk.sdk.api.VKRequest;
@@ -60,7 +61,11 @@ public class WebRequestManagerImpl implements WebRequestManager {
                         ArrayList<Conversation> conversations = result.getResults();
                         if (conversations != null) {
                             for (Conversation conversation : conversations) {
-                                conversation.setUser_id(conversation.getMessage().getUser_id());
+                                if (ConversationUtils.isConversationAGroupChat(conversation)) {
+                                    conversation.setId(conversation.getMessage().getChat_id());
+                                } else {
+                                    conversation.setId(conversation.getMessage().getUser_id());
+                                }
                                 conversation.setDate(conversation.getMessage().getDate());
                             }
                         }
@@ -138,7 +143,7 @@ public class WebRequestManagerImpl implements WebRequestManager {
         if (list != null && list.getResults() != null) {
             List<Long> ids = new ArrayList<>();
             for (Conversation conversation : list.getResults()) {
-                ids.add(conversation.getUser_id());
+                ids.add(conversation.getMessage().getFromId());
             }
             getUsers(ids, Arrays.asList(User.Fields.photo_200, User.Fields.onlin, User.Fields.sex), null, callback);
         }

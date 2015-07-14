@@ -45,7 +45,7 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationViewH
         conversationViewHolder.textDetails.setText(conversation.getMessage().getBody());
         conversationViewHolder.textDate.setText(DateUtils.getRelativeTimeSpanString(conversation.getMessage().getDate() * 1000, System.currentTimeMillis(), 0L, DateUtils.FORMAT_ABBREV_ALL));
 
-        User user = realm.where(User.class).equalTo("id", conversation.getUser_id()).findFirst();
+        User user = realm.where(User.class).equalTo("id", conversation.getMessage().getFromId()).findFirst();
         if (user != null) {
             il.displayUserAvatar(user, conversationViewHolder.imageAvatar);
             conversationViewHolder.textName.setText(user.getFirstName() + " " + user.getLastName());
@@ -59,7 +59,7 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationViewH
 
     @Override
     public long getItemId(int position) {
-        return data.get(position).getUser_id();
+        return data.get(position).getId();
     }
 
     @Override

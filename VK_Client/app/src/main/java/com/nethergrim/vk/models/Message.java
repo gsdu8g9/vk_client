@@ -76,12 +76,12 @@ public class Message extends RealmObject {
     /**
      * массив пересланных сообщений (если есть).
      */
-    private Message[] fwd_messages;
+    private RealmList<Message> fwd_messages;
     /**
      * Айди чата (group conversation).
      * идентификатор беседы.
      */
-    private String chat_id;
+    private long chat_id;
     /**
      * настройки уведомлений для беседы, если они есть.
      * sound и disabled_until
@@ -97,10 +97,10 @@ public class Message extends RealmObject {
      * положительное число
      */
     private int users_count;
-    /**
-     * идентификаторы авторов последних сообщений беседы.
-     */
-    private long[] chat_active;
+//    /**
+//     * идентификаторы авторов последних сообщений беседы.
+//     */
+//    private long[] chat_active;
     /**
      * поле передано, если это служебное сообщение
      * строка, может быть chat_photo_update или chat_photo_remove, а с версии 5.14 еще и chat_create, chat_title_update, chat_invite_user, chat_kick_user
@@ -140,16 +140,20 @@ public class Message extends RealmObject {
     public Message() {
     }
 
-    public void setAttachments(RealmList<Attachment> attachments) {
-        this.attachments = attachments;
-    }
-
-    public Message[] getFwd_messages() {
+    public RealmList<Message> getFwd_messages() {
         return fwd_messages;
     }
 
-    public void setFwd_messages(Message[] fwd_messages) {
+    public void setFwd_messages(RealmList<Message> fwd_messages) {
         this.fwd_messages = fwd_messages;
+    }
+
+    public RealmList<Attachment> getAttachments() {
+        return attachments;
+    }
+
+    public void setAttachments(RealmList<Attachment> attachments) {
+        this.attachments = attachments;
     }
 
     public String getPhoto_200() {
@@ -208,13 +212,13 @@ public class Message extends RealmObject {
         this.action = action;
     }
 
-    public long[] getChat_active() {
-        return chat_active;
-    }
-
-    public void setChat_active(long[] chat_active) {
-        this.chat_active = chat_active;
-    }
+//    public long[] getChat_active() {
+//        return chat_active;
+//    }
+//
+//    public void setChat_active(long[] chat_active) {
+//        this.chat_active = chat_active;
+//    }
 
     public int getUsers_count() {
         return users_count;
@@ -240,11 +244,11 @@ public class Message extends RealmObject {
         this.push_settings = push_settings;
     }
 
-    public String getChat_id() {
+    public long getChat_id() {
         return chat_id;
     }
 
-    public void setChat_id(String chat_id) {
+    public void setChat_id(long chat_id) {
         this.chat_id = chat_id;
     }
 
