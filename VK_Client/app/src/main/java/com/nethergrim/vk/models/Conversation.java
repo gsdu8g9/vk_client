@@ -1,7 +1,6 @@
 package com.nethergrim.vk.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
@@ -15,7 +14,10 @@ public class Conversation extends RealmObject {
     private Message message;
 
     @PrimaryKey
-    private long user_id;
+    /**
+     * Id of the user, in case 1-1 conversation, Id of group chat in case of group chat
+     * */
+    private long id;
     private long date;
 
     public Conversation() {
@@ -37,12 +39,12 @@ public class Conversation extends RealmObject {
         this.message = message;
     }
 
-    public long getUser_id() {
-        return user_id;
+    public long getId() {
+        return id;
     }
 
-    public void setUser_id(long user_id) {
-        this.user_id = user_id;
+    public void setId(long id) {
+        this.id = id;
     }
 
     public long getDate() {

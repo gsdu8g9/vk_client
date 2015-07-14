@@ -2,6 +2,7 @@ package com.nethergrim.vk.adapter;
 
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import com.nethergrim.vk.MyApplication;
@@ -9,6 +10,7 @@ import com.nethergrim.vk.R;
 import com.nethergrim.vk.adapter.viewholders.ConversationViewHolder;
 import com.nethergrim.vk.models.Conversation;
 import com.nethergrim.vk.models.User;
+import com.nethergrim.vk.utils.ConversationUtils;
 import com.nethergrim.vk.web.images.ImageLoader;
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
@@ -45,11 +47,20 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationViewH
         conversationViewHolder.textDetails.setText(conversation.getMessage().getBody());
         conversationViewHolder.textDate.setText(DateUtils.getRelativeTimeSpanString(conversation.getMessage().getDate() * 1000, System.currentTimeMillis(), 0L, DateUtils.FORMAT_ABBREV_ALL));
 
-        User user = realm.where(User.class).equalTo("id", conversation.getUser_id()).findFirst();
-        if (user != null) {
-            il.displayUserAvatar(user, conversationViewHolder.imageAvatar);
-            conversationViewHolder.textName.setText(user.getFirstName() + " " + user.getLastName());
+        if (ConversationUtils.isConversationAGroupChat(conversation)) {
+            conversationViewHolder.imageAvatar.setImageBitmap(null);
+            conversationViewHolder.textName.setText(conversation.getMessage().getTitle());
+        } else {
+            User user = realm.where(User.class).equalTo("id", conversation.getId()).findFirst();
+            if (user != null) {
+                il.displayUserAvatar(user, conversationViewHolder.imageAvatar);
+                conversationViewHolder.textName.setText(user.getFirstName() + " " + user.getLastName());
+            } else {
+                Log.e("TAG", "user with id: " + conversation.getId() + " is null");
+            }
         }
+
+
     }
 
     @Override
@@ -59,7 +70,7 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationViewH
 
     @Override
     public long getItemId(int position) {
-        return data.get(position).getUser_id();
+        return data.get(position).getId();
     }
 
     @Override

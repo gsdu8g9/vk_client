@@ -2,7 +2,6 @@ package com.nethergrim.vk.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
@@ -21,24 +20,46 @@ public class User extends RealmObject {
     @JsonProperty("last_name")
     private String lastName;
 
-
+    /**
+     * возвращается, если страница пользователя удалена или заблокирована, содержит значение deleted или banned. Обратите внимание, в этом случае дополнительные поля fields не возвращаются.
+     */
     private String deactivated;
 
     @JsonProperty("hidden")
+    /**
+     * возвращается при вызове без access_token, если пользователь установил настройку «Кому в интернете видна моя страница» — «Только пользователям ВКонтакте». Обратите внимание, в этом случае дополнительные поля fields не возвращаются.
+     * */
     private int hidden;
 
     @JsonProperty("photo_id")
+    /**
+     * id главной фотографии профиля пользователя в формате user_id+photo_id, например, 6492_192164258. В некоторых случаях (если фотография была установлена очень давно) это поле не возвращается.
+     * */
     private String photoId;
 
+    /**
+     * возвращается 1, если страница пользователя верифицирована, 0 — если не верифицирована.
+     */
     private int verified;
 
+    /**
+     * возвращается 1, если текущий пользователь находится в черном списке у запрашиваемого.
+     */
     private int blacklisted;
 
+    /**
+     * пол пользователя. Возможные значения:
+     * 1 — женский;
+     * 2 — мужской;
+     * 0 — пол не указан.
+     */
     private int sex;
 
     @JsonProperty("bdate")
+    /**
+     * дата рождения. Возвращается в формате DD.MM.YYYY или DD.MM (если год рождения скрыт). Если дата рождения скрыта целиком, поле отсутствует в ответе.
+     * */
     private String dateOfBirth;
-
 
     @JsonProperty("home_town")
     private String homeTown;
@@ -57,6 +78,9 @@ public class User extends RealmObject {
 
     private String photo_max_orig;
 
+    /**
+     * информация о том, находится ли пользователь сейчас на сайте. Возвращаемые значения: 1 — находится, 0 — не находится. Если пользователь использует мобильное приложение либо мобильную версию сайта, возвращается дополнительное поле online_mobile, содержащее 1. При этом, если используется именно приложение, дополнительно возвращается поле online_app, содержащее его идентификатор.
+     */
     private int online;
 
     private String domain;
@@ -308,7 +332,7 @@ public class User extends RealmObject {
         String sex = "sex";
         String bdate = "bdate";
         String country = "country";
-        String onlin = "online";
+        String online = "online";
         String photo_200 = "photo_200";
     }
 }
