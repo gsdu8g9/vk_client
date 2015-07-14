@@ -1,7 +1,6 @@
 package com.nethergrim.vk.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
@@ -12,20 +11,233 @@ import io.realm.annotations.PrimaryKey;
 public class Message extends RealmObject {
 
     @PrimaryKey
+    /**
+     * идентификатор сообщения (не возвращается для пересланных сообщений).
+     * */
     private long id;
 
+    /**
+     * идентификатор пользователя, в диалоге с которым находится сообщение.
+     */
     private long user_id;
+
+    /**
+     * идентификатор автора сообщения.
+     */
     private long fromId;
+    /**
+     * */
     private long date;
-    private boolean read_state;
-    private boolean out;
-    private String title = "";
-    private String body = "";
-    private boolean emoji;
-    private boolean important;
-    private boolean deleted;
+
+    /**
+     * статус сообщения (0 — не прочитано, 1 — прочитано, не возвращается для пересланных сообщений).
+     */
+    private int read_state;
+
+    /**
+     * тип сообщения (0 — полученное, 1 — отправленное, не возвращается для пересланных сообщений).
+     */
+    private int out;
+
+    /**
+     * заголовок сообщения или беседы.
+     */
+    private String title;
+
+    /**
+     * заголовок сообщения или беседы.
+     */
+    private String body;
+
+    /**
+     * информация о местоположении
+     */
+    private Geo geo;
+
+    /**
+     * содержатся ли в сообщении emoji-смайлы.
+     */
+    private int emoji;
+
+    /**
+     * является ли сообщение важным.
+     */
+    private int important;
+
+    /**
+     * удалено ли сообщение.
+     */
+    private int deleted;
+
+
+    /**
+     * Айди чата (group conversation).
+     * идентификатор беседы.
+     */
+    private String chat_id;
+
+    /**
+     * настройки уведомлений для беседы, если они есть.
+     * sound и disabled_until
+     */
+    private PushSettings push_settings;
+
+    /**
+     * идентификатор создателя беседы.
+     * положительное число
+     */
+    private int admin_id;
+
+    /**
+     * количество участников беседы.
+     * положительное число
+     */
+    private int users_count;
+
+    /**
+     * идентификаторы авторов последних сообщений беседы.
+     */
+    private long[] chat_active;
+
+    /**
+     * поле передано, если это служебное сообщение
+     * строка, может быть chat_photo_update или chat_photo_remove, а с версии 5.14 еще и chat_create, chat_title_update, chat_invite_user, chat_kick_user
+     */
+    private String action;
+
+    /**
+     * идентификатор пользователя (если > 0) или email (если < 0), которого пригласили или исключили
+     * число, для служебных сообщений с action равным chat_invite_user или chat_kick_user
+     */
+    private long action_mid;
+
+    /**
+     * email, который пригласили или исключили
+     * строка, для служебных сообщений с action равным chat_invite_user или chat_kick_user и отрицательным action_mid
+     */
+    private String action_email;
+
+    /**
+     * название беседы
+     * строка, для служебных сообщений с action равным chat_create или chat_title_update
+     */
+    private String action_text;
+
+    /**
+     * url копии фотографии беседы шириной 50px.
+     * строка
+     */
+    private String photo_50;
+
+
+    /**
+     * url копии фотографии беседы шириной 100px.
+     * строка
+     */
+    private String photo_100;
+    /**
+     * url копии фотографии беседы шириной 200px.
+     * строка
+     */
+    private String photo_200;
 
     public Message() {
+    }
+
+    public String getPhoto_200() {
+        return photo_200;
+    }
+
+    public void setPhoto_200(String photo_200) {
+        this.photo_200 = photo_200;
+    }
+
+    public String getPhoto_100() {
+        return photo_100;
+    }
+
+    public void setPhoto_100(String photo_100) {
+        this.photo_100 = photo_100;
+    }
+
+    public String getPhoto_50() {
+        return photo_50;
+    }
+
+    public void setPhoto_50(String photo_50) {
+        this.photo_50 = photo_50;
+    }
+
+    public String getAction_text() {
+        return action_text;
+    }
+
+    public void setAction_text(String action_text) {
+        this.action_text = action_text;
+    }
+
+    public String getAction_email() {
+        return action_email;
+    }
+
+    public void setAction_email(String action_email) {
+        this.action_email = action_email;
+    }
+
+    public long getAction_mid() {
+        return action_mid;
+    }
+
+    public void setAction_mid(long action_mid) {
+        this.action_mid = action_mid;
+    }
+
+    public String getAction() {
+        return action;
+    }
+
+    public void setAction(String action) {
+        this.action = action;
+    }
+
+    public long[] getChat_active() {
+        return chat_active;
+    }
+
+    public void setChat_active(long[] chat_active) {
+        this.chat_active = chat_active;
+    }
+
+    public int getUsers_count() {
+        return users_count;
+    }
+
+    public void setUsers_count(int users_count) {
+        this.users_count = users_count;
+    }
+
+    public int getAdmin_id() {
+        return admin_id;
+    }
+
+    public void setAdmin_id(int admin_id) {
+        this.admin_id = admin_id;
+    }
+
+    public PushSettings getPush_settings() {
+        return push_settings;
+    }
+
+    public void setPush_settings(PushSettings push_settings) {
+        this.push_settings = push_settings;
+    }
+
+    public String getChat_id() {
+        return chat_id;
+    }
+
+    public void setChat_id(String chat_id) {
+        this.chat_id = chat_id;
     }
 
     public long getId() {
@@ -60,20 +272,12 @@ public class Message extends RealmObject {
         this.date = date;
     }
 
-    public boolean isRead_state() {
+    public int isRead_state() {
         return read_state;
     }
 
-    public void setRead_state(boolean read_state) {
-        this.read_state = read_state;
-    }
-
-    public boolean isOut() {
+    public int isOut() {
         return out;
-    }
-
-    public void setOut(boolean out) {
-        this.out = out;
     }
 
     public String getTitle() {
@@ -92,27 +296,65 @@ public class Message extends RealmObject {
         this.body = body;
     }
 
-    public boolean isEmoji() {
+    public int isEmoji() {
         return emoji;
     }
 
-    public void setEmoji(boolean emoji) {
-        this.emoji = emoji;
-    }
-
-    public boolean isImportant() {
+    public int isImportant() {
         return important;
     }
 
-    public void setImportant(boolean important) {
-        this.important = important;
-    }
-
-    public boolean isDeleted() {
+    public int isDeleted() {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
+    public int getRead_state() {
+        return read_state;
+    }
+
+    public void setRead_state(int read_state) {
+        this.read_state = read_state;
+    }
+
+    public int getOut() {
+        return out;
+    }
+
+    public void setOut(int out) {
+        this.out = out;
+    }
+
+    public Geo getGeo() {
+        return geo;
+    }
+
+    public void setGeo(Geo geo) {
+        this.geo = geo;
+    }
+
+    public int getEmoji() {
+        return emoji;
+    }
+
+    public void setEmoji(int emoji) {
+        this.emoji = emoji;
+    }
+
+    public int getImportant() {
+        return important;
+    }
+
+    public void setImportant(int important) {
+        this.important = important;
+    }
+
+    public int getDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(int deleted) {
         this.deleted = deleted;
     }
+
+
 }
