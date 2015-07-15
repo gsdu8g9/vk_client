@@ -1,6 +1,7 @@
 package com.nethergrim.vk.utils;
 
 import android.support.annotation.NonNull;
+
 import com.nethergrim.vk.models.Conversation;
 
 /**
@@ -11,5 +12,9 @@ public class ConversationUtils {
 
     public static boolean isConversationAGroupChat(@NonNull Conversation conversation) {
         return conversation.getMessage().getChat_id() > 0;
+    }
+
+    public static boolean isConversationUnread(@NonNull Conversation conversation) {
+        return conversation.getUnread() > 0;
     }
 }
