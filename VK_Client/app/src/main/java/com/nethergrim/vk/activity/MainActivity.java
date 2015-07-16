@@ -1,16 +1,28 @@
 package com.nethergrim.vk.activity;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 
+import com.nethergrim.vk.MyApplication;
 import com.nethergrim.vk.R;
+import com.nethergrim.vk.caching.Prefs;
+import com.nethergrim.vk.callbacks.WebCallback;
 import com.nethergrim.vk.fragment.MessagesFragment;
+import com.nethergrim.vk.models.User;
 import com.nethergrim.vk.utils.Utils;
+import com.nethergrim.vk.web.WebRequestManager;
+import com.nethergrim.vk.web.images.ImageLoader;
+import com.vk.sdk.api.VKError;
+
+import javax.inject.Inject;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import io.realm.Realm;
 
-public class MainActivity extends AbstractActivity {
+public class MainActivity extends AbstractActivity implements WebCallback<User> {
 
     @InjectView(R.id.imageButton)
     ImageButton mMessagesImageButton;
@@ -22,14 +34,53 @@ public class MainActivity extends AbstractActivity {
     ImageButton mSettingsImageButton;
     @InjectView(R.id.imageButton5)
     ImageButton mSearchImageButton;
+    @Inject
+    WebRequestManager mWRM;
+    @Inject
+    ImageLoader mIL;
+    @Inject
+    Prefs mPrefs;
+
+    @Override
+    public void onResponseSucceed(final User response) {
+        mIL.displayUserAvatar(response, mProfileImageButton);
+        mPrefs.setCurrentUserId(response.getId());
+        Realm realm = Realm.getDefaultInstance();
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                realm.copyToRealmOrUpdate(response);
+            }
+        });
+    }
+
+    @Override
+    public void onResponseFailed(VKError e) {
+        Log.e("TAG", "error on get current user: " + e.errorMessage);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.inject(this);
+        MyApplication.getInstance().getMainComponent().inject(this);
         showFragment(new MessagesFragment(), false, false, R.id.fragment_container);
         initMenu();
+        loadCurrentUser();
+    }
+
+    private void loadCurrentUser() {
+        mWRM.getCurrentUser(this);
+        if (mPrefs.getCurrentUserId() != 0) {
+            Realm realm = Realm.getDefaultInstance();
+            User user = realm.where(User.class)
+                    .equalTo("id", mPrefs.getCurrentUserId())
+                    .findFirst();
+            if (user != null) {
+                onResponseSucceed(user);
+            }
+        }
     }
 
     private void initMenu() {
@@ -41,7 +92,8 @@ public class MainActivity extends AbstractActivity {
                 Utils.tintIcon(R.drawable.ic_action_settings, R.color.menu_button_icon));
         mSearchImageButton.setImageDrawable(
                 Utils.tintIcon(R.drawable.ic_action_search, R.color.menu_button_icon));
-        // TODO init profile button with current profile avatar image
+
+        mProfileImageButton.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
     }
 
 }
