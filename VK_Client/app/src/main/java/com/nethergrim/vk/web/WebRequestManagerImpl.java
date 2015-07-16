@@ -16,7 +16,9 @@ import com.vk.sdk.api.VKParameters;
 import com.vk.sdk.api.VKRequest;
 import com.vk.sdk.api.VKResponse;
 
+import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -66,19 +68,31 @@ public class WebRequestManagerImpl implements WebRequestManager {
                 try {
                     result = mJsonDeserializer.getConversations(
                             response.json.getString("response"));
-
+                    JSONArray conversationsArray = response.json.getJSONObject("response")
+                            .getJSONArray("items");
                     // setting userId and date to every conversation
 
                     if (result != null) {
                         ArrayList<Conversation> conversations = result.getResults();
                         if (conversations != null) {
+                            int i = 0;
                             for (Conversation conversation : conversations) {
                                 if (ConversationUtils.isConversationAGroupChat(conversation)) {
+                                    JSONObject jsonConversation = conversationsArray.getJSONObject(
+                                            i).getJSONObject("message");
+                                    JSONArray chatActiveArray = jsonConversation.getJSONArray(
+                                            "chat_active");
+                                    String lastId = chatActiveArray.getString(0);
+                                    long from_id = Long.valueOf(lastId);
+                                    conversation.getMessage().setFrom_id(from_id);
                                     conversation.setId(conversation.getMessage().getChat_id());
                                 } else {
+                                    conversation.getMessage()
+                                            .setFrom_id(conversation.getMessage().getUser_id());
                                     conversation.setId(conversation.getMessage().getUser_id());
                                 }
                                 conversation.setDate(conversation.getMessage().getDate());
+                                i++;
                             }
                         }
                     }

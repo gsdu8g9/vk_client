@@ -2,6 +2,7 @@ package com.nethergrim.vk.adapter;
 
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
@@ -51,7 +52,35 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationViewH
     @Override
     public void onBindViewHolder(ConversationViewHolder conversationViewHolder, int i) {
         Conversation conversation = data.get(i);
-        conversationViewHolder.textDetails.setText(conversation.getMessage().getBody());
+
+        String details;
+        if (ConversationUtils.isConversationAGroupChat(conversation)) {
+            conversationViewHolder.imageAvatar.setImageResource(
+                    R.drawable.ic_social_people_outline);
+            conversationViewHolder.textName.setText(conversation.getMessage().getTitle());
+
+            User user = realm.where(User.class)
+                    .equalTo("id", conversation.getMessage().getFrom_id())
+                    .findFirst();
+            if (user != null) {
+                details = user.getFirstName() + ": " + conversation.getMessage().getBody();
+
+            } else {
+                details = conversation.getMessage().getBody();
+                Log.e("TAG",
+                        "user with id: " + conversation.getMessage().getFrom_id() + " is null");
+            }
+        } else {
+            details = conversation.getMessage().getBody();
+            User user = realm.where(User.class).equalTo("id", conversation.getId()).findFirst();
+            if (user != null) {
+                il.displayUserAvatar(user, conversationViewHolder.imageAvatar);
+                conversationViewHolder.textName.setText(
+                        user.getFirstName() + " " + user.getLastName());
+            }
+        }
+
+        conversationViewHolder.textDetails.setText(details);
         conversationViewHolder.textDate.setText(
                 DateUtils.getRelativeTimeSpanString(conversation.getMessage().getDate() * 1000,
                         System.currentTimeMillis(), 0L, DateUtils.FORMAT_ABBREV_ALL));
@@ -59,19 +88,6 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationViewH
             conversationViewHolder.itemView.setBackgroundColor(mUnreadColor);
         } else {
             conversationViewHolder.itemView.setBackgroundResource(0);
-        }
-
-        if (ConversationUtils.isConversationAGroupChat(conversation)) {
-            conversationViewHolder.imageAvatar.setImageResource(
-                    R.drawable.ic_social_people_outline);
-            conversationViewHolder.textName.setText(conversation.getMessage().getTitle());
-        } else {
-            User user = realm.where(User.class).equalTo("id", conversation.getId()).findFirst();
-            if (user != null) {
-                il.displayUserAvatar(user, conversationViewHolder.imageAvatar);
-                conversationViewHolder.textName.setText(
-                        user.getFirstName() + " " + user.getLastName());
-            }
         }
 
     }
