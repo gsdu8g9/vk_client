@@ -6,59 +6,60 @@
         android:id="@+id/fragment_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginBottom="@dimen/action_bar_height" />
+        android:layout_marginRight="@dimen/action_bar_height" />
 
 
     <View
-        android:layout_width="match_parent"
-        android:layout_height="4dp"
-        android:layout_gravity="bottom"
-        android:layout_marginBottom="@dimen/action_bar_height"
-        android:background="@drawable/shadow_bottom_top" />
+        android:layout_width="4dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="end"
+        android:layout_marginRight="@dimen/action_bar_height"
+        android:background="@drawable/shadow_right_left" />
 
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/action_bar_height"
-        android:layout_gravity="bottom"
+        android:layout_width="@dimen/action_bar_height"
+        android:layout_height="match_parent"
+        android:layout_gravity="end"
+        android:orientation="vertical"
         android:weightSum="5">
 
 
         <ImageButton
             android:id="@+id/imageButton"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
             android:layout_weight="1"
             android:background="@drawable/menu_button_selector"
             android:src="@drawable/ic_action_question_answer" />
 
         <ImageButton
             android:id="@+id/imageButton2"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
             android:layout_weight="1"
             android:background="@drawable/menu_button_selector"
             android:src="@drawable/ic_action_account_child" />
 
         <ImageButton
             android:id="@+id/imageButton3"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
             android:layout_weight="1"
             android:background="@drawable/menu_button_selector" />
 
         <ImageButton
             android:id="@+id/imageButton4"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
             android:layout_weight="1"
             android:background="@drawable/menu_button_selector"
             android:src="@drawable/ic_action_settings" />
 
         <ImageButton
             android:id="@+id/imageButton5"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
             android:layout_weight="1"
             android:background="@drawable/menu_button_selector"
             android:src="@drawable/ic_action_search" />
