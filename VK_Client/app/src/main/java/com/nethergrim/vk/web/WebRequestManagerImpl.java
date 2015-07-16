@@ -14,10 +14,16 @@ import com.vk.sdk.api.VKError;
 import com.vk.sdk.api.VKParameters;
 import com.vk.sdk.api.VKRequest;
 import com.vk.sdk.api.VKResponse;
+
 import org.json.JSONException;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import javax.inject.Inject;
-import java.util.*;
 
 /**
  * @author andreydrobyazko on 4/3/15.
@@ -153,5 +159,9 @@ public class WebRequestManagerImpl implements WebRequestManager {
         }
     }
 
+    @Override
+    public void getCurrentUser(WebCallback<User> callback) {
+        // TODO
+    }
 
 }
