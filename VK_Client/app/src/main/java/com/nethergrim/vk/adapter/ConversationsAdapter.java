@@ -1,9 +1,7 @@
 package com.nethergrim.vk.adapter;
 
-import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
@@ -31,7 +29,6 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationViewH
     ImageLoader il;
     Realm realm;
     private int mUnreadColor;
-    private int mRegularColor;
 
     private RealmResults<Conversation> data;
 
@@ -46,7 +43,6 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationViewH
     public ConversationViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         if (mUnreadColor == 0) {
             mUnreadColor = viewGroup.getResources().getColor(R.color.conversation_row_unread);
-            mRegularColor = Color.TRANSPARENT;
         }
         return new ConversationViewHolder(LayoutInflater.from(viewGroup.getContext())
                 .inflate(R.layout.vh_conversation, viewGroup, false));
@@ -73,8 +69,6 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationViewH
                 il.displayUserAvatar(user, conversationViewHolder.imageAvatar);
                 conversationViewHolder.textName.setText(
                         user.getFirstName() + " " + user.getLastName());
-            } else {
-                Log.e("TAG", "user with id: " + conversation.getId() + " is null");
             }
         }
 

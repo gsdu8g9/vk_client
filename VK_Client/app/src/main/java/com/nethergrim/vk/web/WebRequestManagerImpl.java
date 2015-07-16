@@ -10,14 +10,20 @@ import com.nethergrim.vk.models.ConversationsList;
 import com.nethergrim.vk.models.ListOfUsers;
 import com.nethergrim.vk.models.User;
 import com.nethergrim.vk.utils.ConversationUtils;
+import com.nethergrim.vk.utils.UserUtils;
 import com.vk.sdk.api.VKError;
 import com.vk.sdk.api.VKParameters;
 import com.vk.sdk.api.VKRequest;
 import com.vk.sdk.api.VKResponse;
+
 import org.json.JSONException;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import javax.inject.Inject;
-import java.util.*;
 
 /**
  * @author andreydrobyazko on 4/3/15.
@@ -32,7 +38,11 @@ public class WebRequestManagerImpl implements WebRequestManager {
     }
 
     @Override
-    public void getConversations(int limit, int offset, boolean onlyUnread, int previewLenght, final WebCallback<ConversationsList> callback) {
+    public void getConversations(int limit,
+            int offset,
+            boolean onlyUnread,
+            int previewLenght,
+            final WebCallback<ConversationsList> callback) {
         Map<String, Object> params = new HashMap<>();
         if (offset > 0) {
             params.put("offset", offset);
@@ -46,14 +56,16 @@ public class WebRequestManagerImpl implements WebRequestManager {
         if (previewLenght > 0) {
             params.put("preview_length", previewLenght);
         }
-        VKRequest request = new VKRequest(Constants.Requests.MESSAGES_GET_DIALOGS, new VKParameters(params));
+        VKRequest request = new VKRequest(Constants.Requests.MESSAGES_GET_DIALOGS,
+                new VKParameters(params));
         request.executeWithListener(new VKRequest.VKRequestListener() {
             @Override
             public void onComplete(VKResponse response) {
                 super.onComplete(response);
                 ConversationsList result;
                 try {
-                    result = mJsonDeserializer.getConversations(response.json.getString("response"));
+                    result = mJsonDeserializer.getConversations(
+                            response.json.getString("response"));
 
                     // setting userId and date to every conversation
 
@@ -90,7 +102,10 @@ public class WebRequestManagerImpl implements WebRequestManager {
     }
 
     @Override
-    public void getUsers(List<Long> ids, List<String> fields, String nameCase, final WebCallback<ListOfUsers> callback) {
+    public void getUsers(List<Long> ids,
+            List<String> fields,
+            String nameCase,
+            final WebCallback<ListOfUsers> callback) {
         Map<String, Object> params = new HashMap<>();
 
         if (ids != null) {
@@ -139,7 +154,8 @@ public class WebRequestManagerImpl implements WebRequestManager {
     }
 
     @Override
-    public void getUsersForConversations(ConversationsList list, WebCallback<ListOfUsers> callback) {
+    public void getUsersForConversations(ConversationsList list,
+            WebCallback<ListOfUsers> callback) {
         if (list != null && list.getResults() != null) {
             List<Long> ids = new ArrayList<>(list.getResults().size());
             for (Conversation conversation : list.getResults()) {
@@ -149,9 +165,43 @@ public class WebRequestManagerImpl implements WebRequestManager {
                     ids.add(conversation.getId());
                 }
             }
-            getUsers(ids, Arrays.asList(User.Fields.photo_200, User.Fields.online, User.Fields.sex), null, callback);
+            getUsers(ids, UserUtils.getDefaultUserFields(),
+                    null, callback);
         }
     }
 
+    @Override
+    public void getCurrentUser(final WebCallback<User> callback) {
+        Map<String, Object> params = new HashMap<>();
+
+        params.put("fields", UserUtils.getDefaultUserFieldsAsString());
+
+        VKRequest vkRequest = new VKRequest(Constants.Requests.GET_USERS, new VKParameters(params));
+        vkRequest.executeWithListener(new VKRequest.VKRequestListener() {
+            @Override
+            public void onComplete(VKResponse response) {
+                super.onComplete(response);
+
+                ListOfUsers listOfUsers = mJsonDeserializer.getListOfUsers(response.responseString);
+                if (listOfUsers != null && listOfUsers.getResponse() != null
+                        && !listOfUsers.getResponse().isEmpty()) {
+
+                    User user = listOfUsers.getResponse().get(0);
+                    if (user != null && callback != null) {
+                        callback.onResponseSucceed(user);
+                    }
+                }
+
+            }
+
+            @Override
+            public void onError(VKError error) {
+                super.onError(error);
+                if (callback != null) {
+                    callback.onResponseFailed(error);
+                }
+            }
+        });
+    }
 
 }

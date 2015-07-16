@@ -1,9 +1,11 @@
 package com.nethergrim.vk.json;
 
 import android.util.Log;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nethergrim.vk.models.ConversationsList;
 import com.nethergrim.vk.models.ListOfUsers;
+import com.nethergrim.vk.models.UserResult;
 
 import java.io.IOException;
 
@@ -11,12 +13,12 @@ import java.io.IOException;
 /**
  * @author nethergrim on 04.04.2015.
  */
-public class JsonDeserializerImpl implements JsonDeserializer {
+public class JacksonJsonDeserializerImpl implements JsonDeserializer {
 
-    private static final String TAG = JsonDeserializerImpl.class.getName();
+    private static final String TAG = JacksonJsonDeserializerImpl.class.getName();
     private ObjectMapper mapper;
 
-    public JsonDeserializerImpl() {
+    public JacksonJsonDeserializerImpl() {
         mapper = new ObjectMapper();
     }
 
@@ -34,6 +36,16 @@ public class JsonDeserializerImpl implements JsonDeserializer {
     public ListOfUsers getListOfUsers(String s) {
         try {
             return mapper.readValue(s, ListOfUsers.class);
+        } catch (IOException e) {
+            Log.e(TAG, e.getMessage());
+        }
+        return null;
+    }
+
+    @Override
+    public UserResult getUser(String s) {
+        try {
+            return mapper.readValue(s, UserResult.class);
         } catch (IOException e) {
             Log.e(TAG, e.getMessage());
         }

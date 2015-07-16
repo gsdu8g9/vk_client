@@ -2,6 +2,7 @@ package com.nethergrim.vk.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
@@ -21,19 +22,24 @@ public class User extends RealmObject {
     private String lastName;
 
     /**
-     * возвращается, если страница пользователя удалена или заблокирована, содержит значение deleted или banned. Обратите внимание, в этом случае дополнительные поля fields не возвращаются.
+     * возвращается, если страница пользователя удалена или заблокирована, содержит значение deleted
+     * или banned. Обратите внимание, в этом случае дополнительные поля fields не возвращаются.
      */
     private String deactivated;
 
     @JsonProperty("hidden")
     /**
-     * возвращается при вызове без access_token, если пользователь установил настройку «Кому в интернете видна моя страница» — «Только пользователям ВКонтакте». Обратите внимание, в этом случае дополнительные поля fields не возвращаются.
+     * возвращается при вызове без access_token, если пользователь установил настройку «Кому в
+     * интернете видна моя страница» — «Только пользователям ВКонтакте». Обратите внимание, в
+     * этом случае дополнительные поля fields не возвращаются.
      * */
     private int hidden;
 
     @JsonProperty("photo_id")
     /**
-     * id главной фотографии профиля пользователя в формате user_id+photo_id, например, 6492_192164258. В некоторых случаях (если фотография была установлена очень давно) это поле не возвращается.
+     * id главной фотографии профиля пользователя в формате user_id+photo_id, например,
+     * 6492_192164258. В некоторых случаях (если фотография была установлена очень давно) это
+     * поле не возвращается.
      * */
     private String photoId;
 
@@ -57,7 +63,8 @@ public class User extends RealmObject {
 
     @JsonProperty("bdate")
     /**
-     * дата рождения. Возвращается в формате DD.MM.YYYY или DD.MM (если год рождения скрыт). Если дата рождения скрыта целиком, поле отсутствует в ответе.
+     * дата рождения. Возвращается в формате DD.MM.YYYY или DD.MM (если год рождения скрыт). Если
+     * дата рождения скрыта целиком, поле отсутствует в ответе.
      * */
     private String dateOfBirth;
 
@@ -79,7 +86,11 @@ public class User extends RealmObject {
     private String photo_max_orig;
 
     /**
-     * информация о том, находится ли пользователь сейчас на сайте. Возвращаемые значения: 1 — находится, 0 — не находится. Если пользователь использует мобильное приложение либо мобильную версию сайта, возвращается дополнительное поле online_mobile, содержащее 1. При этом, если используется именно приложение, дополнительно возвращается поле online_app, содержащее его идентификатор.
+     * информация о том, находится ли пользователь сейчас на сайте. Возвращаемые значения: 1 —
+     * находится, 0 — не находится. Если пользователь использует мобильное приложение либо мобильную
+     * версию сайта, возвращается дополнительное поле online_mobile, содержащее 1. При этом, если
+     * используется именно приложение, дополнительно возвращается поле online_app, содержащее его
+     * идентификатор.
      */
     private int online;
 
@@ -100,6 +111,58 @@ public class User extends RealmObject {
     private int relation;
 
     private int is_friend;
+
+    public interface Fields {
+
+        String sex = "sex";
+        String bdate = "bdate";
+        String country = "country";
+        String online = "online";
+        String city = "city";
+        String photo_50 = "photo_50";
+        String photo_100 = "photo_100";
+        String photo_200_orig = "photo_200_orig";
+        String photo_200 = "photo_200";
+        String photo_400_orig = "photo_400_orig";
+        String photo_max = "photo_max";
+        String photo_max_orig = "photo_max_orig";
+        String photo_id = "photo_id";
+        String online_mobile = "online_mobile";
+        String domain = "domain";
+        String has_mobile = "has_mobile";
+        String contacts = "contacts";
+        String connections = "connections";
+        String site = "site";
+        String education = "education";
+        String universities = "universities";
+        String schools = "schools";
+        String can_post = "can_post";
+        String can_see_all_posts = "can_see_all_posts";
+        String can_see_audio = "can_see_audio";
+        String can_write_private_message = "can_write_private_message";
+        String status = "status";
+        String last_seen = "last_seen";
+        String common_count = "common_count";
+        String relation = "relation";
+        String relatives = "relatives";
+        String counters = "counters";
+        String screen_name = "screen_name";
+        String maiden_name = "maiden_name";
+        String timezone = "timezone";
+        String occupation = "occupation";
+        String activities = "activities";
+        String interests = "interests";
+        String music = "music";
+        String movies = "movies";
+        String tv = "tv";
+        String books = "books";
+        String games = "games";
+        String about = "about";
+        String quotes = "quotes";
+        String personal = "personal";
+        String friend_status = "friend_status";
+
+    }
 
     public User() {
     }
@@ -326,13 +389,5 @@ public class User extends RealmObject {
 
     public void setIs_friend(int is_friend) {
         this.is_friend = is_friend;
-    }
-
-    public static interface Fields {
-        String sex = "sex";
-        String bdate = "bdate";
-        String country = "country";
-        String online = "online";
-        String photo_200 = "photo_200";
     }
 }

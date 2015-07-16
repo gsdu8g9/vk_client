@@ -2,6 +2,7 @@ package com.nethergrim.vk;
 
 import android.app.Application;
 import android.util.Log;
+
 import com.kisstools.KissTools;
 import com.nethergrim.vk.inject.DaggerMainComponent;
 import com.nethergrim.vk.inject.MainComponent;
@@ -11,6 +12,7 @@ import com.vk.sdk.VKSdk;
 import com.vk.sdk.VKSdkListener;
 import com.vk.sdk.api.VKError;
 import com.vk.sdk.util.VKUtil;
+
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 
@@ -76,6 +78,10 @@ public class MyApplication extends Application {
         initRealm();
     }
 
+    public MainComponent getMainComponent() {
+        return mainComponent;
+    }
+
     private void initDagger2() {
         mainComponent = DaggerMainComponent.builder().providerModule(new ProviderModule()).build();
     }
@@ -86,9 +92,5 @@ public class MyApplication extends Application {
                 .schemaVersion(1)
                 .build();
         Realm.setDefaultConfiguration(config);
-    }
-
-    public MainComponent getMainComponent() {
-        return mainComponent;
     }
 }
