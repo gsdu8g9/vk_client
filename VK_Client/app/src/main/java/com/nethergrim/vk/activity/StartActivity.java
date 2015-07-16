@@ -17,18 +17,19 @@ public class StartActivity extends AbstractActivity {
         setContentView(R.layout.activity_start);
     }
 
-    private void checkSession() {
-        if (VKSdk.wakeUpSession(this)) {
-            startActivity(new Intent(this, MainActivity.class));
-        } else {
-            Log.e("TAG", "authorizing");
-            VKSdk.authorize(Constants.PERMISSIONS);
-        }
-    }
-
     @Override
     protected void onResume() {
         super.onResume();
         checkSession();
+    }
+
+    private void checkSession() {
+        if (VKSdk.wakeUpSession(this)) {
+            startActivity(new Intent(this, MainActivity.class));
+            finish();
+        } else {
+            Log.e("TAG", "authorizing");
+            VKSdk.authorize(Constants.PERMISSIONS);
+        }
     }
 }
