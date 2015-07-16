@@ -93,7 +93,7 @@ public class MainActivity extends AbstractActivity implements WebCallback<User> 
         mSearchImageButton.setImageDrawable(
                 Utils.tintIcon(R.drawable.ic_action_search, R.color.menu_button_icon));
 
-        mProfileImageButton.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+        mProfileImageButton.setScaleType(ImageView.ScaleType.FIT_CENTER);
     }
 
 }
