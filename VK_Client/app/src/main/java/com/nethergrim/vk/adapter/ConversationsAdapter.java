@@ -11,7 +11,6 @@ import com.nethergrim.vk.adapter.viewholders.ConversationViewHolder;
 import com.nethergrim.vk.models.Conversation;
 import com.nethergrim.vk.models.User;
 import com.nethergrim.vk.utils.ConversationUtils;
-import com.nethergrim.vk.utils.Utils;
 import com.nethergrim.vk.web.images.ImageLoader;
 
 import javax.inject.Inject;
@@ -61,9 +60,10 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationViewH
         } else {
             conversationViewHolder.itemView.setBackgroundResource(0);
         }
+
         if (ConversationUtils.isConversationAGroupChat(conversation)) {
-            conversationViewHolder.imageAvatar.setImageDrawable(
-                    Utils.tintIcon(R.drawable.ic_social_people_outline, R.color.divider_color));
+            conversationViewHolder.imageAvatar.setImageResource(
+                    R.drawable.ic_social_people_outline);
             conversationViewHolder.textName.setText(conversation.getMessage().getTitle());
         } else {
             User user = realm.where(User.class).equalTo("id", conversation.getId()).findFirst();
