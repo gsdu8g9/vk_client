@@ -18,6 +18,7 @@
     <dimen name="conversation_item_height">64dp</dimen>
     <dimen name="conversation_item_padding_vertical">8dp</dimen>
     <dimen name="conversation_item_padding_horizontal">16dp</dimen>
+    <dimen name="conversation_item_online_indicator">8dp</dimen>
     <dimen name="conversation_avatar_size">48dp</dimen>
     <integer name="conversation_item_max_message_lines">1</integer>
 

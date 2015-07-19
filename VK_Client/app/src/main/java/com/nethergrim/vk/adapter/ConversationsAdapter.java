@@ -4,6 +4,7 @@ import android.support.v7.widget.RecyclerView;
 import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 
 import com.nethergrim.vk.MyApplication;
@@ -70,10 +71,14 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationViewH
                 Log.e("TAG",
                         "user with id: " + conversation.getMessage().getFrom_id() + " is null");
             }
+
+            conversationViewHolder.mOnlineIndicator.setVisibility(View.GONE);
         } else {
             details = conversation.getMessage().getBody();
             User user = realm.where(User.class).equalTo("id", conversation.getId()).findFirst();
             if (user != null) {
+                conversationViewHolder.mOnlineIndicator.setVisibility(
+                        user.getOnline() == 1 ? View.VISIBLE : View.GONE);
                 il.displayUserAvatar(user, conversationViewHolder.imageAvatar);
                 conversationViewHolder.textName.setText(
                         user.getFirstName() + " " + user.getLastName());

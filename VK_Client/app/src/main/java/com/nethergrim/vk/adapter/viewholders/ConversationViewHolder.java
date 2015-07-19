@@ -23,6 +23,8 @@ public class ConversationViewHolder extends RecyclerView.ViewHolder {
     public TextView textDetails;
     @InjectView(R.id.text_name)
     public TextView textName;
+    @InjectView(R.id.online_indicator)
+    public View mOnlineIndicator;
 
     public ConversationViewHolder(View itemView) {
         super(itemView);
