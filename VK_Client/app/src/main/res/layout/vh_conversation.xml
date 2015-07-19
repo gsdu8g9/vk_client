@@ -21,6 +21,15 @@
         android:contentDescription="@string/user_avatar"
         tools:background="@android:color/holo_blue_light" />
 
+    <View
+        android:id="@+id/online_indicator"
+        android:layout_width="@dimen/conversation_item_online_indicator"
+        android:layout_height="@dimen/conversation_item_online_indicator"
+        android:layout_alignEnd="@+id/image_avatar"
+        android:layout_alignParentTop="true"
+        android:layout_alignRight="@+id/image_avatar"
+        android:background="@drawable/green_dot" />
+
     <TextView
         android:id="@+id/text_name"
         android:layout_width="wrap_content"

@@ -16,7 +16,8 @@ public class UserUtils {
 
     public static List<String> getDefaultUserFields() {
         return Arrays.asList(User.Fields.photo_200, User.Fields.online, User.Fields.sex,
-                User.Fields.photo_max, User.Fields.photo_max_orig);
+                User.Fields.photo_max, User.Fields.photo_100, User.Fields.photo_200_orig,
+                User.Fields.photo_max_orig);
     }
 
     public static String getDefaultUserFieldsAsString() {
