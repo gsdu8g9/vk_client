@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="@dimen/conversation_item_height"
     android:paddingLeft="@dimen/conversation_item_padding_horizontal"
@@ -7,7 +8,7 @@
     android:paddingTop="@dimen/conversation_item_padding_vertical">
 
 
-    <com.nethergrim.vk.views.CircularImageView
+    <ImageView
         android:id="@+id/image_avatar"
         android:layout_width="@dimen/conversation_avatar_size"
         android:layout_height="@dimen/conversation_avatar_size"
@@ -17,7 +18,8 @@
         android:layout_gravity="center_vertical"
         android:layout_marginEnd="@dimen/conversation_item_padding_horizontal"
         android:layout_marginRight="@dimen/conversation_item_padding_horizontal"
-        android:contentDescription="@string/user_avatar" />
+        android:contentDescription="@string/user_avatar"
+        tools:background="@android:color/holo_blue_light" />
 
     <TextView
         android:id="@+id/text_name"
@@ -30,7 +32,8 @@
         android:layout_toStartOf="@+id/text_date"
         android:ellipsize="end"
         android:singleLine="true"
-        android:textSize="@dimen/text_size_big" />
+        android:textSize="@dimen/text_size_big"
+        tools:text="Steve Jobs" />
 
     <TextView
         android:id="@+id/text_details"
@@ -43,7 +46,8 @@
         android:ellipsize="end"
         android:maxLines="@integer/conversation_item_max_message_lines"
         android:textColor="@color/secondary_text"
-        android:textSize="@dimen/text_size_small" />
+        android:textSize="@dimen/text_size_small"
+        tools:text="Hi! I'm proud of you! You're making really cool apps!" />
 
     <TextView
         android:id="@+id/text_date"
@@ -55,6 +59,7 @@
         android:ellipsize="end"
         android:singleLine="true"
         android:textColor="@color/secondary_text"
-        android:textSize="@dimen/text_size_small" />
+        android:textSize="@dimen/text_size_small"
+        tools:text="Yesterday" />
 
 </RelativeLayout>

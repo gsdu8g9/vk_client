@@ -3,7 +3,6 @@
     <!--            Conversations         -->
     <dimen name="conversation_item_height">80dp</dimen>
     <dimen name="conversation_item_padding_vertical">8dp</dimen>
-    <dimen name="conversation_item_padding_horizontal">16dp</dimen>
     <dimen name="conversation_avatar_size">64dp</dimen>
     <integer name="conversation_item_max_message_lines">2</integer>
 

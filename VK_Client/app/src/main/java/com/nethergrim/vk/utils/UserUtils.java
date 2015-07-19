@@ -1,5 +1,7 @@
 package com.nethergrim.vk.utils;
 
+import android.text.TextUtils;
+
 import com.kisstools.utils.StringUtil;
 import com.nethergrim.vk.models.User;
 
@@ -27,5 +29,16 @@ public class UserUtils {
         }
 
         return StringUtil.cutText(sb.toString(), sb.toString().length() - 2);
+    }
+
+    public static String getStablePhotoUrl(User user) {
+        String url = user.getPhoto_200();
+        if (TextUtils.isEmpty(url)) {
+            url = user.getPhoto_200_orig();
+        }
+        if (TextUtils.isEmpty(url)) {
+            url = user.getPhoto_max_orig();
+        }
+        return url;
     }
 }

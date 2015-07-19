@@ -11,6 +11,8 @@
     <color name="icons">#FFFFFF</color>
     <color name="divider_color">#1e000000</color>
 
+
+    <color name="icons_color">#ff4c4c4c</color>
     <color name="shadow">#80BDBDBD</color>
 
     <color name="menu.button.normal">#FFFFFF</color>

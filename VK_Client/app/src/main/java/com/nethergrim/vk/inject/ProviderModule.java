@@ -7,8 +7,8 @@ import com.nethergrim.vk.json.JacksonJsonDeserializerImpl;
 import com.nethergrim.vk.json.JsonDeserializer;
 import com.nethergrim.vk.web.WebRequestManager;
 import com.nethergrim.vk.web.WebRequestManagerImpl;
-import com.nethergrim.vk.web.images.GlideImageLoaderImpl;
 import com.nethergrim.vk.web.images.ImageLoader;
+import com.nethergrim.vk.web.images.PicassoImageLoaderImpl;
 
 import javax.inject.Singleton;
 
@@ -36,7 +36,7 @@ public class ProviderModule {
     @Provides
     @Singleton
     ImageLoader provideImageLoader() {
-        return new GlideImageLoaderImpl(MyApplication.getInstance());
+        return new PicassoImageLoaderImpl(MyApplication.getInstance());
     }
 
     @Provides
