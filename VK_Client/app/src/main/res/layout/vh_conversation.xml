@@ -3,7 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="@dimen/conversation_item_height"
-    android:paddingLeft="@dimen/conversation_item_padding_horizontal"
     android:paddingRight="@dimen/conversation_item_padding_horizontal"
     android:paddingTop="@dimen/conversation_item_padding_vertical">
 
@@ -17,6 +16,7 @@
         android:layout_centerVertical="true"
         android:layout_gravity="center_vertical"
         android:layout_marginEnd="@dimen/conversation_item_padding_horizontal"
+        android:layout_marginLeft="@dimen/conversation_item_padding_horizontal"
         android:layout_marginRight="@dimen/conversation_item_padding_horizontal"
         android:contentDescription="@string/user_avatar"
         tools:background="@android:color/holo_blue_light" />
@@ -25,9 +25,8 @@
         android:id="@+id/online_indicator"
         android:layout_width="@dimen/conversation_item_online_indicator"
         android:layout_height="@dimen/conversation_item_online_indicator"
-        android:layout_alignEnd="@+id/image_avatar"
-        android:layout_alignParentTop="true"
-        android:layout_alignRight="@+id/image_avatar"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="4dp"
         android:background="@drawable/green_dot" />
 
     <TextView
