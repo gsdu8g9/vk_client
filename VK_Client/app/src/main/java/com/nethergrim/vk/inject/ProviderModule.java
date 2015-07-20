@@ -5,6 +5,8 @@ import com.nethergrim.vk.caching.Prefs;
 import com.nethergrim.vk.caching.PrefsImpl;
 import com.nethergrim.vk.json.JacksonJsonDeserializerImpl;
 import com.nethergrim.vk.json.JsonDeserializer;
+import com.nethergrim.vk.utils.UserProvider;
+import com.nethergrim.vk.utils.UserProviderImplementation;
 import com.nethergrim.vk.web.WebRequestManager;
 import com.nethergrim.vk.web.WebRequestManagerImpl;
 import com.nethergrim.vk.web.images.ImageLoader;
@@ -43,5 +45,11 @@ public class ProviderModule {
     @Singleton
     Prefs provideSharedPreferences() {
         return new PrefsImpl();
+    }
+
+    @Provides
+    @Singleton
+    UserProvider provideUserProvider() {
+        return new UserProviderImplementation();
     }
 }
