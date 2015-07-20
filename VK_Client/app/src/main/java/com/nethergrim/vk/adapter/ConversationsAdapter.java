@@ -13,11 +13,11 @@ import com.nethergrim.vk.adapter.viewholders.ConversationViewHolder;
 import com.nethergrim.vk.models.Conversation;
 import com.nethergrim.vk.models.User;
 import com.nethergrim.vk.utils.ConversationUtils;
+import com.nethergrim.vk.utils.UserProvider;
 import com.nethergrim.vk.web.images.ImageLoader;
 
 import javax.inject.Inject;
 
-import io.realm.Realm;
 import io.realm.RealmChangeListener;
 import io.realm.RealmResults;
 
@@ -29,14 +29,16 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationViewH
 
     @Inject
     ImageLoader il;
-    Realm realm;
+
+    @Inject
+    UserProvider mUP;
+
     private int mUnreadColor;
 
     private RealmResults<Conversation> data;
 
     public ConversationsAdapter(RealmResults<Conversation> data) {
         this.data = data;
-        realm = Realm.getDefaultInstance();
         setHasStableIds(true);
         MyApplication.getInstance().getMainComponent().inject(this);
     }
@@ -55,14 +57,14 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationViewH
         Conversation conversation = data.get(i);
 
         String details;
+        User user;
         if (ConversationUtils.isConversationAGroupChat(conversation)) {
             conversationViewHolder.imageAvatar.setImageResource(
                     R.drawable.ic_social_people_outline);
             conversationViewHolder.textName.setText(conversation.getMessage().getTitle());
 
-            User user = realm.where(User.class)
-                    .equalTo("id", conversation.getMessage().getFrom_id())
-                    .findFirst();
+            user = mUP.getUser(conversation.getMessage().getFrom_id());
+
             if (user != null) {
                 details = user.getFirstName() + ": " + conversation.getMessage().getBody();
 
@@ -74,8 +76,11 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationViewH
 
             conversationViewHolder.mOnlineIndicator.setVisibility(View.GONE);
         } else {
+
+            user = mUP.getUser(conversation.getId());
+
             details = conversation.getMessage().getBody();
-            User user = realm.where(User.class).equalTo("id", conversation.getId()).findFirst();
+
             if (user != null) {
                 conversationViewHolder.mOnlineIndicator.setVisibility(
                         user.getOnline() == 1 ? View.VISIBLE : View.GONE);

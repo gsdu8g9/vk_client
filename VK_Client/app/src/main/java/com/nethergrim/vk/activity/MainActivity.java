@@ -11,6 +11,7 @@ import com.nethergrim.vk.caching.Prefs;
 import com.nethergrim.vk.callbacks.WebCallback;
 import com.nethergrim.vk.fragment.MessagesFragment;
 import com.nethergrim.vk.models.User;
+import com.nethergrim.vk.utils.UserProvider;
 import com.nethergrim.vk.utils.Utils;
 import com.nethergrim.vk.web.WebRequestManager;
 import com.nethergrim.vk.web.images.ImageLoader;
@@ -40,6 +41,8 @@ public class MainActivity extends AbstractActivity implements WebCallback<User> 
     ImageLoader mIL;
     @Inject
     Prefs mPrefs;
+    @Inject
+    UserProvider mUP;
 
     @Override
     public void onResponseSucceed(final User response) {
@@ -73,10 +76,8 @@ public class MainActivity extends AbstractActivity implements WebCallback<User> 
     private void loadCurrentUser() {
         mWRM.getCurrentUser(this);
         if (mPrefs.getCurrentUserId() != 0) {
-            Realm realm = Realm.getDefaultInstance();
-            User user = realm.where(User.class)
-                    .equalTo("id", mPrefs.getCurrentUserId())
-                    .findFirst();
+
+            User user = mUP.getUser(mPrefs.getCurrentUserId());
             if (user != null) {
                 onResponseSucceed(user);
             }
