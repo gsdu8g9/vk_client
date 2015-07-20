@@ -27,4 +27,8 @@ public interface WebRequestManager {
     void getUsersForConversations(ConversationsList list, WebCallback<ListOfUsers> callback);
 
     void getCurrentUser(WebCallback<User> callback);
+
+    void registerToPushNotifications(String token, String deviceId);
+
+    void unregisterFromPushNotifications(String deviceId);
 }
