@@ -2,7 +2,6 @@ package com.nethergrim.vk.adapter;
 
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -80,8 +79,6 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationViewH
 
             } else {
                 details = conversation.getMessage().getBody();
-                Log.e("TAG",
-                        "user with id: " + conversation.getMessage().getFrom_id() + " is null");
             }
 
             conversationViewHolder.mOnlineIndicator.setVisibility(View.GONE);
@@ -104,9 +101,7 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationViewH
             }
         }
         if (MessageUtils.isMessageWithSticker(conversation.getMessage())) {
-            Log.e("TAG", "message with sticker");
             String url = MessageUtils.getStickerFromMessage(conversation.getMessage()).getPhoto64();
-            Log.e("TAG", "sticker url: " + url);
             mImageLoader.displayImage(
                     url,
                     conversationViewHolder.mImageViewDetails);

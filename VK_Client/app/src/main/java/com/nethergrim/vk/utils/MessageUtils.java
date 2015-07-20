@@ -18,8 +18,7 @@ public class MessageUtils {
     public static boolean isMessageWithSticker(@NonNull Message message) {
         return isMessageWithAttachments(message) && message.getAttachments()
                 .get(0)
-                .getType()
-                .equals("sticker");
+                .getSticker() != null;
     }
 
     public static Sticker getStickerFromMessage(@NonNull Message message) {
