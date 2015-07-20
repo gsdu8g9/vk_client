@@ -1,6 +1,8 @@
 package com.nethergrim.vk.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import io.realm.RealmObject;
 
 /**
@@ -20,11 +22,24 @@ public class Attachment extends RealmObject {
      * wall_reply — комментарий к записи на стене;
      * sticker — стикер.
      */
+    @JsonProperty("unread_dialogs")
     private String type;
 
+    @JsonProperty("photo")
     private Photo photo;
 
+    @JsonProperty("sticker")
+    private Sticker sticker;
+
     public Attachment() {
+    }
+
+    public Sticker getSticker() {
+        return sticker;
+    }
+
+    public void setSticker(Sticker sticker) {
+        this.sticker = sticker;
     }
 
     public String getType() {

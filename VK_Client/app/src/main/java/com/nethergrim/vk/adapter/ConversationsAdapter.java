@@ -2,7 +2,6 @@ package com.nethergrim.vk.adapter;
 
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +13,7 @@ import com.nethergrim.vk.caching.Prefs;
 import com.nethergrim.vk.models.Conversation;
 import com.nethergrim.vk.models.User;
 import com.nethergrim.vk.utils.ConversationUtils;
+import com.nethergrim.vk.utils.MessageUtils;
 import com.nethergrim.vk.utils.UserProvider;
 import com.nethergrim.vk.web.images.ImageLoader;
 
@@ -29,20 +29,20 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationViewH
         implements RealmChangeListener {
 
     @Inject
-    ImageLoader il;
+    ImageLoader mImageLoader;
 
     @Inject
-    UserProvider mUP;
+    UserProvider mUserProvider;
 
     @Inject
     Prefs mPrefs;
 
     private int mUnreadColor;
 
-    private RealmResults<Conversation> data;
+    private RealmResults<Conversation> mData;
 
     public ConversationsAdapter(RealmResults<Conversation> data) {
-        this.data = data;
+        this.mData = data;
         setHasStableIds(true);
         MyApplication.getInstance().getMainComponent().inject(this);
     }
@@ -58,7 +58,7 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationViewH
 
     @Override
     public void onBindViewHolder(ConversationViewHolder conversationViewHolder, int i) {
-        Conversation conversation = data.get(i);
+        Conversation conversation = mData.get(i);
 
         String details;
         User user;
@@ -67,7 +67,7 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationViewH
                     R.drawable.ic_social_people_outline);
             conversationViewHolder.textName.setText(conversation.getMessage().getTitle());
 
-            user = mUP.getUser(conversation.getMessage().getFrom_id());
+            user = mUserProvider.getUser(conversation.getMessage().getFrom_id());
 
             if (user != null) {
                 if (ConversationUtils.isMessageFromMe(conversation.getMessage())) {
@@ -79,14 +79,12 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationViewH
 
             } else {
                 details = conversation.getMessage().getBody();
-                Log.e("TAG",
-                        "user with id: " + conversation.getMessage().getFrom_id() + " is null");
             }
 
             conversationViewHolder.mOnlineIndicator.setVisibility(View.GONE);
         } else {
 
-            user = mUP.getUser(conversation.getId());
+            user = mUserProvider.getUser(conversation.getId());
 
             details = conversation.getMessage().getBody();
             if (ConversationUtils.isMessageFromMe(conversation.getMessage())) {
@@ -97,10 +95,18 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationViewH
             if (user != null) {
                 conversationViewHolder.mOnlineIndicator.setVisibility(
                         user.getOnline() == 1 ? View.VISIBLE : View.GONE);
-                il.displayUserAvatar(user, conversationViewHolder.imageAvatar);
+                mImageLoader.displayUserAvatar(user, conversationViewHolder.imageAvatar);
                 conversationViewHolder.textName.setText(
                         user.getFirstName() + " " + user.getLastName());
             }
+        }
+        if (MessageUtils.isMessageWithSticker(conversation.getMessage())) {
+            String url = MessageUtils.getStickerFromMessage(conversation.getMessage()).getPhoto64();
+            mImageLoader.displayImage(
+                    url,
+                    conversationViewHolder.mImageViewDetails);
+        } else {
+            conversationViewHolder.mImageViewDetails.setImageBitmap(null);
         }
 
         conversationViewHolder.textDetails.setText(details);
@@ -117,12 +123,12 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationViewH
 
     @Override
     public long getItemId(int position) {
-        return data.get(position).getId();
+        return mData.get(position).getId();
     }
 
     @Override
     public int getItemCount() {
-        return data.size();
+        return mData.size();
     }
 
     @Override

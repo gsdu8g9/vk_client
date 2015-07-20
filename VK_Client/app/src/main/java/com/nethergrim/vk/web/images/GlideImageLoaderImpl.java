@@ -26,7 +26,17 @@ public class GlideImageLoaderImpl implements ImageLoader {
             Glide.with(mCtx).load(R.drawable.ic_deactivated_200).centerCrop().into(imageView);
         } else {
             String avatarUrl = user.getPhoto_200();
-            Glide.with(mCtx).load(avatarUrl).fallback(R.drawable.ic_action_account_circle).centerCrop().placeholder(R.drawable.ic_action_account_circle).into(imageView);
+            Glide.with(mCtx)
+                    .load(avatarUrl)
+                    .fallback(R.drawable.ic_action_account_circle)
+                    .centerCrop()
+                    .placeholder(R.drawable.ic_action_account_circle)
+                    .into(imageView);
         }
+    }
+
+    @Override
+    public void displayImage(@NonNull String url, @NonNull ImageView imageView) {
+        Glide.with(mCtx).load(url).into(imageView);
     }
 }
