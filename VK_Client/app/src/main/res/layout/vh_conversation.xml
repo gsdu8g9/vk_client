@@ -70,4 +70,12 @@
         android:textSize="@dimen/text_size_small"
         tools:text="Yesterday" />
 
+    <ImageView
+        android:id="@+id/imageViewDetails"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/online_indicator"
+        android:layout_toEndOf="@+id/text_details"
+        android:layout_toRightOf="@+id/text_details" />
+
 </RelativeLayout>

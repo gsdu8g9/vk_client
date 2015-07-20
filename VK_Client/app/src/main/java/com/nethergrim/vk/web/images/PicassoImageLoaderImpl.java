@@ -62,6 +62,13 @@ public class PicassoImageLoaderImpl implements ImageLoader {
 
     }
 
+    @Override
+    public void displayImage(@NonNull String url, @NonNull ImageView imageView) {
+        if (!TextUtils.isEmpty(url)) {
+            Picasso.with(context).load(url).config(Bitmap.Config.RGB_565).into(imageView);
+        }
+    }
+
     public class RoundedTransformation implements com.squareup.picasso.Transformation {
 
 
