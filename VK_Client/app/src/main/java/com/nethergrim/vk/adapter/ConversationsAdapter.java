@@ -15,7 +15,6 @@ import com.nethergrim.vk.models.Conversation;
 import com.nethergrim.vk.models.User;
 import com.nethergrim.vk.utils.ConversationUtils;
 import com.nethergrim.vk.utils.UserProvider;
-import com.nethergrim.vk.utils.UserUtils;
 import com.nethergrim.vk.web.images.ImageLoader;
 
 import javax.inject.Inject;
@@ -71,9 +70,9 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationViewH
             user = mUP.getUser(conversation.getMessage().getFrom_id());
 
             if (user != null) {
-                if (UserUtils.isUserACurrentOne(user)) {
+                if (ConversationUtils.isMessageFromMe(conversation.getMessage())) {
                     details = conversationViewHolder.itemView.getResources().getString(R.string.me_)
-                            + ": " + conversation.getMessage().getBody();
+                            + " " + conversation.getMessage().getBody();
                 } else {
                     details = user.getFirstName() + ": " + conversation.getMessage().getBody();
                 }
@@ -90,11 +89,9 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationViewH
             user = mUP.getUser(conversation.getId());
 
             details = conversation.getMessage().getBody();
-
-            if (mPrefs.getCurrentUserId() == conversation.getMessage().getFrom_id()) {
+            if (ConversationUtils.isMessageFromMe(conversation.getMessage())) {
                 details = conversationViewHolder.itemView.getResources().getString(R.string.me_)
-                        + ": " + details;
-
+                        + " " + details;
             }
 
             if (user != null) {
