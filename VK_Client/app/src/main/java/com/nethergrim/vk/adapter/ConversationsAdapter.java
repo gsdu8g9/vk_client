@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import com.nethergrim.vk.MyApplication;
 import com.nethergrim.vk.R;
 import com.nethergrim.vk.adapter.viewholders.ConversationViewHolder;
+import com.nethergrim.vk.caching.Prefs;
 import com.nethergrim.vk.models.Conversation;
 import com.nethergrim.vk.models.User;
 import com.nethergrim.vk.utils.ConversationUtils;
@@ -32,6 +33,9 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationViewH
 
     @Inject
     UserProvider mUP;
+
+    @Inject
+    Prefs mPrefs;
 
     private int mUnreadColor;
 
@@ -66,7 +70,12 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationViewH
             user = mUP.getUser(conversation.getMessage().getFrom_id());
 
             if (user != null) {
-                details = user.getFirstName() + ": " + conversation.getMessage().getBody();
+                if (ConversationUtils.isMessageFromMe(conversation.getMessage())) {
+                    details = conversationViewHolder.itemView.getResources().getString(R.string.me_)
+                            + " " + conversation.getMessage().getBody();
+                } else {
+                    details = user.getFirstName() + ": " + conversation.getMessage().getBody();
+                }
 
             } else {
                 details = conversation.getMessage().getBody();
@@ -80,6 +89,10 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationViewH
             user = mUP.getUser(conversation.getId());
 
             details = conversation.getMessage().getBody();
+            if (ConversationUtils.isMessageFromMe(conversation.getMessage())) {
+                details = conversationViewHolder.itemView.getResources().getString(R.string.me_)
+                        + " " + details;
+            }
 
             if (user != null) {
                 conversationViewHolder.mOnlineIndicator.setVisibility(

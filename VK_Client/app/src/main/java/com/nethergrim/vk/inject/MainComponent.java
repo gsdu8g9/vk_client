@@ -1,8 +1,10 @@
 package com.nethergrim.vk.inject;
 
+import com.nethergrim.vk.MyApplication;
 import com.nethergrim.vk.activity.MainActivity;
 import com.nethergrim.vk.adapter.ConversationsAdapter;
 import com.nethergrim.vk.fragment.MessagesFragment;
+import com.nethergrim.vk.utils.UserProviderImplementation;
 import com.nethergrim.vk.web.WebRequestManagerImpl;
 
 import javax.inject.Singleton;
@@ -21,6 +23,7 @@ import dagger.Component;
 )
 
 public interface MainComponent {
+
     void inject(MessagesFragment mf);
 
     void inject(WebRequestManagerImpl o);
@@ -28,4 +31,8 @@ public interface MainComponent {
     void inject(ConversationsAdapter o);
 
     void inject(MainActivity m);
+
+    void inject(MyApplication m);
+
+    void inject(UserProviderImplementation obj);
 }

@@ -8,5 +8,8 @@ import com.nethergrim.vk.models.User;
  */
 public interface UserProvider {
 
+
     User getUser(long userId);
+
+    User getMyUser();
 }
