@@ -5,6 +5,7 @@ import com.nethergrim.vk.activity.MainActivity;
 import com.nethergrim.vk.adapter.ConversationsAdapter;
 import com.nethergrim.vk.fragment.MessagesFragment;
 import com.nethergrim.vk.utils.UserProviderImplementation;
+import com.nethergrim.vk.web.PushNotificationsRegisterIntentService;
 import com.nethergrim.vk.web.WebRequestManagerImpl;
 
 import javax.inject.Singleton;
@@ -35,4 +36,6 @@ public interface MainComponent {
     void inject(MyApplication m);
 
     void inject(UserProviderImplementation obj);
+
+    void inject(PushNotificationsRegisterIntentService o);
 }
