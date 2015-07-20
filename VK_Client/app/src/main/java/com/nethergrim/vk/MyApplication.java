@@ -4,6 +4,7 @@ import android.app.Application;
 import android.util.Log;
 
 import com.kisstools.KissTools;
+import com.nethergrim.vk.caching.Prefs;
 import com.nethergrim.vk.inject.DaggerMainComponent;
 import com.nethergrim.vk.inject.MainComponent;
 import com.nethergrim.vk.inject.ProviderModule;
@@ -12,6 +13,8 @@ import com.vk.sdk.VKSdk;
 import com.vk.sdk.VKSdkListener;
 import com.vk.sdk.api.VKError;
 import com.vk.sdk.util.VKUtil;
+
+import javax.inject.Inject;
 
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
@@ -22,6 +25,8 @@ import io.realm.RealmConfiguration;
 public class MyApplication extends Application {
 
     private static MyApplication _app;
+    @Inject
+    Prefs mPrefs;
     private MainComponent mainComponent;
 
     public synchronized static MyApplication getInstance() {
@@ -82,8 +87,13 @@ public class MyApplication extends Application {
         return mainComponent;
     }
 
+    public Prefs getPrefs() {
+        return mPrefs;
+    }
+
     private void initDagger2() {
         mainComponent = DaggerMainComponent.builder().providerModule(new ProviderModule()).build();
+        mainComponent.inject(this);
     }
 
     private void initRealm() {

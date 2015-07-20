@@ -3,6 +3,7 @@ package com.nethergrim.vk.utils;
 import android.text.TextUtils;
 
 import com.kisstools.utils.StringUtil;
+import com.nethergrim.vk.MyApplication;
 import com.nethergrim.vk.models.User;
 
 import java.util.Arrays;
@@ -13,6 +14,7 @@ import java.util.List;
  *         All rights reserved.
  */
 public class UserUtils {
+
 
     public static List<String> getDefaultUserFields() {
         return Arrays.asList(User.Fields.photo_200, User.Fields.online, User.Fields.sex,
@@ -41,5 +43,11 @@ public class UserUtils {
             url = user.getPhoto_max_orig();
         }
         return url;
+    }
+
+    public static boolean isUserACurrentOne(User user) {
+        return user != null && user.getId() == MyApplication.getInstance()
+                .getPrefs()
+                .getCurrentUserId();
     }
 }
