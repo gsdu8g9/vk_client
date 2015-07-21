@@ -11,6 +11,7 @@ import com.nethergrim.vk.R;
 import com.nethergrim.vk.adapter.viewholders.ConversationViewHolder;
 import com.nethergrim.vk.caching.Prefs;
 import com.nethergrim.vk.models.Conversation;
+import com.nethergrim.vk.models.Message;
 import com.nethergrim.vk.models.User;
 import com.nethergrim.vk.utils.ConversationUtils;
 import com.nethergrim.vk.utils.MessageUtils;
@@ -59,35 +60,31 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationViewH
     @Override
     public void onBindViewHolder(ConversationViewHolder conversationViewHolder, int i) {
         Conversation conversation = mData.get(i);
-
+        Message message = conversation.getMessage();
         String details;
         User user;
         if (ConversationUtils.isConversationAGroupChat(conversation)) {
+
+//            group chat
             conversationViewHolder.imageAvatar.setImageResource(
                     R.drawable.ic_social_people_outline);
-            conversationViewHolder.textName.setText(conversation.getMessage().getTitle());
+            conversationViewHolder.textName.setText(message.getTitle());
 
-            user = mUserProvider.getUser(conversation.getMessage().getFrom_id());
-
-            if (user != null) {
-                if (ConversationUtils.isMessageFromMe(conversation.getMessage())) {
-                    details = conversationViewHolder.itemView.getResources().getString(R.string.me_)
-                            + " " + conversation.getMessage().getBody();
-                } else {
-                    details = user.getFirstName() + ": " + conversation.getMessage().getBody();
-                }
-
+            if (ConversationUtils.isMessageFromMe(message)) {
+                details = conversationViewHolder.itemView.getResources().getString(R.string.me_)
+                        + " " + message.getBody();
             } else {
-                details = conversation.getMessage().getBody();
+                user = mUserProvider.getUser(message.getFrom_id());
+                details = user.getFirstName() + ": " + message.getBody();
             }
 
             conversationViewHolder.mOnlineIndicator.setVisibility(View.GONE);
         } else {
-
+//              regular chat
             user = mUserProvider.getUser(conversation.getId());
 
-            details = conversation.getMessage().getBody();
-            if (ConversationUtils.isMessageFromMe(conversation.getMessage())) {
+            details = message.getBody();
+            if (ConversationUtils.isMessageFromMe(message)) {
                 details = conversationViewHolder.itemView.getResources().getString(R.string.me_)
                         + " " + details;
             }
@@ -100,8 +97,8 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationViewH
                         user.getFirstName() + " " + user.getLastName());
             }
         }
-        if (MessageUtils.isMessageWithSticker(conversation.getMessage())) {
-            String url = MessageUtils.getStickerFromMessage(conversation.getMessage()).getPhoto64();
+        if (MessageUtils.isMessageWithSticker(message)) {
+            String url = MessageUtils.getStickerFromMessage(message).getPhoto64();
             mImageLoader.displayImage(
                     url,
                     conversationViewHolder.mImageViewDetails);
@@ -111,7 +108,7 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationViewH
 
         conversationViewHolder.textDetails.setText(details);
         conversationViewHolder.textDate.setText(
-                DateUtils.getRelativeTimeSpanString(conversation.getMessage().getDate() * 1000,
+                DateUtils.getRelativeTimeSpanString(message.getDate() * 1000,
                         System.currentTimeMillis(), 0L, DateUtils.FORMAT_ABBREV_ALL));
         if (ConversationUtils.isConversationUnread(conversation)) {
             conversationViewHolder.itemView.setBackgroundColor(mUnreadColor);
