@@ -79,7 +79,12 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationViewH
                 Log.d("TAG", "message not from me, out : " + message.getOut() + " body: "
                         + message.getBody());
                 user = mUserProvider.getUser(message.getUser_id());
-                details = user.getFirstName() + ": " + message.getBody();
+                if (user != null) {
+                    details = user.getFirstName() + ": " + message.getBody();
+                } else {
+                    details = message.getBody();
+                }
+
             }
 
             conversationViewHolder.mOnlineIndicator.setVisibility(View.GONE);
