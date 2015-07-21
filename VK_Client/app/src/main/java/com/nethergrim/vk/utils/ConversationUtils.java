@@ -20,6 +20,7 @@ public class ConversationUtils {
     }
 
     public static boolean isMessageFromMe(@NonNull Message message) {
-        return message.getOut() == 1;
+        long out = message.getOut();
+        return out > 0;
     }
 }
