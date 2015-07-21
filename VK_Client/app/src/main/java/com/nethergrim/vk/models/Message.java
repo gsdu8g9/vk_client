@@ -1,6 +1,7 @@
 package com.nethergrim.vk.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import io.realm.RealmList;
 import io.realm.RealmObject;
@@ -42,23 +43,20 @@ public class Message extends RealmObject {
     /**
      * тип сообщения (0 — полученное, 1 — отправленное, не возвращается для пересланных сообщений).
      */
-    private int out;
-
+    @JsonProperty("out")
+    private long out;
     /**
      * заголовок сообщения или беседы.
      */
     private String title;
-
     /**
      * заголовок сообщения или беседы.
      */
     private String body;
-
     /**
      * информация о местоположении
      */
     private Geo geo;
-
     /**
      * содержатся ли в сообщении emoji-смайлы.
      */
@@ -99,7 +97,6 @@ public class Message extends RealmObject {
      * положительное число
      */
     private int users_count;
-
     /**
      * поле передано, если это служебное сообщение
      * строка, может быть chat_photo_update или chat_photo_remove, а с версии 5.14 еще и
@@ -140,6 +137,14 @@ public class Message extends RealmObject {
     private String photo_200;
 
     public Message() {
+    }
+
+    public long getOut() {
+        return out;
+    }
+
+    public void setOut(long out) {
+        this.out = out;
     }
 
     public RealmList<Message> getFwd_messages() {
@@ -282,10 +287,6 @@ public class Message extends RealmObject {
         return read_state;
     }
 
-    public int isOut() {
-        return out;
-    }
-
     public String getTitle() {
         return title;
     }
@@ -320,14 +321,6 @@ public class Message extends RealmObject {
 
     public void setRead_state(int read_state) {
         this.read_state = read_state;
-    }
-
-    public int getOut() {
-        return out;
-    }
-
-    public void setOut(int out) {
-        this.out = out;
     }
 
     public Geo getGeo() {

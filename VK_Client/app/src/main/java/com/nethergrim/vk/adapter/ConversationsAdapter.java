@@ -2,6 +2,7 @@ package com.nethergrim.vk.adapter;
 
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -71,10 +72,13 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationViewH
             conversationViewHolder.textName.setText(message.getTitle());
 
             if (ConversationUtils.isMessageFromMe(message)) {
+                Log.d("TAG", "message from me: " + message.getBody());
                 details = conversationViewHolder.itemView.getResources().getString(R.string.me_)
                         + " " + message.getBody();
             } else {
-                user = mUserProvider.getUser(message.getFrom_id());
+                Log.d("TAG", "message not from me, out : " + message.getOut() + " body: "
+                        + message.getBody());
+                user = mUserProvider.getUser(message.getUser_id());
                 details = user.getFirstName() + ": " + message.getBody();
             }
 
