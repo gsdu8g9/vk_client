@@ -4,6 +4,7 @@ import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
+
 import com.vk.sdk.VKUIHelper;
 
 /**
@@ -12,17 +13,10 @@ import com.vk.sdk.VKUIHelper;
 public abstract class AbstractActivity extends ActionBarActivity {
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        VKUIHelper.onResume(this);
-    }
-
-    @Override
     protected void onDestroy() {
         super.onDestroy();
         VKUIHelper.onDestroy(this);
     }
-
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -30,7 +24,16 @@ public abstract class AbstractActivity extends ActionBarActivity {
         VKUIHelper.onActivityResult(this, requestCode, resultCode, data);
     }
 
-    protected void showFragment(Fragment fragment, boolean addToBackStack, boolean animate, int containerId) {
+    @Override
+    protected void onResume() {
+        super.onResume();
+        VKUIHelper.onResume(this);
+    }
+
+    protected void showFragment(Fragment fragment,
+            boolean addToBackStack,
+            boolean animate,
+            int containerId) {
         String tag = fragment.getClass().getSimpleName();
         Fragment alreadyExistingFragment = getFragmentManager().findFragmentByTag(tag);
         FragmentTransaction transaction = getFragmentManager().beginTransaction();

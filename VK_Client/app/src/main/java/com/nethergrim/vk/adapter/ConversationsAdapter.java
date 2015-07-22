@@ -12,8 +12,10 @@ import com.nethergrim.vk.R;
 import com.nethergrim.vk.adapter.viewholders.ConversationViewHolder;
 import com.nethergrim.vk.caching.Prefs;
 import com.nethergrim.vk.models.Conversation;
+import com.nethergrim.vk.models.Message;
 import com.nethergrim.vk.models.User;
 import com.nethergrim.vk.utils.ConversationUtils;
+import com.nethergrim.vk.utils.MessageUtils;
 import com.nethergrim.vk.utils.UserProvider;
 import com.nethergrim.vk.web.images.ImageLoader;
 
@@ -29,20 +31,20 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationViewH
         implements RealmChangeListener {
 
     @Inject
-    ImageLoader il;
+    ImageLoader mImageLoader;
 
     @Inject
-    UserProvider mUP;
+    UserProvider mUserProvider;
 
     @Inject
     Prefs mPrefs;
 
     private int mUnreadColor;
 
-    private RealmResults<Conversation> data;
+    private RealmResults<Conversation> mData;
 
     public ConversationsAdapter(RealmResults<Conversation> data) {
-        this.data = data;
+        this.mData = data;
         setHasStableIds(true);
         MyApplication.getInstance().getMainComponent().inject(this);
     }
@@ -58,38 +60,40 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationViewH
 
     @Override
     public void onBindViewHolder(ConversationViewHolder conversationViewHolder, int i) {
-        Conversation conversation = data.get(i);
-
+        Conversation conversation = mData.get(i);
+        Message message = conversation.getMessage();
         String details;
         User user;
         if (ConversationUtils.isConversationAGroupChat(conversation)) {
+
+//            group chat
             conversationViewHolder.imageAvatar.setImageResource(
                     R.drawable.ic_social_people_outline);
-            conversationViewHolder.textName.setText(conversation.getMessage().getTitle());
+            conversationViewHolder.textName.setText(message.getTitle());
 
-            user = mUP.getUser(conversation.getMessage().getFrom_id());
-
-            if (user != null) {
-                if (ConversationUtils.isMessageFromMe(conversation.getMessage())) {
-                    details = conversationViewHolder.itemView.getResources().getString(R.string.me_)
-                            + " " + conversation.getMessage().getBody();
+            if (ConversationUtils.isMessageFromMe(message)) {
+                Log.d("TAG", "message from me: " + message.getBody());
+                details = conversationViewHolder.itemView.getResources().getString(R.string.me_)
+                        + " " + message.getBody();
+            } else {
+                Log.d("TAG", "message not from me, out : " + message.getOut() + " body: "
+                        + message.getBody());
+                user = mUserProvider.getUser(message.getUser_id());
+                if (user != null) {
+                    details = user.getFirstName() + ": " + message.getBody();
                 } else {
-                    details = user.getFirstName() + ": " + conversation.getMessage().getBody();
+                    details = message.getBody();
                 }
 
-            } else {
-                details = conversation.getMessage().getBody();
-                Log.e("TAG",
-                        "user with id: " + conversation.getMessage().getFrom_id() + " is null");
             }
 
             conversationViewHolder.mOnlineIndicator.setVisibility(View.GONE);
         } else {
+//              regular chat
+            user = mUserProvider.getUser(conversation.getId());
 
-            user = mUP.getUser(conversation.getId());
-
-            details = conversation.getMessage().getBody();
-            if (ConversationUtils.isMessageFromMe(conversation.getMessage())) {
+            details = message.getBody();
+            if (ConversationUtils.isMessageFromMe(message)) {
                 details = conversationViewHolder.itemView.getResources().getString(R.string.me_)
                         + " " + details;
             }
@@ -97,15 +101,23 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationViewH
             if (user != null) {
                 conversationViewHolder.mOnlineIndicator.setVisibility(
                         user.getOnline() == 1 ? View.VISIBLE : View.GONE);
-                il.displayUserAvatar(user, conversationViewHolder.imageAvatar);
+                mImageLoader.displayUserAvatar(user, conversationViewHolder.imageAvatar);
                 conversationViewHolder.textName.setText(
                         user.getFirstName() + " " + user.getLastName());
             }
         }
+        if (MessageUtils.isMessageWithSticker(message)) {
+            String url = MessageUtils.getStickerFromMessage(message).getPhoto64();
+            mImageLoader.displayImage(
+                    url,
+                    conversationViewHolder.mImageViewDetails);
+        } else {
+            conversationViewHolder.mImageViewDetails.setImageBitmap(null);
+        }
 
         conversationViewHolder.textDetails.setText(details);
         conversationViewHolder.textDate.setText(
-                DateUtils.getRelativeTimeSpanString(conversation.getMessage().getDate() * 1000,
+                DateUtils.getRelativeTimeSpanString(message.getDate() * 1000,
                         System.currentTimeMillis(), 0L, DateUtils.FORMAT_ABBREV_ALL));
         if (ConversationUtils.isConversationUnread(conversation)) {
             conversationViewHolder.itemView.setBackgroundColor(mUnreadColor);
@@ -117,12 +129,12 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationViewH
 
     @Override
     public long getItemId(int position) {
-        return data.get(position).getId();
+        return mData.get(position).getId();
     }
 
     @Override
     public int getItemCount() {
-        return data.size();
+        return mData.size();
     }
 
     @Override

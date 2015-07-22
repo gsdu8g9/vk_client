@@ -16,6 +16,8 @@ public class Constants {
             VKScope.NOTIFICATIONS
     };
 
+    public static float mDensity;
+
     public interface Requests {
 
         String MESSAGES_GET_DIALOGS = "messages.getDialogs";
@@ -23,5 +25,9 @@ public class Constants {
         String ACCOUNT_GET_PROFILE_INFO = "account.getProfileInfo";
         String ACCOUNT_REGISTER_DEVICE = "account.registerDevice";
         String ACCOUNT_UNREGISTER_DEVICE = "account.unregisterDevice";
+    }
+
+    public static float getDensity() {
+        return mDensity;
     }
 }

@@ -178,6 +178,7 @@ public class WebRequestManagerImpl implements WebRequestManager {
             for (Conversation conversation : list.getResults()) {
                 if (ConversationUtils.isConversationAGroupChat(conversation)) {
                     ids.add(conversation.getMessage().getFrom_id());
+                    ids.add(conversation.getMessage().getUser_id());
                 } else {
                     ids.add(conversation.getId());
                 }

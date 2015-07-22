@@ -12,4 +12,8 @@ public interface Prefs {
     String getToken();
 
     void setToken(String token);
+
+    int getCurrentActivityStateId();
+
+    void setCurrentActivityStateId(int id);
 }

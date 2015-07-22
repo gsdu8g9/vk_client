@@ -11,4 +11,6 @@ import com.nethergrim.vk.models.User;
 public interface ImageLoader {
 
     void displayUserAvatar(@NonNull User user,@NonNull ImageView imageView);
+
+    void displayImage(@NonNull String url, @NonNull ImageView imageView);
 }

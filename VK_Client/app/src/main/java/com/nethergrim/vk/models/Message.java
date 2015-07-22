@@ -1,6 +1,8 @@
 package com.nethergrim.vk.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
@@ -33,30 +35,28 @@ public class Message extends RealmObject {
     private long date;
 
     /**
-     * статус сообщения (0 — не прочитано, 1 — прочитано, не возвращается для пересланных сообщений).
+     * статус сообщения (0 — не прочитано, 1 — прочитано, не возвращается для пересланных
+     * сообщений).
      */
     private int read_state;
 
     /**
      * тип сообщения (0 — полученное, 1 — отправленное, не возвращается для пересланных сообщений).
      */
-    private int out;
-
+    @JsonProperty("out")
+    private long out;
     /**
      * заголовок сообщения или беседы.
      */
     private String title;
-
     /**
      * заголовок сообщения или беседы.
      */
     private String body;
-
     /**
      * информация о местоположении
      */
     private Geo geo;
-
     /**
      * содержатся ли в сообщении emoji-смайлы.
      */
@@ -97,23 +97,22 @@ public class Message extends RealmObject {
      * положительное число
      */
     private int users_count;
-//    /**
-//     * идентификаторы авторов последних сообщений беседы.
-//     */
-//    private long[] chat_active;
     /**
      * поле передано, если это служебное сообщение
-     * строка, может быть chat_photo_update или chat_photo_remove, а с версии 5.14 еще и chat_create, chat_title_update, chat_invite_user, chat_kick_user
+     * строка, может быть chat_photo_update или chat_photo_remove, а с версии 5.14 еще и
+     * chat_create, chat_title_update, chat_invite_user, chat_kick_user
      */
     private String action;
     /**
-     * идентификатор пользователя (если > 0) или email (если < 0), которого пригласили или исключили
+     * идентификатор пользователя (если > 0) или email (если < 0), которого пригласили или
+     * исключили
      * число, для служебных сообщений с action равным chat_invite_user или chat_kick_user
      */
     private long action_mid;
     /**
      * email, который пригласили или исключили
-     * строка, для служебных сообщений с action равным chat_invite_user или chat_kick_user и отрицательным action_mid
+     * строка, для служебных сообщений с action равным chat_invite_user или chat_kick_user и
+     * отрицательным action_mid
      */
     private String action_email;
     /**
@@ -138,6 +137,14 @@ public class Message extends RealmObject {
     private String photo_200;
 
     public Message() {
+    }
+
+    public long getOut() {
+        return out;
+    }
+
+    public void setOut(long out) {
+        this.out = out;
     }
 
     public RealmList<Message> getFwd_messages() {
@@ -212,14 +219,6 @@ public class Message extends RealmObject {
         this.action = action;
     }
 
-//    public long[] getChat_active() {
-//        return chat_active;
-//    }
-//
-//    public void setChat_active(long[] chat_active) {
-//        this.chat_active = chat_active;
-//    }
-
     public int getUsers_count() {
         return users_count;
     }
@@ -288,10 +287,6 @@ public class Message extends RealmObject {
         return read_state;
     }
 
-    public int isOut() {
-        return out;
-    }
-
     public String getTitle() {
         return title;
     }
@@ -328,14 +323,6 @@ public class Message extends RealmObject {
         this.read_state = read_state;
     }
 
-    public int getOut() {
-        return out;
-    }
-
-    public void setOut(int out) {
-        this.out = out;
-    }
-
     public Geo getGeo() {
         return geo;
     }
@@ -367,6 +354,5 @@ public class Message extends RealmObject {
     public void setDeleted(int deleted) {
         this.deleted = deleted;
     }
-
 
 }

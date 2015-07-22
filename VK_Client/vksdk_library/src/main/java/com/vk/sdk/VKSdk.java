@@ -74,18 +74,17 @@ public class VKSdk {
      */
     private String mCurrentAppId;
 
-    private VKSdk() {
-
+    /**
+     * Enumerates result of checking the token for valid
+     */
+    enum CheckTokenResult {
+        None,
+        Success,
+        Error
     }
 
-    private static void checkConditions() throws BindException {
-        if (sInstance == null) {
-            throw new BindException("VK Sdk not yet initialized");
-        }
+    private VKSdk() {
 
-        if (sInstance.getContext() == null) {
-            throw new BindException("Context must not be null");
-        }
     }
 
     /**
@@ -254,33 +253,6 @@ public class VKSdk {
     }
 
     /**
-     * Check new access token and sets it as working token
-     *
-     * @param tokenParams params of token
-     * @param renew       flag indicates token renewal
-     * @return true if access token was set, or error was provided
-     */
-    private static CheckTokenResult checkAndSetToken(Map<String, String> tokenParams, boolean renew) {
-
-        VKAccessToken token = VKAccessToken.tokenFromParameters(tokenParams);
-        if (token == null || token.accessToken == null) {
-            if (tokenParams.containsKey(VKAccessToken.SUCCESS)) {
-                return CheckTokenResult.Success;
-            }
-
-            VKError error = new VKError(tokenParams);
-            if (error.errorMessage != null || error.errorReason != null) {
-                setAccessTokenError(error);
-                return CheckTokenResult.Error;
-            }
-        } else {
-            setAccessToken(token, renew);
-            return CheckTokenResult.Success;
-        }
-        return CheckTokenResult.None;
-    }
-
-    /**
      * Set API token to passed
      *
      * @param token token must be used for API requests
@@ -296,7 +268,8 @@ public class VKSdk {
                 sInstance.mListener.onRenewAccessToken(token);
             }
         }
-        sInstance.mAccessToken.saveTokenToSharedPreferences(VKUIHelper.getApplicationContext(), VK_SDK_ACCESS_TOKEN_PREF_KEY);
+        sInstance.mAccessToken.saveTokenToSharedPreferences(VKUIHelper.getApplicationContext(),
+                VK_SDK_ACCESS_TOKEN_PREF_KEY);
     }
 
     /**
@@ -362,7 +335,8 @@ public class VKSdk {
         cookieManager.removeAllCookie();
 
         sInstance.mAccessToken = null;
-        VKAccessToken.removeTokenAtKey(VKUIHelper.getApplicationContext(), VK_SDK_ACCESS_TOKEN_PREF_KEY);
+        VKAccessToken.removeTokenAtKey(VKUIHelper.getApplicationContext(),
+                VK_SDK_ACCESS_TOKEN_PREF_KEY);
     }
 
     /**
@@ -372,10 +346,6 @@ public class VKSdk {
      */
     public static boolean isLoggedIn() {
         return sInstance.mAccessToken != null && !sInstance.mAccessToken.isExpired();
-    }
-
-    Context getContext() {
-        return VKUIHelper.getApplicationContext();
     }
 
     /**
@@ -394,6 +364,48 @@ public class VKSdk {
      */
     public void setSdkListener(VKSdkListener newListener) {
         sInstance.mListener = newListener;
+    }
+
+    Context getContext() {
+        return VKUIHelper.getApplicationContext();
+    }
+
+    private static void checkConditions() throws BindException {
+        if (sInstance == null) {
+            throw new BindException("VK Sdk not yet initialized");
+        }
+
+        if (sInstance.getContext() == null) {
+            throw new BindException("Context must not be null");
+        }
+    }
+
+    /**
+     * Check new access token and sets it as working token
+     *
+     * @param tokenParams params of token
+     * @param renew       flag indicates token renewal
+     * @return true if access token was set, or error was provided
+     */
+    private static CheckTokenResult checkAndSetToken(Map<String, String> tokenParams,
+            boolean renew) {
+
+        VKAccessToken token = VKAccessToken.tokenFromParameters(tokenParams);
+        if (token == null || token.accessToken == null) {
+            if (tokenParams.containsKey(VKAccessToken.SUCCESS)) {
+                return CheckTokenResult.Success;
+            }
+
+            VKError error = new VKError(tokenParams);
+            if (error.errorMessage != null || error.errorReason != null) {
+                setAccessTokenError(error);
+                return CheckTokenResult.Error;
+            }
+        } else {
+            setAccessToken(token, renew);
+            return CheckTokenResult.Success;
+        }
+        return CheckTokenResult.None;
     }
 
     private boolean performTokenCheck(VKAccessToken token, boolean isUserToken) {
@@ -416,21 +428,12 @@ public class VKSdk {
         new VKRequest("stats.trackVisitor").executeWithListener(new VKRequest.VKRequestListener() {
             @Override
             public void onError(VKError error) {
-                if (error.apiError.errorCode == 5) {
+                if (error != null && error.apiError != null && error.apiError.errorCode == 5) {
                     VKSdk.setAccessTokenError(error.apiError);
                     sInstance.mAccessToken = null;
                     VKAccessToken.removeTokenAtKey(VKUIHelper.getApplicationContext(), VK_SDK_ACCESS_TOKEN_PREF_KEY);
                 }
             }
         });
-    }
-
-    /**
-     * Enumerates result of checking the token for valid
-     */
-    enum CheckTokenResult {
-        None,
-        Success,
-        Error
     }
 }
