@@ -9,11 +9,21 @@
         android:layout_marginBottom="@dimen/menu_height"
         android:layout_marginTop="@dimen/action_bar_height" />
 
+
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="@dimen/action_bar_height"
         android:background="@color/primary" />
+
+    <ImageView
+        android:id="@+id/imageViewSearch"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/action_bar_height"
+        android:layout_gravity="right|top"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:src="@drawable/ic_action_search" />
 
 
     <View
@@ -54,6 +64,14 @@
             android:background="@drawable/menu_button_selector" />
 
         <ImageButton
+            android:id="@+id/photosImageButton"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/menu_button_selector"
+            android:src="@drawable/ic_image_collections" />
+
+        <ImageButton
             android:id="@+id/settingsImageButton"
             android:layout_width="0dp"
             android:layout_height="match_parent"
@@ -61,13 +79,7 @@
             android:background="@drawable/menu_button_selector"
             android:src="@drawable/ic_action_settings" />
 
-        <ImageButton
-            android:id="@+id/searchImageButton"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@drawable/menu_button_selector"
-            android:src="@drawable/ic_action_search" />
+
     </LinearLayout>
 
 </FrameLayout>

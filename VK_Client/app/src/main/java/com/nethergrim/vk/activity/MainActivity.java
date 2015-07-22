@@ -41,10 +41,14 @@ public class MainActivity extends AbstractActivity implements WebCallback<User>,
     ImageButton mProfileImageButton;
     @InjectView(R.id.settingsImageButton)
     ImageButton mSettingsImageButton;
-    @InjectView(R.id.searchImageButton)
-    ImageButton mSearchImageButton;
+    @InjectView(R.id.photosImageButton)
+    ImageButton mPhotosImageButton;
     @InjectView(R.id.toolbar)
     Toolbar mToolbar;
+
+    @InjectView(R.id.imageViewSearch)
+    ImageView mSearchImageView;
+
     @Inject
     WebRequestManager mWebRequestManager;
     @Inject
@@ -89,8 +93,11 @@ public class MainActivity extends AbstractActivity implements WebCallback<User>,
             case R.id.settingsImageButton:
                 setState(MainActivityState.Settings);
                 break;
-            case R.id.searchImageButton:
-                setState(MainActivityState.Search);
+            case R.id.photosImageButton:
+                setState(MainActivityState.Photos);
+                break;
+            case R.id.imageViewSearch:
+                // TODO open search activity
                 break;
 
         }
@@ -122,13 +129,16 @@ public class MainActivity extends AbstractActivity implements WebCallback<User>,
     private void initToolbar() {
         ViewCompat.setElevation(mToolbar, 4.0f * Constants.mDensity);
         mToolbar.setTitleTextColor(Color.WHITE);
+        mSearchImageView.setImageDrawable(
+                Utils.tintIcon(R.drawable.ic_action_search, R.color.icons));
+        mSearchImageView.setOnClickListener(this);
     }
 
     private void initMenu() {
         mMessagesImageButton.setOnClickListener(this);
         mFriendsImageButton.setOnClickListener(this);
         mProfileImageButton.setOnClickListener(this);
-        mSearchImageButton.setOnClickListener(this);
+        mPhotosImageButton.setOnClickListener(this);
         mSettingsImageButton.setOnClickListener(this);
         setState(MainActivityState.getStateForId(mPrefs.getCurrentActivityStateId()));
         mProfileImageButton.setScaleType(ImageView.ScaleType.FIT_CENTER);
@@ -154,10 +164,10 @@ public class MainActivity extends AbstractActivity implements WebCallback<User>,
                 case Profile:
                     // TODO show profile fragment
                     break;
-                case Search:
-                    mSearchImageButton.setImageDrawable(
-                            Utils.tintIcon(R.drawable.ic_action_search, R.color.primary));
-                    // TODO show fragment
+                case Photos:
+                    mPhotosImageButton.setImageDrawable(
+                            Utils.tintIcon(R.drawable.ic_image_collections, R.color.primary));
+                    // TODO show Photos fragment
                     break;
                 case Settings:
                     mSettingsImageButton.setImageDrawable(
@@ -175,8 +185,8 @@ public class MainActivity extends AbstractActivity implements WebCallback<User>,
                 Utils.tintIcon(R.drawable.ic_action_account_child, R.color.icons_color));
         mSettingsImageButton.setImageDrawable(
                 Utils.tintIcon(R.drawable.ic_action_settings, R.color.icons_color));
-        mSearchImageButton.setImageDrawable(
-                Utils.tintIcon(R.drawable.ic_action_search, R.color.icons_color));
+        mPhotosImageButton.setImageDrawable(
+                Utils.tintIcon(R.drawable.ic_image_collections, R.color.icons_color));
     }
 
 }

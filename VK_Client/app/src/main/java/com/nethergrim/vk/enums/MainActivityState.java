@@ -12,8 +12,8 @@ public enum MainActivityState {
     Conversations(R.string.conversations, 0),
     Friends(R.string.friends, 1),
     Profile(R.string.profile, 2),
-    Settings(R.string.settings, 3),
-    Search(R.string.search, 4);
+    Settings(R.string.settings, 4),
+    Photos(R.string.photos, 3);
 
     private int mTitleString;
     private int mId;
