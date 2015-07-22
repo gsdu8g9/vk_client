@@ -3,6 +3,7 @@ package com.nethergrim.vk.utils;
 import android.graphics.ColorFilter;
 import android.graphics.ColorMatrixColorFilter;
 import android.graphics.drawable.Drawable;
+import android.provider.Settings;
 import android.support.annotation.ColorRes;
 import android.support.annotation.DrawableRes;
 
@@ -32,6 +33,12 @@ public class Utils {
         drawable.setColorFilter(colorFilter);
 
         return drawable;
+    }
+
+    public static String generateAndroidId() {
+        return Settings.Secure.getString(
+                MyApplication.getInstance().getApplicationContext().getContentResolver(),
+                Settings.Secure.ANDROID_ID);
     }
 
 }

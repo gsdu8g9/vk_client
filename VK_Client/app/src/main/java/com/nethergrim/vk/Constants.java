@@ -7,7 +7,10 @@ import com.vk.sdk.VKScope;
  */
 public class Constants {
 
+
     public static final String VK_APP_ID = "4579411";
+    public static final String GCM_SENDER_ID = "793065187";
+
     public static final String[] PERMISSIONS = new String[] {
             VKScope.FRIENDS,
             VKScope.WALL,

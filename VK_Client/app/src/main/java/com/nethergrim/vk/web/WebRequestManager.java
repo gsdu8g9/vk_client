@@ -28,7 +28,7 @@ public interface WebRequestManager {
 
     void getCurrentUser(WebCallback<User> callback);
 
-    void registerToPushNotifications(String token, String deviceId);
+    void registerToPushNotifications(String token);
 
-    void unregisterFromPushNotifications(String deviceId);
+    void unregisterFromPushNotifications();
 }

@@ -14,6 +14,7 @@ import com.nethergrim.vk.models.ListOfUsers;
 import com.nethergrim.vk.models.User;
 import com.nethergrim.vk.utils.ConversationUtils;
 import com.nethergrim.vk.utils.UserUtils;
+import com.nethergrim.vk.utils.Utils;
 import com.vk.sdk.api.VKError;
 import com.vk.sdk.api.VKParameters;
 import com.vk.sdk.api.VKRequest;
@@ -223,11 +224,11 @@ public class WebRequestManagerImpl implements WebRequestManager {
     }
 
     @Override
-    public void registerToPushNotifications(String token, String deviceId) {
+    public void registerToPushNotifications(String token) {
         Map<String, Object> params = new HashMap<>();
         params.put("token", token);
         params.put("device_model", "android");
-        params.put("device_id", deviceId);
+        params.put("device_id", Utils.generateAndroidId());
         params.put("system_version", String.valueOf(Build.VERSION.SDK_INT));
 
         VKRequest vkRequest = new VKRequest(Constants.Requests.ACCOUNT_REGISTER_DEVICE,
@@ -236,7 +237,7 @@ public class WebRequestManagerImpl implements WebRequestManager {
             @Override
             public void onComplete(VKResponse response) {
                 super.onComplete(response);
-                Log.e("TAG", "registered ok: " + response.responseString);
+                Log.e("TAG", "registered GCM ok: " + response.responseString);
             }
 
             @Override
@@ -248,16 +249,16 @@ public class WebRequestManagerImpl implements WebRequestManager {
     }
 
     @Override
-    public void unregisterFromPushNotifications(String deviceId) {
+    public void unregisterFromPushNotifications() {
         Map<String, Object> params = new HashMap<>();
-        params.put("device_id", deviceId);
+        params.put("device_id", Utils.generateAndroidId());
         VKRequest vkRequest = new VKRequest(Constants.Requests.ACCOUNT_UNREGISTER_DEVICE,
                 new VKParameters(params));
         vkRequest.executeWithListener(new VKRequest.VKRequestListener() {
             @Override
             public void onComplete(VKResponse response) {
                 super.onComplete(response);
-                Log.e("TAG", "unregistered ok: " + response.responseString);
+                Log.e("TAG", "unregistered GCM ok: " + response.responseString);
             }
 
             @Override

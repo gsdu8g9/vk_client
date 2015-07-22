@@ -1,10 +1,17 @@
-package com.nethergrim.vk.web;
+package com.nethergrim.vk.gcm;
 
 import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 
+import com.google.android.gms.gcm.GoogleCloudMessaging;
+import com.google.android.gms.iid.InstanceID;
+import com.nethergrim.vk.Constants;
 import com.nethergrim.vk.MyApplication;
+import com.nethergrim.vk.web.WebRequestManager;
+
+import java.io.IOException;
 
 import javax.inject.Inject;
 
@@ -37,7 +44,15 @@ public class PushNotificationsRegisterIntentService extends IntentService {
     }
 
     private void registerForPushNotifications() {
-        // TODO register for push notifications
+        InstanceID instanceID = InstanceID.getInstance(this);
+        try {
+            String token = instanceID.getToken(Constants.GCM_SENDER_ID,
+                    GoogleCloudMessaging.INSTANCE_ID_SCOPE, null);
+            Log.e("TAG", "GCM token: " + token);
+            mWebRequestManager.registerToPushNotifications(token);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 }
