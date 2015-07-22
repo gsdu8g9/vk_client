@@ -69,12 +69,20 @@
             android:background="@drawable/menu_button_selector"
             android:src="@drawable/ic_action_account_child" />
 
-        <ImageButton
-            android:id="@+id/profileImageButton"
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1"
-            android:background="@drawable/menu_button_selector" />
+            android:layout_weight="1">
+
+            <ImageButton
+                android:id="@+id/profileImageButton"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/menu_height"
+                android:layout_gravity="center"
+                android:background="@drawable/menu_button_selector" />
+
+        </FrameLayout>
+
 
         <ImageButton
             android:id="@+id/photosImageButton"
