@@ -8,4 +8,8 @@ public interface Prefs {
     long getCurrentUserId();
 
     void setCurrentUserId(long userId);
+
+    int getCurrentActivityStateId();
+
+    void setCurrentActivityStateId(int id);
 }

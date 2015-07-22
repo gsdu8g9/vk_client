@@ -16,10 +16,16 @@ public class Constants {
             VKScope.NOTIFICATIONS
     };
 
+    public static float mDensity;
+
     public interface Requests {
 
         String MESSAGES_GET_DIALOGS = "messages.getDialogs";
         String GET_USERS = "users.get";
         String ACCOUNT_GET_PROFILE_INFO = "account.getProfileInfo";
+    }
+
+    public static float getDensity() {
+        return mDensity;
     }
 }
