@@ -149,17 +149,20 @@ public class MainActivity extends AbstractActivity implements WebCallback<User>,
                 case Friends:
                     mFriendsImageButton.setImageDrawable(
                             Utils.tintIcon(R.drawable.ic_action_account_child, R.color.primary));
+                    // TODO show friends fragment
                     break;
                 case Profile:
-
+                    // TODO show profile fragment
                     break;
                 case Search:
                     mSearchImageButton.setImageDrawable(
                             Utils.tintIcon(R.drawable.ic_action_search, R.color.primary));
+                    // TODO show fragment
                     break;
                 case Settings:
                     mSettingsImageButton.setImageDrawable(
                             Utils.tintIcon(R.drawable.ic_action_settings, R.color.primary));
+                    // TODO show settings fragment
                     break;
             }
         }
