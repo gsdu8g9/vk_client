@@ -3,14 +3,12 @@ package com.nethergrim.vk.activity;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
-import com.nethergrim.vk.Constants;
 import com.nethergrim.vk.MyApplication;
 import com.nethergrim.vk.R;
 import com.nethergrim.vk.caching.Prefs;
@@ -127,7 +125,6 @@ public class MainActivity extends AbstractActivity implements WebCallback<User>,
     }
 
     private void initToolbar() {
-        ViewCompat.setElevation(mToolbar, 4.0f * Constants.mDensity);
         mToolbar.setTitleTextColor(Color.WHITE);
         mSearchImageView.setImageDrawable(
                 Utils.tintIcon(R.drawable.ic_action_search, R.color.icons));
