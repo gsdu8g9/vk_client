@@ -38,6 +38,7 @@ public class MyApplication extends Application {
         super.onCreate();
         KissTools.setContext(this);
         _app = this;
+        Constants.mDensity = getResources().getDisplayMetrics().density;
         VKSdkListener vkSdkListener = new VKSdkListener() {
             @Override
             public void onCaptchaError(VKError captchaError) {

@@ -16,8 +16,5 @@
     <color name="shadow">#80BDBDBD</color>
 
     <color name="green">#4CAF50</color>
-    <color name="menu.button.normal">#FFFFFF</color>
-    <color name="menu.button.pressed">#EEEEEE</color>
-    <color name="menu.button.icon">#2196F3</color>
 
 </resources>

@@ -6,19 +6,29 @@
         android:id="@+id/fragment_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginRight="@dimen/action_bar_height" />
+        android:layout_marginRight="@dimen/menu_height"
+        android:layout_marginTop="@dimen/action_bar_height" />
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/action_bar_height"
+        android:layout_marginRight="@dimen/menu_height"
+        android:background="@color/primary" />
 
 
     <View
         android:layout_width="4dp"
         android:layout_height="match_parent"
         android:layout_gravity="end"
-        android:layout_marginRight="@dimen/action_bar_height"
+        android:layout_marginRight="@dimen/menu_height"
+        android:layout_marginTop="@dimen/action_bar_height"
         android:background="@drawable/shadow_right_left" />
 
 
     <LinearLayout
-        android:layout_width="@dimen/action_bar_height"
+        android:id="@+id/menu_layout"
+        android:layout_width="@dimen/menu_height"
         android:layout_height="match_parent"
         android:layout_gravity="end"
         android:orientation="vertical"

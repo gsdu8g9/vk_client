@@ -1,10 +1,13 @@
 package com.nethergrim.vk.activity;
 
 import android.os.Bundle;
+import android.support.v4.view.ViewCompat;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
+import com.nethergrim.vk.Constants;
 import com.nethergrim.vk.MyApplication;
 import com.nethergrim.vk.R;
 import com.nethergrim.vk.caching.Prefs;
@@ -35,6 +38,8 @@ public class MainActivity extends AbstractActivity implements WebCallback<User> 
     ImageButton mSettingsImageButton;
     @InjectView(R.id.imageButton5)
     ImageButton mSearchImageButton;
+    @InjectView(R.id.toolbar)
+    Toolbar mToolbar;
     @Inject
     WebRequestManager mWRM;
     @Inject
@@ -70,6 +75,7 @@ public class MainActivity extends AbstractActivity implements WebCallback<User> 
         MyApplication.getInstance().getMainComponent().inject(this);
         showFragment(new MessagesFragment(), false, false, R.id.fragment_container);
         initMenu();
+        initToolbar();
         loadCurrentUser();
     }
 
@@ -84,15 +90,19 @@ public class MainActivity extends AbstractActivity implements WebCallback<User> 
         }
     }
 
+    private void initToolbar() {
+        ViewCompat.setElevation(mToolbar, 4.0f * Constants.mDensity);
+    }
+
     private void initMenu() {
         mMessagesImageButton.setImageDrawable(
-                Utils.tintIcon(R.drawable.ic_action_question_answer, R.color.menu_button_icon));
+                Utils.tintIcon(R.drawable.ic_action_question_answer, R.color.primary));
         mFriendsImageButton.setImageDrawable(
-                Utils.tintIcon(R.drawable.ic_action_account_child, R.color.menu_button_icon));
+                Utils.tintIcon(R.drawable.ic_action_account_child, R.color.primary));
         mSettingsImageButton.setImageDrawable(
-                Utils.tintIcon(R.drawable.ic_action_settings, R.color.menu_button_icon));
+                Utils.tintIcon(R.drawable.ic_action_settings, R.color.primary));
         mSearchImageButton.setImageDrawable(
-                Utils.tintIcon(R.drawable.ic_action_search, R.color.menu_button_icon));
+                Utils.tintIcon(R.drawable.ic_action_search, R.color.primary));
 
         mProfileImageButton.setScaleType(ImageView.ScaleType.FIT_CENTER);
     }

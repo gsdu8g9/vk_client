@@ -6,23 +6,29 @@
         android:id="@+id/fragment_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginBottom="@dimen/action_bar_height" />
+        android:layout_marginBottom="@dimen/menu_height"
+        android:layout_marginTop="@dimen/action_bar_height" />
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/action_bar_height"
+        android:background="@color/primary" />
 
 
     <View
         android:layout_width="match_parent"
         android:layout_height="4dp"
         android:layout_gravity="bottom"
-        android:layout_marginBottom="@dimen/action_bar_height"
+        android:layout_marginBottom="@dimen/menu_height"
         android:background="@drawable/shadow_bottom_top" />
 
-
     <LinearLayout
+        android:id="@+id/menu_layout"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/action_bar_height"
+        android:layout_height="@dimen/menu_height"
         android:layout_gravity="bottom"
         android:weightSum="5">
-
 
         <ImageButton
             android:id="@+id/imageButton"
