@@ -4,5 +4,9 @@
     <string name="nothing_here_yet">Здесь пока что ничего нет</string>
     <string name="me_">Я:</string>
 
-
+    <string name="conversations">Сообщения</string>
+    <string name="friends">Друзья</string>
+    <string name="profile">Мой Профиль</string>
+    <string name="settings">Настройки</string>
+    <string name="search">Поиск</string>
 </resources>

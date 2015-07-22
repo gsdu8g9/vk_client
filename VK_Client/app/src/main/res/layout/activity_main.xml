@@ -31,7 +31,7 @@
         android:weightSum="5">
 
         <ImageButton
-            android:id="@+id/imageButton"
+            android:id="@+id/messagesImageButton"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -39,7 +39,7 @@
             android:src="@drawable/ic_action_question_answer" />
 
         <ImageButton
-            android:id="@+id/imageButton2"
+            android:id="@+id/friendsImageButton"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -47,14 +47,14 @@
             android:src="@drawable/ic_action_account_child" />
 
         <ImageButton
-            android:id="@+id/imageButton3"
+            android:id="@+id/profileImageButton"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:background="@drawable/menu_button_selector" />
 
         <ImageButton
-            android:id="@+id/imageButton4"
+            android:id="@+id/settingsImageButton"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -62,7 +62,7 @@
             android:src="@drawable/ic_action_settings" />
 
         <ImageButton
-            android:id="@+id/imageButton5"
+            android:id="@+id/searchImageButton"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
