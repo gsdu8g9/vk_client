@@ -51,7 +51,6 @@ public class ProviderModule {
     }
 
     @Provides
-    @Singleton
     UserProvider provideUserProvider() {
         return new RealmUserProviderImplementation();
     }

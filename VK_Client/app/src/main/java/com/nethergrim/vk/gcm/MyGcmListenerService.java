@@ -2,12 +2,16 @@ package com.nethergrim.vk.gcm;
 
 import android.app.NotificationManager;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.google.android.gms.gcm.GcmListenerService;
 import com.nethergrim.vk.MyApplication;
+import com.nethergrim.vk.R;
 import com.nethergrim.vk.callbacks.WebCallback;
 import com.nethergrim.vk.models.ListOfUsers;
 import com.nethergrim.vk.models.User;
@@ -16,6 +20,9 @@ import com.nethergrim.vk.models.push.PushObject;
 import com.nethergrim.vk.utils.PushParser;
 import com.nethergrim.vk.utils.UserProvider;
 import com.nethergrim.vk.web.WebRequestManager;
+import com.nethergrim.vk.web.images.ImageLoader;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 import com.vk.sdk.api.VKError;
 
 import java.util.Collections;
@@ -42,20 +49,18 @@ public class MyGcmListenerService extends GcmListenerService {
     @Inject
     Realm mRealm;
 
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        MyApplication.getInstance().getMainComponent().inject(this);
-    }
+    @Inject
+    ImageLoader mImageLoader;
 
     @Override
     public void onMessageReceived(String from, Bundle data) {
         super.onMessageReceived(from, data);
+        MyApplication.getInstance().getMainComponent().inject(this);
         PushObject pushObject = mPushParser.parsePushObject(data);
         handleNotificationForPush(pushObject);
     }
 
-    private void handleNotificationForPush(PushObject pushObject) {
+    private void handleNotificationForPush(final PushObject pushObject) {
         switch (pushObject.getPushType()) {
             case Message:
                 PushMessage pushMessage = (PushMessage) pushObject;
@@ -67,18 +72,39 @@ public class MyGcmListenerService extends GcmListenerService {
         }
     }
 
-    private void showNotification(final PushMessage message) {
+    private void showNotification(@NonNull final PushMessage message) {
         User user = mUserProvider.getUser(message.getUid());
         if (user != null) {
             // just show notification
-            NotificationCompat.Builder mBuilder =
-                    new NotificationCompat.Builder(this)
-                            .setContentTitle(user.getFirstName() + " " + user.getLastName())
-                            .setContentText(message.getText());
 
-            NotificationManager mNotificationManager =
-                    (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-            mNotificationManager.notify(message.getUid().hashCode(), mBuilder.build());
+            final String firstName = user.getFirstName();
+            final String lastName = user.getLastName();
+            mImageLoader.getUserAvatar(user, new Target() {
+                @Override
+                public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                    NotificationCompat.Builder mBuilder =
+                            new NotificationCompat.Builder(MyGcmListenerService.this)
+                                    .setSmallIcon(R.drawable.ic_stat_content_mail)
+                                    .setLargeIcon(bitmap)
+                                    .setContentTitle(firstName + " " + lastName)
+                                    .setContentText(message.getText());
+
+                    NotificationManager mNotificationManager =
+                            (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                    mNotificationManager.notify(message.getUid().hashCode(), mBuilder.build());
+                }
+
+                @Override
+                public void onBitmapFailed(Drawable errorDrawable) {
+
+                }
+
+                @Override
+                public void onPrepareLoad(Drawable placeHolderDrawable) {
+
+                }
+            });
+
         } else {
             // fetch user from backend
             long userId = Long.parseLong(message.getUid());

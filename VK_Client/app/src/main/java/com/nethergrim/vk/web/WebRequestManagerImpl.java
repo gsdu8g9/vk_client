@@ -15,6 +15,7 @@ import com.nethergrim.vk.models.User;
 import com.nethergrim.vk.utils.ConversationUtils;
 import com.nethergrim.vk.utils.UserUtils;
 import com.nethergrim.vk.utils.Utils;
+import com.nethergrim.vk.web.images.ImageLoader;
 import com.vk.sdk.api.VKError;
 import com.vk.sdk.api.VKParameters;
 import com.vk.sdk.api.VKRequest;
@@ -38,6 +39,9 @@ public class WebRequestManagerImpl implements WebRequestManager {
 
     @Inject
     JsonDeserializer mJsonDeserializer;
+
+    @Inject
+    ImageLoader mImageLoader;
 
     public WebRequestManagerImpl() {
         MyApplication.getInstance().getMainComponent().inject(this);
@@ -157,6 +161,9 @@ public class WebRequestManagerImpl implements WebRequestManager {
                 super.onComplete(response);
                 ListOfUsers listOfUsers = mJsonDeserializer.getListOfUsers(response.responseString);
                 if (listOfUsers != null && listOfUsers.getResponse() != null && callback != null) {
+                    for (User user : listOfUsers.getResponse()) {
+                        mImageLoader.cacheUserAvatars(user);
+                    }
                     callback.onResponseSucceed(listOfUsers);
                 }
             }
@@ -173,49 +180,7 @@ public class WebRequestManagerImpl implements WebRequestManager {
 
     @Override
     public void getUsers(List<Long> ids, final WebCallback<ListOfUsers> callback) {
-        Map<String, Object> params = new HashMap<>();
-
-        if (ids != null) {
-            if (ids.size() > 1000) {
-                throw new IllegalArgumentException("you want to fetch too much users. Max is 1000");
-            }
-
-            StringBuilder sb = new StringBuilder();
-            for (Long id : ids) {
-                sb.append(id);
-                sb.append(", ");
-            }
-            String idsValues = StringUtil.cutText(sb.toString(), sb.toString().length() - 2);
-            params.put("user_ids", idsValues);
-        }
-
-        StringBuilder sb = new StringBuilder();
-        for (String field : UserUtils.getDefaultUserFields()) {
-            sb.append(field);
-            sb.append(", ");
-        }
-        String idsValues = StringUtil.cutText(sb.toString(), sb.toString().length() - 2);
-        params.put("fields", idsValues);
-
-        VKRequest vkRequest = new VKRequest(Constants.Requests.GET_USERS, new VKParameters(params));
-        vkRequest.executeWithListener(new VKRequest.VKRequestListener() {
-            @Override
-            public void onComplete(VKResponse response) {
-                super.onComplete(response);
-                ListOfUsers listOfUsers = mJsonDeserializer.getListOfUsers(response.responseString);
-                if (listOfUsers != null && listOfUsers.getResponse() != null && callback != null) {
-                    callback.onResponseSucceed(listOfUsers);
-                }
-            }
-
-            @Override
-            public void onError(VKError error) {
-                super.onError(error);
-                if (callback != null) {
-                    callback.onResponseFailed(error);
-                }
-            }
-        });
+        getUsers(ids, UserUtils.getDefaultUserFields(), null, callback);
 
     }
 
