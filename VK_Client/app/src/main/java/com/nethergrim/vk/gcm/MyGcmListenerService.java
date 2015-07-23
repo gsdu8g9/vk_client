@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.google.android.gms.gcm.GcmListenerService;
+import com.nethergrim.vk.MyApplication;
 import com.nethergrim.vk.web.WebRequestManager;
 
 import javax.inject.Inject;
@@ -17,6 +18,12 @@ public class MyGcmListenerService extends GcmListenerService {
 
     @Inject
     WebRequestManager mWebRequestManager;
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        MyApplication.getInstance().getMainComponent().inject(this);
+    }
 
     @Override
     public void onMessageReceived(String from, Bundle data) {
