@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.android.gms.iid.InstanceID;
@@ -75,6 +76,7 @@ public class PushNotificationsRegisterService extends Service {
                                     }
                                     mPrefs.setGcmToken(token);
                                 }
+                                Log.e("TAG", "registering token: " + token);
                                 mWebRequestManager.registerToPushNotifications(token);
                             }
                         });
