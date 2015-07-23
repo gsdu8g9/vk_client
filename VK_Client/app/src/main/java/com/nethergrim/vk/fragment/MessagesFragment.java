@@ -109,13 +109,13 @@ public class MessagesFragment extends AbstractFragment implements WebCallback<Co
     @Override
     public void onResume() {
         super.onResume();
-        mSafeTimer.start();
+//        mSafeTimer.start();
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        mSafeTimer.finish();
+//        mSafeTimer.finish();
     }
 
     @Override
@@ -134,7 +134,9 @@ public class MessagesFragment extends AbstractFragment implements WebCallback<Co
         loadPage(0);
     }
 
-    @Override
+    private void loadPage(int pageNumber) {
+        mWM.getConversations(DEFAULT_PAGE_SIZE, pageNumber * DEFAULT_PAGE_SIZE, false, 0, this);
+    }    @Override
     public void onResponseSucceed(ConversationsList response) {
         if (response != null && checkRealm()) {
             mSwipeRefreshLayout.setRefreshing(false);
@@ -167,9 +169,7 @@ public class MessagesFragment extends AbstractFragment implements WebCallback<Co
         }
     }
 
-    private void loadPage(int pageNumber) {
-        mWM.getConversations(DEFAULT_PAGE_SIZE, pageNumber * DEFAULT_PAGE_SIZE, false, 0, this);
-    }
+
 
     @Override
     public void onResponseFailed(VKError e) {

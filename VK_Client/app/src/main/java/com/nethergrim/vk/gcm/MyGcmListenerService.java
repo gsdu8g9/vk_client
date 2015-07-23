@@ -20,6 +20,7 @@ import com.nethergrim.vk.models.push.PushMessage;
 import com.nethergrim.vk.models.push.PushObject;
 import com.nethergrim.vk.utils.PushParser;
 import com.nethergrim.vk.utils.UserProvider;
+import com.nethergrim.vk.utils.Utils;
 import com.nethergrim.vk.web.WebRequestManager;
 import com.nethergrim.vk.web.images.ImageLoader;
 import com.squareup.picasso.Picasso;
@@ -56,6 +57,7 @@ public class MyGcmListenerService extends GcmListenerService {
     @Override
     public void onMessageReceived(String from, Bundle data) {
         super.onMessageReceived(from, data);
+        Log.e("TAG", "message received: " + Utils.convertBundleToJson(data).toString());
         MyApplication.getInstance().getMainComponent().inject(this);
         PushObject pushObject = mPushParser.parsePushObject(data);
         handleNotificationForPush(pushObject);
@@ -63,7 +65,7 @@ public class MyGcmListenerService extends GcmListenerService {
 
     private void handleNotificationForPush(final PushObject pushObject) {
         Log.e("TAG", "update conversations");
-        mWebRequestManager.getConversations(10, 0, false, 0,
+        mWebRequestManager.getConversations(10, 0, true, 0,
                 new WebCallback<ConversationsList>() {
                     @Override
                     public void onResponseSucceed(ConversationsList response) {
@@ -99,6 +101,15 @@ public class MyGcmListenerService extends GcmListenerService {
 
             final String firstName = user.getFirstName();
             final String lastName = user.getLastName();
+            NotificationCompat.Builder mBuilder =
+                    new NotificationCompat.Builder(MyGcmListenerService.this)
+                            .setSmallIcon(R.drawable.ic_stat_content_mail)
+                            .setContentTitle(firstName + " " + lastName)
+                            .setContentText(message.getText());
+
+            NotificationManager mNotificationManager =
+                    (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            mNotificationManager.notify(message.getUid().hashCode(), mBuilder.build());
             mImageLoader.getUserAvatar(user, new Target() {
                 @Override
                 public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
