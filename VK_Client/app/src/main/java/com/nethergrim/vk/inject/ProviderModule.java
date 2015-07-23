@@ -18,6 +18,7 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
+import io.realm.Realm;
 
 /**
  * @author andreydrobyazko on 4/3/15.
@@ -59,5 +60,10 @@ public class ProviderModule {
     @Singleton
     PushParser providePushParser() {
         return new PushParserImpl();
+    }
+
+    @Provides
+    Realm provideRealm() {
+        return Realm.getDefaultInstance();
     }
 }

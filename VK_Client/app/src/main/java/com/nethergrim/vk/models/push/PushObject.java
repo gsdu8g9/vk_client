@@ -42,6 +42,7 @@ public abstract class PushObject {
 
         Message("msg", "msg", PushMessage.class),
         Friend("friend", "friend", PushFriend.class),
+        Other("new_post", "new_post", PushObject.class),
         Call("call", "call", PushCall.class);
         // TODO add more push notifications types
 

@@ -7,6 +7,7 @@ import com.nethergrim.vk.fragment.MessagesFragment;
 import com.nethergrim.vk.gcm.MyGcmListenerService;
 import com.nethergrim.vk.gcm.MyInstanceIDListenerService;
 import com.nethergrim.vk.gcm.PushNotificationsRegisterService;
+import com.nethergrim.vk.utils.PushParserImpl;
 import com.nethergrim.vk.utils.RealmUserProviderImplementation;
 import com.nethergrim.vk.web.WebRequestManagerImpl;
 
@@ -44,4 +45,6 @@ public interface MainComponent {
     void inject(MyInstanceIDListenerService o);
 
     void inject(MyGcmListenerService o);
+
+    void inject(PushParserImpl o);
 }

@@ -11,5 +11,7 @@ public interface UserProvider {
 
     User getUser(long userId);
 
+    User getUser(String userId);
+
     User getMyUser();
 }

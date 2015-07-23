@@ -30,6 +30,9 @@ public interface WebRequestManager {
             WebCallback<ListOfUsers> callback);
 
     @UiThread
+    void getUsers(List<Long> ids, WebCallback<ListOfUsers> callback);
+
+    @UiThread
     void getUsersForConversations(ConversationsList list, WebCallback<ListOfUsers> callback);
 
     @UiThread

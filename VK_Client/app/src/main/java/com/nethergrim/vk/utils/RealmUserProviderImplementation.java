@@ -29,6 +29,12 @@ public class RealmUserProviderImplementation implements UserProvider {
     }
 
     @Override
+    public User getUser(String userId) {
+        long uid = Long.parseLong(userId);
+        return getUser(uid);
+    }
+
+    @Override
     public User getMyUser() {
         return getUser(mPrefs.getCurrentUserId());
     }

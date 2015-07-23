@@ -1,6 +1,7 @@
 package com.nethergrim.vk.utils;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 
 import com.nethergrim.vk.models.push.PushObject;
 
@@ -9,5 +10,7 @@ import com.nethergrim.vk.models.push.PushObject;
  */
 public interface PushParser {
 
-    PushObject parsePushObject(Bundle bundle);
+    PushObject parsePushObject(@NonNull Bundle bundle);
+
+    PushObject parsePushObject(@NonNull Bundle bundle, @NonNull PushObject.PushType pushType);
 }
