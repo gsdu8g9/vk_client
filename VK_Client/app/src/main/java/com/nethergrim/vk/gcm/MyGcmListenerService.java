@@ -13,6 +13,7 @@ import com.google.android.gms.gcm.GcmListenerService;
 import com.nethergrim.vk.MyApplication;
 import com.nethergrim.vk.R;
 import com.nethergrim.vk.callbacks.WebCallback;
+import com.nethergrim.vk.models.ConversationsList;
 import com.nethergrim.vk.models.ListOfUsers;
 import com.nethergrim.vk.models.User;
 import com.nethergrim.vk.models.push.PushMessage;
@@ -61,6 +62,25 @@ public class MyGcmListenerService extends GcmListenerService {
     }
 
     private void handleNotificationForPush(final PushObject pushObject) {
+        Log.e("TAG", "update conversations");
+        mWebRequestManager.getConversations(10, 0, false, 0,
+                new WebCallback<ConversationsList>() {
+                    @Override
+                    public void onResponseSucceed(ConversationsList response) {
+                        Log.e("TAG", "conversations updated");
+                        Realm realm = Realm.getDefaultInstance();
+                        realm.beginTransaction();
+                        realm.setAutoRefresh(true);
+                        realm.copyToRealmOrUpdate(response.getResults());
+                        realm.commitTransaction();
+                    }
+
+                    @Override
+                    public void onResponseFailed(VKError e) {
+
+                    }
+                });
+
         switch (pushObject.getPushType()) {
             case Message:
                 PushMessage pushMessage = (PushMessage) pushObject;
