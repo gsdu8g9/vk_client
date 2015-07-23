@@ -84,10 +84,11 @@ public class MyGcmListenerService extends GcmListenerService {
                     @Override
                     public void onResponseSucceed(ConversationsList response) {
                         Log.e("TAG", "conversations updated");
-                        mRealm.beginTransaction();
-                        mRealm.setAutoRefresh(true);
-                        mRealm.copyToRealmOrUpdate(response.getResults());
-                        mRealm.commitTransaction();
+                        Realm realm = Realm.getDefaultInstance();
+                        realm.beginTransaction();
+                        realm.setAutoRefresh(true);
+                        realm.copyToRealmOrUpdate(response.getResults());
+                        realm.commitTransaction();
                     }
 
                     @Override
@@ -104,15 +105,7 @@ public class MyGcmListenerService extends GcmListenerService {
 
             final String firstName = user.getFirstName();
             final String lastName = user.getLastName();
-            NotificationCompat.Builder mBuilder =
-                    new NotificationCompat.Builder(MyGcmListenerService.this)
-                            .setSmallIcon(R.drawable.ic_stat_content_mail)
-                            .setContentTitle(firstName + " " + lastName)
-                            .setContentText(message.getText());
 
-            NotificationManager mNotificationManager =
-                    (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-            mNotificationManager.notify(message.getUid().hashCode(), mBuilder.build());
             mImageLoader.getUserAvatar(user, new Target() {
                 @Override
                 public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
