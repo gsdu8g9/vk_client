@@ -64,24 +64,6 @@ public class MyGcmListenerService extends GcmListenerService {
     }
 
     private void handleNotificationForPush(final PushObject pushObject) {
-        Log.e("TAG", "update conversations");
-        mWebRequestManager.getConversations(10, 0, true, 0,
-                new WebCallback<ConversationsList>() {
-                    @Override
-                    public void onResponseSucceed(ConversationsList response) {
-                        Log.e("TAG", "conversations updated");
-                        Realm realm = Realm.getDefaultInstance();
-                        realm.beginTransaction();
-                        realm.setAutoRefresh(true);
-                        realm.copyToRealmOrUpdate(response.getResults());
-                        realm.commitTransaction();
-                    }
-
-                    @Override
-                    public void onResponseFailed(VKError e) {
-
-                    }
-                });
 
         switch (pushObject.getPushType()) {
             case Message:
@@ -92,6 +74,27 @@ public class MyGcmListenerService extends GcmListenerService {
                 // do not supporting other push notifications now
                 break;
         }
+        updateConversations();
+    }
+
+    private void updateConversations() {
+        Log.e("TAG", "update conversations");
+        mWebRequestManager.getConversations(10, 0, true, 0,
+                new WebCallback<ConversationsList>() {
+                    @Override
+                    public void onResponseSucceed(ConversationsList response) {
+                        Log.e("TAG", "conversations updated");
+                        mRealm.beginTransaction();
+                        mRealm.setAutoRefresh(true);
+                        mRealm.copyToRealmOrUpdate(response.getResults());
+                        mRealm.commitTransaction();
+                    }
+
+                    @Override
+                    public void onResponseFailed(VKError e) {
+
+                    }
+                });
     }
 
     private void showNotification(@NonNull final PushMessage message) {
