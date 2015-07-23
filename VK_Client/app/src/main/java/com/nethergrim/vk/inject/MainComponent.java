@@ -4,7 +4,7 @@ import com.nethergrim.vk.MyApplication;
 import com.nethergrim.vk.activity.MainActivity;
 import com.nethergrim.vk.adapter.ConversationsAdapter;
 import com.nethergrim.vk.fragment.MessagesFragment;
-import com.nethergrim.vk.gcm.PushNotificationsRegisterIntentService;
+import com.nethergrim.vk.gcm.PushNotificationsRegisterService;
 import com.nethergrim.vk.utils.UserProviderImplementation;
 import com.nethergrim.vk.web.WebRequestManagerImpl;
 
@@ -37,5 +37,5 @@ public interface MainComponent {
 
     void inject(UserProviderImplementation obj);
 
-    void inject(PushNotificationsRegisterIntentService o);
+    void inject(PushNotificationsRegisterService o);
 }

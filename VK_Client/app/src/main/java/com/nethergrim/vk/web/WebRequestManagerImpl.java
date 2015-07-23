@@ -233,19 +233,19 @@ public class WebRequestManagerImpl implements WebRequestManager {
 
         VKRequest vkRequest = new VKRequest(Constants.Requests.ACCOUNT_REGISTER_DEVICE,
                 new VKParameters(params));
-        vkRequest.executeWithListener(new VKRequest.VKRequestListener() {
+        vkRequest.setRequestListener(new VKRequest.VKRequestListener() {
             @Override
             public void onComplete(VKResponse response) {
                 super.onComplete(response);
-                Log.e("TAG", "registered GCM ok: " + response.responseString);
             }
 
             @Override
             public void onError(VKError error) {
                 super.onError(error);
-                Log.e("TAG", "register error: " + error.errorMessage);
+                Log.e("TAG", "GCM register error: " + error.errorMessage + " " + error.apiError);
             }
         });
+        vkRequest.start();
     }
 
     @Override

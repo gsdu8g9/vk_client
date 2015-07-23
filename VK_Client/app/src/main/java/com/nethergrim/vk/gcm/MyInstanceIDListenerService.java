@@ -19,7 +19,7 @@ public class MyInstanceIDListenerService extends InstanceIDListenerService {
         super.onTokenRefresh();
 
         Log.e("TAG", "token refreshed");
-        PushNotificationsRegisterIntentService.start(
+        PushNotificationsRegisterService.start(
                 MyApplication.getInstance().getApplicationContext());
     }
 

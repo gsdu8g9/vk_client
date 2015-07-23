@@ -36,7 +36,7 @@
         <activity android:name=".activity.MainActivity" />
 
         <service
-            android:name=".gcm.PushNotificationsRegisterIntentService"
+            android:name=".gcm.PushNotificationsRegisterService"
             android:exported="false" />
 
         <!-- GCM starts here-->

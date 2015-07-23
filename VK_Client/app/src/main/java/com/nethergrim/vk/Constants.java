@@ -16,7 +16,7 @@ public class Constants {
             VKScope.WALL,
             VKScope.PHOTOS,
             VKScope.MESSAGES,
-            VKScope.NOTIFICATIONS
+            VKScope.NOTIFICATIONS, VKScope.NOTIFY
     };
 
     public static float mDensity;
