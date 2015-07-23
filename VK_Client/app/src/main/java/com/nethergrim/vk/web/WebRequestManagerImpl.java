@@ -237,6 +237,7 @@ public class WebRequestManagerImpl implements WebRequestManager {
             @Override
             public void onComplete(VKResponse response) {
                 super.onComplete(response);
+                Log.e("TAG", "GCM register ok: \n" + response.responseString);
             }
 
             @Override

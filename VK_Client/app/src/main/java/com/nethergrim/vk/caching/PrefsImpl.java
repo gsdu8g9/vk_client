@@ -12,8 +12,9 @@ import com.nethergrim.vk.enums.MainActivityState;
 public class PrefsImpl implements Prefs {
 
     public static final String KEY_USER_ID = "id";
-    private static final String KEY_TOKEN = "token";
     public static final String KEY_ACTIVITY_STATE_ID = "activity_state_id";
+    public static final String KEY_GCM_TOKEN = "gcm_token";
+    private static final String KEY_TOKEN = "token";
     private SharedPreferences mPrefs;
 
     public PrefsImpl() {
@@ -32,6 +33,16 @@ public class PrefsImpl implements Prefs {
     }
 
     @Override
+    public String getToken() {
+        return mPrefs.getString(KEY_TOKEN, null);
+    }
+
+    @Override
+    public void setToken(String token) {
+        mPrefs.edit().putString(KEY_TOKEN, token).apply();
+    }
+
+    @Override
     public int getCurrentActivityStateId() {
         return mPrefs.getInt(KEY_ACTIVITY_STATE_ID, MainActivityState.Conversations.getId());
     }
@@ -42,13 +53,14 @@ public class PrefsImpl implements Prefs {
     }
 
     @Override
-    public String getToken() {
-        return mPrefs.getString(KEY_TOKEN, null);
+    public void setGcmToken(String token) {
+        mPrefs.edit().putString(KEY_GCM_TOKEN, token).apply();
     }
 
+
     @Override
-    public void setToken(String token) {
-        mPrefs.edit().putString(KEY_TOKEN, token).apply();
+    public String getGcmToken() {
+        return mPrefs.getString(KEY_GCM_TOKEN, null);
     }
 
 }

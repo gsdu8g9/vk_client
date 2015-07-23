@@ -4,6 +4,8 @@ import com.nethergrim.vk.MyApplication;
 import com.nethergrim.vk.activity.MainActivity;
 import com.nethergrim.vk.adapter.ConversationsAdapter;
 import com.nethergrim.vk.fragment.MessagesFragment;
+import com.nethergrim.vk.gcm.MyGcmListenerService;
+import com.nethergrim.vk.gcm.MyInstanceIDListenerService;
 import com.nethergrim.vk.gcm.PushNotificationsRegisterService;
 import com.nethergrim.vk.utils.UserProviderImplementation;
 import com.nethergrim.vk.web.WebRequestManagerImpl;
@@ -38,4 +40,8 @@ public interface MainComponent {
     void inject(UserProviderImplementation obj);
 
     void inject(PushNotificationsRegisterService o);
+
+    void inject(MyInstanceIDListenerService o);
+
+    void inject(MyGcmListenerService o);
 }

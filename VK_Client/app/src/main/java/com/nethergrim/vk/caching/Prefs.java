@@ -16,4 +16,8 @@ public interface Prefs {
     int getCurrentActivityStateId();
 
     void setCurrentActivityStateId(int id);
+
+    String getGcmToken();
+
+    void setGcmToken(String token);
 }
