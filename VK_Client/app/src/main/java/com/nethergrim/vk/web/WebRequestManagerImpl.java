@@ -230,6 +230,7 @@ public class WebRequestManagerImpl implements WebRequestManager {
         params.put("device_model", "android");
         params.put("device_id", Utils.generateAndroidId());
         params.put("system_version", String.valueOf(Build.VERSION.SDK_INT));
+        // TODO fix settings
         params.put("settings", "{\"msg\":\"on\", \"chat\":[\"no_sound\",\"no_text\"], "
                 + "\"friend\":\"on\", \"reply\":\"on\", \"mention\":\"fr_of_fr\"} ");
         VKRequest vkRequest = new VKRequest(Constants.Requests.ACCOUNT_REGISTER_DEVICE,
