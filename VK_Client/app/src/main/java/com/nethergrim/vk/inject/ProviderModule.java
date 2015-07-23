@@ -1,12 +1,14 @@
 package com.nethergrim.vk.inject;
 
 import com.nethergrim.vk.MyApplication;
+import com.nethergrim.vk.caching.DefaultPrefsImpl;
 import com.nethergrim.vk.caching.Prefs;
-import com.nethergrim.vk.caching.PrefsImpl;
 import com.nethergrim.vk.json.JacksonJsonDeserializerImpl;
 import com.nethergrim.vk.json.JsonDeserializer;
+import com.nethergrim.vk.utils.PushParser;
+import com.nethergrim.vk.utils.PushParserImpl;
+import com.nethergrim.vk.utils.RealmUserProviderImplementation;
 import com.nethergrim.vk.utils.UserProvider;
-import com.nethergrim.vk.utils.UserProviderImplementation;
 import com.nethergrim.vk.web.WebRequestManager;
 import com.nethergrim.vk.web.WebRequestManagerImpl;
 import com.nethergrim.vk.web.images.ImageLoader;
@@ -44,12 +46,18 @@ public class ProviderModule {
     @Provides
     @Singleton
     Prefs provideSharedPreferences() {
-        return new PrefsImpl();
+        return new DefaultPrefsImpl();
     }
 
     @Provides
     @Singleton
     UserProvider provideUserProvider() {
-        return new UserProviderImplementation();
+        return new RealmUserProviderImplementation();
+    }
+
+    @Provides
+    @Singleton
+    PushParser providePushParser() {
+        return new PushParserImpl();
     }
 }

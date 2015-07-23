@@ -7,7 +7,7 @@ import com.nethergrim.vk.fragment.MessagesFragment;
 import com.nethergrim.vk.gcm.MyGcmListenerService;
 import com.nethergrim.vk.gcm.MyInstanceIDListenerService;
 import com.nethergrim.vk.gcm.PushNotificationsRegisterService;
-import com.nethergrim.vk.utils.UserProviderImplementation;
+import com.nethergrim.vk.utils.RealmUserProviderImplementation;
 import com.nethergrim.vk.web.WebRequestManagerImpl;
 
 import javax.inject.Singleton;
@@ -37,7 +37,7 @@ public interface MainComponent {
 
     void inject(MyApplication m);
 
-    void inject(UserProviderImplementation obj);
+    void inject(RealmUserProviderImplementation obj);
 
     void inject(PushNotificationsRegisterService o);
 
