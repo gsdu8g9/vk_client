@@ -7,13 +7,16 @@ import com.vk.sdk.VKScope;
  */
 public class Constants {
 
+
     public static final String VK_APP_ID = "4579411";
+    public static final String GCM_SENDER_ID = "793065187";
+
     public static final String[] PERMISSIONS = new String[] {
             VKScope.FRIENDS,
             VKScope.WALL,
             VKScope.PHOTOS,
             VKScope.MESSAGES,
-            VKScope.NOTIFICATIONS
+            VKScope.NOTIFICATIONS, VKScope.NOTIFY
     };
 
     public static float mDensity;
@@ -23,6 +26,8 @@ public class Constants {
         String MESSAGES_GET_DIALOGS = "messages.getDialogs";
         String GET_USERS = "users.get";
         String ACCOUNT_GET_PROFILE_INFO = "account.getProfileInfo";
+        String ACCOUNT_REGISTER_DEVICE = "account.registerDevice";
+        String ACCOUNT_UNREGISTER_DEVICE = "account.unregisterDevice";
     }
 
     public static float getDensity() {

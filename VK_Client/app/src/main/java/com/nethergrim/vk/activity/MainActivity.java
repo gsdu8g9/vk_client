@@ -15,6 +15,7 @@ import com.nethergrim.vk.caching.Prefs;
 import com.nethergrim.vk.callbacks.WebCallback;
 import com.nethergrim.vk.enums.MainActivityState;
 import com.nethergrim.vk.fragment.MessagesFragment;
+import com.nethergrim.vk.gcm.PushNotificationsRegisterService;
 import com.nethergrim.vk.models.User;
 import com.nethergrim.vk.utils.UserProvider;
 import com.nethergrim.vk.utils.Utils;
@@ -107,7 +108,7 @@ public class MainActivity extends AbstractActivity implements WebCallback<User>,
         setContentView(R.layout.activity_main);
         ButterKnife.inject(this);
         MyApplication.getInstance().getMainComponent().inject(this);
-
+        PushNotificationsRegisterService.start(this);
         initMenu();
         initToolbar();
         loadCurrentUser();

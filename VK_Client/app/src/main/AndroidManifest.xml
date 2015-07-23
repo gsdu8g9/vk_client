@@ -1,8 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.nethergrim.vk">
+<manifest
+    package="com.nethergrim.vk"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:installLocation="auto">
+
 
     <uses-permission android:name="android.permission.INTERNET" />
+
+    <!-- For gcm start-->
+    <uses-sdk
+        android:minSdkVersion="8"
+        android:targetSdkVersion="17" />
+
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+
+    <permission
+        android:name="com.nethergrim.vk.permission.C2D_MESSAGE"
+        android:protectionLevel="signature" />
+    <uses-permission android:name="com.nethergrim.vk.permission.C2D_MESSAGE" />
+
+    <!-- For gcm finish-->
 
     <application
         android:name=".MyApplication"
@@ -20,7 +39,44 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activity.MainActivity"></activity>
+        <activity android:name=".activity.MainActivity" />
+
+        <service
+            android:name=".gcm.PushNotificationsRegisterService"
+            android:exported="false" />
+
+        <!-- GCM starts here-->
+
+        <receiver
+            android:name="com.google.android.gms.gcm.GcmReceiver"
+            android:exported="true"
+            android:permission="com.google.android.c2dm.permission.SEND">
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+                <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
+
+                <category android:name="com.nethergrim.vk" />
+            </intent-filter>
+        </receiver>
+
+        <service
+            android:name="com.nethergrim.vk.gcm.MyGcmListenerService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+            </intent-filter>
+        </service>
+
+        <service
+            android:name="com.nethergrim.vk.gcm.MyInstanceIDListenerService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.android.gms.iid.InstanceID" />
+            </intent-filter>
+        </service>
+
+        <!--  GCM finishes here -->
+
     </application>
 
 </manifest>

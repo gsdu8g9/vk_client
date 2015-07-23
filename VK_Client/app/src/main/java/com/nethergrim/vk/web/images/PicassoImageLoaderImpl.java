@@ -7,6 +7,8 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Shader;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.widget.ImageView;
@@ -15,6 +17,7 @@ import com.nethergrim.vk.R;
 import com.nethergrim.vk.models.User;
 import com.nethergrim.vk.utils.UserUtils;
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 /**
  * @author andreydrobyazko on 4/7/15.
@@ -67,6 +70,38 @@ public class PicassoImageLoaderImpl implements ImageLoader {
         if (!TextUtils.isEmpty(url)) {
             Picasso.with(context).load(url).config(Bitmap.Config.RGB_565).into(imageView);
         }
+    }
+
+    @Override
+    public void getUserAvatar(@NonNull final User user, @NonNull final Target target) {
+        final String url = UserUtils.getStablePhotoUrl(user);
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                if (!TextUtils.isEmpty(url)) {
+                    Picasso.with(context)
+                            .load(url)
+                            .config(Bitmap.Config.RGB_565)
+                            .into(target);
+                } else {
+                    Picasso.with(context)
+                            .load(R.drawable.ic_action_account_circle)
+                            .config(Bitmap.Config.RGB_565)
+                            .into(target);
+                }
+            }
+        });
+    }
+
+    @Override
+    public void cacheImage(@NonNull String url) {
+        Picasso.with(context).load(url).fetch();
+    }
+
+    @Override
+    public void cacheUserAvatars(@NonNull User user) {
+        String url = UserUtils.getStablePhotoUrl(user);
+        cacheImage(url);
     }
 
     public class RoundedTransformation implements com.squareup.picasso.Transformation {

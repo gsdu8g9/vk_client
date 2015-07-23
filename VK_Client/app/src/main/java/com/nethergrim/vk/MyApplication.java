@@ -27,7 +27,7 @@ public class MyApplication extends Application {
     private static MyApplication _app;
     @Inject
     Prefs mPrefs;
-    private MainComponent mainComponent;
+    private MainComponent mMainComponent;
 
     public synchronized static MyApplication getInstance() {
         return _app;
@@ -58,24 +58,27 @@ public class MyApplication extends Application {
             @Override
             public void onReceiveNewToken(VKAccessToken newToken) {
                 super.onReceiveNewToken(newToken);
+                mPrefs.setToken(newToken.accessToken);
                 Log.e("TAG", "received new token: " + newToken.email);
             }
 
             @Override
             public void onAcceptUserToken(VKAccessToken token) {
                 super.onAcceptUserToken(token);
+                mPrefs.setToken(token.accessToken);
                 Log.e("TAG", "user token accepted: " + token.email);
             }
 
             @Override
             public void onRenewAccessToken(VKAccessToken token) {
                 super.onRenewAccessToken(token);
+                mPrefs.setToken(token.accessToken);
                 Log.e("TAG", "onRenewAccessToken: " + token.email);
             }
         };
         VKSdk.initialize(vkSdkListener, Constants.VK_APP_ID);
         String[] fingerprints = VKUtil.getCertificateFingerprint(this, this.getPackageName());
-        if (fingerprints != null) {
+        if (fingerprints != null && BuildConfig.DEBUG) {
             for (String fingerprint : fingerprints) {
                 Log.e("TAG", "key fingerprint: " + fingerprint);
             }
@@ -85,7 +88,7 @@ public class MyApplication extends Application {
     }
 
     public MainComponent getMainComponent() {
-        return mainComponent;
+        return mMainComponent;
     }
 
     public Prefs getPrefs() {
@@ -93,8 +96,8 @@ public class MyApplication extends Application {
     }
 
     private void initDagger2() {
-        mainComponent = DaggerMainComponent.builder().providerModule(new ProviderModule()).build();
-        mainComponent.inject(this);
+        mMainComponent = DaggerMainComponent.builder().providerModule(new ProviderModule()).build();
+        mMainComponent.inject(this);
     }
 
     private void initRealm() {

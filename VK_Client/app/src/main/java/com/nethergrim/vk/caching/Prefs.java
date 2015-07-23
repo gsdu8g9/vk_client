@@ -9,7 +9,15 @@ public interface Prefs {
 
     void setCurrentUserId(long userId);
 
+    String getToken();
+
+    void setToken(String token);
+
     int getCurrentActivityStateId();
 
     void setCurrentActivityStateId(int id);
+
+    String getGcmToken();
+
+    void setGcmToken(String token);
 }

@@ -6,6 +6,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nethergrim.vk.models.ConversationsList;
 import com.nethergrim.vk.models.ListOfUsers;
 import com.nethergrim.vk.models.UserResult;
+import com.nethergrim.vk.models.push.PushMessage;
+
+import org.json.JSONObject;
 
 import java.io.IOException;
 
@@ -51,4 +54,15 @@ public class JacksonJsonDeserializerImpl implements JsonDeserializer {
         }
         return null;
     }
+
+    @Override
+    public PushMessage getPushMessage(JSONObject jsonObject) {
+        try {
+            return mapper.readValue(jsonObject.toString(), PushMessage.class);
+        } catch (IOException e) {
+            Log.e(TAG, e.getMessage());
+        }
+        return null;
+    }
+
 }

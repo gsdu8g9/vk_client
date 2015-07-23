@@ -1,5 +1,8 @@
 package com.nethergrim.vk.web;
 
+import android.os.Build;
+import android.util.Log;
+
 import com.kisstools.utils.StringUtil;
 import com.nethergrim.vk.Constants;
 import com.nethergrim.vk.MyApplication;
@@ -11,6 +14,8 @@ import com.nethergrim.vk.models.ListOfUsers;
 import com.nethergrim.vk.models.User;
 import com.nethergrim.vk.utils.ConversationUtils;
 import com.nethergrim.vk.utils.UserUtils;
+import com.nethergrim.vk.utils.Utils;
+import com.nethergrim.vk.web.images.ImageLoader;
 import com.vk.sdk.api.VKError;
 import com.vk.sdk.api.VKParameters;
 import com.vk.sdk.api.VKRequest;
@@ -34,6 +39,9 @@ public class WebRequestManagerImpl implements WebRequestManager {
 
     @Inject
     JsonDeserializer mJsonDeserializer;
+
+    @Inject
+    ImageLoader mImageLoader;
 
     public WebRequestManagerImpl() {
         MyApplication.getInstance().getMainComponent().inject(this);
@@ -153,6 +161,9 @@ public class WebRequestManagerImpl implements WebRequestManager {
                 super.onComplete(response);
                 ListOfUsers listOfUsers = mJsonDeserializer.getListOfUsers(response.responseString);
                 if (listOfUsers != null && listOfUsers.getResponse() != null && callback != null) {
+                    for (User user : listOfUsers.getResponse()) {
+                        mImageLoader.cacheUserAvatars(user);
+                    }
                     callback.onResponseSucceed(listOfUsers);
                 }
             }
@@ -165,6 +176,12 @@ public class WebRequestManagerImpl implements WebRequestManager {
                 }
             }
         });
+    }
+
+    @Override
+    public void getUsers(List<Long> ids, final WebCallback<ListOfUsers> callback) {
+        getUsers(ids, UserUtils.getDefaultUserFields(), null, callback);
+
     }
 
     @Override
@@ -215,6 +232,55 @@ public class WebRequestManagerImpl implements WebRequestManager {
                 if (callback != null) {
                     callback.onResponseFailed(error);
                 }
+            }
+        });
+    }
+
+    @Override
+    public void registerToPushNotifications(String token) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("token", token);
+        params.put("device_model", "android");
+        params.put("device_id", Utils.generateAndroidId());
+        params.put("system_version", String.valueOf(Build.VERSION.SDK_INT));
+        // TODO fix settings
+        params.put("settings", "{\"msg\":\"on\", \"chat\":[\"no_sound\",\"no_text\"], "
+                + "\"friend\":\"on\", \"reply\":\"on\", \"mention\":\"fr_of_fr\"} ");
+        VKRequest vkRequest = new VKRequest(Constants.Requests.ACCOUNT_REGISTER_DEVICE,
+                new VKParameters(params));
+        vkRequest.setRequestListener(new VKRequest.VKRequestListener() {
+            @Override
+            public void onComplete(VKResponse response) {
+                super.onComplete(response);
+                Log.e("TAG", "GCM register ok: \n" + response.responseString);
+            }
+
+            @Override
+            public void onError(VKError error) {
+                super.onError(error);
+                Log.e("TAG", "GCM register error: " + error.errorMessage + " " + error.apiError);
+            }
+        });
+        vkRequest.start();
+    }
+
+    @Override
+    public void unregisterFromPushNotifications() {
+        Map<String, Object> params = new HashMap<>();
+        params.put("device_id", Utils.generateAndroidId());
+        VKRequest vkRequest = new VKRequest(Constants.Requests.ACCOUNT_UNREGISTER_DEVICE,
+                new VKParameters(params));
+        vkRequest.executeWithListener(new VKRequest.VKRequestListener() {
+            @Override
+            public void onComplete(VKResponse response) {
+                super.onComplete(response);
+                Log.e("TAG", "unregistered GCM ok: " + response.responseString);
+            }
+
+            @Override
+            public void onError(VKError error) {
+                super.onError(error);
+                Log.e("TAG", "unregister error: " + error.errorMessage);
             }
         });
     }
