@@ -121,6 +121,12 @@ public class MessagesFragment extends AbstractFragment implements
     }
 
     @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mBus.unregister(this);
+    }
+
+    @Override
     public void onRecyclerViewScrolledToPage(int pageNumber) {
         loadPage(pageNumber);
     }
