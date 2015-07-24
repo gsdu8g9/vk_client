@@ -78,7 +78,8 @@ public class VKRequest extends VKObject {
      */
     public int attempts;
     /**
-     * Use HTTPS requests (by default is YES). If http-request is impossible (user denied no https access), SDK will load https version
+     * Use HTTPS requests (by default is YES). If http-request is impossible (user denied no https
+     * access), SDK will load https version
      */
     public boolean secure;
     /**
@@ -126,8 +127,19 @@ public class VKRequest extends VKObject {
      */
     private Looper mLooper;
 
+    public enum VKProgressType {
+        Download,
+        Upload
+    }
+
+    public enum HttpMethod {
+        GET,
+        POST
+    }
+
     /**
-     * Creates new request with parameters. See documentation for methods here https://vk.com/dev/methods
+     * Creates new request with parameters. See documentation for methods here
+     * https://vk.com/dev/methods
      *
      * @param method API-method name, e.g. audio.get
      */
@@ -136,9 +148,10 @@ public class VKRequest extends VKObject {
     }
 
     /**
-     * Creates new request with parameters. See documentation for methods here https://vk.com/dev/methods
+     * Creates new request with parameters. See documentation for methods here
+     * https://vk.com/dev/methods
      *
-     * @param method     API-method name, e.g. audio.get
+     * @param method API-method name, e.g. audio.get
      * @param parameters method parameters
      */
     public VKRequest(String method, VKParameters parameters) {
@@ -146,9 +159,10 @@ public class VKRequest extends VKObject {
     }
 
     /**
-     * Creates new request with parameters. See documentation for methods here https://vk.com/dev/methods
+     * Creates new request with parameters. See documentation for methods here
+     * https://vk.com/dev/methods
      *
-     * @param method     API-method name, e.g. audio.get
+     * @param method API-method name, e.g. audio.get
      * @param parameters method parameters
      * @param httpMethod HTTP method for execution, e.g. GET, POST
      */
@@ -174,15 +188,16 @@ public class VKRequest extends VKObject {
     }
 
     /**
-     * Creates new request with parameters. See documentation for methods here https://vk.com/dev/methods
+     * Creates new request with parameters. See documentation for methods here
+     * https://vk.com/dev/methods
      *
-     * @param method     API-method name, e.g. audio.get
+     * @param method API-method name, e.g. audio.get
      * @param parameters method parameters
      * @param httpMethod HTTP method for execution, e.g. GET, POST
      * @param modelClass class for automatic parse
      */
     public VKRequest(String method, VKParameters parameters, HttpMethod httpMethod,
-                     Class<? extends VKApiModel> modelClass) {
+            Class<? extends VKApiModel> modelClass) {
         this(method, parameters, httpMethod);
         setModelClass(modelClass);
     }
@@ -220,21 +235,15 @@ public class VKRequest extends VKObject {
     }
 
     /**
-     * Register current request for execute after passed request, if passed request is successful. If it's not, errorBlock will be called.
+     * Register current request for execute after passed request, if passed request is successful.
+     * If it's not, errorBlock will be called.
      *
-     * @param request  after which request must be called that request
+     * @param request after which request must be called that request
      * @param listener listener for request events
      */
     public void executeAfterRequest(VKRequest request, VKRequestListener listener) {
         this.requestListener = listener;
         request.addPostRequest(this);
-    }
-
-    private void addPostRequest(VKRequest postRequest) {
-        if (mPostRequestsQueue == null) {
-            mPostRequestsQueue = new ArrayList<VKRequest>();
-        }
-        mPostRequestsQueue.add(postRequest);
     }
 
     public VKParameters getPreparedParameters() {
@@ -304,7 +313,8 @@ public class VKRequest extends VKObject {
                                 if (VKSdk.DEBUG && VKSdk.DEBUG_API_ERRORS) {
                                     Log.w(VKSdk.SDK_TAG, operation.getResponseString());
                                 }
-                                if (processCommonError(error)) return;
+                                if (processCommonError(error))
+                                    return;
                                 provideError(error);
                             } catch (JSONException e) {
                                 if (VKSdk.DEBUG)
@@ -321,7 +331,8 @@ public class VKRequest extends VKObject {
 
                     @Override
                     public void onError(VKJsonOperation operation, VKError error) {
-                        //Хак для проверки того, что корректно распарсился ответ при заливке картинок
+                        //Хак для проверки того, что корректно распарсился ответ при заливке
+                        // картинок
                         if (error.errorCode != VKError.VK_CANCELED &&
                                 error.errorCode != VKError.VK_API_ERROR &&
                                 operation != null && operation.response != null &&
@@ -335,7 +346,8 @@ public class VKRequest extends VKObject {
                         }
                         if (attempts == 0 || ++mAttemptsUsed < attempts) {
                             if (requestListener != null)
-                                requestListener.attemptFailed(VKRequest.this, mAttemptsUsed, attempts);
+                                requestListener.attemptFailed(VKRequest.this, mAttemptsUsed,
+                                        attempts);
                             runOnLooper(new Runnable() {
                                 @Override
                                 public void run() {
@@ -383,6 +395,59 @@ public class VKRequest extends VKObject {
     }
 
     /**
+     * Adds additional parameter to that request
+     *
+     * @param key parameter name
+     * @param value parameter value
+     */
+    public void addExtraParameter(String key, Object value) {
+        mMethodParameters.put(key, value);
+    }
+
+    /**
+     * Adds additional parameters to that request
+     *
+     * @param extraParameters parameters supposed to be added
+     */
+    public void addExtraParameters(VKParameters extraParameters) {
+        mMethodParameters.putAll(extraParameters);
+    }
+
+    /**
+     * Sets preferred language for api results.
+     *
+     * @param lang Two letter language code. May be "ru", "en", "ua", "es", "fi", "de", "it"
+     */
+    public void setPreferredLang(String lang) {
+        useSystemLanguage = false;
+        mPreferredLang = lang;
+    }
+
+    /**
+     * Sets class for parse object model
+     *
+     * @param modelClass Class extends VKApiModel
+     */
+    public void setModelClass(Class<? extends VKApiModel> modelClass) {
+        mModelClass = modelClass;
+        if (mModelClass != null)
+            parseModel = true;
+    }
+
+    public void setResponseParser(VKParser parser) {
+        mModelParser = parser;
+        if (mModelParser != null)
+            parseModel = true;
+    }
+
+    private void addPostRequest(VKRequest postRequest) {
+        if (mPostRequestsQueue == null) {
+            mPostRequestsQueue = new ArrayList<VKRequest>();
+        }
+        mPostRequestsQueue.add(postRequest);
+    }
+
+    /**
      * Method used for errors processing
      *
      * @param error error caused by this request
@@ -397,9 +462,10 @@ public class VKRequest extends VKObject {
                     requestListener.onError(error);
                 }
                 if (mPostRequestsQueue != null && mPostRequestsQueue.size() > 0) {
-                    for (VKRequest postRequest : mPostRequestsQueue)
+                    for (VKRequest postRequest : mPostRequestsQueue) {
                         if (postRequest.requestListener != null)
                             postRequest.requestListener.onError(error);
+                    }
                 }
             }
         });
@@ -410,7 +476,7 @@ public class VKRequest extends VKObject {
      * Method used for response processing
      *
      * @param jsonResponse response from API
-     * @param parsedModel  model parsed from json
+     * @param parsedModel model parsed from json
      */
     private void provideResponse(final JSONObject jsonResponse, Object parsedModel) {
         final VKResponse response = new VKResponse();
@@ -437,25 +503,6 @@ public class VKRequest extends VKObject {
                 }
             }
         });
-    }
-
-    /**
-     * Adds additional parameter to that request
-     *
-     * @param key   parameter name
-     * @param value parameter value
-     */
-    public void addExtraParameter(String key, Object value) {
-        mMethodParameters.put(key, value);
-    }
-
-    /**
-     * Adds additional parameters to that request
-     *
-     * @param extraParameters parameters supposed to be added
-     */
-    public void addExtraParameters(VKParameters extraParameters) {
-        mMethodParameters.putAll(extraParameters);
     }
 
     private String generateSig(VKAccessToken token) {
@@ -499,7 +546,8 @@ public class VKRequest extends VKObject {
                     runOnMainLooper(new Runnable() {
                         @Override
                         public void run() {
-                            Intent i = new Intent(VKUIHelper.getTopActivity(), VKOpenAuthActivity.class);
+                            Intent i = new Intent(VKUIHelper.getTopActivity(),
+                                    VKOpenAuthActivity.class);
                             i.putExtra(VKOpenAuthActivity.VK_EXTRA_VALIDATION_URL,
                                     error.apiError.redirectUri);
                             i.putExtra(VKOpenAuthActivity.VK_EXTRA_VALIDATION_REQUEST,
@@ -520,44 +568,23 @@ public class VKRequest extends VKObject {
     private String getLang() {
         String result = mPreferredLang;
         if (useSystemLanguage) {
-            result = VKUIHelper.getApplicationContext().getResources().getConfiguration().locale.getLanguage();
+            result = "ru";
+            try {
+                result = VKUIHelper.getApplicationContext().getResources().getConfiguration().locale
+                        .getLanguage();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             if (result.equals("uk")) {
                 result = "ua";
             }
 
-            if (!Arrays.asList(new String[]{"ru", "en", "ua", "es", "fi", "de", "it"})
+            if (!Arrays.asList(new String[] {"ru", "en", "ua", "es", "fi", "de", "it"})
                     .contains(result)) {
                 result = mPreferredLang;
             }
         }
         return result;
-    }
-
-    /**
-     * Sets preferred language for api results.
-     *
-     * @param lang Two letter language code. May be "ru", "en", "ua", "es", "fi", "de", "it"
-     */
-    public void setPreferredLang(String lang) {
-        useSystemLanguage = false;
-        mPreferredLang = lang;
-    }
-
-    /**
-     * Sets class for parse object model
-     *
-     * @param modelClass Class extends VKApiModel
-     */
-    public void setModelClass(Class<? extends VKApiModel> modelClass) {
-        mModelClass = modelClass;
-        if (mModelClass != null)
-            parseModel = true;
-    }
-
-    public void setResponseParser(VKParser parser) {
-        mModelParser = parser;
-        if (mModelParser != null)
-            parseModel = true;
     }
 
     private void runOnLooper(Runnable block) {
@@ -580,22 +607,13 @@ public class VKRequest extends VKObject {
         new Handler(Looper.getMainLooper()).post(block);
     }
 
-    public enum VKProgressType {
-        Download,
-        Upload
-    }
-
-    public enum HttpMethod {
-        GET,
-        POST
-    }
-
     /**
      * Extend listeners for requests from that class
      * Created by Roman Truba on 02.12.13.
      * Copyright (c) 2013 VK. All rights reserved.
      */
     public static abstract class VKRequestListener {
+
         /**
          * Called if there were no HTTP or API errors, returns execution result.
          *
@@ -607,7 +625,7 @@ public class VKRequest extends VKObject {
         /**
          * Called when request has failed attempt, and ready to do next attempt
          *
-         * @param request       Failed request
+         * @param request Failed request
          * @param attemptNumber Number of failed attempt, started from 1
          * @param totalAttempts Total request attempts defined for request
          */
@@ -615,7 +633,8 @@ public class VKRequest extends VKObject {
         }
 
         /**
-         * Called immediately if there was API error, or after <b>attempts</b> tries if there was an HTTP error
+         * Called immediately if there was API error, or after <b>attempts</b> tries if there was an
+         * HTTP error
          *
          * @param error error for VKRequest
          */
@@ -623,13 +642,16 @@ public class VKRequest extends VKObject {
         }
 
         /**
-         * Specify progress for uploading or downloading. Useless for text requests (because gzip encoding bytesTotal will always return -1)
+         * Specify progress for uploading or downloading. Useless for text requests (because gzip
+         * encoding bytesTotal will always return -1)
          *
          * @param progressType type of progress (upload or download)
-         * @param bytesLoaded  total bytes loaded
-         * @param bytesTotal   total bytes suppose to be loaded
+         * @param bytesLoaded total bytes loaded
+         * @param bytesTotal total bytes suppose to be loaded
          */
-        public void onProgress(VKRequest.VKProgressType progressType, long bytesLoaded, long bytesTotal) {
+        public void onProgress(VKRequest.VKProgressType progressType,
+                long bytesLoaded,
+                long bytesTotal) {
         }
     }
 }
