@@ -10,7 +10,6 @@ import com.nethergrim.vk.MyApplication;
 import com.nethergrim.vk.R;
 import com.nethergrim.vk.adapter.viewholders.ConversationViewHolder;
 import com.nethergrim.vk.caching.Prefs;
-import com.nethergrim.vk.event.ConversationsUpdatedEvent;
 import com.nethergrim.vk.models.Conversation;
 import com.nethergrim.vk.models.Message;
 import com.nethergrim.vk.models.User;
@@ -18,11 +17,10 @@ import com.nethergrim.vk.utils.ConversationUtils;
 import com.nethergrim.vk.utils.MessageUtils;
 import com.nethergrim.vk.utils.UserProvider;
 import com.nethergrim.vk.web.images.ImageLoader;
-import com.squareup.otto.Bus;
-import com.squareup.otto.Subscribe;
 
 import javax.inject.Inject;
 
+import io.realm.Realm;
 import io.realm.RealmChangeListener;
 import io.realm.RealmResults;
 
@@ -43,22 +41,18 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationViewH
 
 
     @Inject
-    Bus mBus;
+    Realm mRealm;
 
     private int mUnreadColor;
 
     private RealmResults<Conversation> mData;
 
-    public ConversationsAdapter(RealmResults<Conversation> data) {
-        this.mData = data;
-        setHasStableIds(true);
+    public ConversationsAdapter() {
         MyApplication.getInstance().getMainComponent().inject(this);
-        mBus.register(this);
-    }
-
-    @Subscribe
-    public void conversationsUpdated(ConversationsUpdatedEvent event) {
-        notifyDataSetChanged();
+        mRealm.setAutoRefresh(true);
+        this.mData = mRealm.where(Conversation.class)
+                .findAllSorted("date", false);
+        setHasStableIds(true);
     }
 
     @Override

@@ -9,6 +9,8 @@ import com.nethergrim.vk.utils.PushParser;
 import com.nethergrim.vk.utils.PushParserImpl;
 import com.nethergrim.vk.utils.RealmUserProviderImplementation;
 import com.nethergrim.vk.utils.UserProvider;
+import com.nethergrim.vk.web.DataManager;
+import com.nethergrim.vk.web.RealmDataManagerImpl;
 import com.nethergrim.vk.web.WebRequestManager;
 import com.nethergrim.vk.web.WebRequestManagerImpl;
 import com.nethergrim.vk.web.images.ImageLoader;
@@ -73,4 +75,11 @@ public class ProviderModule {
     Bus provideBus() {
         return new Bus(ThreadEnforcer.MAIN);
     }
+
+    @Provides
+    @Singleton
+    DataManager provideDataManager() {
+        return new RealmDataManagerImpl();
+    }
+
 }

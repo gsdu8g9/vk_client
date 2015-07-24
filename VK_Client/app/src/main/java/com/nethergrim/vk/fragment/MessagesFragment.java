@@ -16,31 +16,28 @@ import android.widget.TextView;
 import com.nethergrim.vk.MyApplication;
 import com.nethergrim.vk.R;
 import com.nethergrim.vk.adapter.ConversationsAdapter;
-import com.nethergrim.vk.callbacks.WebCallback;
-import com.nethergrim.vk.models.Conversation;
-import com.nethergrim.vk.models.ConversationsList;
-import com.nethergrim.vk.models.ListOfUsers;
+import com.nethergrim.vk.event.ConversationsUpdatedEvent;
 import com.nethergrim.vk.utils.SafeTimer;
 import com.nethergrim.vk.views.RecyclerviewPageScroller;
-import com.nethergrim.vk.web.WebRequestManager;
-import com.vk.sdk.api.VKError;
+import com.nethergrim.vk.web.DataManager;
+import com.squareup.otto.Bus;
+import com.squareup.otto.Subscribe;
 import com.yqritc.recyclerviewflexibledivider.HorizontalDividerItemDecoration;
 
 import javax.inject.Inject;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
-import io.realm.RealmResults;
 
 /**
  * @author andreydrobyazko on 3/20/15.
  */
-public class MessagesFragment extends AbstractFragment implements WebCallback<ConversationsList>,
+public class MessagesFragment extends AbstractFragment implements
         RecyclerviewPageScroller.OnRecyclerViewScrolledToPageListener,
         SwipeRefreshLayout.OnRefreshListener {
 
     public static final int DEFAULT_PAGE_SIZE = 20;
-    public static final int UPDATE_DELAY_SEC = 15;
+    public static final int UPDATE_DELAY_SEC = 60;
     @InjectView(R.id.list)
     RecyclerView mRecyclerView;
     @InjectView(R.id.progressBar2)
@@ -50,7 +47,10 @@ public class MessagesFragment extends AbstractFragment implements WebCallback<Co
     @InjectView(R.id.refresh_layout)
     SwipeRefreshLayout mSwipeRefreshLayout;
     @Inject
-    WebRequestManager mWM;
+    DataManager mDataManager;
+
+    @Inject
+    Bus mBus;
     private SafeTimer mSafeTimer;
     private ConversationsAdapter mAdapter;
 
@@ -58,6 +58,7 @@ public class MessagesFragment extends AbstractFragment implements WebCallback<Co
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         MyApplication.getInstance().getMainComponent().inject(this);
+        mBus.register(this);
         mSafeTimer = new SafeTimer(new Runnable() {
             @Override
             public void run() {
@@ -81,27 +82,22 @@ public class MessagesFragment extends AbstractFragment implements WebCallback<Co
         super.onViewCreated(view, savedInstanceState);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
         mRecyclerView.setHasFixedSize(true);
-        if (checkRealm()) {
-            realm.setAutoRefresh(true);
-            RealmResults<Conversation> data = realm.where(Conversation.class)
-                    .findAllSorted("date", false);
-            mAdapter = new ConversationsAdapter(data);
-            mRecyclerView.setAdapter(mAdapter);
-            Resources res = view.getResources();
-            int additionalLeftMarginForDividers =
-                    2 * (res.getDimensionPixelSize(R.dimen.conversation_item_padding_horizontal))
-                            + res.getDimensionPixelSize(R.dimen.conversation_avatar_size);
-            mRecyclerView.addItemDecoration(
-                    new HorizontalDividerItemDecoration.Builder(view.getContext()).margin(
-                            additionalLeftMarginForDividers, 0).build());
-            mRecyclerView.setOnScrollListener(
-                    new RecyclerviewPageScroller(DEFAULT_PAGE_SIZE, this, 5));
-            if (mAdapter.getItemCount() == 0) {
-                mProgressBar.setVisibility(View.VISIBLE);
-                mNothingHereTextView.setVisibility(View.GONE);
-            }
+        mAdapter = new ConversationsAdapter();
+        mRecyclerView.setAdapter(mAdapter);
+        Resources res = view.getResources();
+        int additionalLeftMarginForDividers =
+                2 * (res.getDimensionPixelSize(R.dimen.conversation_item_padding_horizontal))
+                        + res.getDimensionPixelSize(R.dimen.conversation_avatar_size);
+        mRecyclerView.addItemDecoration(
+                new HorizontalDividerItemDecoration.Builder(view.getContext()).margin(
+                        additionalLeftMarginForDividers, 0).build());
+        mRecyclerView.setOnScrollListener(
+                new RecyclerviewPageScroller(DEFAULT_PAGE_SIZE, this, 5));
+        if (mAdapter.getItemCount() == 0) {
+            mProgressBar.setVisibility(View.VISIBLE);
+            mNothingHereTextView.setVisibility(View.GONE);
         }
-        loadPage(0);
+        mSwipeRefreshLayout.setRefreshing(true);
         mSwipeRefreshLayout.setOnRefreshListener(this);
         mSwipeRefreshLayout.setColorSchemeResources(R.color.primary);
     }
@@ -109,13 +105,13 @@ public class MessagesFragment extends AbstractFragment implements WebCallback<Co
     @Override
     public void onResume() {
         super.onResume();
-//        mSafeTimer.start();
+        mSafeTimer.start();
     }
 
     @Override
     public void onPause() {
         super.onPause();
-//        mSafeTimer.finish();
+        mSafeTimer.finish();
     }
 
     @Override
@@ -125,56 +121,42 @@ public class MessagesFragment extends AbstractFragment implements WebCallback<Co
     }
 
     @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mBus.unregister(this);
+    }
+
+    @Override
     public void onRecyclerViewScrolledToPage(int pageNumber) {
         loadPage(pageNumber);
     }
 
     @Override
     public void onRefresh() {
+        Log.e("TAG", "onRefresh");
         loadPage(0);
     }
 
-    private void loadPage(int pageNumber) {
-        mWM.getConversations(DEFAULT_PAGE_SIZE, pageNumber * DEFAULT_PAGE_SIZE, false, 0, this);
-    }    @Override
-    public void onResponseSucceed(ConversationsList response) {
-        if (response != null && checkRealm()) {
+    @Subscribe
+    public void conversationsUpdated(ConversationsUpdatedEvent event) {
+        if (mSwipeRefreshLayout != null) {
             mSwipeRefreshLayout.setRefreshing(false);
-            realm.beginTransaction();
-            realm.copyToRealmOrUpdate(response.getResults());
-            realm.commitTransaction();
-            if (response.getResults().isEmpty() && mAdapter != null
-                    && mAdapter.getItemCount() == 0) {
+        }
+        if (mProgressBar != null) {
+            mProgressBar.setVisibility(View.GONE);
+        }
+        if (mAdapter != null) {
+            mAdapter.notifyDataSetChanged();
+            if (mAdapter.getItemCount() == 0) {
                 mProgressBar.setVisibility(View.GONE);
                 mNothingHereTextView.setVisibility(View.VISIBLE);
             }
-            mWM.getUsersForConversations(response, new WebCallback<ListOfUsers>() {
-                @Override
-                public void onResponseSucceed(ListOfUsers response) {
-                    if (checkRealm()) {
-                        realm.beginTransaction();
-                        realm.copyToRealmOrUpdate(response.getResponse());
-                        realm.commitTransaction();
-                        mAdapter.notifyDataSetChanged();
-                        mProgressBar.setVisibility(View.GONE);
-                    }
-                }
-
-                @Override
-                public void onResponseFailed(VKError e) {
-                    Log.e("TAG", "error: " + e.errorMessage);
-                    // TODO handle
-                }
-            });
         }
     }
 
-
-
-    @Override
-    public void onResponseFailed(VKError e) {
-        Log.e("TAG", "e: " + e.errorMessage);
-        // TODO handle
+    private void loadPage(int pageNumber) {
+        mDataManager.manageConversationsAndUsers(DEFAULT_PAGE_SIZE, pageNumber * DEFAULT_PAGE_SIZE,
+                false);
     }
 
 }

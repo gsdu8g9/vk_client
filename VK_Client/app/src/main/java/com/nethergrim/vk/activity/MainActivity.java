@@ -14,13 +14,16 @@ import com.nethergrim.vk.R;
 import com.nethergrim.vk.caching.Prefs;
 import com.nethergrim.vk.callbacks.WebCallback;
 import com.nethergrim.vk.enums.MainActivityState;
+import com.nethergrim.vk.event.UsersUpdatedEvent;
 import com.nethergrim.vk.fragment.MessagesFragment;
 import com.nethergrim.vk.gcm.PushNotificationsRegisterService;
 import com.nethergrim.vk.models.User;
 import com.nethergrim.vk.utils.UserProvider;
 import com.nethergrim.vk.utils.Utils;
-import com.nethergrim.vk.web.WebRequestManager;
+import com.nethergrim.vk.web.DataManager;
 import com.nethergrim.vk.web.images.ImageLoader;
+import com.squareup.otto.Bus;
+import com.squareup.otto.Subscribe;
 import com.vk.sdk.api.VKError;
 
 import javax.inject.Inject;
@@ -49,7 +52,11 @@ public class MainActivity extends AbstractActivity implements WebCallback<User>,
     ImageView mSearchImageView;
 
     @Inject
-    WebRequestManager mWebRequestManager;
+    DataManager mDataManager;
+
+    @Inject
+    Bus mBus;
+
     @Inject
     ImageLoader mIL;
     @Inject
@@ -102,27 +109,34 @@ public class MainActivity extends AbstractActivity implements WebCallback<User>,
         }
     }
 
+    @Subscribe
+    public void loadCurrentUser(UsersUpdatedEvent r) {
+        if (mPrefs.getCurrentUserId() != 0) {
+            User user = mUP.getUser(mPrefs.getCurrentUserId());
+            if (user != null) {
+                onResponseSucceed(user);
+            }
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.inject(this);
         MyApplication.getInstance().getMainComponent().inject(this);
+        mBus.register(this);
         PushNotificationsRegisterService.start(this);
         initMenu();
         initToolbar();
-        loadCurrentUser();
+        loadCurrentUser(new UsersUpdatedEvent());
+        mDataManager.fetchMyUser();
     }
 
-    private void loadCurrentUser() {
-        mWebRequestManager.getCurrentUser(this);
-        if (mPrefs.getCurrentUserId() != 0) {
-
-            User user = mUP.getUser(mPrefs.getCurrentUserId());
-            if (user != null) {
-                onResponseSucceed(user);
-            }
-        }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mBus.unregister(this);
     }
 
     private void initToolbar() {

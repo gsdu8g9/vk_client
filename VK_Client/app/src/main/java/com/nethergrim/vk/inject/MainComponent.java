@@ -9,6 +9,7 @@ import com.nethergrim.vk.gcm.MyInstanceIDListenerService;
 import com.nethergrim.vk.gcm.PushNotificationsRegisterService;
 import com.nethergrim.vk.utils.PushParserImpl;
 import com.nethergrim.vk.utils.RealmUserProviderImplementation;
+import com.nethergrim.vk.web.RealmDataManagerImpl;
 import com.nethergrim.vk.web.WebRequestManagerImpl;
 
 import javax.inject.Singleton;
@@ -47,4 +48,6 @@ public interface MainComponent {
     void inject(MyGcmListenerService o);
 
     void inject(PushParserImpl o);
+
+    void inject(RealmDataManagerImpl o);
 }
