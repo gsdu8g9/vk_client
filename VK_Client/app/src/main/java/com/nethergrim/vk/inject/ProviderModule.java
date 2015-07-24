@@ -13,6 +13,8 @@ import com.nethergrim.vk.web.WebRequestManager;
 import com.nethergrim.vk.web.WebRequestManagerImpl;
 import com.nethergrim.vk.web.images.ImageLoader;
 import com.nethergrim.vk.web.images.PicassoImageLoaderImpl;
+import com.squareup.otto.Bus;
+import com.squareup.otto.ThreadEnforcer;
 
 import javax.inject.Singleton;
 
@@ -64,5 +66,11 @@ public class ProviderModule {
     @Provides
     Realm provideRealm() {
         return Realm.getDefaultInstance();
+    }
+
+    @Provides
+    @Singleton
+    Bus provideBus() {
+        return new Bus(ThreadEnforcer.MAIN);
     }
 }

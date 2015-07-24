@@ -13,6 +13,7 @@ import com.google.android.gms.gcm.GcmListenerService;
 import com.nethergrim.vk.MyApplication;
 import com.nethergrim.vk.R;
 import com.nethergrim.vk.callbacks.WebCallback;
+import com.nethergrim.vk.event.ConversationsUpdatedEvent;
 import com.nethergrim.vk.models.ConversationsList;
 import com.nethergrim.vk.models.ListOfUsers;
 import com.nethergrim.vk.models.User;
@@ -23,6 +24,7 @@ import com.nethergrim.vk.utils.UserProvider;
 import com.nethergrim.vk.utils.Utils;
 import com.nethergrim.vk.web.WebRequestManager;
 import com.nethergrim.vk.web.images.ImageLoader;
+import com.squareup.otto.Bus;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 import com.vk.sdk.api.VKError;
@@ -54,14 +56,28 @@ public class MyGcmListenerService extends GcmListenerService {
     @Inject
     ImageLoader mImageLoader;
 
+    @Inject
+    Bus mBus;
+
     @Override
     public void onMessageReceived(String from, Bundle data) {
         super.onMessageReceived(from, data);
         Log.e("TAG", "message received: " + Utils.convertBundleToJson(data).toString());
         MyApplication.getInstance().getMainComponent().inject(this);
+
         PushObject pushObject = mPushParser.parsePushObject(data);
         handleNotificationForPush(pushObject);
+//        mBus.register(this);
     }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+//        if (mBus != null) {
+//            mBus.unregister(this);
+//        }
+    }
+
 
     private void handleNotificationForPush(final PushObject pushObject) {
 
@@ -89,6 +105,7 @@ public class MyGcmListenerService extends GcmListenerService {
                         realm.setAutoRefresh(true);
                         realm.copyToRealmOrUpdate(response.getResults());
                         realm.commitTransaction();
+                        mBus.post(new ConversationsUpdatedEvent());
                     }
 
                     @Override
