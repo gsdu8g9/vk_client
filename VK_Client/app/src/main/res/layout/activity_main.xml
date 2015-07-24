@@ -14,14 +14,16 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="@dimen/action_bar_height"
-        android:background="@color/primary" />
+        android:background="@color/primary"
+        android:elevation="0dp"
+        android:translationZ="0dp" />
 
     <View
         android:layout_width="match_parent"
-        android:layout_height="4dp"
+        android:layout_height="8dp"
         android:layout_gravity="top"
         android:layout_marginTop="@dimen/action_bar_height"
-        android:background="@drawable/shadow_top_bottom" />
+        android:background="@drawable/bottom_shadow" />
 
     <ImageView
         android:id="@+id/imageViewSearch"
@@ -35,10 +37,10 @@
 
     <View
         android:layout_width="match_parent"
-        android:layout_height="4dp"
+        android:layout_height="8dp"
         android:layout_gravity="bottom"
         android:layout_marginBottom="@dimen/menu_height"
-        android:background="@drawable/shadow_bottom_top" />
+        android:background="@drawable/top_shadow" />
 
     <LinearLayout
         android:id="@+id/menu_layout"
