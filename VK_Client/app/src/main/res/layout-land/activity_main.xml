@@ -18,11 +18,11 @@
 
     <View
         android:layout_width="match_parent"
-        android:layout_height="4dp"
+        android:layout_height="8dp"
         android:layout_gravity="top"
         android:layout_marginRight="@dimen/menu_height"
         android:layout_marginTop="@dimen/action_bar_height"
-        android:background="@drawable/shadow_top_bottom" />
+        android:background="@drawable/bottom_shadow" />
 
     <ImageView
         android:id="@+id/imageViewSearch"
@@ -36,12 +36,12 @@
 
 
     <View
-        android:layout_width="4dp"
+        android:layout_width="8dp"
         android:layout_height="match_parent"
         android:layout_gravity="end"
         android:layout_marginRight="@dimen/menu_height"
         android:layout_marginTop="@dimen/action_bar_height"
-        android:background="@drawable/shadow_right_left" />
+        android:background="@drawable/left_shadow" />
 
 
     <LinearLayout
