@@ -3,11 +3,13 @@ package com.nethergrim.vk.web;
 import android.util.Log;
 
 import com.nethergrim.vk.MyApplication;
+import com.nethergrim.vk.caching.Prefs;
 import com.nethergrim.vk.callbacks.WebCallback;
 import com.nethergrim.vk.event.ConversationsUpdatedEvent;
 import com.nethergrim.vk.event.UsersUpdatedEvent;
 import com.nethergrim.vk.models.ConversationsList;
 import com.nethergrim.vk.models.ListOfUsers;
+import com.nethergrim.vk.models.User;
 import com.squareup.otto.Bus;
 import com.vk.sdk.api.VKError;
 
@@ -27,6 +29,9 @@ public class RealmDataManagerImpl implements DataManager {
 
     @Inject
     Bus mBus;
+
+    @Inject
+    Prefs mPrefs;
 
 
     public RealmDataManagerImpl() {
@@ -96,6 +101,27 @@ public class RealmDataManagerImpl implements DataManager {
             @Override
             public void onResponseFailed(VKError e) {
                 Log.e("TAG", "error in ManageUsers: \n" + e.toString());
+            }
+        });
+    }
+
+    @Override
+    public void fetchMyUser() {
+        mWebRequestManager.getCurrentUser(new WebCallback<User>() {
+            @Override
+            public void onResponseSucceed(User response) {
+                mPrefs.setCurrentUserId(response.getId());
+                Realm realm = getRealm();
+                realm.beginTransaction();
+                realm.copyToRealmOrUpdate(response);
+                realm.commitTransaction();
+                realm = null;
+                mBus.post(new UsersUpdatedEvent());
+            }
+
+            @Override
+            public void onResponseFailed(VKError e) {
+                Log.e("TAG", "error in fetchMyUser: \n" + e.toString());
             }
         });
     }

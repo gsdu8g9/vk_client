@@ -11,4 +11,6 @@ public interface DataManager {
 
     void manageUsers(List<Long> userIds);
 
+    void fetchMyUser();
+
 }
