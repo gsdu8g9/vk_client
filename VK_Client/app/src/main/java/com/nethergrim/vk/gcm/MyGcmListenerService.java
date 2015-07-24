@@ -67,17 +67,7 @@ public class MyGcmListenerService extends GcmListenerService {
 
         PushObject pushObject = mPushParser.parsePushObject(data);
         handleNotificationForPush(pushObject);
-//        mBus.register(this);
     }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-//        if (mBus != null) {
-//            mBus.unregister(this);
-//        }
-    }
-
 
     private void handleNotificationForPush(final PushObject pushObject) {
 

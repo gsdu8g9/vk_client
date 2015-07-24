@@ -23,6 +23,7 @@ import com.squareup.otto.Subscribe;
 
 import javax.inject.Inject;
 
+import io.realm.Realm;
 import io.realm.RealmChangeListener;
 import io.realm.RealmResults;
 
@@ -41,18 +42,22 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationViewH
     @Inject
     Prefs mPrefs;
 
-
     @Inject
     Bus mBus;
+
+    @Inject
+    Realm mRealm;
 
     private int mUnreadColor;
 
     private RealmResults<Conversation> mData;
 
-    public ConversationsAdapter(RealmResults<Conversation> data) {
-        this.mData = data;
-        setHasStableIds(true);
+    public ConversationsAdapter() {
         MyApplication.getInstance().getMainComponent().inject(this);
+        mRealm.setAutoRefresh(true);
+        this.mData = mRealm.where(Conversation.class)
+                .findAllSorted("date", false);
+        setHasStableIds(true);
         mBus.register(this);
     }
 
