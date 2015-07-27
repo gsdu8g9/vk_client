@@ -25,4 +25,9 @@ public class MessageUtils {
         return message.getAttachments().get(0).getSticker();
     }
 
+    public static boolean isMessageWithPhoto(@NonNull Message message) {
+        return isMessageWithAttachments(message)
+                && message.getAttachments().get(0).getPhoto() != null;
+    }
+
 }
