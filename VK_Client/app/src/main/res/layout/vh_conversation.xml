@@ -48,22 +48,24 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/text_name"
-        android:layout_marginTop="@dimen/margin_small"
+        android:layout_marginTop="@dimen/conversation_item_text_secondary_margin_top"
         android:layout_toEndOf="@+id/image_avatar"
         android:layout_toRightOf="@+id/image_avatar"
         android:ellipsize="end"
         android:maxLines="@integer/conversation_item_max_message_lines"
         android:textColor="@color/secondary_text"
         android:textSize="@dimen/text_size_small"
-        tools:text="Hi! I'm proud of you! You're making really cool apps!" />
+        tools:text="Hi! I'm proud of you! You're making really cool apps! Hi! I'm proud of you! You're making really cool apps! Hi! I'm proud of you! You're making really cool apps! Hi! I'm proud of you! You're making really cool apps! Hi! I'm proud of you! You're making really cool apps! Hi! I'm proud of you! You're making really cool apps! Hi! I'm proud of you! You're making really cool apps! " />
 
     <TextView
         android:id="@+id/text_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/text_name"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
+        android:layout_toLeftOf="@+id/imageViewDetails"
+        android:layout_toStartOf="@+id/imageViewDetails"
         android:ellipsize="end"
         android:singleLine="true"
         android:textColor="@color/secondary_text"
