@@ -123,6 +123,9 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationViewH
         if (MessageUtils.isMessageWithPhoto(message)) {
             details = "[ " + ctx.getString(R.string.photo) + " ] " + details;
         }
+        if (MessageUtils.isMessageWithAudio(message)) {
+            details = "[ " + ctx.getString(R.string.audio) + " ] " + details;
+        }
 
         conversationViewHolder.textDetails.setText(details);
         conversationViewHolder.textDate.setText(

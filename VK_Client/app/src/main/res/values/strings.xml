@@ -11,4 +11,5 @@
     <string name="search">Поиск</string>
     <string name="photos">Фотографии</string>
     <string name="photo">Фотография</string>
+    <string name="audio">Аудиозапись</string>
 </resources>
