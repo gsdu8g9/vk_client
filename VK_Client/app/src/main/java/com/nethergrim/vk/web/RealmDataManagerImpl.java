@@ -49,6 +49,7 @@ public class RealmDataManagerImpl implements DataManager {
                         if (response != null) {
                             Realm realm = getRealm();
                             realm.beginTransaction();
+                            mPrefs.setUnreadMessagesCount(response.getUnreadCount());
                             realm.copyToRealmOrUpdate(response.getResults());
                             realm.commitTransaction();
                             realm = null;
@@ -87,6 +88,11 @@ public class RealmDataManagerImpl implements DataManager {
 
     @Override
     public void manageUsers(final List<Long> userIds) {
+        manageUsers(userIds, null);
+    }
+
+    @Override
+    public void manageUsers(List<Long> userIds, final WebCallback<ListOfUsers> callback) {
         mWebRequestManager.getUsers(userIds, new WebCallback<ListOfUsers>() {
             @Override
             public void onResponseSucceed(ListOfUsers response) {
@@ -96,11 +102,17 @@ public class RealmDataManagerImpl implements DataManager {
                 realm.commitTransaction();
                 realm = null;
                 mBus.post(new UsersUpdatedEvent());
+                if (callback != null) {
+                    callback.onResponseSucceed(response);
+                }
             }
 
             @Override
             public void onResponseFailed(VKError e) {
                 Log.e("TAG", "error in ManageUsers: \n" + e.toString());
+                if (callback != null) {
+                    callback.onResponseFailed(e);
+                }
             }
         });
     }

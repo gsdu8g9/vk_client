@@ -12,9 +12,8 @@ import android.util.Log;
 import com.google.android.gms.gcm.GcmListenerService;
 import com.nethergrim.vk.MyApplication;
 import com.nethergrim.vk.R;
+import com.nethergrim.vk.caching.Prefs;
 import com.nethergrim.vk.callbacks.WebCallback;
-import com.nethergrim.vk.event.ConversationsUpdatedEvent;
-import com.nethergrim.vk.models.ConversationsList;
 import com.nethergrim.vk.models.ListOfUsers;
 import com.nethergrim.vk.models.User;
 import com.nethergrim.vk.models.push.PushMessage;
@@ -22,7 +21,7 @@ import com.nethergrim.vk.models.push.PushObject;
 import com.nethergrim.vk.utils.PushParser;
 import com.nethergrim.vk.utils.UserProvider;
 import com.nethergrim.vk.utils.Utils;
-import com.nethergrim.vk.web.WebRequestManager;
+import com.nethergrim.vk.web.DataManager;
 import com.nethergrim.vk.web.images.ImageLoader;
 import com.squareup.otto.Bus;
 import com.squareup.picasso.Picasso;
@@ -33,8 +32,6 @@ import java.util.Collections;
 
 import javax.inject.Inject;
 
-import io.realm.Realm;
-
 /**
  * @author Andrey Drobyazko (c2q9450@gmail.com).
  *         All rights reserved.
@@ -42,7 +39,7 @@ import io.realm.Realm;
 public class MyGcmListenerService extends GcmListenerService {
 
     @Inject
-    WebRequestManager mWebRequestManager;
+    DataManager mDataManager;
 
     @Inject
     PushParser mPushParser;
@@ -51,13 +48,13 @@ public class MyGcmListenerService extends GcmListenerService {
     UserProvider mUserProvider;
 
     @Inject
-    Realm mRealm;
-
-    @Inject
     ImageLoader mImageLoader;
 
     @Inject
     Bus mBus;
+
+    @Inject
+    Prefs mPrefs;
 
     @Override
     public void onMessageReceived(String from, Bundle data) {
@@ -84,29 +81,12 @@ public class MyGcmListenerService extends GcmListenerService {
     }
 
     private void updateConversations() {
-        Log.e("TAG", "update conversations");
-        mWebRequestManager.getConversations(10, 0, true, 0,
-                new WebCallback<ConversationsList>() {
-                    @Override
-                    public void onResponseSucceed(ConversationsList response) {
-                        Log.e("TAG", "conversations updated");
-                        Realm realm = Realm.getDefaultInstance();
-                        realm.beginTransaction();
-                        realm.setAutoRefresh(true);
-                        realm.copyToRealmOrUpdate(response.getResults());
-                        realm.commitTransaction();
-                        mBus.post(new ConversationsUpdatedEvent());
-                    }
-
-                    @Override
-                    public void onResponseFailed(VKError e) {
-
-                    }
-                });
+        mDataManager.manageConversationsAndUsers(5, 0, false);
     }
 
     private void showNotification(@NonNull final PushMessage message) {
         User user = mUserProvider.getUser(message.getUid());
+        mPrefs.setUnreadMessagesCount(Integer.parseInt(message.getBadge()));
         if (user != null) {
             // just show notification
 
@@ -142,19 +122,15 @@ public class MyGcmListenerService extends GcmListenerService {
         } else {
             // fetch user from backend
             long userId = Long.parseLong(message.getUid());
-            mWebRequestManager.getUsers(Collections.singletonList(userId),
+            mDataManager.manageUsers(Collections.singletonList(userId),
                     new WebCallback<ListOfUsers>() {
                         @Override
                         public void onResponseSucceed(ListOfUsers response) {
-                            mRealm.beginTransaction();
-                            mRealm.copyToRealmOrUpdate(response.getResponse());
-                            mRealm.commitTransaction();
                             showNotification(message);
                         }
 
                         @Override
                         public void onResponseFailed(VKError e) {
-                            Log.e("TAG", "response failed: " + e.errorMessage);
                         }
                     });
         }

@@ -14,12 +14,14 @@ import com.nethergrim.vk.R;
 import com.nethergrim.vk.caching.Prefs;
 import com.nethergrim.vk.callbacks.WebCallback;
 import com.nethergrim.vk.enums.MainActivityState;
+import com.nethergrim.vk.event.ConversationsUpdatedEvent;
 import com.nethergrim.vk.event.UsersUpdatedEvent;
 import com.nethergrim.vk.fragment.MessagesFragment;
 import com.nethergrim.vk.gcm.PushNotificationsRegisterService;
 import com.nethergrim.vk.models.User;
 import com.nethergrim.vk.utils.UserProvider;
 import com.nethergrim.vk.utils.Utils;
+import com.nethergrim.vk.views.MenuButton;
 import com.nethergrim.vk.web.DataManager;
 import com.nethergrim.vk.web.images.ImageLoader;
 import com.squareup.otto.Bus;
@@ -36,15 +38,15 @@ public class MainActivity extends AbstractActivity implements WebCallback<User>,
         View.OnClickListener {
 
     @InjectView(R.id.messagesImageButton)
-    ImageButton mMessagesImageButton;
+    MenuButton mMessagesImageButton;
     @InjectView(R.id.friendsImageButton)
-    ImageButton mFriendsImageButton;
+    MenuButton mFriendsImageButton;
     @InjectView(R.id.profileImageButton)
     ImageButton mProfileImageButton;
     @InjectView(R.id.settingsImageButton)
-    ImageButton mSettingsImageButton;
+    MenuButton mSettingsImageButton;
     @InjectView(R.id.photosImageButton)
-    ImageButton mPhotosImageButton;
+    MenuButton mPhotosImageButton;
     @InjectView(R.id.toolbar)
     Toolbar mToolbar;
 
@@ -119,6 +121,11 @@ public class MainActivity extends AbstractActivity implements WebCallback<User>,
         }
     }
 
+    @Subscribe
+    public void onConversationsUpdated(ConversationsUpdatedEvent e) {
+        mMessagesImageButton.setAlert(mPrefs.getUnreadMessagesCount() > 0);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -131,6 +138,7 @@ public class MainActivity extends AbstractActivity implements WebCallback<User>,
         initToolbar();
         loadCurrentUser(new UsersUpdatedEvent());
         mDataManager.fetchMyUser();
+        onConversationsUpdated(new ConversationsUpdatedEvent());
     }
 
     @Override
