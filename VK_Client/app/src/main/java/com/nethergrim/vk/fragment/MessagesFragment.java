@@ -37,7 +37,7 @@ public class MessagesFragment extends AbstractFragment implements
         SwipeRefreshLayout.OnRefreshListener {
 
     public static final int DEFAULT_PAGE_SIZE = 20;
-    public static final int UPDATE_DELAY_SEC = 60;
+    public static final int UPDATE_DELAY_SEC = 20;
     @InjectView(R.id.list)
     RecyclerView mRecyclerView;
     @InjectView(R.id.progressBar2)

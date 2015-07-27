@@ -20,4 +20,8 @@ public interface Prefs {
     String getGcmToken();
 
     void setGcmToken(String token);
+
+    int getUnreadMessagesCount();
+
+    void setUnreadMessagesCount(int count);
 }

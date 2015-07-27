@@ -14,6 +14,7 @@ public class DefaultPrefsImpl implements Prefs {
     public static final String KEY_USER_ID = "id";
     public static final String KEY_ACTIVITY_STATE_ID = "activity_state_id";
     public static final String KEY_GCM_TOKEN = "gcm_token";
+    public static final String KEY_UNREAD_MESSAGES_COUNT = "unread_messages_count";
     private static final String KEY_TOKEN = "token";
     private SharedPreferences mPrefs;
 
@@ -60,6 +61,16 @@ public class DefaultPrefsImpl implements Prefs {
     @Override
     public void setGcmToken(String token) {
         mPrefs.edit().putString(KEY_GCM_TOKEN, token).apply();
+    }
+
+    @Override
+    public int getUnreadMessagesCount() {
+        return mPrefs.getInt(KEY_UNREAD_MESSAGES_COUNT, 0);
+    }
+
+    @Override
+    public void setUnreadMessagesCount(int count) {
+        mPrefs.edit().putInt(KEY_UNREAD_MESSAGES_COUNT, count).apply();
     }
 
 }
