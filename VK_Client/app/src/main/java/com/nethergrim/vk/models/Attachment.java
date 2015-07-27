@@ -30,7 +30,6 @@ public class Attachment extends RealmObject {
 
     @JsonProperty("sticker")
     private Sticker sticker;
-
     public Attachment() {
     }
 

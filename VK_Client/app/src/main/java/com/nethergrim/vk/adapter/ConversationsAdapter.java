@@ -1,5 +1,6 @@
 package com.nethergrim.vk.adapter;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
@@ -70,6 +71,7 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationViewH
         Message message = conversation.getMessage();
         String details;
         User user;
+        Context ctx = conversationViewHolder.itemView.getContext();
         if (ConversationUtils.isConversationAGroupChat(conversation)) {
 
 //            group chat
@@ -116,6 +118,10 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationViewH
                     conversationViewHolder.mImageViewDetails);
         } else {
             conversationViewHolder.mImageViewDetails.setImageBitmap(null);
+        }
+
+        if (MessageUtils.isMessageWithPhoto(message)) {
+            details = "[ " + ctx.getString(R.string.photo) + " ] " + details;
         }
 
         conversationViewHolder.textDetails.setText(details);
