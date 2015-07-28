@@ -1,6 +1,5 @@
 package com.nethergrim.vk.adapter;
 
-import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -60,11 +59,8 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsViewHolder>
 
     @Override
     public void onBindViewHolder(FriendsViewHolder holder, int position) {
-        Context ctx = holder.itemView.getContext();
         User user = mData.get(position);
         String avatarUrl = UserUtils.getStablePhotoUrl(user);
-        holder.mImageView.getLayoutParams().height = holder.mImageView.getMeasuredWidth();
-        holder.mImageView.requestLayout();
         mImageLoader.displayImage(avatarUrl, holder.mImageView);
 
     }

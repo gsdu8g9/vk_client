@@ -3,8 +3,6 @@ package com.nethergrim.vk.fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -19,6 +17,7 @@ import com.nethergrim.vk.adapter.FriendsAdapter;
 import com.nethergrim.vk.callbacks.WebCallback;
 import com.nethergrim.vk.event.UsersUpdatedEvent;
 import com.nethergrim.vk.models.ListOfUsers;
+import com.nethergrim.vk.views.VarColumnGridLayoutManager;
 import com.nethergrim.vk.web.DataManager;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
@@ -33,7 +32,7 @@ import butterknife.InjectView;
  * @author andrej on 28.07.15.
  */
 public class FriendsFragment extends AbstractFragment
-        implements SwipeRefreshLayout.OnRefreshListener, WebCallback<ListOfUsers> {
+        implements WebCallback<ListOfUsers> {
 
     @InjectView(R.id.progressBar2)
     ProgressBar mProgressBar2;
@@ -41,8 +40,6 @@ public class FriendsFragment extends AbstractFragment
     TextView mTextViewNothingHere;
     @InjectView(R.id.list)
     RecyclerView mList;
-    @InjectView(R.id.refresh_layout)
-    SwipeRefreshLayout mRefreshLayout;
 
 
     @Inject
@@ -80,6 +77,9 @@ public class FriendsFragment extends AbstractFragment
 
     @Subscribe
     public void onDataChanged(UsersUpdatedEvent e) {
+        if (mProgressBar2 == null) {
+            return;
+        }
         if (mAdapter.getItemCount() != 0) {
             mProgressBar2.setVisibility(View.GONE);
             mTextViewNothingHere.setVisibility(View.GONE);
@@ -87,12 +87,6 @@ public class FriendsFragment extends AbstractFragment
             mTextViewNothingHere.setVisibility(View.VISIBLE);
             mProgressBar2.setVisibility(View.GONE);
         }
-        mRefreshLayout.setRefreshing(false);
-    }
-
-    @Override
-    public void onRefresh() {
-        updateFriendsFromBackend();
     }
 
     @Override
@@ -103,23 +97,23 @@ public class FriendsFragment extends AbstractFragment
     @Override
     public void onResponseFailed(VKError e) {
         Log.e("TAG", "error: " + e.toString());
-        mRefreshLayout.setRefreshing(false);
     }
 
     private void updateFriendsFromBackend() {
         mDataManager.manageFriends(this);
     }
 
-    private void initList(Context context) {
+    private void initList(final Context context) {
         mAdapter = new FriendsAdapter();
         mList.setAdapter(mAdapter);
         mList.setHasFixedSize(true);
-        mList.setLayoutManager(new GridLayoutManager(context, 3));
-        mRefreshLayout.setOnRefreshListener(this);
+        mList.setLayoutManager(new VarColumnGridLayoutManager(context, context.getResources()
+                .getDimensionPixelSize(R.dimen.friends_screen_min_item_width)));
         mAdapter.notifyDataSetChanged();
         if (mAdapter.getItemCount() > 0) {
             mProgressBar2.setVisibility(View.GONE);
             mTextViewNothingHere.setVisibility(View.GONE);
         }
     }
+
 }
