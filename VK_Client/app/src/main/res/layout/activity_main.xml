@@ -62,7 +62,6 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="@drawable/menu_button_selector"
             android:src="@drawable/ic_action_question_answer" />
 
         <com.nethergrim.vk.views.MenuButton
@@ -70,7 +69,6 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="@drawable/menu_button_selector"
             android:src="@drawable/ic_action_account_child" />
 
         <FrameLayout
@@ -92,7 +90,6 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="@drawable/menu_button_selector"
             android:src="@drawable/ic_image_collections" />
 
         <com.nethergrim.vk.views.MenuButton
@@ -100,7 +97,6 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="@drawable/menu_button_selector"
             android:src="@drawable/ic_action_settings" />
 
 

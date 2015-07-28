@@ -8,7 +8,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
-import android.widget.ImageButton;
+import android.widget.ImageView;
 
 import com.nethergrim.vk.Constants;
 import com.nethergrim.vk.R;
@@ -20,7 +20,7 @@ public class MenuButton extends FrameLayout {
 
     public static final int DOT_SIZE_DP = 8;
     public static final int DOT_MARGIN_TOP_RIGHT_DP = 12;
-    private ImageButton mImageButton;
+    private ImageView mImageView;
     private View mDotView;
 
     public MenuButton(Context context) {
@@ -43,20 +43,27 @@ public class MenuButton extends FrameLayout {
     }
 
     public void setImageDrawable(@DrawableRes int id) {
-        mImageButton.setImageResource(id);
+        mImageView.setImageResource(id);
     }
 
     public void setImageDrawable(Drawable drawable) {
-        mImageButton.setImageDrawable(drawable);
+        mImageView.setImageDrawable(drawable);
     }
 
     private void init(Context context) {
         if (isInEditMode()) {
             return;
         }
-        mImageButton = new ImageButton(context);
-        mImageButton.setBackgroundResource(0);
-        addView(mImageButton, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+        setFocusable(true);
+        setClickable(true);
+        setEnabled(true);
+
+        setBackgroundResource(R.drawable.menu_button_selector);
+        setDescendantFocusability(FOCUS_BLOCK_DESCENDANTS);
+        mImageView = new ImageView(context);
+        mImageView.setBackgroundResource(0);
+        mImageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+        addView(mImageView, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT));
 
         mDotView = new View(context);
