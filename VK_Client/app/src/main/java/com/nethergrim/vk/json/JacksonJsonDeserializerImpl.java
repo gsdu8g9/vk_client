@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nethergrim.vk.models.ConversationsList;
+import com.nethergrim.vk.models.ListOfFriendIds;
 import com.nethergrim.vk.models.ListOfUsers;
 import com.nethergrim.vk.models.UserResult;
 import com.nethergrim.vk.models.push.PushMessage;
@@ -59,6 +60,16 @@ public class JacksonJsonDeserializerImpl implements JsonDeserializer {
     public PushMessage getPushMessage(JSONObject jsonObject) {
         try {
             return mapper.readValue(jsonObject.toString(), PushMessage.class);
+        } catch (IOException e) {
+            Log.e(TAG, e.getMessage());
+        }
+        return null;
+    }
+
+    @Override
+    public ListOfFriendIds getFriendsIds(String s) {
+        try {
+            return mapper.readValue(s, ListOfFriendIds.class);
         } catch (IOException e) {
             Log.e(TAG, e.getMessage());
         }

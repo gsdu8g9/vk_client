@@ -35,7 +35,10 @@ public class UserUtils {
     }
 
     public static String getStablePhotoUrl(User user) {
-        String url = user.getPhoto_200();
+        String url = user.getPhoto_100();
+        if (TextUtils.isEmpty(url)) {
+            url = user.getPhoto_200();
+        }
         if (TextUtils.isEmpty(url)) {
             url = user.getPhoto_200_orig();
         }

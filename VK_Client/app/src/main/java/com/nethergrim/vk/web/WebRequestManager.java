@@ -5,6 +5,7 @@ import android.support.annotation.WorkerThread;
 
 import com.nethergrim.vk.callbacks.WebCallback;
 import com.nethergrim.vk.models.ConversationsList;
+import com.nethergrim.vk.models.ListOfFriendIds;
 import com.nethergrim.vk.models.ListOfUsers;
 import com.nethergrim.vk.models.User;
 
@@ -43,4 +44,7 @@ public interface WebRequestManager {
 
     @UiThread
     void unregisterFromPushNotifications();
+
+    @UiThread
+    void getFriendsList(long userId, WebCallback<ListOfFriendIds> callback);
 }

@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,10 +16,13 @@ import android.widget.TextView;
 import com.nethergrim.vk.MyApplication;
 import com.nethergrim.vk.R;
 import com.nethergrim.vk.adapter.FriendsAdapter;
+import com.nethergrim.vk.callbacks.WebCallback;
 import com.nethergrim.vk.event.UsersUpdatedEvent;
+import com.nethergrim.vk.models.ListOfUsers;
 import com.nethergrim.vk.web.DataManager;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
+import com.vk.sdk.api.VKError;
 
 import javax.inject.Inject;
 
@@ -29,7 +33,7 @@ import butterknife.InjectView;
  * @author andrej on 28.07.15.
  */
 public class FriendsFragment extends AbstractFragment
-        implements SwipeRefreshLayout.OnRefreshListener {
+        implements SwipeRefreshLayout.OnRefreshListener, WebCallback<ListOfUsers> {
 
     @InjectView(R.id.progressBar2)
     ProgressBar mProgressBar2;
@@ -64,6 +68,7 @@ public class FriendsFragment extends AbstractFragment
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         initList(view.getContext());
+        updateFriendsFromBackend();
     }
 
     @Override
@@ -87,11 +92,21 @@ public class FriendsFragment extends AbstractFragment
 
     @Override
     public void onRefresh() {
-        loadPage(0);
+        updateFriendsFromBackend();
     }
 
-    private void loadPage(int pageNumber) {
-        // TODO
+    @Override
+    public void onResponseSucceed(ListOfUsers response) {
+        onDataChanged(new UsersUpdatedEvent());
+    }
+
+    @Override
+    public void onResponseFailed(VKError e) {
+        Log.e("TAG", "error: " + e.toString());
+    }
+
+    private void updateFriendsFromBackend() {
+        mDataManager.manageFriends(this);
     }
 
     private void initList(Context context) {

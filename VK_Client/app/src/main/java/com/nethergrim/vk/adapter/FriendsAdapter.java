@@ -46,6 +46,8 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsViewHolder>
         mData = realm.where(User.class)
                 .notEqualTo("id", mPrefs.getCurrentUserId())
                 .equalTo("friend_status", 3)
+                .or()
+                .equalTo("is_friend", 1)
                 .findAllSorted("firstName", true);
         notifyDataSetChanged();
         realm.addChangeListener(this);
