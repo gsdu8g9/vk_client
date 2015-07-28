@@ -17,6 +17,7 @@
             android:layout_height="@dimen/action_bar_height"
             android:background="@color/primary"
             android:elevation="0dp"
+            android:minHeight="@dimen/action_bar_height"
             android:translationZ="0dp"
             app:layout_scrollFlags="scroll|enterAlways" />
 
