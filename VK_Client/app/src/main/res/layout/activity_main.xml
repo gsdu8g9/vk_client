@@ -1,38 +1,46 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/appBarLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:elevation="0dp">
+
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/action_bar_height"
+            android:background="@color/primary"
+            android:elevation="0dp"
+            android:minHeight="@dimen/action_bar_height"
+            android:translationZ="0dp"
+            app:layout_scrollFlags="scroll|enterAlways" />
+
+
+    </android.support.design.widget.AppBarLayout>
+
     <FrameLayout
-        android:id="@+id/fragment_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginBottom="@dimen/menu_height"
-        android:layout_marginTop="@dimen/action_bar_height" />
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="8dp"
+            android:background="@drawable/bottom_shadow" />
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/action_bar_height"
-        android:background="@color/primary"
-        android:elevation="0dp"
-        android:translationZ="0dp" />
+        <FrameLayout
+            android:id="@+id/fragment_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="8dp"
-        android:layout_gravity="top"
-        android:layout_marginTop="@dimen/action_bar_height"
-        android:background="@drawable/bottom_shadow" />
-
-    <ImageView
-        android:id="@+id/imageViewSearch"
-        android:layout_width="wrap_content"
-        android:layout_height="@dimen/action_bar_height"
-        android:layout_gravity="right|top"
-        android:paddingLeft="8dp"
-        android:paddingRight="8dp"
-        android:src="@drawable/ic_action_search" />
+    </FrameLayout>
 
 
     <View
@@ -47,6 +55,7 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/menu_height"
         android:layout_gravity="bottom"
+        android:background="@android:color/white"
         android:weightSum="5">
 
         <com.nethergrim.vk.views.MenuButton
@@ -54,7 +63,6 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="@drawable/menu_button_selector"
             android:src="@drawable/ic_action_question_answer" />
 
         <com.nethergrim.vk.views.MenuButton
@@ -62,7 +70,6 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="@drawable/menu_button_selector"
             android:src="@drawable/ic_action_account_child" />
 
         <FrameLayout
@@ -84,7 +91,6 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="@drawable/menu_button_selector"
             android:src="@drawable/ic_image_collections" />
 
         <com.nethergrim.vk.views.MenuButton
@@ -92,10 +98,9 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="@drawable/menu_button_selector"
             android:src="@drawable/ic_action_settings" />
 
 
     </LinearLayout>
 
-</FrameLayout>
+</android.support.design.widget.CoordinatorLayout>
