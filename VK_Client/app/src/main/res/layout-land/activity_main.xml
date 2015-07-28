@@ -1,38 +1,46 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/appBarLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="@dimen/menu_height"
+        android:elevation="0dp">
+
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/action_bar_height"
+            android:background="@color/primary"
+            android:elevation="0dp"
+            android:translationZ="0dp"
+            app:layout_scrollFlags="scroll|enterAlways" />
+
+
+    </android.support.design.widget.AppBarLayout>
+
     <FrameLayout
-        android:id="@+id/fragment_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginRight="@dimen/menu_height"
-        android:layout_marginTop="@dimen/action_bar_height" />
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/action_bar_height"
-        android:layout_marginRight="@dimen/menu_height"
-        android:background="@color/primary" />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="8dp"
+            android:background="@drawable/bottom_shadow" />
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="8dp"
-        android:layout_gravity="top"
-        android:layout_marginRight="@dimen/menu_height"
-        android:layout_marginTop="@dimen/action_bar_height"
-        android:background="@drawable/bottom_shadow" />
+        <FrameLayout
+            android:id="@+id/fragment_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
 
-    <ImageView
-        android:id="@+id/imageViewSearch"
-        android:layout_width="wrap_content"
-        android:layout_height="@dimen/action_bar_height"
-        android:layout_gravity="right|top"
-        android:layout_marginRight="@dimen/menu_height"
-        android:paddingLeft="8dp"
-        android:paddingRight="8dp"
-        android:src="@drawable/ic_action_search" />
+    </FrameLayout>
 
 
     <View
@@ -40,7 +48,6 @@
         android:layout_height="match_parent"
         android:layout_gravity="end"
         android:layout_marginRight="@dimen/menu_height"
-        android:layout_marginTop="@dimen/action_bar_height"
         android:background="@drawable/left_shadow" />
 
 
@@ -103,4 +110,4 @@
 
     </LinearLayout>
 
-</FrameLayout>
+</android.support.design.widget.CoordinatorLayout>

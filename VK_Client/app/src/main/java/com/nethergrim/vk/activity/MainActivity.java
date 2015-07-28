@@ -50,9 +50,6 @@ public class MainActivity extends AbstractActivity implements WebCallback<User>,
     @InjectView(R.id.toolbar)
     Toolbar mToolbar;
 
-    @InjectView(R.id.imageViewSearch)
-    ImageView mSearchImageView;
-
     @Inject
     DataManager mDataManager;
 
@@ -104,10 +101,6 @@ public class MainActivity extends AbstractActivity implements WebCallback<User>,
             case R.id.photosImageButton:
                 setState(MainActivityState.Photos);
                 break;
-            case R.id.imageViewSearch:
-                // TODO open search activity
-                break;
-
         }
     }
 
@@ -148,10 +141,8 @@ public class MainActivity extends AbstractActivity implements WebCallback<User>,
     }
 
     private void initToolbar() {
+        setSupportActionBar(mToolbar);
         mToolbar.setTitleTextColor(Color.WHITE);
-        mSearchImageView.setImageDrawable(
-                Utils.tintIcon(R.drawable.ic_action_search, R.color.icons));
-        mSearchImageView.setOnClickListener(this);
     }
 
     private void initMenu() {
