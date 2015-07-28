@@ -2,7 +2,6 @@ package com.nethergrim.vk.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +12,7 @@ import com.nethergrim.vk.adapter.viewholders.FriendsViewHolder;
 import com.nethergrim.vk.caching.Prefs;
 import com.nethergrim.vk.event.UsersUpdatedEvent;
 import com.nethergrim.vk.models.User;
+import com.nethergrim.vk.utils.UserUtils;
 import com.nethergrim.vk.web.images.ImageLoader;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
@@ -46,8 +46,6 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsViewHolder>
         mData = realm.where(User.class)
                 .notEqualTo("id", mPrefs.getCurrentUserId())
                 .equalTo("friend_status", 3)
-                .or()
-                .equalTo("is_friend", 1)
                 .findAllSorted("firstName", true);
         notifyDataSetChanged();
         realm.addChangeListener(this);
@@ -64,11 +62,11 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsViewHolder>
     public void onBindViewHolder(FriendsViewHolder holder, int position) {
         Context ctx = holder.itemView.getContext();
         User user = mData.get(position);
-        String avatarUrl = user.getPhoto_200();
-        if (TextUtils.isEmpty(avatarUrl)) {
-            avatarUrl = user.getPhoto_200_orig();
-        }
+        String avatarUrl = UserUtils.getStablePhotoUrl(user);
+        holder.mImageView.getLayoutParams().height = holder.mImageView.getMeasuredWidth();
+        holder.mImageView.requestLayout();
         mImageLoader.displayImage(avatarUrl, holder.mImageView);
+
     }
 
     @Override

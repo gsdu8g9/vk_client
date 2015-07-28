@@ -103,6 +103,7 @@ public class FriendsFragment extends AbstractFragment
     @Override
     public void onResponseFailed(VKError e) {
         Log.e("TAG", "error: " + e.toString());
+        mRefreshLayout.setRefreshing(false);
     }
 
     private void updateFriendsFromBackend() {
@@ -115,6 +116,7 @@ public class FriendsFragment extends AbstractFragment
         mList.setHasFixedSize(true);
         mList.setLayoutManager(new GridLayoutManager(context, 3));
         mRefreshLayout.setOnRefreshListener(this);
+        mAdapter.notifyDataSetChanged();
         if (mAdapter.getItemCount() > 0) {
             mProgressBar2.setVisibility(View.GONE);
             mTextViewNothingHere.setVisibility(View.GONE);
