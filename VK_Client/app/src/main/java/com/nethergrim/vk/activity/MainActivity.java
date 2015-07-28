@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -120,6 +122,21 @@ public class MainActivity extends AbstractActivity implements WebCallback<User>,
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.search_menu_item) {
+            // TODO open search activity
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -199,5 +216,4 @@ public class MainActivity extends AbstractActivity implements WebCallback<User>,
         mPhotosImageButton.setImageDrawable(
                 Utils.tintIcon(R.drawable.ic_image_collections, R.color.icons_color));
     }
-
 }
