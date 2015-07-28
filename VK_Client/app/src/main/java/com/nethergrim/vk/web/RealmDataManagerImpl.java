@@ -1,5 +1,6 @@
 package com.nethergrim.vk.web;
 
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.nethergrim.vk.MyApplication;
@@ -115,6 +116,11 @@ public class RealmDataManagerImpl implements DataManager {
                 }
             }
         });
+    }
+
+    @Override
+    public void manageFriends(int limit, int offset, @Nullable WebCallback<ListOfUsers> callback) {
+        // TODO
     }
 
     @Override
