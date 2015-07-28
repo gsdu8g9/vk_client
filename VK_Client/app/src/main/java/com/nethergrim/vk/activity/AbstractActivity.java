@@ -35,13 +35,14 @@ public abstract class AbstractActivity extends ActionBarActivity {
             boolean animate,
             int containerId) {
         String tag = fragment.getClass().getSimpleName();
-        Fragment alreadyExistingFragment = getFragmentManager().findFragmentByTag(tag);
+//        Fragment alreadyExistingFragment = getFragmentManager().findFragmentByTag(tag);
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
-        if (alreadyExistingFragment != null) {
-            transaction.show(alreadyExistingFragment);
-        } else {
-            transaction.add(containerId, fragment, tag);
-        }
+//        if (alreadyExistingFragment != null) {
+//            transaction.show(alreadyExistingFragment);
+//        } else {
+//            transaction.add(containerId, fragment, tag);
+//        }
+        transaction.replace(containerId, fragment, tag);
         if (addToBackStack) {
             transaction.addToBackStack(tag);
         }

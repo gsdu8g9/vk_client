@@ -28,6 +28,7 @@ public class Constants {
         String ACCOUNT_GET_PROFILE_INFO = "account.getProfileInfo";
         String ACCOUNT_REGISTER_DEVICE = "account.registerDevice";
         String ACCOUNT_UNREGISTER_DEVICE = "account.unregisterDevice";
+        String FRIENDS_GET = "friends.get";
     }
 
     public static float getDensity() {

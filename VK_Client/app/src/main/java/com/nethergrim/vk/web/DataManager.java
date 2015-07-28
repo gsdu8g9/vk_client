@@ -19,6 +19,8 @@ public interface DataManager {
 
     void manageUsers(@NonNull List<Long> userIds, @Nullable WebCallback<ListOfUsers> callback);
 
+    void manageFriends(int limit, int offset, @Nullable WebCallback<ListOfUsers> callback);
+
     void fetchMyUser();
 
 }

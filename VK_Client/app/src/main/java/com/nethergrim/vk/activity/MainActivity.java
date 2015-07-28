@@ -18,6 +18,7 @@ import com.nethergrim.vk.callbacks.WebCallback;
 import com.nethergrim.vk.enums.MainActivityState;
 import com.nethergrim.vk.event.ConversationsUpdatedEvent;
 import com.nethergrim.vk.event.UsersUpdatedEvent;
+import com.nethergrim.vk.fragment.FriendsFragment;
 import com.nethergrim.vk.fragment.MessagesFragment;
 import com.nethergrim.vk.gcm.PushNotificationsRegisterService;
 import com.nethergrim.vk.models.User;
@@ -187,7 +188,7 @@ public class MainActivity extends AbstractActivity implements WebCallback<User>,
                 case Friends:
                     mFriendsImageButton.setImageDrawable(
                             Utils.tintIcon(R.drawable.ic_action_account_child, R.color.primary));
-                    // TODO show friends fragment
+                    showFragment(new FriendsFragment(), false, false, R.id.fragment_container);
                     break;
                 case Profile:
                     // TODO show profile fragment
