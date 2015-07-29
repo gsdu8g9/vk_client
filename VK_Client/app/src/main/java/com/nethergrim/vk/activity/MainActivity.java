@@ -16,6 +16,7 @@ import android.widget.LinearLayout;
 import com.nethergrim.vk.MyApplication;
 import com.nethergrim.vk.R;
 import com.nethergrim.vk.caching.Prefs;
+import com.nethergrim.vk.callbacks.ToolbarScrollable;
 import com.nethergrim.vk.callbacks.WebCallback;
 import com.nethergrim.vk.enums.MainActivityState;
 import com.nethergrim.vk.event.ConversationsUpdatedEvent;
@@ -40,9 +41,10 @@ import butterknife.InjectView;
 import io.realm.Realm;
 
 public class MainActivity extends AbstractActivity implements WebCallback<User>,
-        View.OnClickListener {
+        View.OnClickListener, ToolbarScrollable {
 
 
+    public static final int ANIMATION_DURATION = 300;
     @Inject
     DataManager mDataManager;
     @Inject
@@ -69,6 +71,10 @@ public class MainActivity extends AbstractActivity implements WebCallback<User>,
     MenuButton mSettingsImageButton;
     @InjectView(R.id.menu_layout)
     LinearLayout mMenuLayout;
+    @InjectView(R.id.toolbar_layout)
+    View mToolbarLayout;
+    private boolean mToolbarIsHidden = false;
+    private float mToolBarHeight;
 
     private MainActivityState mCurrentState;
 
@@ -142,6 +148,25 @@ public class MainActivity extends AbstractActivity implements WebCallback<User>,
     }
 
     @Override
+    public void showToolbar() {
+        if (mToolbarIsHidden) {
+            mToolbarIsHidden = false;
+            mToolbarLayout.animate().translationY(0).setDuration(ANIMATION_DURATION).start();
+        }
+    }
+
+    @Override
+    public void hideToolbar() {
+        if (!mToolbarIsHidden) {
+            mToolbarIsHidden = true;
+            mToolbarLayout.animate()
+                    .translationY(mToolBarHeight * -1)
+                    .setDuration(ANIMATION_DURATION)
+                    .start();
+        }
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -163,6 +188,7 @@ public class MainActivity extends AbstractActivity implements WebCallback<User>,
     }
 
     private void initToolbar() {
+        mToolBarHeight = getResources().getDimensionPixelSize(R.dimen.action_bar_height);
         setSupportActionBar(mToolbar);
         mToolbar.setTitleTextColor(Color.WHITE);
     }
@@ -182,6 +208,7 @@ public class MainActivity extends AbstractActivity implements WebCallback<User>,
             mCurrentState = mainActivityState;
             mPrefs.setCurrentActivityStateId(mainActivityState.getId());
             deselectIcons();
+            showToolbar();
             mToolbar.setTitle(mainActivityState.getTitleStringRes());
             switch (mainActivityState) {
                 case Conversations:

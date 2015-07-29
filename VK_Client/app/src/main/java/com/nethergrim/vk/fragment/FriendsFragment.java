@@ -1,5 +1,6 @@
 package com.nethergrim.vk.fragment;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -14,9 +15,11 @@ import android.widget.TextView;
 import com.nethergrim.vk.MyApplication;
 import com.nethergrim.vk.R;
 import com.nethergrim.vk.adapter.FriendsAdapter;
+import com.nethergrim.vk.callbacks.ToolbarScrollable;
 import com.nethergrim.vk.callbacks.WebCallback;
 import com.nethergrim.vk.event.UsersUpdatedEvent;
 import com.nethergrim.vk.models.ListOfUsers;
+import com.nethergrim.vk.utils.BasicRecyclerViewScroller;
 import com.nethergrim.vk.views.VarColumnGridLayoutManager;
 import com.nethergrim.vk.web.DataManager;
 import com.squareup.otto.Bus;
@@ -49,6 +52,16 @@ public class FriendsFragment extends AbstractFragment
 
     private FriendsAdapter mAdapter;
 
+    private ToolbarScrollable mToolbarScrollable;
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        if (activity instanceof ToolbarScrollable) {
+            mToolbarScrollable = (ToolbarScrollable) activity;
+        }
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater,
@@ -73,6 +86,12 @@ public class FriendsFragment extends AbstractFragment
         super.onDestroyView();
         ButterKnife.reset(this);
         mBus.unregister(this);
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mToolbarScrollable = null;
     }
 
     @Subscribe
@@ -111,6 +130,7 @@ public class FriendsFragment extends AbstractFragment
                 context.getResources()
                         .getDimensionPixelSize(R.dimen.friends_screen_min_item_width));
         mList.setLayoutManager(manager);
+        mList.addOnScrollListener(new BasicRecyclerViewScroller(mToolbarScrollable));
 
         mAdapter.notifyDataSetChanged();
         if (mAdapter.getItemCount() > 0) {

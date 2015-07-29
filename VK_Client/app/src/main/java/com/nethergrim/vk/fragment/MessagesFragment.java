@@ -1,12 +1,12 @@
 package com.nethergrim.vk.fragment;
 
+import android.app.Activity;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,7 +16,9 @@ import android.widget.TextView;
 import com.nethergrim.vk.MyApplication;
 import com.nethergrim.vk.R;
 import com.nethergrim.vk.adapter.ConversationsAdapter;
+import com.nethergrim.vk.callbacks.ToolbarScrollable;
 import com.nethergrim.vk.event.ConversationsUpdatedEvent;
+import com.nethergrim.vk.utils.BasicRecyclerViewScroller;
 import com.nethergrim.vk.utils.SafeTimer;
 import com.nethergrim.vk.views.RecyclerviewPageScroller;
 import com.nethergrim.vk.web.DataManager;
@@ -53,6 +55,16 @@ public class MessagesFragment extends AbstractFragment implements
     Bus mBus;
     private SafeTimer mSafeTimer;
     private ConversationsAdapter mAdapter;
+
+    private ToolbarScrollable mToolbarScrollable;
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        if (activity instanceof ToolbarScrollable) {
+            mToolbarScrollable = (ToolbarScrollable) activity;
+        }
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -91,8 +103,9 @@ public class MessagesFragment extends AbstractFragment implements
         mRecyclerView.addItemDecoration(
                 new HorizontalDividerItemDecoration.Builder(view.getContext()).margin(
                         additionalLeftMarginForDividers, 0).build());
-        mRecyclerView.setOnScrollListener(
+        mRecyclerView.addOnScrollListener(
                 new RecyclerviewPageScroller(DEFAULT_PAGE_SIZE, this, 5));
+        mRecyclerView.addOnScrollListener(new BasicRecyclerViewScroller(mToolbarScrollable));
         if (mAdapter.getItemCount() == 0) {
             mProgressBar.setVisibility(View.VISIBLE);
             mNothingHereTextView.setVisibility(View.GONE);
@@ -127,13 +140,18 @@ public class MessagesFragment extends AbstractFragment implements
     }
 
     @Override
+    public void onDetach() {
+        super.onDetach();
+        mToolbarScrollable = null;
+    }
+
+    @Override
     public void onRecyclerViewScrolledToPage(int pageNumber) {
         loadPage(pageNumber);
     }
 
     @Override
     public void onRefresh() {
-        Log.e("TAG", "onRefresh");
         loadPage(0);
     }
 
