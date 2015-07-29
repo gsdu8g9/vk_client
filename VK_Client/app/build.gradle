@@ -54,6 +54,7 @@ dependencies {
     compile 'com.google.dagger:dagger:2.1-SNAPSHOT'
     compile 'io.reactivex:rxandroid:0.25.0'
     compile 'com.google.android.gms:play-services-gcm:7.5.0'
+    compile 'com.github.johnkil.android-robototextview:robototextview:2.4.0'
     compile files('lib/jackson-annotations-2.5.0.jar')
     compile files('lib/jackson-core-2.5.0.jar')
     compile files('lib/jackson-databind-2.5.0.jar')

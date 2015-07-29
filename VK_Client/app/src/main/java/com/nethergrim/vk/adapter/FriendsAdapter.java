@@ -62,7 +62,7 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsViewHolder>
         User user = mData.get(position);
         String avatarUrl = UserUtils.getStablePhotoUrl(user);
         mImageLoader.displayImage(avatarUrl, holder.mImageView);
-        holder.mTextViewName.setText(user.getFirstName());
+        holder.mTextViewName.setText(user.getFirstName() + "\n " + user.getLastName());
     }
 
     @Override
