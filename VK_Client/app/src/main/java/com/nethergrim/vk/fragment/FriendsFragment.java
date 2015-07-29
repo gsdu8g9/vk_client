@@ -107,8 +107,11 @@ public class FriendsFragment extends AbstractFragment
         mAdapter = new FriendsAdapter();
         mList.setAdapter(mAdapter);
         mList.setHasFixedSize(true);
-        mList.setLayoutManager(new VarColumnGridLayoutManager(context, context.getResources()
-                .getDimensionPixelSize(R.dimen.friends_screen_min_item_width)));
+        VarColumnGridLayoutManager manager = new VarColumnGridLayoutManager(context,
+                context.getResources()
+                        .getDimensionPixelSize(R.dimen.friends_screen_min_item_width));
+        mList.setLayoutManager(manager);
+
         mAdapter.notifyDataSetChanged();
         if (mAdapter.getItemCount() > 0) {
             mProgressBar2.setVisibility(View.GONE);
