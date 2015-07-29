@@ -8,8 +8,10 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import com.nethergrim.vk.MyApplication;
 import com.nethergrim.vk.R;
@@ -40,31 +42,33 @@ import io.realm.Realm;
 public class MainActivity extends AbstractActivity implements WebCallback<User>,
         View.OnClickListener {
 
-    @InjectView(R.id.messagesImageButton)
-    MenuButton mMessagesImageButton;
-    @InjectView(R.id.friendsImageButton)
-    MenuButton mFriendsImageButton;
-    @InjectView(R.id.profileImageButton)
-    ImageButton mProfileImageButton;
-    @InjectView(R.id.settingsImageButton)
-    MenuButton mSettingsImageButton;
-    @InjectView(R.id.photosImageButton)
-    MenuButton mPhotosImageButton;
-    @InjectView(R.id.toolbar)
-    Toolbar mToolbar;
 
     @Inject
     DataManager mDataManager;
-
     @Inject
     Bus mBus;
-
     @Inject
     ImageLoader mIL;
     @Inject
     Prefs mPrefs;
     @Inject
     UserProvider mUP;
+    @InjectView(R.id.fragment_container)
+    FrameLayout mFragmentContainer;
+    @InjectView(R.id.toolbar)
+    Toolbar mToolbar;
+    @InjectView(R.id.messagesImageButton)
+    MenuButton mMessagesImageButton;
+    @InjectView(R.id.friendsImageButton)
+    MenuButton mFriendsImageButton;
+    @InjectView(R.id.profileImageButton)
+    ImageButton mProfileImageButton;
+    @InjectView(R.id.photosImageButton)
+    MenuButton mPhotosImageButton;
+    @InjectView(R.id.settingsImageButton)
+    MenuButton mSettingsImageButton;
+    @InjectView(R.id.menu_layout)
+    LinearLayout mMenuLayout;
 
     private MainActivityState mCurrentState;
 
