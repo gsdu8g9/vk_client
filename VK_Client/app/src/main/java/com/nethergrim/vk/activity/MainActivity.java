@@ -8,12 +8,15 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import com.nethergrim.vk.MyApplication;
 import com.nethergrim.vk.R;
 import com.nethergrim.vk.caching.Prefs;
+import com.nethergrim.vk.callbacks.ToolbarScrollable;
 import com.nethergrim.vk.callbacks.WebCallback;
 import com.nethergrim.vk.enums.MainActivityState;
 import com.nethergrim.vk.event.ConversationsUpdatedEvent;
@@ -38,33 +41,40 @@ import butterknife.InjectView;
 import io.realm.Realm;
 
 public class MainActivity extends AbstractActivity implements WebCallback<User>,
-        View.OnClickListener {
+        View.OnClickListener, ToolbarScrollable {
 
-    @InjectView(R.id.messagesImageButton)
-    MenuButton mMessagesImageButton;
-    @InjectView(R.id.friendsImageButton)
-    MenuButton mFriendsImageButton;
-    @InjectView(R.id.profileImageButton)
-    ImageButton mProfileImageButton;
-    @InjectView(R.id.settingsImageButton)
-    MenuButton mSettingsImageButton;
-    @InjectView(R.id.photosImageButton)
-    MenuButton mPhotosImageButton;
-    @InjectView(R.id.toolbar)
-    Toolbar mToolbar;
 
+    public static final int ANIMATION_DURATION = 300;
     @Inject
     DataManager mDataManager;
-
     @Inject
     Bus mBus;
-
     @Inject
     ImageLoader mIL;
     @Inject
     Prefs mPrefs;
     @Inject
     UserProvider mUP;
+    @InjectView(R.id.fragment_container)
+    FrameLayout mFragmentContainer;
+    @InjectView(R.id.toolbar)
+    Toolbar mToolbar;
+    @InjectView(R.id.messagesImageButton)
+    MenuButton mMessagesImageButton;
+    @InjectView(R.id.friendsImageButton)
+    MenuButton mFriendsImageButton;
+    @InjectView(R.id.profileImageButton)
+    ImageButton mProfileImageButton;
+    @InjectView(R.id.photosImageButton)
+    MenuButton mPhotosImageButton;
+    @InjectView(R.id.settingsImageButton)
+    MenuButton mSettingsImageButton;
+    @InjectView(R.id.menu_layout)
+    LinearLayout mMenuLayout;
+    @InjectView(R.id.toolbar_layout)
+    View mToolbarLayout;
+    private boolean mToolbarIsHidden = false;
+    private float mToolBarHeight;
 
     private MainActivityState mCurrentState;
 
@@ -138,6 +148,25 @@ public class MainActivity extends AbstractActivity implements WebCallback<User>,
     }
 
     @Override
+    public void showToolbar() {
+        if (mToolbarIsHidden) {
+            mToolbarIsHidden = false;
+            mToolbarLayout.animate().translationY(0).setDuration(ANIMATION_DURATION).start();
+        }
+    }
+
+    @Override
+    public void hideToolbar() {
+        if (!mToolbarIsHidden) {
+            mToolbarIsHidden = true;
+            mToolbarLayout.animate()
+                    .translationY(mToolBarHeight * -1)
+                    .setDuration(ANIMATION_DURATION)
+                    .start();
+        }
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -159,6 +188,7 @@ public class MainActivity extends AbstractActivity implements WebCallback<User>,
     }
 
     private void initToolbar() {
+        mToolBarHeight = getResources().getDimensionPixelSize(R.dimen.action_bar_height);
         setSupportActionBar(mToolbar);
         mToolbar.setTitleTextColor(Color.WHITE);
     }
@@ -178,6 +208,7 @@ public class MainActivity extends AbstractActivity implements WebCallback<User>,
             mCurrentState = mainActivityState;
             mPrefs.setCurrentActivityStateId(mainActivityState.getId());
             deselectIcons();
+            showToolbar();
             mToolbar.setTitle(mainActivityState.getTitleStringRes());
             switch (mainActivityState) {
                 case Conversations:
