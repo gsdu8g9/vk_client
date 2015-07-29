@@ -3,6 +3,8 @@ package com.nethergrim.vk.inject;
 import com.nethergrim.vk.MyApplication;
 import com.nethergrim.vk.activity.MainActivity;
 import com.nethergrim.vk.adapter.ConversationsAdapter;
+import com.nethergrim.vk.adapter.FriendsAdapter;
+import com.nethergrim.vk.fragment.FriendsFragment;
 import com.nethergrim.vk.fragment.MessagesFragment;
 import com.nethergrim.vk.gcm.MyGcmListenerService;
 import com.nethergrim.vk.gcm.MyInstanceIDListenerService;
@@ -50,4 +52,8 @@ public interface MainComponent {
     void inject(PushParserImpl o);
 
     void inject(RealmDataManagerImpl o);
+
+    void inject(FriendsAdapter o);
+
+    void inject(FriendsFragment o);
 }

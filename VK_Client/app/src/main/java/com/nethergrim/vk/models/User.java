@@ -22,7 +22,8 @@ public class User extends RealmObject {
     private String lastName;
 
     /**
-     * возвращается, если страница пользователя удалена или заблокирована, содержит значение deleted
+     * возвращается, если страница пользователя удалена или заблокирована, содержит значение
+     * deleted
      * или banned. Обратите внимание, в этом случае дополнительные поля fields не возвращаются.
      */
     private String deactivated;
@@ -87,7 +88,8 @@ public class User extends RealmObject {
 
     /**
      * информация о том, находится ли пользователь сейчас на сайте. Возвращаемые значения: 1 —
-     * находится, 0 — не находится. Если пользователь использует мобильное приложение либо мобильную
+     * находится, 0 — не находится. Если пользователь использует мобильное приложение либо
+     * мобильную
      * версию сайта, возвращается дополнительное поле online_mobile, содержащее 1. При этом, если
      * используется именно приложение, дополнительно возвращается поле online_app, содержащее его
      * идентификатор.
@@ -103,14 +105,22 @@ public class User extends RealmObject {
     private String status;
 
     private int followers_count;
-
     private int common_count;
-
     private String nickname;
-
     private int relation;
-
+    /**
+     * 1 – пользователь друг, 2 – пользователь не в друзьях.
+     */
     private int is_friend;
+    /**
+     * статус дружбы с пользователем:
+     * 0 – пользователь не является другом,
+     * 1 – отправлена заявка/подписка пользователю,
+     * 2 – имеется входящая заявка/подписка от пользователя,
+     * 3 – пользователь является другом;
+     */
+    private int friend_status;
+
 
     public interface Fields {
 
@@ -165,6 +175,14 @@ public class User extends RealmObject {
     }
 
     public User() {
+    }
+
+    public int getFriend_status() {
+        return friend_status;
+    }
+
+    public void setFriend_status(int friend_status) {
+        this.friend_status = friend_status;
     }
 
     public long getId() {

@@ -31,15 +31,16 @@
         android:layout_marginBottom="@dimen/menu_height"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="8dp"
-            android:background="@drawable/bottom_shadow" />
 
         <FrameLayout
             android:id="@+id/fragment_container"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="8dp"
+            android:background="@drawable/bottom_shadow" />
 
     </FrameLayout>
 

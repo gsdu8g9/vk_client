@@ -10,6 +10,7 @@ import com.nethergrim.vk.callbacks.WebCallback;
 import com.nethergrim.vk.json.JsonDeserializer;
 import com.nethergrim.vk.models.Conversation;
 import com.nethergrim.vk.models.ConversationsList;
+import com.nethergrim.vk.models.ListOfFriendIds;
 import com.nethergrim.vk.models.ListOfUsers;
 import com.nethergrim.vk.models.User;
 import com.nethergrim.vk.utils.ConversationUtils;
@@ -282,6 +283,43 @@ public class WebRequestManagerImpl implements WebRequestManager {
             public void onError(VKError error) {
                 super.onError(error);
                 Log.e("TAG", "unregister error: " + error.errorMessage);
+            }
+        });
+    }
+
+    @Override
+    public void getFriendsList(long userId, final WebCallback<ListOfFriendIds> callback) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("user_id", String.valueOf(userId));
+        params.put("order", "random");
+
+        VKRequest vkRequest = new VKRequest(Constants.Requests.FRIENDS_GET,
+                new VKParameters(params));
+        vkRequest.executeWithListener(new VKRequest.VKRequestListener() {
+            @Override
+            public void onComplete(VKResponse response) {
+                super.onComplete(response);
+
+                ListOfFriendIds listOfFriendIds = null;
+                try {
+                    listOfFriendIds = mJsonDeserializer.getFriendsIds(
+                            response.json.getJSONObject("response").toString());
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                if (callback != null) {
+                    callback.onResponseSucceed(listOfFriendIds);
+                }
+
+            }
+
+            @Override
+            public void onError(VKError error) {
+                super.onError(error);
+                Log.e("TAG", "error: " + error.toString());
+                if (callback != null) {
+                    callback.onResponseFailed(error);
+                }
             }
         });
     }

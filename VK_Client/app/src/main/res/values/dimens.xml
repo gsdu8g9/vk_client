@@ -4,7 +4,6 @@
     <dimen name="action_bar_height">48dp</dimen>
 
 
-
     <!--           Text          -->
     <dimen name="text_size_regular">16sp</dimen>
     <dimen name="text_size_big">18sp</dimen>
@@ -21,5 +20,8 @@
     <dimen name="conversation_avatar_size">56dp</dimen>
     <integer name="conversation_item_max_message_lines">2</integer>
     <dimen name="conversation_item_text_secondary_margin_top">1dp</dimen>
+
+    <!--               Friends Screen     -->
+    <dimen name="friends_screen_min_item_width">130dp</dimen>
 
 </resources>
