@@ -9,16 +9,19 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.nethergrim.vk.MyApplication;
 import com.nethergrim.vk.R;
+import com.nethergrim.vk.activity.UserProfileActivity;
 import com.nethergrim.vk.adapter.FriendsAdapter;
 import com.nethergrim.vk.callbacks.ToolbarScrollable;
 import com.nethergrim.vk.callbacks.WebCallback;
 import com.nethergrim.vk.event.UsersUpdatedEvent;
 import com.nethergrim.vk.models.ListOfUsers;
+import com.nethergrim.vk.models.User;
 import com.nethergrim.vk.utils.BasicRecyclerViewScroller;
 import com.nethergrim.vk.views.VarColumnGridLayoutManager;
 import com.nethergrim.vk.web.DataManager;
@@ -35,7 +38,7 @@ import butterknife.InjectView;
  * @author andrej on 28.07.15.
  */
 public class FriendsFragment extends AbstractFragment
-        implements WebCallback<ListOfUsers> {
+        implements WebCallback<ListOfUsers>, FriendsAdapter.OnFriendClickedCallback {
 
     @InjectView(R.id.progressBar2)
     ProgressBar mProgressBar2;
@@ -118,12 +121,18 @@ public class FriendsFragment extends AbstractFragment
         Log.e("TAG", "error: " + e.toString());
     }
 
+    @Override
+    public void onFriendClicked(View v, User user) {
+        UserProfileActivity.show(user.getId(), getActivity(),
+                (ImageView) v.findViewById(R.id.image_avatar));
+    }
+
     private void updateFriendsFromBackend() {
         mDataManager.manageFriends(this);
     }
 
     private void initList(final Context context) {
-        mAdapter = new FriendsAdapter();
+        mAdapter = new FriendsAdapter(this);
         mList.setAdapter(mAdapter);
         mList.setHasFixedSize(true);
         VarColumnGridLayoutManager manager = new VarColumnGridLayoutManager(context,
