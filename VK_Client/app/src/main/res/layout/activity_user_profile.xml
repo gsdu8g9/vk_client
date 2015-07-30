@@ -21,14 +21,9 @@
                 android:layout_width="140dp"
                 android:layout_height="140dp"
                 android:layout_gravity="center"
-                android:background="@drawable/white_dot" />
+                android:background="@drawable/white_dot"
+                android:visibility="gone" />
 
-            <View
-                android:id="@+id/foregroundAvatar"
-                android:layout_width="140dp"
-                android:layout_height="140dp"
-                android:layout_gravity="center"
-                android:background="@drawable/white_dot" />
 
         </FrameLayout>
 
@@ -62,6 +57,7 @@
     </FrameLayout>
 
     <include
+        android:id="@+id/layout_toolbar"
         layout="@layout/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />

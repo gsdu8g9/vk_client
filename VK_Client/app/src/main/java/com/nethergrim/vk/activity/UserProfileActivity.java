@@ -55,8 +55,9 @@ public class UserProfileActivity extends AbstractActivity {
     FrameLayout mBackgroundLayout;
     @InjectView(R.id.toolbar)
     Toolbar mToolbar;
-    @InjectView(R.id.foregroundAvatar)
-    View mForegroundAvatar;
+
+    @InjectView(R.id.layout_toolbar)
+    View mToolbarLayout;
 
     private User mUser;
 
@@ -114,6 +115,7 @@ public class UserProfileActivity extends AbstractActivity {
 
     private void startFirstAnimation(Bundle savedInstanceState) {
         if (mUser != null) {
+            mToolbarLayout.setAlpha(0f);
             mImageLoader.displayImage(UserUtils.getStablePhotoUrl(mUser), mAvatarImageView);
             mExitActivityTransition = ActivityTransition.with(getIntent())
                     .to(mAvatarImageView)
@@ -132,6 +134,7 @@ public class UserProfileActivity extends AbstractActivity {
             @Nullable Animator.AnimatorListener animationListener) {
 
         Drawable drawable = getResources().getDrawable(R.drawable.white_dot);
+        mBackgroundAvatar.setVisibility(View.VISIBLE);
         if (in) {
             UserPalette userPalette = mImageLoader.getUserPalette(userId);
             if (userPalette != null && userPalette.getVibrant() != 0) {
@@ -144,10 +147,11 @@ public class UserProfileActivity extends AbstractActivity {
             mBackgroundAvatar.animate().setDuration(ANIMATION_DURATION).scaleX(3f).scaleY(
                     3f).start();
         } else {
-            mBackgroundAvatar.animate().setDuration(ANIMATION_DURATION).scaleX(1f).scaleY(
+            mBackgroundAvatar.animate().setDuration(ANIMATION_DURATION).scaleX(1f).alpha(0f).scaleY(
                     1f).start();
         }
-
+        mToolbarLayout.setAlpha(in ? 0f : 1f);
+        mToolbarLayout.animate().setDuration(ANIMATION_DURATION).alpha(in ? 1f : 0f).start();
         mShadowLayout.animate()
                 .setDuration(ANIMATION_DURATION)
                 .alpha(in ? 1f : 0f)
