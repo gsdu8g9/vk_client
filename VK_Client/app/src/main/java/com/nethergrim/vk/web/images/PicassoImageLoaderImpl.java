@@ -115,24 +115,27 @@ public class PicassoImageLoaderImpl implements ImageLoader {
     public void generatePaletteAndStore(@NonNull final User user) {
         Picasso.with(context)
                 .load(UserUtils.getStablePhotoUrl(user))
-                .config(Bitmap.Config.RGB_565)
                 .into(new Target() {
                     @Override
                     public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
                         Palette.from(bitmap).generate(new Palette.PaletteAsyncListener() {
                             @Override
                             public void onGenerated(Palette palette) {
+                                int defaultColor = context.getResources()
+                                        .getColor(R.color.primary_light);
                                 Realm realm = Realm.getDefaultInstance();
                                 realm.beginTransaction();
                                 UserPalette userPalette = realm.createObject(
                                         UserPalette.class);
-                                userPalette.setMuted(palette.getMutedColor(0));
-                                userPalette.setMutedDark(palette.getDarkMutedColor(0));
-                                userPalette.setMutedLight(palette.getLightMutedColor(0));
+                                userPalette.setMuted(palette.getMutedColor(defaultColor));
+                                userPalette.setMutedDark(palette.getDarkMutedColor(defaultColor));
+                                userPalette.setMutedLight(palette.getLightMutedColor(defaultColor));
                                 userPalette.setUserId(user.getId());
-                                userPalette.setVibrant(palette.getVibrantColor(0));
-                                userPalette.setVibrantLight(palette.getLightVibrantColor(0));
-                                userPalette.setVibrantDark(palette.getDarkVibrantColor(0));
+                                userPalette.setVibrant(palette.getVibrantColor(defaultColor));
+                                userPalette.setVibrantLight(
+                                        palette.getLightVibrantColor(defaultColor));
+                                userPalette.setVibrantDark(
+                                        palette.getDarkVibrantColor(defaultColor));
                                 realm.commitTransaction();
                             }
                         });
