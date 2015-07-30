@@ -58,6 +58,10 @@ public class UserProfileActivity extends AbstractActivity {
 
     @InjectView(R.id.layout_toolbar)
     View mToolbarLayout;
+    @InjectView(R.id.topLayout)
+    FrameLayout mTopLayout;
+    @InjectView(R.id.bottomLayout)
+    View mBottomLayout;
 
     private User mUser;
 
@@ -135,6 +139,7 @@ public class UserProfileActivity extends AbstractActivity {
 
         Drawable drawable = getResources().getDrawable(R.drawable.white_dot);
         mBackgroundAvatar.setVisibility(View.VISIBLE);
+
         if (in) {
             UserPalette userPalette = mImageLoader.getUserPalette(userId);
             if (userPalette != null && userPalette.getVibrant() != 0) {
@@ -146,9 +151,19 @@ public class UserProfileActivity extends AbstractActivity {
             mBackgroundAvatar.setBackgroundDrawable(drawable);
             mBackgroundAvatar.animate().setDuration(ANIMATION_DURATION).scaleX(3f).scaleY(
                     3f).start();
+            mBottomLayout.setVisibility(View.VISIBLE);
+            mBottomLayout.setTranslationY(1000f);
+            mBottomLayout.animate().translationY(0f).setDuration(ANIMATION_DURATION).start();
         } else {
             mBackgroundAvatar.animate().setDuration(ANIMATION_DURATION).scaleX(1f).alpha(0f).scaleY(
                     1f).start();
+            mBottomLayout.setTranslationY(0f);
+            mBottomLayout.animate()
+                    .translationY(1000f)
+                    .alpha(0f)
+                    .setDuration(ANIMATION_DURATION)
+                    .start();
+
         }
         mToolbarLayout.setAlpha(in ? 0f : 1f);
         mToolbarLayout.animate().setDuration(ANIMATION_DURATION).alpha(in ? 1f : 0f).start();
