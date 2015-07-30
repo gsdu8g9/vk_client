@@ -59,6 +59,7 @@ dependencies {
     compile 'com.github.johnkil.android-robototextview:robototextview:2.4.0'
     compile 'com.karumi:headerrecyclerview:1.0.3'
     compile 'com.kogitune:pre-lollipop-activity-transition:1.0.0'
+    compile 'com.github.dmytrodanylyk.shadow-layout:library:1.0.3'
     compile files('lib/jackson-annotations-2.5.0.jar')
     compile files('lib/jackson-core-2.5.0.jar')
     compile files('lib/jackson-databind-2.5.0.jar')

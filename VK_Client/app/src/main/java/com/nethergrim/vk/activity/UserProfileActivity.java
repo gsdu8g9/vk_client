@@ -2,10 +2,14 @@ package com.nethergrim.vk.activity;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.widget.ImageView;
 
+import com.dd.ShadowLayout;
 import com.kogitune.activity_transition.ActivityTransition;
 import com.kogitune.activity_transition.ActivityTransitionLauncher;
 import com.kogitune.activity_transition.ExitActivityTransition;
@@ -29,7 +33,7 @@ import io.realm.Realm;
 public class UserProfileActivity extends AbstractActivity {
 
     public static final String BUNDLE_EXTRA_USER_ID = "user_id";
-    public static final int ANIMATION_DURATION = 500;
+    public static final int ANIMATION_DURATION = 300;
     @InjectView(R.id.imageView2)
     ImageView mAvatarImageView;
 
@@ -39,6 +43,8 @@ public class UserProfileActivity extends AbstractActivity {
     ImageLoader mImageLoader;
     @InjectView(R.id.backgroundAvatar)
     View mBackgroundAvatar;
+    @InjectView(R.id.shadow_layout)
+    ShadowLayout mShadowLayout;
 
     private ExitActivityTransition mExitActivityTransition;
 
@@ -73,17 +79,33 @@ public class UserProfileActivity extends AbstractActivity {
         User user = mRealm.where(User.class).equalTo("id", userId).findFirst();
         if (user != null) {
             mImageLoader.displayImage(UserUtils.getStablePhotoUrl(user), mAvatarImageView);
-            UserPalette userPalette = mImageLoader.getUserPalette(userId);
-            if (userPalette != null && userPalette.getVibrant() != 0) {
-                mBackgroundAvatar.setBackgroundColor(userPalette.getVibrantLight());
-            } else {
-                mBackgroundAvatar.setBackgroundResource(R.color.primary_light);
-            }
             mExitActivityTransition = ActivityTransition.with(getIntent())
                     .to(mAvatarImageView)
                     .duration(ANIMATION_DURATION)
                     .start(savedInstanceState);
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    runBackgroundRippleAnimation();
+                }
+            }, ANIMATION_DURATION);
         }
 
     }
+
+    private void runBackgroundRippleAnimation() {
+        UserPalette userPalette = mImageLoader.getUserPalette(userId);
+
+        Drawable drawable = getResources().getDrawable(R.drawable.white_dot);
+        if (userPalette != null && userPalette.getVibrant() != 0) {
+            drawable.setColorFilter(userPalette.getVibrantLight(), PorterDuff.Mode.MULTIPLY);
+        } else {
+            drawable.setColorFilter(getResources().getColor(R.color.primary_light),
+                    PorterDuff.Mode.MULTIPLY);
+        }
+        mBackgroundAvatar.setBackgroundDrawable(drawable);
+        mBackgroundAvatar.animate().setDuration(ANIMATION_DURATION).scaleX(3f).scaleY(3f).start();
+        mShadowLayout.animate().setDuration(ANIMATION_DURATION).alpha(1f).start();
+    }
+
 }
