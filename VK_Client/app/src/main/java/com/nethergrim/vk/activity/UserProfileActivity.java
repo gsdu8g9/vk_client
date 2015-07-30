@@ -145,6 +145,8 @@ public class UserProfileActivity extends AbstractActivity {
             UserPalette userPalette = mImageLoader.getUserPalette(userId);
             if (userPalette != null && userPalette.getVibrant() != 0) {
                 drawable.setColorFilter(userPalette.getVibrant(), PorterDuff.Mode.MULTIPLY);
+            } else if (userPalette != null && userPalette.getMuted() != 0) {
+                drawable.setColorFilter(userPalette.getMuted(), PorterDuff.Mode.MULTIPLY);
             } else {
                 drawable.setColorFilter(getResources().getColor(R.color.primary_light),
                         PorterDuff.Mode.MULTIPLY);
