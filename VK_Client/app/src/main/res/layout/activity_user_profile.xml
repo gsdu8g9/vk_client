@@ -11,13 +11,21 @@
         android:layout_marginTop="@dimen/action_bar_height">
 
 
-        <View
+        <FrameLayout
             android:id="@+id/bottomLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginTop="188dp"
             android:background="@android:color/white"
-            android:visibility="gone" />
+            android:visibility="gone">
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="8dp"
+                android:background="@drawable/bottom_shadow" />
+
+
+        </FrameLayout>
 
         <FrameLayout
             android:id="@+id/topLayout"

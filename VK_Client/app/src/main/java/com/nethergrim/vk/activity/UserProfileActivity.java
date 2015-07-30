@@ -12,6 +12,7 @@ import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.view.animation.AccelerateInterpolator;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
@@ -39,7 +40,7 @@ import io.realm.Realm;
 public class UserProfileActivity extends AbstractActivity {
 
     public static final String BUNDLE_EXTRA_USER_ID = "user_id";
-    public static final int ANIMATION_DURATION = 300;
+    public static final int ANIMATION_DURATION = 220;
     @InjectView(R.id.imageView2)
     ImageView mAvatarImageView;
 
@@ -143,7 +144,7 @@ public class UserProfileActivity extends AbstractActivity {
         if (in) {
             UserPalette userPalette = mImageLoader.getUserPalette(userId);
             if (userPalette != null && userPalette.getVibrant() != 0) {
-                drawable.setColorFilter(userPalette.getVibrantLight(), PorterDuff.Mode.MULTIPLY);
+                drawable.setColorFilter(userPalette.getVibrant(), PorterDuff.Mode.MULTIPLY);
             } else {
                 drawable.setColorFilter(getResources().getColor(R.color.primary_light),
                         PorterDuff.Mode.MULTIPLY);
@@ -153,7 +154,14 @@ public class UserProfileActivity extends AbstractActivity {
                     3f).start();
             mBottomLayout.setVisibility(View.VISIBLE);
             mBottomLayout.setTranslationY(1000f);
-            mBottomLayout.animate().translationY(0f).setDuration(ANIMATION_DURATION).start();
+            mBottomLayout.setAlpha(0.5f);
+            mBottomLayout.animate()
+                    .translationY(0f)
+                    .alpha(1f)
+                    .setInterpolator(new AccelerateInterpolator())
+                    .setDuration(
+                            ANIMATION_DURATION)
+                    .start();
         } else {
             mBackgroundAvatar.animate().setDuration(ANIMATION_DURATION).scaleX(1f).alpha(0f).scaleY(
                     1f).start();
