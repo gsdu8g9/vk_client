@@ -12,11 +12,19 @@
 
 
         <FrameLayout
+            android:id="@+id/backgroundLayout"
             android:layout_width="match_parent"
             android:layout_height="188dp">
 
             <View
                 android:id="@+id/backgroundAvatar"
+                android:layout_width="140dp"
+                android:layout_height="140dp"
+                android:layout_gravity="center"
+                android:background="@drawable/white_dot" />
+
+            <View
+                android:id="@+id/foregroundAvatar"
                 android:layout_width="140dp"
                 android:layout_height="140dp"
                 android:layout_gravity="center"

@@ -1,12 +1,18 @@
 package com.nethergrim.vk.activity;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.Nullable;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 import com.dd.ShadowLayout;
@@ -45,6 +51,15 @@ public class UserProfileActivity extends AbstractActivity {
     View mBackgroundAvatar;
     @InjectView(R.id.shadow_layout)
     ShadowLayout mShadowLayout;
+    @InjectView(R.id.backgroundLayout)
+    FrameLayout mBackgroundLayout;
+    @InjectView(R.id.toolbar)
+    Toolbar mToolbar;
+    @InjectView(R.id.foregroundAvatar)
+    View mForegroundAvatar;
+
+    private User mUser;
+
 
     private ExitActivityTransition mExitActivityTransition;
 
@@ -62,7 +77,14 @@ public class UserProfileActivity extends AbstractActivity {
     @Override
     public void onBackPressed() {
         if (mExitActivityTransition != null) {
-            mExitActivityTransition.exit(this);
+            runBackgroundRippleAnimation(false, new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    super.onAnimationEnd(animation);
+                    mExitActivityTransition.exit(UserProfileActivity.this);
+                }
+            });
+
         } else {
             super.onBackPressed();
         }
@@ -74,11 +96,25 @@ public class UserProfileActivity extends AbstractActivity {
         setContentView(R.layout.activity_user_profile);
         ButterKnife.inject(this);
         MyApplication.getInstance().getMainComponent().inject(this);
-
         userId = getIntent().getExtras().getLong(BUNDLE_EXTRA_USER_ID, 0);
-        User user = mRealm.where(User.class).equalTo("id", userId).findFirst();
-        if (user != null) {
-            mImageLoader.displayImage(UserUtils.getStablePhotoUrl(user), mAvatarImageView);
+        findUser();
+        initToolBar();
+        startFirstAnimation(savedInstanceState);
+    }
+
+    private void findUser() {
+        mUser = mRealm.where(User.class).equalTo("id", userId).findFirst();
+    }
+
+    private void initToolBar() {
+        setSupportActionBar(mToolbar);
+        mToolbar.setTitleTextColor(Color.WHITE);
+        setTitle(mUser.getFirstName() + " " + mUser.getLastName());
+    }
+
+    private void startFirstAnimation(Bundle savedInstanceState) {
+        if (mUser != null) {
+            mImageLoader.displayImage(UserUtils.getStablePhotoUrl(mUser), mAvatarImageView);
             mExitActivityTransition = ActivityTransition.with(getIntent())
                     .to(mAvatarImageView)
                     .duration(ANIMATION_DURATION)
@@ -86,26 +122,38 @@ public class UserProfileActivity extends AbstractActivity {
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    runBackgroundRippleAnimation();
+                    runBackgroundRippleAnimation(true, null);
                 }
             }, ANIMATION_DURATION);
         }
-
     }
 
-    private void runBackgroundRippleAnimation() {
-        UserPalette userPalette = mImageLoader.getUserPalette(userId);
+    private void runBackgroundRippleAnimation(boolean in,
+            @Nullable Animator.AnimatorListener animationListener) {
 
         Drawable drawable = getResources().getDrawable(R.drawable.white_dot);
-        if (userPalette != null && userPalette.getVibrant() != 0) {
-            drawable.setColorFilter(userPalette.getVibrantLight(), PorterDuff.Mode.MULTIPLY);
+        if (in) {
+            UserPalette userPalette = mImageLoader.getUserPalette(userId);
+            if (userPalette != null && userPalette.getVibrant() != 0) {
+                drawable.setColorFilter(userPalette.getVibrantLight(), PorterDuff.Mode.MULTIPLY);
+            } else {
+                drawable.setColorFilter(getResources().getColor(R.color.primary_light),
+                        PorterDuff.Mode.MULTIPLY);
+            }
+            mBackgroundAvatar.setBackgroundDrawable(drawable);
+            mBackgroundAvatar.animate().setDuration(ANIMATION_DURATION).scaleX(3f).scaleY(
+                    3f).start();
         } else {
-            drawable.setColorFilter(getResources().getColor(R.color.primary_light),
-                    PorterDuff.Mode.MULTIPLY);
+            mBackgroundAvatar.animate().setDuration(ANIMATION_DURATION).scaleX(1f).scaleY(
+                    1f).start();
         }
-        mBackgroundAvatar.setBackgroundDrawable(drawable);
-        mBackgroundAvatar.animate().setDuration(ANIMATION_DURATION).scaleX(3f).scaleY(3f).start();
-        mShadowLayout.animate().setDuration(ANIMATION_DURATION).alpha(1f).start();
+
+        mShadowLayout.animate()
+                .setDuration(ANIMATION_DURATION)
+                .alpha(in ? 1f : 0f)
+                .setListener(animationListener)
+                .start();
+
     }
 
 }
