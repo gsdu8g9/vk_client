@@ -76,6 +76,8 @@ public class UserProfileActivity extends AbstractActivity {
             UserPalette userPalette = mImageLoader.getUserPalette(userId);
             if (userPalette != null && userPalette.getVibrant() != 0) {
                 mBackgroundAvatar.setBackgroundColor(userPalette.getVibrantLight());
+            } else {
+                mBackgroundAvatar.setBackgroundResource(R.color.primary_light);
             }
             mExitActivityTransition = ActivityTransition.with(getIntent())
                     .to(mAvatarImageView)
