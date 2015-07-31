@@ -1,19 +1,33 @@
 package com.nethergrim.vk.models;
 
 import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
 
 /**
  * @author andrej on 30.07.15.
  */
 public class UserPalette extends RealmObject {
 
+    @PrimaryKey
     private long userId;
+
+
     private int vibrant;
     private int vibrantDark;
     private int vibrantLight;
     private int muted;
     private int mutedDark;
     private int mutedLight;
+
+    private long generatedAt;
+
+    public long getGeneratedAt() {
+        return generatedAt;
+    }
+
+    public void setGeneratedAt(long generatedAt) {
+        this.generatedAt = generatedAt;
+    }
 
     public long getUserId() {
         return userId;

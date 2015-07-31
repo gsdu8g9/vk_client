@@ -1,4 +1,4 @@
-package com.nethergrim.vk.web.images;
+package com.nethergrim.vk.images;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -7,23 +7,19 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Shader;
-import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v7.graphics.Palette;
 import android.text.TextUtils;
 import android.widget.ImageView;
 
 import com.nethergrim.vk.R;
 import com.nethergrim.vk.models.User;
-import com.nethergrim.vk.models.UserPalette;
 import com.nethergrim.vk.utils.UserUtils;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
-import io.realm.Realm;
+import java.io.IOException;
 
 /**
  * @author andreydrobyazko on 4/7/15.
@@ -111,52 +107,18 @@ public class PicassoImageLoaderImpl implements ImageLoader {
     }
 
     @Override
-    public void generatePaletteAndStore(@NonNull final User user) {
-        Picasso.with(context)
-                .load(UserUtils.getStablePhotoUrl(user))
-                .into(new Target() {
-                    @Override
-                    public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                        Palette.from(bitmap).generate(new Palette.PaletteAsyncListener() {
-                            @Override
-                            public void onGenerated(Palette palette) {
-                                int defaultColor = context.getResources()
-                                        .getColor(R.color.primary_light);
-                                Realm realm = Realm.getDefaultInstance();
-                                realm.beginTransaction();
-                                UserPalette userPalette = realm.createObject(
-                                        UserPalette.class);
-                                userPalette.setMuted(palette.getMutedColor(defaultColor));
-                                userPalette.setMutedDark(palette.getDarkMutedColor(defaultColor));
-                                userPalette.setMutedLight(palette.getLightMutedColor(defaultColor));
-                                userPalette.setUserId(user.getId());
-                                userPalette.setVibrant(palette.getVibrantColor(defaultColor));
-                                userPalette.setVibrantLight(
-                                        palette.getLightVibrantColor(defaultColor));
-                                userPalette.setVibrantDark(
-                                        palette.getDarkVibrantColor(defaultColor));
-                                realm.commitTransaction();
-                            }
-                        });
-                    }
-
-                    @Override
-                    public void onBitmapFailed(Drawable errorDrawable) {
-                    }
-
-                    @Override
-                    public void onPrepareLoad(Drawable placeHolderDrawable) {
-                    }
-                });
+    public Bitmap getBitmap(@NonNull String url) {
+        try {
+            return Picasso.with(context).load(url).get();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
-    @Nullable
     @Override
-    public UserPalette getUserPalette(long userId) {
-        Realm realm = Realm.getDefaultInstance();
-        return realm.where(UserPalette.class)
-                .equalTo("userId", userId)
-                .findFirst();
+    public Bitmap getBitmap(@NonNull User user) {
+        return getBitmap(UserUtils.getStablePhotoUrl(user));
     }
 
     public class RoundedTransformation implements com.squareup.picasso.Transformation {

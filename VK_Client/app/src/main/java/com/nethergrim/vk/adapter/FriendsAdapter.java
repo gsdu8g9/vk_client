@@ -11,9 +11,9 @@ import com.nethergrim.vk.R;
 import com.nethergrim.vk.adapter.viewholders.FriendsViewHolder;
 import com.nethergrim.vk.caching.Prefs;
 import com.nethergrim.vk.event.UsersUpdatedEvent;
+import com.nethergrim.vk.images.ImageLoader;
 import com.nethergrim.vk.models.User;
 import com.nethergrim.vk.utils.UserUtils;
-import com.nethergrim.vk.web.images.ImageLoader;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 

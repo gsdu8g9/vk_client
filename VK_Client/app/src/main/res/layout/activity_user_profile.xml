@@ -33,21 +33,11 @@
             android:layout_height="match_parent">
 
 
-            <FrameLayout
+            <com.nethergrim.vk.views.RevealContainer
                 android:id="@+id/backgroundLayout"
                 android:layout_width="match_parent"
-                android:layout_height="188dp">
-
-                <View
-                    android:id="@+id/backgroundAvatar"
-                    android:layout_width="140dp"
-                    android:layout_height="140dp"
-                    android:layout_gravity="center"
-                    android:background="@drawable/white_dot"
-                    android:visibility="gone" />
-
-
-            </FrameLayout>
+                android:layout_height="188dp"
+                android:layout_gravity="center_horizontal" />
 
 
             <com.dd.ShadowLayout

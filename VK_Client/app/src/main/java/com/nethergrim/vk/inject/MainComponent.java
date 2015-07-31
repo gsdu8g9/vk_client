@@ -10,6 +10,7 @@ import com.nethergrim.vk.fragment.MessagesFragment;
 import com.nethergrim.vk.gcm.MyGcmListenerService;
 import com.nethergrim.vk.gcm.MyInstanceIDListenerService;
 import com.nethergrim.vk.gcm.PushNotificationsRegisterService;
+import com.nethergrim.vk.images.PaletteProviderImpl;
 import com.nethergrim.vk.utils.PushParserImpl;
 import com.nethergrim.vk.utils.RealmUserProviderImplementation;
 import com.nethergrim.vk.web.RealmDataManagerImpl;
@@ -62,4 +63,6 @@ public interface MainComponent {
     void inject(UserProfileActivity a);
 
     void inject(StartupTasksIntentService s);
+
+        void inject(PaletteProviderImpl p);
 }

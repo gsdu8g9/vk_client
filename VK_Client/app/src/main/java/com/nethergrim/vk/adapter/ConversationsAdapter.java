@@ -11,13 +11,13 @@ import com.nethergrim.vk.MyApplication;
 import com.nethergrim.vk.R;
 import com.nethergrim.vk.adapter.viewholders.ConversationViewHolder;
 import com.nethergrim.vk.caching.Prefs;
+import com.nethergrim.vk.images.ImageLoader;
 import com.nethergrim.vk.models.Conversation;
 import com.nethergrim.vk.models.Message;
 import com.nethergrim.vk.models.User;
 import com.nethergrim.vk.utils.ConversationUtils;
 import com.nethergrim.vk.utils.MessageUtils;
 import com.nethergrim.vk.utils.UserProvider;
-import com.nethergrim.vk.web.images.ImageLoader;
 
 import javax.inject.Inject;
 

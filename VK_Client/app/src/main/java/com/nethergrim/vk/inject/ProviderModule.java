@@ -3,6 +3,10 @@ package com.nethergrim.vk.inject;
 import com.nethergrim.vk.MyApplication;
 import com.nethergrim.vk.caching.DefaultPrefsImpl;
 import com.nethergrim.vk.caching.Prefs;
+import com.nethergrim.vk.images.ImageLoader;
+import com.nethergrim.vk.images.PaletteProvider;
+import com.nethergrim.vk.images.PaletteProviderImpl;
+import com.nethergrim.vk.images.PicassoImageLoaderImpl;
 import com.nethergrim.vk.json.JacksonJsonDeserializerImpl;
 import com.nethergrim.vk.json.JsonDeserializer;
 import com.nethergrim.vk.utils.PushParser;
@@ -13,8 +17,6 @@ import com.nethergrim.vk.web.DataManager;
 import com.nethergrim.vk.web.RealmDataManagerImpl;
 import com.nethergrim.vk.web.WebRequestManager;
 import com.nethergrim.vk.web.WebRequestManagerImpl;
-import com.nethergrim.vk.web.images.ImageLoader;
-import com.nethergrim.vk.web.images.PicassoImageLoaderImpl;
 import com.squareup.otto.Bus;
 import com.squareup.otto.ThreadEnforcer;
 
@@ -80,6 +82,12 @@ public class ProviderModule {
     @Singleton
     DataManager provideDataManager() {
         return new RealmDataManagerImpl();
+    }
+
+    @Provides
+    @Singleton
+    PaletteProvider providePaletteProvider() {
+        return new PaletteProviderImpl();
     }
 
 }

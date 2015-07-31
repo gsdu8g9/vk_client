@@ -1,11 +1,11 @@
-package com.nethergrim.vk.web.images;
+package com.nethergrim.vk.images;
 
+import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import android.support.annotation.WorkerThread;
 import android.widget.ImageView;
 
 import com.nethergrim.vk.models.User;
-import com.nethergrim.vk.models.UserPalette;
 import com.squareup.picasso.Target;
 
 /**
@@ -23,9 +23,10 @@ public interface ImageLoader {
 
     void cacheUserAvatars(@NonNull User user);
 
-    void generatePaletteAndStore(@NonNull User user);
+    @WorkerThread
+    Bitmap getBitmap(@NonNull String url);
 
-    @Nullable
-    UserPalette getUserPalette(long userId);
+    @WorkerThread
+    Bitmap getBitmap(@NonNull User user);
 
 }
