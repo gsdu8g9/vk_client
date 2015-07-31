@@ -7,6 +7,8 @@ import com.kisstools.utils.StringUtil;
 import com.nethergrim.vk.Constants;
 import com.nethergrim.vk.MyApplication;
 import com.nethergrim.vk.callbacks.WebCallback;
+import com.nethergrim.vk.images.ImageLoader;
+import com.nethergrim.vk.images.PaletteProvider;
 import com.nethergrim.vk.json.JsonDeserializer;
 import com.nethergrim.vk.models.Conversation;
 import com.nethergrim.vk.models.ConversationsList;
@@ -16,7 +18,6 @@ import com.nethergrim.vk.models.User;
 import com.nethergrim.vk.utils.ConversationUtils;
 import com.nethergrim.vk.utils.UserUtils;
 import com.nethergrim.vk.utils.Utils;
-import com.nethergrim.vk.web.images.ImageLoader;
 import com.vk.sdk.api.VKError;
 import com.vk.sdk.api.VKParameters;
 import com.vk.sdk.api.VKRequest;
@@ -43,6 +44,8 @@ public class WebRequestManagerImpl implements WebRequestManager {
     JsonDeserializer mJsonDeserializer;
     @Inject
     ImageLoader mImageLoader;
+    @Inject
+    PaletteProvider mPaletteProvider;
 
     public WebRequestManagerImpl() {
         MyApplication.getInstance().getMainComponent().inject(this);
@@ -164,8 +167,8 @@ public class WebRequestManagerImpl implements WebRequestManager {
                 if (listOfUsers != null && listOfUsers.getResponse() != null && callback != null) {
                     for (User user : listOfUsers.getResponse()) {
                         mImageLoader.cacheUserAvatars(user);
-                        mImageLoader.generatePaletteAndStore(user);
                     }
+                    mPaletteProvider.generateAndStorePalette(listOfUsers.getResponse());
                     callback.onResponseSucceed(listOfUsers);
                 }
             }
@@ -223,7 +226,6 @@ public class WebRequestManagerImpl implements WebRequestManager {
                     User user = listOfUsers.getResponse().get(0);
                     if (user != null && callback != null) {
                         mImageLoader.cacheUserAvatars(user);
-                        mImageLoader.generatePaletteAndStore(user);
                         callback.onResponseSucceed(user);
                     }
                 }

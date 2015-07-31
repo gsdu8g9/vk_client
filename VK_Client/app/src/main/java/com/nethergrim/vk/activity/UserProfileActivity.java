@@ -22,10 +22,11 @@ import com.kogitune.activity_transition.ActivityTransitionLauncher;
 import com.kogitune.activity_transition.ExitActivityTransition;
 import com.nethergrim.vk.MyApplication;
 import com.nethergrim.vk.R;
+import com.nethergrim.vk.images.ImageLoader;
+import com.nethergrim.vk.images.PaletteProvider;
 import com.nethergrim.vk.models.User;
 import com.nethergrim.vk.models.UserPalette;
 import com.nethergrim.vk.utils.UserUtils;
-import com.nethergrim.vk.web.images.ImageLoader;
 
 import javax.inject.Inject;
 
@@ -56,6 +57,8 @@ public class UserProfileActivity extends AbstractActivity {
     FrameLayout mBackgroundLayout;
     @InjectView(R.id.toolbar)
     Toolbar mToolbar;
+    @Inject
+    PaletteProvider mPaletteProvider;
 
     @InjectView(R.id.layout_toolbar)
     View mToolbarLayout;
@@ -145,7 +148,7 @@ public class UserProfileActivity extends AbstractActivity {
         mBackgroundAvatar.setVisibility(View.VISIBLE);
 
         if (in) {
-            UserPalette userPalette = mImageLoader.getUserPalette(userId);
+            UserPalette userPalette = mPaletteProvider.getUserPalette(userId);
             if (userPalette != null && userPalette.getVibrant() != 0) {
                 drawable.setColorFilter(userPalette.getVibrant(), PorterDuff.Mode.MULTIPLY);
             } else if (userPalette != null && userPalette.getMuted() != 0) {
