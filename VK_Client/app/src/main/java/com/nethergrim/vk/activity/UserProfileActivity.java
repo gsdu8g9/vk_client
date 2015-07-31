@@ -139,6 +139,9 @@ public class UserProfileActivity extends AbstractActivity {
             @Nullable Animator.AnimatorListener animationListener) {
 
         Drawable drawable = getResources().getDrawable(R.drawable.white_dot);
+        if (drawable == null) {
+            return;
+        }
         mBackgroundAvatar.setVisibility(View.VISIBLE);
 
         if (in) {
