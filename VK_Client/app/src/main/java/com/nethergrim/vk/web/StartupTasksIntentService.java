@@ -72,7 +72,7 @@ public class StartupTasksIntentService extends Service {
                 mDataManager.manageConversationsAndUsers(10, 0, false);
 
                 try {
-                    Thread.sleep(1500);
+                    Thread.sleep(2500);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -85,6 +85,7 @@ public class StartupTasksIntentService extends Service {
                     @Override
                     public void onResponseFailed(VKError e) {
                         Log.e(TAG, "fetching friends error: " + e.toString());
+                        handleActionLaunchStartupTasks();
                     }
                 });
             }
