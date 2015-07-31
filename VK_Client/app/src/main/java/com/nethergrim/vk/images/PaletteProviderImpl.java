@@ -65,6 +65,20 @@ public class PaletteProviderImpl implements PaletteProvider {
     }
 
     @Override
+    public int getPaletteColor(long userId) {
+        UserPalette userPalette = getUserPalette(userId);
+        int color;
+        if (userPalette != null && userPalette.getVibrant() != 0) {
+            color = userPalette.getVibrant();
+        } else if (userPalette != null && userPalette.getMuted() != 0) {
+            color = userPalette.getMuted();
+        } else {
+            color = MyApplication.getInstance().getResources().getColor(R.color.primary_light);
+        }
+        return color;
+    }
+
+    @Override
     public UserPalette getUserPalette(long userId) {
         return Realm.getDefaultInstance()
                 .where(UserPalette.class)

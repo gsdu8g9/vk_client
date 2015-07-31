@@ -17,6 +17,8 @@ public interface PaletteProvider {
 
     void generateAndStorePalette(@NonNull List<User> userList);
 
+    int getPaletteColor(long userId);
+
     UserPalette getUserPalette(long userId);
 
 }

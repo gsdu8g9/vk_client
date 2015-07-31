@@ -5,7 +5,6 @@ import android.animation.AnimatorListenerAdapter;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -25,8 +24,8 @@ import com.nethergrim.vk.R;
 import com.nethergrim.vk.images.ImageLoader;
 import com.nethergrim.vk.images.PaletteProvider;
 import com.nethergrim.vk.models.User;
-import com.nethergrim.vk.models.UserPalette;
 import com.nethergrim.vk.utils.UserUtils;
+import com.nethergrim.vk.views.RevealContainer;
 
 import javax.inject.Inject;
 
@@ -49,12 +48,10 @@ public class UserProfileActivity extends AbstractActivity {
     Realm mRealm;
     @Inject
     ImageLoader mImageLoader;
-    @InjectView(R.id.backgroundAvatar)
-    View mBackgroundAvatar;
     @InjectView(R.id.shadow_layout)
     ShadowLayout mShadowLayout;
     @InjectView(R.id.backgroundLayout)
-    FrameLayout mBackgroundLayout;
+    RevealContainer mRevealContainer;
     @InjectView(R.id.toolbar)
     Toolbar mToolbar;
     @Inject
@@ -145,21 +142,12 @@ public class UserProfileActivity extends AbstractActivity {
         if (drawable == null) {
             return;
         }
-        mBackgroundAvatar.setVisibility(View.VISIBLE);
 
         if (in) {
-            UserPalette userPalette = mPaletteProvider.getUserPalette(userId);
-            if (userPalette != null && userPalette.getVibrant() != 0) {
-                drawable.setColorFilter(userPalette.getVibrant(), PorterDuff.Mode.MULTIPLY);
-            } else if (userPalette != null && userPalette.getMuted() != 0) {
-                drawable.setColorFilter(userPalette.getMuted(), PorterDuff.Mode.MULTIPLY);
-            } else {
-                drawable.setColorFilter(getResources().getColor(R.color.primary_light),
-                        PorterDuff.Mode.MULTIPLY);
-            }
-            mBackgroundAvatar.setBackgroundDrawable(drawable);
-            mBackgroundAvatar.animate().setDuration(ANIMATION_DURATION).scaleX(3f).scaleY(
-                    3f).start();
+            int color = mPaletteProvider.getPaletteColor(userId);
+            mRevealContainer.setMainColor(color);
+            mRevealContainer.setDuration(ANIMATION_DURATION);
+            mRevealContainer.startIn();
             mBottomLayout.setVisibility(View.VISIBLE);
             mBottomLayout.setTranslationY(1000f);
             mBottomLayout.setAlpha(0.5f);
@@ -171,8 +159,7 @@ public class UserProfileActivity extends AbstractActivity {
                             ANIMATION_DURATION)
                     .start();
         } else {
-            mBackgroundAvatar.animate().setDuration(ANIMATION_DURATION).scaleX(1f).alpha(0f).scaleY(
-                    1f).start();
+            mRevealContainer.startOut();
             mBottomLayout.setTranslationY(0f);
             mBottomLayout.animate()
                     .translationY(1000f)
