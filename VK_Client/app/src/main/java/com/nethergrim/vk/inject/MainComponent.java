@@ -13,6 +13,7 @@ import com.nethergrim.vk.gcm.PushNotificationsRegisterService;
 import com.nethergrim.vk.utils.PushParserImpl;
 import com.nethergrim.vk.utils.RealmUserProviderImplementation;
 import com.nethergrim.vk.web.RealmDataManagerImpl;
+import com.nethergrim.vk.web.StartupTasksIntentService;
 import com.nethergrim.vk.web.WebRequestManagerImpl;
 
 import javax.inject.Singleton;
@@ -59,4 +60,6 @@ public interface MainComponent {
     void inject(FriendsFragment o);
 
     void inject(UserProfileActivity a);
+
+    void inject(StartupTasksIntentService s);
 }
