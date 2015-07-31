@@ -23,12 +23,12 @@ import com.nethergrim.vk.event.ConversationsUpdatedEvent;
 import com.nethergrim.vk.event.UsersUpdatedEvent;
 import com.nethergrim.vk.fragment.FriendsFragment;
 import com.nethergrim.vk.fragment.MessagesFragment;
-import com.nethergrim.vk.gcm.PushNotificationsRegisterService;
 import com.nethergrim.vk.models.User;
 import com.nethergrim.vk.utils.UserProvider;
 import com.nethergrim.vk.utils.Utils;
 import com.nethergrim.vk.views.MenuButton;
 import com.nethergrim.vk.web.DataManager;
+import com.nethergrim.vk.web.StartupTasksIntentService;
 import com.nethergrim.vk.web.images.ImageLoader;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
@@ -44,6 +44,7 @@ public class MainActivity extends AbstractActivity implements WebCallback<User>,
         View.OnClickListener, ToolbarScrollable {
 
 
+    public static final String TAG = MainActivity.class.getName();
     public static final int ANIMATION_DURATION = 300;
     @Inject
     DataManager mDataManager;
@@ -93,7 +94,7 @@ public class MainActivity extends AbstractActivity implements WebCallback<User>,
 
     @Override
     public void onResponseFailed(VKError e) {
-        Log.e("TAG", "error on get current user: " + e.errorMessage);
+        Log.e(TAG, "error on get current user: " + e.toString());
     }
 
     @Override
@@ -172,8 +173,8 @@ public class MainActivity extends AbstractActivity implements WebCallback<User>,
         setContentView(R.layout.activity_main);
         ButterKnife.inject(this);
         MyApplication.getInstance().getMainComponent().inject(this);
+        StartupTasksIntentService.startActionLaunchStartupTasks(this);
         mBus.register(this);
-        PushNotificationsRegisterService.start(this);
         initMenu();
         initToolbar();
         loadCurrentUser(new UsersUpdatedEvent());

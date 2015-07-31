@@ -2,7 +2,6 @@ package com.nethergrim.vk.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 
 import com.nethergrim.vk.Constants;
 import com.nethergrim.vk.R;
@@ -28,7 +27,6 @@ public class StartActivity extends AbstractActivity {
             startActivity(new Intent(this, MainActivity.class));
             finish();
         } else {
-            Log.e("TAG", "authorizing");
             VKSdk.authorize(Constants.PERMISSIONS);
         }
     }

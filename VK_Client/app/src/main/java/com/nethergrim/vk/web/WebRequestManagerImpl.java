@@ -77,7 +77,6 @@ public class WebRequestManagerImpl implements WebRequestManager {
                 try {
                     result = mJsonDeserializer.getConversations(
                             response.json.getString("response"));
-                    Log.e("TAG", "received result: " + response.json.getString("response"));
                     JSONArray conversationsArray = response.json.getJSONObject("response")
                             .getJSONArray("items");
                     // setting userId and date to every conversation
