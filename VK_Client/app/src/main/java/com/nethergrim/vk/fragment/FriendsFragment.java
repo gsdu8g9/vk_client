@@ -40,14 +40,13 @@ import butterknife.InjectView;
 public class FriendsFragment extends AbstractFragment
         implements WebCallback<ListOfUsers>, FriendsAdapter.OnFriendClickedCallback {
 
+    public static final String TAG = FriendsFragment.class.getName();
     @InjectView(R.id.progressBar2)
     ProgressBar mProgressBar2;
     @InjectView(R.id.textViewNothingHere)
     TextView mTextViewNothingHere;
     @InjectView(R.id.list)
     RecyclerView mList;
-
-
     @Inject
     DataManager mDataManager;
     @Inject
@@ -81,7 +80,6 @@ public class FriendsFragment extends AbstractFragment
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         initList(view.getContext());
-        updateFriendsFromBackend();
     }
 
     @Override
@@ -118,7 +116,7 @@ public class FriendsFragment extends AbstractFragment
 
     @Override
     public void onResponseFailed(VKError e) {
-        Log.e("TAG", "error: " + e.toString());
+        Log.e(TAG, "error: " + e.toString());
     }
 
     @Override
@@ -127,9 +125,6 @@ public class FriendsFragment extends AbstractFragment
                 (ImageView) v.findViewById(R.id.image_avatar));
     }
 
-    private void updateFriendsFromBackend() {
-        mDataManager.manageFriends(this);
-    }
 
     private void initList(final Context context) {
         mAdapter = new FriendsAdapter(this);

@@ -24,6 +24,7 @@ import io.realm.RealmConfiguration;
  */
 public class MyApplication extends Application {
 
+    public static final String TAG = MyApplication.class.getName();
     private static MyApplication _app;
     @Inject
     Prefs mPrefs;
@@ -42,47 +43,42 @@ public class MyApplication extends Application {
         VKSdkListener vkSdkListener = new VKSdkListener() {
             @Override
             public void onCaptchaError(VKError captchaError) {
-                Log.e("TAG", "captcha error: " + captchaError.errorMessage);
+                Log.e(TAG, "captcha error: " + captchaError.toString());
             }
 
             @Override
             public void onTokenExpired(VKAccessToken expiredToken) {
-                Log.e("TAG", "token expired: " + expiredToken.email);
+                Log.e(TAG, "token expired: " + expiredToken.email);
             }
 
             @Override
             public void onAccessDenied(VKError authorizationError) {
-                Log.e("TAG", "access denied (auth error) " + authorizationError.errorMessage);
+                Log.e(TAG, "access denied (auth error) " + authorizationError.toString());
             }
 
             @Override
             public void onReceiveNewToken(VKAccessToken newToken) {
                 super.onReceiveNewToken(newToken);
                 mPrefs.setToken(newToken.accessToken);
-                Log.e("TAG", "received new token: " + newToken.email);
+                Log.d(TAG, "received new token");
             }
 
             @Override
             public void onAcceptUserToken(VKAccessToken token) {
                 super.onAcceptUserToken(token);
                 mPrefs.setToken(token.accessToken);
-                Log.e("TAG", "user token accepted: " + token.email);
+                Log.d(TAG, "user token accepted");
             }
 
             @Override
             public void onRenewAccessToken(VKAccessToken token) {
                 super.onRenewAccessToken(token);
                 mPrefs.setToken(token.accessToken);
-                Log.e("TAG", "onRenewAccessToken: " + token.email);
+                Log.d(TAG, "onRenewAccessToken");
             }
         };
         VKSdk.initialize(vkSdkListener, Constants.VK_APP_ID);
-        String[] fingerprints = VKUtil.getCertificateFingerprint(this, this.getPackageName());
-        if (fingerprints != null && BuildConfig.DEBUG) {
-            for (String fingerprint : fingerprints) {
-                Log.e("TAG", "key fingerprint: " + fingerprint);
-            }
-        }
+//        printFingerPrints();
         initDagger2();
         initRealm();
     }
@@ -93,6 +89,16 @@ public class MyApplication extends Application {
 
     public Prefs getPrefs() {
         return mPrefs;
+    }
+
+    private void printFingerPrints() {
+        String[] fingerprints = VKUtil.getCertificateFingerprint(this,
+                this.getPackageName());
+        if (fingerprints != null && BuildConfig.DEBUG) {
+            for (String fingerprint : fingerprints) {
+                Log.d("TAG", "key fingerprint: " + fingerprint);
+            }
+        }
     }
 
     private void initDagger2() {

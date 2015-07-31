@@ -38,9 +38,9 @@ import javax.inject.Inject;
  */
 public class WebRequestManagerImpl implements WebRequestManager {
 
+    public static final String TAG = WebRequestManagerImpl.class.getSimpleName();
     @Inject
     JsonDeserializer mJsonDeserializer;
-
     @Inject
     ImageLoader mImageLoader;
 
@@ -77,7 +77,6 @@ public class WebRequestManagerImpl implements WebRequestManager {
                 try {
                     result = mJsonDeserializer.getConversations(
                             response.json.getString("response"));
-                    Log.e("TAG", "received result: " + response.json.getString("response"));
                     JSONArray conversationsArray = response.json.getJSONObject("response")
                             .getJSONArray("items");
                     // setting userId and date to every conversation
@@ -323,6 +322,27 @@ public class WebRequestManagerImpl implements WebRequestManager {
                 if (callback != null) {
                     callback.onResponseFailed(error);
                 }
+            }
+        });
+    }
+
+    @Override
+    public void registerOnline() {
+        Map<String, Object> params = new HashMap<>();
+        params.put("voip", String.valueOf(0));
+        VKRequest vkRequest = new VKRequest(Constants.Requests.ACCOUNT_SETONLINE,
+                new VKParameters(params));
+        vkRequest.executeWithListener(new VKRequest.VKRequestListener() {
+            @Override
+            public void onComplete(VKResponse response) {
+                super.onComplete(response);
+                Log.d(TAG, "register online ok, result: " + response.responseString);
+            }
+
+            @Override
+            public void onError(VKError error) {
+                super.onError(error);
+                Log.e(TAG, "register online error: " + error.toString());
             }
         });
     }

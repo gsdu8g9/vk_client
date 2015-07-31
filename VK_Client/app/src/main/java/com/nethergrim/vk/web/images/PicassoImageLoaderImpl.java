@@ -14,7 +14,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.graphics.Palette;
 import android.text.TextUtils;
-import android.util.Log;
 import android.widget.ImageView;
 
 import com.nethergrim.vk.R;
@@ -143,12 +142,10 @@ public class PicassoImageLoaderImpl implements ImageLoader {
 
                     @Override
                     public void onBitmapFailed(Drawable errorDrawable) {
-                        Log.e("TAG", "error in bitmap loading");
                     }
 
                     @Override
                     public void onPrepareLoad(Drawable placeHolderDrawable) {
-                        Log.e("TAG", "error in bitmap loading");
                     }
                 });
     }

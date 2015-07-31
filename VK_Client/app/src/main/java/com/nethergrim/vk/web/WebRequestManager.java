@@ -47,4 +47,6 @@ public interface WebRequestManager {
 
     @UiThread
     void getFriendsList(long userId, WebCallback<ListOfFriendIds> callback);
+
+    void registerOnline();
 }
