@@ -35,7 +35,7 @@
 
             <com.nethergrim.vk.views.RevealContainer
                 android:id="@+id/backgroundLayout"
-                android:layout_width="188dp"
+                android:layout_width="match_parent"
                 android:layout_height="188dp"
                 android:layout_gravity="center_horizontal" />
 
