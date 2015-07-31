@@ -1,9 +1,11 @@
 package com.nethergrim.vk.web.images;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.widget.ImageView;
 
 import com.nethergrim.vk.models.User;
+import com.nethergrim.vk.models.UserPalette;
 import com.squareup.picasso.Target;
 
 /**
@@ -20,4 +22,10 @@ public interface ImageLoader {
     void cacheImage(@NonNull String url);
 
     void cacheUserAvatars(@NonNull User user);
+
+    void generatePaletteAndStore(@NonNull User user);
+
+    @Nullable
+    UserPalette getUserPalette(long userId);
+
 }

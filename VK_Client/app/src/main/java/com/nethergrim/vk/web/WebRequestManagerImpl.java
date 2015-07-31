@@ -165,6 +165,7 @@ public class WebRequestManagerImpl implements WebRequestManager {
                 if (listOfUsers != null && listOfUsers.getResponse() != null && callback != null) {
                     for (User user : listOfUsers.getResponse()) {
                         mImageLoader.cacheUserAvatars(user);
+                        mImageLoader.generatePaletteAndStore(user);
                     }
                     callback.onResponseSucceed(listOfUsers);
                 }
@@ -222,6 +223,8 @@ public class WebRequestManagerImpl implements WebRequestManager {
 
                     User user = listOfUsers.getResponse().get(0);
                     if (user != null && callback != null) {
+                        mImageLoader.cacheUserAvatars(user);
+                        mImageLoader.generatePaletteAndStore(user);
                         callback.onResponseSucceed(user);
                     }
                 }

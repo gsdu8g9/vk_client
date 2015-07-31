@@ -2,6 +2,7 @@ package com.nethergrim.vk.inject;
 
 import com.nethergrim.vk.MyApplication;
 import com.nethergrim.vk.activity.MainActivity;
+import com.nethergrim.vk.activity.UserProfileActivity;
 import com.nethergrim.vk.adapter.ConversationsAdapter;
 import com.nethergrim.vk.adapter.FriendsAdapter;
 import com.nethergrim.vk.fragment.FriendsFragment;
@@ -56,4 +57,6 @@ public interface MainComponent {
     void inject(FriendsAdapter o);
 
     void inject(FriendsFragment o);
+
+    void inject(UserProfileActivity a);
 }

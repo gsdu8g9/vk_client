@@ -1,5 +1,6 @@
 package com.nethergrim.vk.adapter;
 
+import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,7 +27,7 @@ import io.realm.RealmResults;
  * @author andrej on 28.07.15.
  */
 public class FriendsAdapter extends RecyclerView.Adapter<FriendsViewHolder>
-        implements RealmChangeListener {
+        implements RealmChangeListener, View.OnClickListener {
 
     @Inject
     Bus mBus;
@@ -37,8 +38,15 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsViewHolder>
     ImageLoader mImageLoader;
 
     private RealmResults<User> mData;
+    private OnFriendClickedCallback mOnFriendClickedCallback;
 
-    public FriendsAdapter() {
+    public interface OnFriendClickedCallback {
+
+        void onFriendClicked(View v, User user);
+    }
+
+    public FriendsAdapter(@Nullable OnFriendClickedCallback callback) {
+        this.mOnFriendClickedCallback = callback;
         MyApplication.getInstance().getMainComponent().inject(this);
         mBus.register(this);
         Realm realm = Realm.getDefaultInstance();
@@ -63,6 +71,8 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsViewHolder>
         String avatarUrl = UserUtils.getStablePhotoUrl(user);
         mImageLoader.displayImage(avatarUrl, holder.mImageView);
         holder.mTextViewName.setText(user.getFirstName() + "\n " + user.getLastName());
+        holder.itemView.setTag(Integer.valueOf(position));
+        holder.itemView.setOnClickListener(this);
     }
 
     @Override
@@ -78,5 +88,13 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsViewHolder>
     @Subscribe
     public void onDataChanged(UsersUpdatedEvent e) {
         notifyDataSetChanged();
+    }
+
+    @Override
+    public void onClick(View v) {
+        Integer position = (Integer) v.getTag();
+        if (position != null && mOnFriendClickedCallback != null && mData.size() > position) {
+            mOnFriendClickedCallback.onFriendClicked(v, mData.get(position));
+        }
     }
 }

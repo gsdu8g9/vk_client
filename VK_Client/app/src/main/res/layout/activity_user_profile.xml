@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/action_bar_height">
+
+
+        <FrameLayout
+            android:id="@+id/bottomLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="188dp"
+            android:background="@android:color/white"
+            android:visibility="gone">
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="8dp"
+                android:background="@drawable/bottom_shadow" />
+
+
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/topLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+
+            <FrameLayout
+                android:id="@+id/backgroundLayout"
+                android:layout_width="match_parent"
+                android:layout_height="188dp">
+
+                <View
+                    android:id="@+id/backgroundAvatar"
+                    android:layout_width="140dp"
+                    android:layout_height="140dp"
+                    android:layout_gravity="center"
+                    android:background="@drawable/white_dot"
+                    android:visibility="gone" />
+
+
+            </FrameLayout>
+
+
+            <com.dd.ShadowLayout
+                android:id="@+id/shadow_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_margin="22dp"
+                android:alpha="0"
+                app:sl_cornerRadius="2dp"
+                app:sl_shadowColor="#80000000">
+
+                <View
+                    android:layout_width="140dp"
+                    android:layout_height="140dp"
+                    android:layout_gravity="center_horizontal"
+                    android:scaleType="centerCrop" />
+
+            </com.dd.ShadowLayout>
+
+            <ImageView
+                android:id="@+id/imageView2"
+                android:layout_width="140dp"
+                android:layout_height="140dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_margin="24dp"
+                android:scaleType="centerCrop" />
+
+        </FrameLayout>
+
+
+    </RelativeLayout>
+
+    <include
+        android:id="@+id/layout_toolbar"
+        layout="@layout/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+</FrameLayout>

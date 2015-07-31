@@ -41,6 +41,10 @@
         </activity>
         <activity android:name=".activity.MainActivity" />
 
+        <activity
+            android:name=".activity.UserProfileActivity"
+            android:theme="@style/Theme.Transparent" />
+
         <service
             android:name=".gcm.PushNotificationsRegisterService"
             android:exported="false" />
