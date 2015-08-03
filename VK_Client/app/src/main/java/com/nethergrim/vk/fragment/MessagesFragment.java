@@ -4,15 +4,18 @@ import android.app.Activity;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.nethergrim.vk.Constants;
 import com.nethergrim.vk.MyApplication;
 import com.nethergrim.vk.R;
 import com.nethergrim.vk.adapter.ConversationsAdapter;
@@ -30,13 +33,14 @@ import javax.inject.Inject;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import butterknife.OnClick;
 
 /**
  * @author andreydrobyazko on 3/20/15.
  */
 public class MessagesFragment extends AbstractFragment implements
         RecyclerviewPageScroller.OnRecyclerViewScrolledToPageListener,
-        SwipeRefreshLayout.OnRefreshListener {
+        SwipeRefreshLayout.OnRefreshListener, ToolbarScrollable {
 
     public static final int DEFAULT_PAGE_SIZE = 20;
     public static final int UPDATE_DELAY_SEC = 20;
@@ -53,10 +57,13 @@ public class MessagesFragment extends AbstractFragment implements
 
     @Inject
     Bus mBus;
+    @InjectView(R.id.fab_normal)
+    FloatingActionButton mFabNormal;
     private SafeTimer mSafeTimer;
     private ConversationsAdapter mAdapter;
 
     private ToolbarScrollable mToolbarScrollable;
+//    private boolean mIsFabDisplayed;
 
     @Override
     public void onAttach(Activity activity) {
@@ -105,7 +112,7 @@ public class MessagesFragment extends AbstractFragment implements
                         additionalLeftMarginForDividers, 0).build());
         mRecyclerView.addOnScrollListener(
                 new RecyclerviewPageScroller(DEFAULT_PAGE_SIZE, this, 5));
-        mRecyclerView.addOnScrollListener(new BasicRecyclerViewScroller(mToolbarScrollable));
+        mRecyclerView.addOnScrollListener(new BasicRecyclerViewScroller(this));
         if (mAdapter.getItemCount() == 0) {
             mProgressBar.setVisibility(View.VISIBLE);
             mNothingHereTextView.setVisibility(View.GONE);
@@ -170,6 +177,36 @@ public class MessagesFragment extends AbstractFragment implements
                 mNothingHereTextView.setVisibility(View.VISIBLE);
             }
         }
+    }
+
+    @Override
+    public void showToolbar() {
+        if (mFabNormal != null) {
+            mFabNormal.animate().translationY(0f).setDuration(Constants.ANIMATION_DURATION).start();
+        }
+        if (mToolbarScrollable != null) {
+            mToolbarScrollable.showToolbar();
+        }
+
+    }
+
+    @Override
+    public void hideToolbar() {
+        if (mFabNormal != null) {
+            mFabNormal.animate()
+                    .translationY(300f)
+                    .setDuration(Constants.ANIMATION_DURATION)
+                    .start();
+        }
+        if (mToolbarScrollable != null) {
+            mToolbarScrollable.hideToolbar();
+        }
+    }
+
+    @OnClick(R.id.fab_normal)
+    public void onFabClicked(View v) {
+        Log.e("TAG", "on fab clicked");
+        // TODo handle fab click
     }
 
     private void loadPage(int pageNumber) {

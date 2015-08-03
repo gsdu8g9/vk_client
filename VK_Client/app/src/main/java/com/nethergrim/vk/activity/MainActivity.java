@@ -13,6 +13,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
+import com.nethergrim.vk.Constants;
 import com.nethergrim.vk.MyApplication;
 import com.nethergrim.vk.R;
 import com.nethergrim.vk.caching.Prefs;
@@ -45,7 +46,6 @@ public class MainActivity extends AbstractActivity implements WebCallback<User>,
 
 
     public static final String TAG = MainActivity.class.getName();
-    public static final int ANIMATION_DURATION = 300;
     @Inject
     DataManager mDataManager;
     @Inject
@@ -152,7 +152,10 @@ public class MainActivity extends AbstractActivity implements WebCallback<User>,
     public void showToolbar() {
         if (mToolbarIsHidden) {
             mToolbarIsHidden = false;
-            mToolbarLayout.animate().translationY(0).setDuration(ANIMATION_DURATION).start();
+            mToolbarLayout.animate()
+                    .translationY(0)
+                    .setDuration(Constants.ANIMATION_DURATION)
+                    .start();
         }
     }
 
@@ -162,7 +165,7 @@ public class MainActivity extends AbstractActivity implements WebCallback<User>,
             mToolbarIsHidden = true;
             mToolbarLayout.animate()
                     .translationY(mToolBarHeight * -1)
-                    .setDuration(ANIMATION_DURATION)
+                    .setDuration(Constants.ANIMATION_DURATION)
                     .start();
         }
     }
