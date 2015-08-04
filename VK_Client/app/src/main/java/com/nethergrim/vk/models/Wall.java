@@ -3,8 +3,7 @@ package com.nethergrim.vk.models;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.util.List;
-
+import io.realm.RealmList;
 import io.realm.RealmObject;
 
 /**
@@ -59,7 +58,7 @@ public class Wall extends RealmObject {
      * записях на стене.
      */
     @JsonProperty("attachments")
-    private List<Attachment> attachments;
+    private RealmList<Attachment> attachments;
     /**
      * информация о месте (если доступно);
      */
@@ -69,7 +68,7 @@ public class Wall extends RealmObject {
      * информация о том, как была создана запись;
      */
     @JsonProperty("post_source")
-    private String postSource;
+    private PostSource postSource;
     /**
      * если запись была опубликована от имени группы и подписана пользователем, то в
      * поле содержится идентификатор её автора;
@@ -94,6 +93,14 @@ public class Wall extends RealmObject {
      */
     @JsonProperty("copy_text")
     private String copyText;
+
+    public PostSource getPostSource() {
+        return postSource;
+    }
+
+    public void setPostSource(PostSource postSource) {
+        this.postSource = postSource;
+    }
 
     public long getId() {
         return id;
@@ -159,11 +166,11 @@ public class Wall extends RealmObject {
         this.reposts = reposts;
     }
 
-    public List<Attachment> getAttachments() {
+    public RealmList<Attachment> getAttachments() {
         return attachments;
     }
 
-    public void setAttachments(List<Attachment> attachments) {
+    public void setAttachments(RealmList<Attachment> attachments) {
         this.attachments = attachments;
     }
 
@@ -173,14 +180,6 @@ public class Wall extends RealmObject {
 
     public void setGeo(Geo geo) {
         this.geo = geo;
-    }
-
-    public String getPostSource() {
-        return postSource;
-    }
-
-    public void setPostSource(String postSource) {
-        this.postSource = postSource;
     }
 
     public long getSignerId() {

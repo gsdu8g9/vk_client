@@ -56,4 +56,19 @@ public class MessageUtils {
         return result;
     }
 
+    public static boolean isMessageWithWall(@NonNull Message message) {
+        if (!isMessageWithAttachments(message)) {
+            return false;
+        }
+        boolean result = false;
+        List<Attachment> attachmentList = message.getAttachments();
+        for (int i = 0, size = attachmentList.size(); i < size; i++) {
+            if (attachmentList.get(i).getWall() != null) {
+                result = true;
+                break;
+            }
+        }
+        return result;
+    }
+
 }
