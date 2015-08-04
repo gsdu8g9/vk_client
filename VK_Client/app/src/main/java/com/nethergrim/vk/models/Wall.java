@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import io.realm.RealmList;
 import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
 
 /**
  * @author andrej on 04.08.15.
@@ -16,6 +17,7 @@ public class Wall extends RealmObject {
     /**
      * идентификатор записи на стене;
      */
+    @PrimaryKey
     private long id;
     /**
      * идентификатор владельца записи;

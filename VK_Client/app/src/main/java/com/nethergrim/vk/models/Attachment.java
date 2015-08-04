@@ -36,6 +36,9 @@ public class Attachment extends RealmObject {
     @JsonProperty("wall")
     private Wall wall;
 
+    @JsonProperty("wall_reply")
+    private WallReply wallReply;
+
     public Wall getWall() {
         return wall;
     }

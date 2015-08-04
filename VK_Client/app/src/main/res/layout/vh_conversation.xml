@@ -41,7 +41,7 @@
         android:layout_toStartOf="@+id/text_date"
         android:ellipsize="end"
         android:singleLine="true"
-        android:textSize="@dimen/text_size_big"
+        android:textSize="@dimen/text_size_regular"
         app:typeface="roboto_regular"
         tools:text="Steve Jobs" />
 
