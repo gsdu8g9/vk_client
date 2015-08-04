@@ -22,6 +22,6 @@
     <dimen name="conversation_item_text_secondary_margin_top">1dp</dimen>
 
     <!--               Friends Screen     -->
-    <dimen name="friends_screen_min_item_width">130dp</dimen>
+    <dimen name="friends_screen_min_item_width">100dp</dimen>
 
 </resources>

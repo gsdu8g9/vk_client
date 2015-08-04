@@ -24,16 +24,51 @@ public class Attachment extends RealmObject {
      */
     @JsonProperty("unread_dialogs")
     private String type;
-
     @JsonProperty("photo")
     private Photo photo;
-
     @JsonProperty("sticker")
     private Sticker sticker;
     @JsonProperty("audio")
     private Audio audio;
+    @JsonProperty("wall")
+    private Wall wall;
+    @JsonProperty("wall_reply")
+    private WallReply wallReply;
+    @JsonProperty("doc")
+    private Doc doc;
+    @JsonProperty("video")
+    private Video video;
 
-    public Attachment() {
+    public Video getVideo() {
+        return video;
+    }
+
+    public void setVideo(Video video) {
+        this.video = video;
+    }
+
+    public Doc getDoc() {
+        return doc;
+    }
+
+    public void setDoc(Doc doc) {
+        this.doc = doc;
+    }
+
+    public WallReply getWallReply() {
+        return wallReply;
+    }
+
+    public void setWallReply(WallReply wallReply) {
+        this.wallReply = wallReply;
+    }
+
+    public Wall getWall() {
+        return wall;
+    }
+
+    public void setWall(Wall wall) {
+        this.wall = wall;
     }
 
     public Audio getAudio() {

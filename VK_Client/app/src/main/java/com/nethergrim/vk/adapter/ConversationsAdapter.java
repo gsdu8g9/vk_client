@@ -69,9 +69,29 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationViewH
     public void onBindViewHolder(ConversationViewHolder conversationViewHolder, int i) {
         Conversation conversation = mData.get(i);
         Message message = conversation.getMessage();
-        String details;
+        String details = "";
         User user;
         Context ctx = conversationViewHolder.itemView.getContext();
+
+        if (MessageUtils.isMessageWithPhoto(message)) {
+            details = "[ " + ctx.getString(R.string.photo) + " ] " + details;
+        }
+        if (MessageUtils.isMessageWithAudio(message)) {
+            details = "[ " + ctx.getString(R.string.audio) + " ] " + details;
+        }
+        if (MessageUtils.isMessageWithWall(message)) {
+            details = "[ " + ctx.getString(R.string.wall_entry) + " ] " + details;
+        }
+        if (MessageUtils.isMessageWithReply(message)) {
+            details = "[ " + ctx.getString(R.string.reply) + " ] " + details;
+        }
+        if (MessageUtils.isMessageWithDoc(message)) {
+            details = "[ " + ctx.getString(R.string.document) + " ] " + details;
+        }
+        if (MessageUtils.isMessageWithVideo(message)) {
+            details = "[ " + ctx.getString(R.string.video) + " ] " + details;
+        }
+
         if (ConversationUtils.isConversationAGroupChat(conversation)) {
 
 //            group chat
@@ -80,7 +100,8 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationViewH
             conversationViewHolder.textName.setText(message.getTitle());
 
             if (ConversationUtils.isMessageFromMe(message)) {
-                details = conversationViewHolder.itemView.getResources().getString(R.string.me_)
+                details = details + conversationViewHolder.itemView.getResources()
+                        .getString(R.string.me_)
                         + " " + message.getBody();
             } else {
                 user = mUserProvider.getUser(message.getUser_id());
@@ -97,7 +118,7 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationViewH
 //              regular chat
             user = mUserProvider.getUser(conversation.getId());
 
-            details = message.getBody();
+            details = details + message.getBody();
             if (ConversationUtils.isMessageFromMe(message)) {
                 details = conversationViewHolder.itemView.getResources().getString(R.string.me_)
                         + " " + details;
@@ -118,13 +139,6 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationViewH
                     conversationViewHolder.mImageViewDetails);
         } else {
             conversationViewHolder.mImageViewDetails.setImageBitmap(null);
-        }
-
-        if (MessageUtils.isMessageWithPhoto(message)) {
-            details = "[ " + ctx.getString(R.string.photo) + " ] " + details;
-        }
-        if (MessageUtils.isMessageWithAudio(message)) {
-            details = "[ " + ctx.getString(R.string.audio) + " ] " + details;
         }
 
         conversationViewHolder.textDetails.setText(details);
