@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="@dimen/conversation_item_height"
@@ -29,7 +30,7 @@
         android:layout_marginLeft="4dp"
         android:background="@drawable/green_dot" />
 
-    <TextView
+    <com.devspark.robototextview.widget.RobotoTextView
         android:id="@+id/text_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -41,9 +42,10 @@
         android:ellipsize="end"
         android:singleLine="true"
         android:textSize="@dimen/text_size_big"
+        app:typeface="roboto_regular"
         tools:text="Steve Jobs" />
 
-    <TextView
+    <com.devspark.robototextview.widget.RobotoTextView
         android:id="@+id/text_details"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -55,9 +57,10 @@
         android:maxLines="@integer/conversation_item_max_message_lines"
         android:textColor="@color/secondary_text"
         android:textSize="@dimen/text_size_small"
+        app:typeface="roboto_light"
         tools:text="Hi! I'm proud of you! You're making really cool apps! Hi! I'm proud of you! You're making really cool apps! Hi! I'm proud of you! You're making really cool apps! Hi! I'm proud of you! You're making really cool apps! Hi! I'm proud of you! You're making really cool apps! Hi! I'm proud of you! You're making really cool apps! Hi! I'm proud of you! You're making really cool apps! " />
 
-    <TextView
+    <com.devspark.robototextview.widget.RobotoTextView
         android:id="@+id/text_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -70,6 +73,7 @@
         android:singleLine="true"
         android:textColor="@color/secondary_text"
         android:textSize="@dimen/text_size_small"
+        app:typeface="roboto_light"
         tools:text="Yesterday" />
 
     <ImageView
