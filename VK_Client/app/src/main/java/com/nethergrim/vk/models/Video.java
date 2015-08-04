@@ -100,7 +100,7 @@ public class Video extends RealmObject {
     @JsonProperty("processing")
     private int processing;
 
-    public long getId()
+    public long getId() {
         return id;
     }
 
