@@ -85,6 +85,12 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationViewH
         if (MessageUtils.isMessageWithReply(message)) {
             details = "[ " + ctx.getString(R.string.reply) + " ] " + details;
         }
+        if (MessageUtils.isMessageWithDoc(message)) {
+            details = "[ " + ctx.getString(R.string.document) + " ] " + details;
+        }
+        if (MessageUtils.isMessageWithVideo(message)) {
+            details = "[ " + ctx.getString(R.string.video) + " ] " + details;
+        }
 
         if (ConversationUtils.isConversationAGroupChat(conversation)) {
 

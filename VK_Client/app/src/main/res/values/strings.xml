@@ -14,4 +14,6 @@
     <string name="audio">Аудиозапись</string>
     <string name="wall_entry">Запись на стене</string>
     <string name="reply">Комментарий</string>
+    <string name="document">Документ</string>
+    <string name="video">Видеозапись</string>
 </resources>

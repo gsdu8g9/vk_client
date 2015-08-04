@@ -86,4 +86,34 @@ public class MessageUtils {
         return result;
     }
 
+    public static boolean isMessageWithDoc(@NonNull Message message) {
+        if (!isMessageWithAttachments(message)) {
+            return false;
+        }
+        boolean result = false;
+        List<Attachment> attachmentList = message.getAttachments();
+        for (int i = 0, size = attachmentList.size(); i < size; i++) {
+            if (attachmentList.get(i).getDoc() != null) {
+                result = true;
+                break;
+            }
+        }
+        return result;
+    }
+
+    public static boolean isMessageWithVideo(@NonNull Message message) {
+        if (!isMessageWithAttachments(message)) {
+            return false;
+        }
+        boolean result = false;
+        List<Attachment> attachmentList = message.getAttachments();
+        for (int i = 0, size = attachmentList.size(); i < size; i++) {
+            if (attachmentList.get(i).getVideo() != null) {
+                result = true;
+                break;
+            }
+        }
+        return result;
+    }
+
 }
