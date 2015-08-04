@@ -11,6 +11,9 @@ public class Constants {
     public static final String VK_APP_ID = "4579411";
     public static final String GCM_SENDER_ID = "793065187";
     public static final int ANIMATION_DURATION = 300;
+    public static final String PACKAGE_NAME = "com.nethergrim.vk";
+    public static final String EXTRA_CONVERSATION_ID = Constants.PACKAGE_NAME
+            + ".CONVERSATION_ID";
 
 
     public static final String[] PERMISSIONS = new String[] {

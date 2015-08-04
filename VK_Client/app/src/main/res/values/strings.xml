@@ -16,4 +16,5 @@
     <string name="reply">Комментарий</string>
     <string name="document">Документ</string>
     <string name="video">Видеозапись</string>
+    <string name="action_settings">Настройки</string>
 </resources>

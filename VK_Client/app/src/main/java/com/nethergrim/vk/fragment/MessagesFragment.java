@@ -18,9 +18,11 @@ import android.widget.TextView;
 import com.nethergrim.vk.Constants;
 import com.nethergrim.vk.MyApplication;
 import com.nethergrim.vk.R;
+import com.nethergrim.vk.activity.ChatActivity;
 import com.nethergrim.vk.adapter.ConversationsAdapter;
 import com.nethergrim.vk.callbacks.ToolbarScrollable;
 import com.nethergrim.vk.event.ConversationsUpdatedEvent;
+import com.nethergrim.vk.models.Conversation;
 import com.nethergrim.vk.utils.BasicRecyclerViewScroller;
 import com.nethergrim.vk.utils.SafeTimer;
 import com.nethergrim.vk.views.RecyclerviewPageScroller;
@@ -40,10 +42,11 @@ import butterknife.OnClick;
  */
 public class MessagesFragment extends AbstractFragment implements
         RecyclerviewPageScroller.OnRecyclerViewScrolledToPageListener,
-        SwipeRefreshLayout.OnRefreshListener, ToolbarScrollable {
+        SwipeRefreshLayout.OnRefreshListener, ToolbarScrollable,
+        ConversationsAdapter.OnConversationClickListener {
 
     public static final int DEFAULT_PAGE_SIZE = 20;
-    public static final int UPDATE_DELAY_SEC = 20;
+    public static final int UPDATE_DELAY_SEC = 30;
     @InjectView(R.id.list)
     RecyclerView mRecyclerView;
     @InjectView(R.id.progressBar2)
@@ -63,7 +66,6 @@ public class MessagesFragment extends AbstractFragment implements
     private ConversationsAdapter mAdapter;
 
     private ToolbarScrollable mToolbarScrollable;
-//    private boolean mIsFabDisplayed;
 
     @Override
     public void onAttach(Activity activity) {
@@ -101,7 +103,7 @@ public class MessagesFragment extends AbstractFragment implements
         super.onViewCreated(view, savedInstanceState);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
         mRecyclerView.setHasFixedSize(true);
-        mAdapter = new ConversationsAdapter();
+        mAdapter = new ConversationsAdapter(this);
         mRecyclerView.setAdapter(mAdapter);
         Resources res = view.getResources();
         int additionalLeftMarginForDividers =
@@ -207,6 +209,11 @@ public class MessagesFragment extends AbstractFragment implements
     public void onFabClicked(View v) {
         Log.e("TAG", "on fab clicked");
         // TODo handle fab click
+    }
+
+    @Override
+    public void onConversationClicked(Conversation conversation, View v) {
+        ChatActivity.start(getActivity(), conversation);
     }
 
     private void loadPage(int pageNumber) {

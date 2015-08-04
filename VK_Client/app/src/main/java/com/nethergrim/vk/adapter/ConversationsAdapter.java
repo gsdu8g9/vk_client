@@ -29,7 +29,7 @@ import io.realm.RealmResults;
  * @author andreydrobyazko on 4/6/15.
  */
 public class ConversationsAdapter extends RecyclerView.Adapter<ConversationViewHolder>
-        implements RealmChangeListener {
+        implements RealmChangeListener, View.OnClickListener {
 
     @Inject
     ImageLoader mImageLoader;
@@ -47,8 +47,15 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationViewH
     private int mUnreadColor;
 
     private RealmResults<Conversation> mData;
+    private OnConversationClickListener mCallback;
 
-    public ConversationsAdapter() {
+    public interface OnConversationClickListener {
+
+        void onConversationClicked(Conversation conversation, View v);
+    }
+
+    public ConversationsAdapter(OnConversationClickListener callback) {
+        this.mCallback = callback;
         MyApplication.getInstance().getMainComponent().inject(this);
         mRealm.setAutoRefresh(true);
         this.mData = mRealm.where(Conversation.class)
@@ -150,7 +157,8 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationViewH
         } else {
             conversationViewHolder.itemView.setBackgroundResource(0);
         }
-
+        conversationViewHolder.itemView.setOnClickListener(this);
+        conversationViewHolder.itemView.setTag(i);
     }
 
     @Override
@@ -166,5 +174,14 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationViewH
     @Override
     public void onChange() {
         notifyDataSetChanged();
+    }
+
+    @Override
+    public void onClick(View v) {
+        int position = (int) v.getTag();
+        Conversation conversation = mData.get(position);
+        if (mCallback != null) {
+            mCallback.onConversationClicked(conversation, v);
+        }
     }
 }
