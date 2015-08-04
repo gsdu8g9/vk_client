@@ -36,6 +36,16 @@ public class Attachment extends RealmObject {
     private WallReply wallReply;
     @JsonProperty("doc")
     private Doc doc;
+    @JsonProperty("video")
+    private Video video;
+
+    public Video getVideo() {
+        return video;
+    }
+
+    public void setVideo(Video video) {
+        this.video = video;
+    }
 
     public Doc getDoc() {
         return doc;
