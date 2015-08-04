@@ -82,6 +82,9 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationViewH
         if (MessageUtils.isMessageWithWall(message)) {
             details = "[ " + ctx.getString(R.string.wall_entry) + " ] " + details;
         }
+        if (MessageUtils.isMessageWithReply(message)) {
+            details = "[ " + ctx.getString(R.string.reply) + " ] " + details;
+        }
 
         if (ConversationUtils.isConversationAGroupChat(conversation)) {
 

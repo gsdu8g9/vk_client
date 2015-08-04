@@ -13,4 +13,5 @@
     <string name="photo">Фотография</string>
     <string name="audio">Аудиозапись</string>
     <string name="wall_entry">Запись на стене</string>
+    <string name="reply">Комментарий</string>
 </resources>
