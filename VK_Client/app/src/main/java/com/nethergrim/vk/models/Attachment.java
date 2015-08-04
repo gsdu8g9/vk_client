@@ -32,8 +32,16 @@ public class Attachment extends RealmObject {
     private Sticker sticker;
     @JsonProperty("audio")
     private Audio audio;
+    @JsonProperty("wall")
 
-    public Attachment() {
+    private Wall wall;
+
+    public Wall getWall() {
+        return wall;
+    }
+
+    public void setWall(Wall wall) {
+        this.wall = wall;
     }
 
     public Audio getAudio() {
