@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -12,11 +13,15 @@ import com.nethergrim.vk.Constants;
 import com.nethergrim.vk.MyApplication;
 import com.nethergrim.vk.R;
 import com.nethergrim.vk.caching.Prefs;
+import com.nethergrim.vk.callbacks.WebCallback;
 import com.nethergrim.vk.models.Conversation;
+import com.nethergrim.vk.models.ListOfMessages;
 import com.nethergrim.vk.models.User;
 import com.nethergrim.vk.utils.ConversationUtils;
 import com.nethergrim.vk.utils.UserProvider;
 import com.nethergrim.vk.web.DataManager;
+import com.nethergrim.vk.web.WebRequestManager;
+import com.vk.sdk.api.VKError;
 
 import javax.inject.Inject;
 
@@ -42,8 +47,12 @@ public class ChatActivity extends AbstractActivity {
     @InjectView(R.id.toolbar)
     Toolbar mToolbar;
 
+    @Inject
+    WebRequestManager mWebRequestManager;
+
     private long mConversationId;
     private Conversation mConversation;
+    private boolean mIsGroupChat;
 
     private User mAnotherUser;
 
@@ -84,6 +93,7 @@ public class ChatActivity extends AbstractActivity {
         MyApplication.getInstance().getMainComponent().inject(this);
         loadConversation();
         initToolbar();
+        loadLastMessages();
     }
 
     private void loadConversation() {
@@ -91,7 +101,8 @@ public class ChatActivity extends AbstractActivity {
         if (mConversation == null) {
             return;
         }
-        if (!ConversationUtils.isConversationAGroupChat(mConversation)) {
+        mIsGroupChat = ConversationUtils.isConversationAGroupChat(mConversation);
+        if (!mIsGroupChat) {
             mAnotherUser = mUserProvider.getUser(mConversation.getId());
         }
     }
@@ -112,5 +123,20 @@ public class ChatActivity extends AbstractActivity {
         mToolbar.setTitleTextColor(Color.WHITE);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         setTitle(getToolbarTitle());
+    }
+
+    private void loadLastMessages() {
+        mWebRequestManager.getChatHistory(0, 18, mIsGroupChat ? 0 : mConversationId,
+                mIsGroupChat ? mConversationId : 0, 0, false, new WebCallback<ListOfMessages>() {
+                    @Override
+                    public void onResponseSucceed(ListOfMessages response) {
+                        Log.e("TAG", "messages received: " + response.getMessages().size());
+                    }
+
+                    @Override
+                    public void onResponseFailed(VKError e) {
+                        Log.e("TAG", "error");
+                    }
+                });
     }
 }

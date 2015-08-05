@@ -6,6 +6,7 @@ import android.support.annotation.WorkerThread;
 import com.nethergrim.vk.callbacks.WebCallback;
 import com.nethergrim.vk.models.ConversationsList;
 import com.nethergrim.vk.models.ListOfFriendIds;
+import com.nethergrim.vk.models.ListOfMessages;
 import com.nethergrim.vk.models.ListOfUsers;
 import com.nethergrim.vk.models.User;
 
@@ -49,4 +50,13 @@ public interface WebRequestManager {
     void getFriendsList(long userId, WebCallback<ListOfFriendIds> callback);
 
     void registerOnline();
+
+    @WorkerThread
+    void getChatHistory(int offset,
+            int count,
+            long userId,
+            long chatId,
+            long startMessageId,
+            boolean reversedSorting,
+            WebCallback<ListOfMessages> callback);
 }
