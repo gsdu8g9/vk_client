@@ -13,6 +13,8 @@ import com.nethergrim.vk.MyApplication;
 import com.nethergrim.vk.R;
 import com.nethergrim.vk.caching.Prefs;
 import com.nethergrim.vk.models.Conversation;
+import com.nethergrim.vk.models.User;
+import com.nethergrim.vk.utils.ConversationUtils;
 import com.nethergrim.vk.utils.UserProvider;
 import com.nethergrim.vk.web.DataManager;
 
@@ -41,6 +43,9 @@ public class ChatActivity extends AbstractActivity {
     Toolbar mToolbar;
 
     private long mConversationId;
+    private Conversation mConversation;
+
+    private User mAnotherUser;
 
     public static void start(Context context, Conversation conversation) {
         Intent intent = new Intent(context, ChatActivity.class);
@@ -50,23 +55,18 @@ public class ChatActivity extends AbstractActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_chat, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            // TODO handle menu button tap
             return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -82,17 +82,35 @@ public class ChatActivity extends AbstractActivity {
             }
         }
         MyApplication.getInstance().getMainComponent().inject(this);
+        loadConversation();
         initToolbar();
     }
 
+    private void loadConversation() {
+        mConversation = mRealm.where(Conversation.class).equalTo("id", mConversationId).findFirst();
+        if (mConversation == null) {
+            return;
+        }
+        if (!ConversationUtils.isConversationAGroupChat(mConversation)) {
+            mAnotherUser = mUserProvider.getUser(mConversation.getId());
+        }
+    }
+
     private String getToolbarTitle() {
-        return null;
+        if (mConversation == null) {
+            return null;
+        }
+        if (ConversationUtils.isConversationAGroupChat(mConversation)) {
+            return mConversation.getMessage().getTitle();
+        } else {
+            return mAnotherUser.getFirstName() + " " + mAnotherUser.getLastName();
+        }
     }
 
     private void initToolbar() {
         setSupportActionBar(mToolbar);
         mToolbar.setTitleTextColor(Color.WHITE);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
+        setTitle(getToolbarTitle());
     }
 }
