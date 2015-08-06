@@ -4,10 +4,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ImageButton;
+import android.widget.RelativeLayout;
 
 import com.nethergrim.vk.Constants;
 import com.nethergrim.vk.MyApplication;
@@ -49,6 +52,14 @@ public class ChatActivity extends AbstractActivity {
 
     @Inject
     WebRequestManager mWebRequestManager;
+    @InjectView(R.id.btn_emoji)
+    ImageButton mBtnEmoji;
+    @InjectView(R.id.btn_send)
+    ImageButton mBtnSend;
+    @InjectView(R.id.input_layout)
+    RelativeLayout mInputLayout;
+    @InjectView(R.id.recyclerView)
+    RecyclerView mRecyclerView;
 
     private long mConversationId;
     private Conversation mConversation;
@@ -65,6 +76,8 @@ public class ChatActivity extends AbstractActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_chat, menu);
+        // TODO check if conversation is a group conv, and replace Profile icon to another one
+        // (for group chat).
         return true;
     }
 
@@ -72,8 +85,11 @@ public class ChatActivity extends AbstractActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_attach) {
             // TODO handle menu button tap
+            return true;
+        } else if (id == R.id.action_user_profile) {
+            // TODO handle profile tap
             return true;
         }
         return super.onOptionsItemSelected(item);

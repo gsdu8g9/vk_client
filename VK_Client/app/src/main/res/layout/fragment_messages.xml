@@ -32,8 +32,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:clipToPadding="false"
-            android:paddingTop="@dimen/action_bar_height"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+            android:paddingTop="@dimen/action_bar_height" />
 
     </android.support.v4.widget.SwipeRefreshLayout>
 
