@@ -1,19 +1,28 @@
 package com.nethergrim.vk.views;
 
 import android.content.Context;
-import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
-import android.widget.EditText;
+import android.view.LayoutInflater;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
+
+import com.devspark.robototextview.widget.RobotoEditText;
+import com.nethergrim.vk.R;
+
+import butterknife.ButterKnife;
+import butterknife.InjectView;
 
 /**
  * @author andrej on 06.08.15.
  */
-public class InputMessagesController extends RecyclerView {
+public class InputMessagesController extends FrameLayout {
 
-    private EditText mEditText;
-    private ImageButton mBtnSend;
-    private ImageButton mBtnEmoji;
+    @InjectView(R.id.btn_emoji)
+    ImageButton mBtnEmoji;
+    @InjectView(R.id.et_message)
+    RobotoEditText mEtMessage;
+    @InjectView(R.id.btn_send)
+    ImageButton mBtnSend;
 
     public InputMessagesController(Context context) {
         super(context);
@@ -34,5 +43,8 @@ public class InputMessagesController extends RecyclerView {
         if (isInEditMode()) {
             return;
         }
+        LayoutInflater.from(context)
+                .inflate(R.layout.input_message_controller, this, true);
+        ButterKnife.inject(this, this);
     }
 }

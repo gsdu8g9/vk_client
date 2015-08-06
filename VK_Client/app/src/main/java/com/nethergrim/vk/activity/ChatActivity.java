@@ -10,7 +10,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageButton;
-import android.widget.RelativeLayout;
 
 import com.nethergrim.vk.Constants;
 import com.nethergrim.vk.MyApplication;
@@ -56,8 +55,6 @@ public class ChatActivity extends AbstractActivity {
     ImageButton mBtnEmoji;
     @InjectView(R.id.btn_send)
     ImageButton mBtnSend;
-    @InjectView(R.id.input_layout)
-    RelativeLayout mInputLayout;
     @InjectView(R.id.recyclerView)
     RecyclerView mRecyclerView;
 
