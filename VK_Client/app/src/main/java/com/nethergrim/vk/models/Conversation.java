@@ -1,6 +1,7 @@
 package com.nethergrim.vk.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
@@ -10,18 +11,19 @@ import io.realm.annotations.PrimaryKey;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Conversation extends RealmObject {
 
+    /**
+     * count of unread messages in this conversation
+     */
     private long unread;
     private Message message;
 
     @PrimaryKey
     /**
-     * Id of the user, in case 1-1 conversation, Id of group chat in case of group chat
+     * Id of the user, in case 1-1 conversation, Id of a group chat in case of group chat.
      * */
     private long id;
     private long date;
 
-    public Conversation() {
-    }
 
     public long getUnread() {
         return unread;

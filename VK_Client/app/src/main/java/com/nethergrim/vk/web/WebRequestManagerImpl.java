@@ -13,6 +13,7 @@ import com.nethergrim.vk.json.JsonDeserializer;
 import com.nethergrim.vk.models.Conversation;
 import com.nethergrim.vk.models.ConversationsList;
 import com.nethergrim.vk.models.ListOfFriendIds;
+import com.nethergrim.vk.models.ListOfMessages;
 import com.nethergrim.vk.models.ListOfUsers;
 import com.nethergrim.vk.models.User;
 import com.nethergrim.vk.utils.ConversationUtils;
@@ -347,6 +348,67 @@ public class WebRequestManagerImpl implements WebRequestManager {
                 Log.e(TAG, "register online error: " + error.toString());
             }
         });
+    }
+
+    @Override
+    public void getChatHistory(int offset,
+            int count,
+            long userId,
+            long chatId,
+            long startMessageId,
+            boolean chronologicalOrder, final WebCallback<ListOfMessages> callback) {
+
+        Map<String, Object> params = new HashMap<>();
+        if (offset >= 0) {
+            params.put("offset", String.valueOf(offset));
+        }
+        if (count > 0 && count <= 200) {
+            params.put("count", String.valueOf(count));
+        }
+
+        if (userId > 0) {
+            params.put("user_id", String.valueOf(userId));
+        }
+        if (chatId > 0) {
+            params.put("chat_id", String.valueOf(chatId));
+        }
+        if (startMessageId > 0) {
+            params.put("start_message_id", String.valueOf(startMessageId));
+        } else {
+            if (chronologicalOrder) {
+                params.put("rev", "1");
+            }
+        }
+
+        VKRequest vkRequest = new VKRequest(Constants.Requests.MESSAGES_GET_HISTORY,
+                new VKParameters(params));
+        vkRequest.executeWithListener(new VKRequest.VKRequestListener() {
+            @Override
+            public void onComplete(VKResponse response) {
+                super.onComplete(response);
+
+                ListOfMessages result;
+                try {
+                    result = mJsonDeserializer.getListOfMessages(
+                            response.json.getString("response"));
+                    if (callback != null) {
+                        callback.onResponseSucceed(result);
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+
+            @Override
+            public void onError(VKError error) {
+                super.onError(error);
+                if (callback != null) {
+                    callback.onResponseFailed(error);
+                }
+            }
+        });
+
     }
 
 }

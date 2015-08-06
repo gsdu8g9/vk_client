@@ -1,6 +1,7 @@
 package com.nethergrim.vk.inject;
 
 import com.nethergrim.vk.MyApplication;
+import com.nethergrim.vk.activity.ChatActivity;
 import com.nethergrim.vk.activity.MainActivity;
 import com.nethergrim.vk.activity.UserProfileActivity;
 import com.nethergrim.vk.adapter.ConversationsAdapter;
@@ -64,5 +65,7 @@ public interface MainComponent {
 
     void inject(StartupTasksIntentService s);
 
-        void inject(PaletteProviderImpl p);
+    void inject(PaletteProviderImpl p);
+
+    void inject(ChatActivity a);
 }
