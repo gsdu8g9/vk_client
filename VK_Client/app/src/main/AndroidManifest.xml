@@ -81,7 +81,9 @@
             android:name=".web.StartupTasksIntentService"
             android:exported="false" />
 
-        <activity android:name=".activity.ChatActivity"></activity>
+        <activity
+            android:name=".activity.ChatActivity"
+            android:windowSoftInputMode="adjustResize|stateHidden" />
     </application>
 
 </manifest>

@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_gravity="bottom"
-    android:background="@android:color/white">
+    android:layout_alignParentBottom="true"
+    android:background="@android:color/white"
+    android:minHeight="@dimen/input.messages.controller.height">
 
 
     <com.devspark.robototextview.widget.RobotoEditText
@@ -13,13 +14,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
+        android:layout_toLeftOf="@+id/btn_send"
+        android:layout_toRightOf="@+id/btn_emoji"
         android:background="@null"
         android:gravity="center_vertical|left"
         android:hint="@string/write_a_message"
+        android:inputType="textMultiLine"
         android:maxLines="5"
         android:minHeight="@dimen/input.messages.controller.height"
-        android:paddingLeft="48dp"
-        android:paddingRight="48dp"
         android:textColor="@color/primary_text"
         android:textColorHint="@color/hint_text"
         android:textCursorDrawable="@null"
@@ -32,6 +34,8 @@
         android:id="@+id/btn_emoji"
         android:layout_width="wrap_content"
         android:layout_height="@dimen/input.messages.controller.height"
+        android:layout_alignBottom="@+id/et_message"
+
         android:layout_gravity="left|bottom"
         android:background="?android:attr/selectableItemBackground"
         android:paddingLeft="8dp"
@@ -43,12 +47,14 @@
         android:id="@+id/btn_send"
         android:layout_width="wrap_content"
         android:layout_height="@dimen/input.messages.controller.height"
+        android:layout_alignBottom="@+id/et_message"
+        android:layout_alignParentRight="true"
         android:layout_gravity="right|bottom"
-        android:alpha="0.3"
         android:background="?android:attr/selectableItemBackground"
         android:paddingLeft="8dp"
         android:paddingRight="8dp"
-        android:src="@drawable/ic_action_content_send" />
+        android:src="@drawable/ic_action_content_send"
+        android:visibility="gone" />
 
 
-</FrameLayout>
+</RelativeLayout>

@@ -1,30 +1,24 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.nethergrim.vk.activity.ChatActivity">
 
 
-    <LinearLayout
+    <com.nethergrim.vk.views.InputMessagesController
+        android:id="@+id/inputMessagesController"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true" />
+
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_above="@+id/inputMessagesController"
         android:layout_marginTop="@dimen/action_bar_height"
-        android:orientation="vertical">
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/recyclerView"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:background="@color/chat_background_color" />
-
-
-        <com.nethergrim.vk.views.InputMessagesController
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-
-    </LinearLayout>
+        android:background="@color/chat_background_color" />
 
 
     <include
@@ -34,4 +28,4 @@
         android:layout_height="wrap_content" />
 
 
-</FrameLayout>
+</RelativeLayout>

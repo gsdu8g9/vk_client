@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 import com.nethergrim.vk.Constants;
 import com.nethergrim.vk.MyApplication;
@@ -21,6 +22,7 @@ import com.nethergrim.vk.models.ListOfMessages;
 import com.nethergrim.vk.models.User;
 import com.nethergrim.vk.utils.ConversationUtils;
 import com.nethergrim.vk.utils.UserProvider;
+import com.nethergrim.vk.views.InputMessagesController;
 import com.nethergrim.vk.web.DataManager;
 import com.nethergrim.vk.web.WebRequestManager;
 import com.vk.sdk.api.VKError;
@@ -31,7 +33,8 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 import io.realm.Realm;
 
-public class ChatActivity extends AbstractActivity {
+public class ChatActivity extends AbstractActivity
+        implements InputMessagesController.InputMessagesControllerInterface {
 
 
     @Inject
@@ -57,6 +60,9 @@ public class ChatActivity extends AbstractActivity {
     ImageButton mBtnSend;
     @InjectView(R.id.recyclerView)
     RecyclerView mRecyclerView;
+    @InjectView(R.id.inputMessagesController)
+    InputMessagesController mInputMessagesController;
+
 
     private long mConversationId;
     private Conversation mConversation;
@@ -93,6 +99,16 @@ public class ChatActivity extends AbstractActivity {
     }
 
     @Override
+    public void onMessageSent(String text) {
+        Toast.makeText(this, "sending message: " + text, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onEmojiPressed() {
+        Toast.makeText(this, "opening emoji keyboard", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
@@ -107,6 +123,11 @@ public class ChatActivity extends AbstractActivity {
         loadConversation();
         initToolbar();
         loadLastMessages();
+        initViews();
+    }
+
+    private void initViews() {
+        mInputMessagesController.setCallback(this);
     }
 
     private void loadConversation() {
