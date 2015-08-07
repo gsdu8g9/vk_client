@@ -6,7 +6,10 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -157,6 +160,23 @@ public class ChatFragment extends AbstractFragment
         final EmojiconsPopup popup = new EmojiconsPopup(rootView, context);
         popup.setSizeForSoftKeyboard();
 
+        mEtMessage.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                mBtnSend.setVisibility(s != null && s.length() > 0 ? View.VISIBLE : View.GONE);
+            }
+        });
+
         //If the emoji popup is dismissed, change emojiButton to smiley icon
         popup.setOnDismissListener(new PopupWindow.OnDismissListener() {
 
@@ -189,19 +209,19 @@ public class ChatFragment extends AbstractFragment
             @Override
             public void onEmojiconClicked(Emojicon emojicon) {
                 Log.e("TAG", "onEmojiconClicked");
-                /*if (emojiconEditText == null || emojicon == null) {
+                if (mEtMessage == null || emojicon == null) {
                     return;
                 }
 
-                int start = emojiconEditText.getSelectionStart();
-                int end = emojiconEditText.getSelectionEnd();
+                int start = mEtMessage.getSelectionStart();
+                int end = mEtMessage.getSelectionEnd();
                 if (start < 0) {
-                    emojiconEditText.append(emojicon.getEmoji());
+                    mEtMessage.append(emojicon.getEmoji());
                 } else {
-                    emojiconEditText.getText().replace(Math.min(start, end),
+                    mEtMessage.getText().replace(Math.min(start, end),
                             Math.max(start, end), emojicon.getEmoji(), 0,
                             emojicon.getEmoji().length());
-                }*/
+                }
             }
         });
 
@@ -212,10 +232,10 @@ public class ChatFragment extends AbstractFragment
                     @Override
                     public void onEmojiconBackspaceClicked(View v) {
                         Log.e("TAG", "onEmojiconBackspaceClicked");
-//                        KeyEvent event = new KeyEvent(
-//                                0, 0, 0, KeyEvent.KEYCODE_DEL, 0, 0, 0, 0,
-//                                KeyEvent.KEYCODE_ENDCALL);
-//                        emojiconEditText.dispatchKeyEvent(event);
+                        KeyEvent event = new KeyEvent(
+                                0, 0, 0, KeyEvent.KEYCODE_DEL, 0, 0, 0, 0,
+                                KeyEvent.KEYCODE_ENDCALL);
+                        mEtMessage.dispatchKeyEvent(event);
                     }
                 });
 
@@ -228,6 +248,7 @@ public class ChatFragment extends AbstractFragment
 
                 //If popup is not showing => emoji keyboard is not visible, we need to show it
                 if (!popup.isShowing()) {
+                    mBtnEmoji.setImageResource(R.drawable.ic_hardware_keyboard);
                     Log.e("TAG", "popup is not showing");
                     //If keyboard is visible, simply show the emoji popup
                     if (popup.isKeyBoardOpen()) {
@@ -254,6 +275,7 @@ public class ChatFragment extends AbstractFragment
                 else {
                     Log.e("TAG", "popup is showing, dismissing now");
                     popup.dismiss();
+                    mBtnEmoji.setImageResource(R.drawable.ic_action_social_mood);
                 }
             }
         });
