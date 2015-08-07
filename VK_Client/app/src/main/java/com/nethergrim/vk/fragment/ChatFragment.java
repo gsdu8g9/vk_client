@@ -1,5 +1,6 @@
 package com.nethergrim.vk.fragment;
 
+import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -12,7 +13,10 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageButton;
+import android.widget.PopupWindow;
+import android.widget.RelativeLayout;
 
 import com.nethergrim.vk.Constants;
 import com.nethergrim.vk.MyApplication;
@@ -25,7 +29,6 @@ import com.nethergrim.vk.models.ListOfMessages;
 import com.nethergrim.vk.models.User;
 import com.nethergrim.vk.utils.ConversationUtils;
 import com.nethergrim.vk.utils.UserProvider;
-import com.nethergrim.vk.views.InputMessagesController;
 import com.nethergrim.vk.web.DataManager;
 import com.nethergrim.vk.web.WebRequestManager;
 import com.vk.sdk.api.VKError;
@@ -34,14 +37,17 @@ import javax.inject.Inject;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import github.ankushsachdeva.emojicon.EmojiconEditText;
+import github.ankushsachdeva.emojicon.EmojiconGridView;
+import github.ankushsachdeva.emojicon.EmojiconsPopup;
+import github.ankushsachdeva.emojicon.emoji.Emojicon;
 import io.realm.Realm;
 
 /**
  * @author andrej on 07.08.15.
  */
 public class ChatFragment extends AbstractFragment
-        implements InputMessagesController.InputMessagesControllerInterface,
-        Toolbar.OnMenuItemClickListener {
+        implements Toolbar.OnMenuItemClickListener {
 
     public static final String EXTRA_CONVERSATION_ID = Constants.PACKAGE_NAME + ".CONV_ID";
     @Inject
@@ -56,14 +62,16 @@ public class ChatFragment extends AbstractFragment
     Toolbar mToolbar;
     @Inject
     WebRequestManager mWebRequestManager;
+    @InjectView(R.id.recyclerView)
+    RecyclerView mRecyclerView;
+    @InjectView(R.id.et_message)
+    EmojiconEditText mEtMessage;
     @InjectView(R.id.btn_emoji)
     ImageButton mBtnEmoji;
     @InjectView(R.id.btn_send)
     ImageButton mBtnSend;
-    @InjectView(R.id.recyclerView)
-    RecyclerView mRecyclerView;
     @InjectView(R.id.inputMessagesController)
-    InputMessagesController mInputMessagesController;
+    RelativeLayout mInputMessagesController;
     private long mConversationId;
     private Conversation mConversation;
     private boolean mIsGroupChat;
@@ -94,6 +102,7 @@ public class ChatFragment extends AbstractFragment
             Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_chat, container, false);
         ButterKnife.inject(this, v);
+        initViews(v);
         return v;
     }
 
@@ -104,7 +113,6 @@ public class ChatFragment extends AbstractFragment
         loadConversation();
         initToolbar();
         loadLastMessages();
-        initViews();
     }
 
     @Override
@@ -124,15 +132,6 @@ public class ChatFragment extends AbstractFragment
         }
     }
 
-    @Override
-    public void onMessageSent(String text) {
-        // TODO handle
-    }
-
-    @Override
-    public void onEmojiPressed() {
-        // TODO handle
-    }
 
     @Override
     public boolean onMenuItemClick(MenuItem item) {
@@ -152,8 +151,108 @@ public class ChatFragment extends AbstractFragment
             return 0;
     }
 
-    private void initViews() {
-        mInputMessagesController.setCallback(this);
+    private void initViews(View rootView) {
+        final Context context = rootView.getContext();
+        final EmojiconsPopup popup = new EmojiconsPopup(rootView, context);
+        popup.setSizeForSoftKeyboard();
+
+        //If the emoji popup is dismissed, change emojiButton to smiley icon
+        popup.setOnDismissListener(new PopupWindow.OnDismissListener() {
+
+            @Override
+            public void onDismiss() {
+                Log.e("TAG", "popup onDismiss");
+            }
+        });
+
+        //If the text keyboard closes, also dismiss the emoji popup
+        popup.setOnSoftKeyboardOpenCloseListener(
+                new EmojiconsPopup.OnSoftKeyboardOpenCloseListener() {
+
+                    @Override
+                    public void onKeyboardOpen(int keyBoardHeight) {
+                        Log.e("TAG", "onKeyboardOpen");
+                    }
+
+                    @Override
+                    public void onKeyboardClose() {
+                        Log.e("TAG", "onKeyboardClose");
+                        if (popup.isShowing())
+                            popup.dismiss();
+                    }
+                });
+
+        //On emoji clicked, add it to edittext
+        popup.setOnEmojiconClickedListener(new EmojiconGridView.OnEmojiconClickedListener() {
+
+            @Override
+            public void onEmojiconClicked(Emojicon emojicon) {
+                Log.e("TAG", "onEmojiconClicked");
+                /*if (emojiconEditText == null || emojicon == null) {
+                    return;
+                }
+
+                int start = emojiconEditText.getSelectionStart();
+                int end = emojiconEditText.getSelectionEnd();
+                if (start < 0) {
+                    emojiconEditText.append(emojicon.getEmoji());
+                } else {
+                    emojiconEditText.getText().replace(Math.min(start, end),
+                            Math.max(start, end), emojicon.getEmoji(), 0,
+                            emojicon.getEmoji().length());
+                }*/
+            }
+        });
+
+        //On backspace clicked, emulate the KEYCODE_DEL key event
+        popup.setOnEmojiconBackspaceClickedListener(
+                new EmojiconsPopup.OnEmojiconBackspaceClickedListener() {
+
+                    @Override
+                    public void onEmojiconBackspaceClicked(View v) {
+                        Log.e("TAG", "onEmojiconBackspaceClicked");
+//                        KeyEvent event = new KeyEvent(
+//                                0, 0, 0, KeyEvent.KEYCODE_DEL, 0, 0, 0, 0,
+//                                KeyEvent.KEYCODE_ENDCALL);
+//                        emojiconEditText.dispatchKeyEvent(event);
+                    }
+                });
+
+        // To toggle between text keyboard and emoji keyboard keyboard(Popup)
+        mBtnEmoji.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+
+                //If popup is not showing => emoji keyboard is not visible, we need to show it
+                if (!popup.isShowing()) {
+
+                    //If keyboard is visible, simply show the emoji popup
+                    if (popup.isKeyBoardOpen()) {
+                        popup.showAtBottom();
+                    }
+
+                    //else, open the text keyboard first and immediately after that show the
+                    // emoji popup
+                    else {
+                        mEtMessage.setFocusableInTouchMode(true);
+                        mEtMessage.requestFocus();
+                        popup.showAtBottomPending();
+                        final InputMethodManager inputMethodManager
+                                = (InputMethodManager) context.getSystemService(
+                                Context.INPUT_METHOD_SERVICE);
+                        inputMethodManager.showSoftInput(mEtMessage,
+                                InputMethodManager.SHOW_IMPLICIT);
+                    }
+                }
+
+                //If popup is showing, simply dismiss it to show the undelying text keyboard
+                else {
+                    popup.dismiss();
+                }
+            }
+        });
+
     }
 
     private void loadConversation() {
@@ -188,6 +287,7 @@ public class ChatFragment extends AbstractFragment
     }
 
     private void loadLastMessages() {
+        // TODO refactor and make pagination
         mWebRequestManager.getChatHistory(0, 18, mIsGroupChat ? 0 : mConversationId,
                 mIsGroupChat ? mConversationId : 0, 0, false, new WebCallback<ListOfMessages>() {
                     @Override
