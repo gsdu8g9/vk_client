@@ -16,4 +16,12 @@
         android:orderInCategory="15"
         android:title="@string/user_profile"
         app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/action_group_conversation_details"
+        android:icon="@drawable/ic_people_white_24dp"
+        android:orderInCategory="15"
+        android:title="@string/group_chat"
+        app:showAsAction="ifRoom" />
+
 </menu>

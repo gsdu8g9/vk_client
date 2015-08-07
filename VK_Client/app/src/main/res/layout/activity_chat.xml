@@ -1,31 +1,8 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    android:id="@+id/root"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="com.nethergrim.vk.activity.ChatActivity">
+    android:layout_height="match_parent">
 
-
-    <com.nethergrim.vk.views.InputMessagesController
-        android:id="@+id/inputMessagesController"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true" />
-
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/recyclerView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@+id/inputMessagesController"
-        android:layout_marginTop="@dimen/action_bar_height"
-        android:background="@color/chat_background_color" />
-
-
-    <include
-        android:id="@+id/toolbar_layout"
-        layout="@layout/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
-
-</RelativeLayout>
+</FrameLayout>

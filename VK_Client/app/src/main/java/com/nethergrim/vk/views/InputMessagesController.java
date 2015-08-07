@@ -8,12 +8,12 @@ import android.view.LayoutInflater;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 
-import com.devspark.robototextview.widget.RobotoEditText;
 import com.nethergrim.vk.R;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
+import github.ankushsachdeva.emojicon.EmojiconEditText;
 
 /**
  * @author andrej on 06.08.15.
@@ -23,7 +23,7 @@ public class InputMessagesController extends FrameLayout implements TextWatcher 
     @InjectView(R.id.btn_emoji)
     ImageButton mBtnEmoji;
     @InjectView(R.id.et_message)
-    RobotoEditText mEtMessage;
+    EmojiconEditText mEtMessage;
     @InjectView(R.id.btn_send)
     ImageButton mBtnSend;
     private InputMessagesControllerInterface mCallback;
@@ -81,13 +81,6 @@ public class InputMessagesController extends FrameLayout implements TextWatcher 
         mBtnSend = btnSend;
     }
 
-    public RobotoEditText getEtMessage() {
-        return mEtMessage;
-    }
-
-    public void setEtMessage(RobotoEditText etMessage) {
-        mEtMessage = etMessage;
-    }
 
     public ImageButton getBtnEmoji() {
         return mBtnEmoji;
