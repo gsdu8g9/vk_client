@@ -102,7 +102,7 @@ public class ChatFragment extends AbstractFragment
             Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_chat, container, false);
         ButterKnife.inject(this, v);
-        initViews(v);
+        initViews();
         return v;
     }
 
@@ -151,7 +151,8 @@ public class ChatFragment extends AbstractFragment
             return 0;
     }
 
-    private void initViews(View rootView) {
+    private void initViews() {
+        View rootView = getActivity().findViewById(R.id.root);
         final Context context = rootView.getContext();
         final EmojiconsPopup popup = new EmojiconsPopup(rootView, context);
         popup.setSizeForSoftKeyboard();
@@ -223,18 +224,21 @@ public class ChatFragment extends AbstractFragment
 
             @Override
             public void onClick(View v) {
+                Log.e("TAG", "emoji button clicked");
 
                 //If popup is not showing => emoji keyboard is not visible, we need to show it
                 if (!popup.isShowing()) {
-
+                    Log.e("TAG", "popup is not showing");
                     //If keyboard is visible, simply show the emoji popup
                     if (popup.isKeyBoardOpen()) {
+                        Log.e("TAG", "keyboard is shown, opening a popup");
                         popup.showAtBottom();
                     }
 
                     //else, open the text keyboard first and immediately after that show the
                     // emoji popup
                     else {
+                        Log.e("TAG", "keyboard is not shown, opening a keyboard and a popup");
                         mEtMessage.setFocusableInTouchMode(true);
                         mEtMessage.requestFocus();
                         popup.showAtBottomPending();
@@ -242,12 +246,13 @@ public class ChatFragment extends AbstractFragment
                                 = (InputMethodManager) context.getSystemService(
                                 Context.INPUT_METHOD_SERVICE);
                         inputMethodManager.showSoftInput(mEtMessage,
-                                InputMethodManager.SHOW_IMPLICIT);
+                                InputMethodManager.SHOW_FORCED);
                     }
                 }
 
-                //If popup is showing, simply dismiss it to show the undelying text keyboard
+                //If popup is showing, simply dismiss it to show the underlying text keyboard
                 else {
+                    Log.e("TAG", "popup is showing, dismissing now");
                     popup.dismiss();
                 }
             }
