@@ -3,6 +3,7 @@ package com.nethergrim.vk.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.MenuItem;
 
 import com.nethergrim.vk.Constants;
 import com.nethergrim.vk.R;
@@ -21,6 +22,16 @@ public class ChatActivity extends AbstractActivity {
         context.startActivity(intent);
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == android.R.id.home) {
+            onBackPressed();
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,5 +48,4 @@ public class ChatActivity extends AbstractActivity {
         }
 
     }
-
 }
