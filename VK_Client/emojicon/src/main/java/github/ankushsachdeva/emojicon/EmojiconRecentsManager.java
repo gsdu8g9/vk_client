@@ -74,8 +74,7 @@ public class EmojiconRecentsManager extends ArrayList<Emojicon> {
 
     @Override
     public boolean add(Emojicon object) {
-        boolean ret = super.add(object);
-        return ret;
+        return super.add(object);
     }
 
     @Override
@@ -85,8 +84,7 @@ public class EmojiconRecentsManager extends ArrayList<Emojicon> {
 
     @Override
     public boolean remove(Object object) {
-        boolean ret = super.remove(object);
-        return ret;
+        return super.remove(object);
     }
 
     public void saveRecents() {

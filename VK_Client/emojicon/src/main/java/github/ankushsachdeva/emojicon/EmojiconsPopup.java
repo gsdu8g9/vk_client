@@ -59,7 +59,6 @@ public class EmojiconsPopup extends PopupWindow
     Context mContext;
     private int mEmojiTabLastSelectedIndex = -1;
     private View[] mEmojiTabs;
-    private PagerAdapter mEmojisAdapter;
     private EmojiconRecentsManager mRecentsManager;
     private int keyBoardHeight = 0;
     private Boolean pendingOpen = false;
@@ -256,7 +255,7 @@ public class EmojiconsPopup extends PopupWindow
         emojisPager = (ViewPager) view.findViewById(R.id.emojis_pager);
         emojisPager.setOnPageChangeListener(this);
         EmojiconRecents recents = this;
-        mEmojisAdapter = new EmojisPagerAdapter(
+        PagerAdapter emojisAdapter = new EmojisPagerAdapter(
                 Arrays.asList(
                         new EmojiconRecentsGridView(mContext, null, null, this),
                         new EmojiconGridView(mContext, People.DATA, recents, this),
@@ -266,7 +265,7 @@ public class EmojiconsPopup extends PopupWindow
                         new EmojiconGridView(mContext, Symbols.DATA, recents, this)
                 )
         );
-        emojisPager.setAdapter(mEmojisAdapter);
+        emojisPager.setAdapter(emojisAdapter);
         mEmojiTabs = new View[6];
         mEmojiTabs[0] = view.findViewById(R.id.emojis_tab_0_recents);
         mEmojiTabs[1] = view.findViewById(R.id.emojis_tab_1_people);

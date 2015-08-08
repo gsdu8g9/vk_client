@@ -52,12 +52,11 @@ public class EmojiconGridView {
         mEmojiconPopup = emojiconPopup;
         rootView = inflater.inflate(R.layout.emojicon_grid, null);
         setRecents(recents);
-        GridView gridView = (GridView) rootView.findViewById(R.id.Emoji_GridView);
+        GridView gridView = (GridView) rootView.findViewById(R.id.gridview);
         if (emojicons == null) {
             mData = People.DATA;
         } else {
-            Object[] o = (Object[]) emojicons;
-            mData = Arrays.asList(o).toArray(new Emojicon[o.length]);
+            mData = Arrays.asList(emojicons).toArray(new Emojicon[emojicons.length]);
         }
         EmojiAdapter mAdapter = new EmojiAdapter(rootView.getContext(), mData);
         mAdapter.setEmojiClickListener(new OnEmojiconClickedListener() {

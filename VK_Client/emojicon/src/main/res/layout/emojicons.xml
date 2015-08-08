@@ -14,16 +14,15 @@
   ~ limitations under the License.
   -->
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/keyboard_background_holo">
+    android:background="@color/emojicon_keyboard_background">
 
     <LinearLayout
         android:id="@+id/emojis_tab"
         android:layout_width="match_parent"
-        android:layout_height="50dip"
-        android:layout_alignParentTop="true"
+        android:layout_height="48dp"
         android:orientation="horizontal">
 
         <ImageButton
@@ -36,9 +35,9 @@
             android:src="@drawable/ic_emoji_recent_light" />
 
         <View
-            android:layout_width="1px"
+            android:layout_width="@dimen/divider_size"
             android:layout_height="match_parent"
-            android:background="#888888" />
+            android:background="@color/emojicon_keyboard_divider" />
 
         <ImageButton
             android:id="@+id/emojis_tab_1_people"
@@ -50,9 +49,9 @@
             android:src="@drawable/ic_emoji_people_light" />
 
         <View
-            android:layout_width="1px"
+            android:layout_width="@dimen/divider_size"
             android:layout_height="match_parent"
-            android:background="#888888" />
+            android:background="@color/emojicon_keyboard_divider" />
 
         <ImageButton
             android:id="@+id/emojis_tab_2_nature"
@@ -64,9 +63,9 @@
             android:src="@drawable/ic_emoji_nature_light" />
 
         <View
-            android:layout_width="1px"
+            android:layout_width="@dimen/divider_size"
             android:layout_height="match_parent"
-            android:background="#888888" />
+            android:background="@color/emojicon_keyboard_divider" />
 
         <ImageButton
             android:id="@+id/emojis_tab_3_objects"
@@ -78,9 +77,9 @@
             android:src="@drawable/ic_emoji_objects_light" />
 
         <View
-            android:layout_width="1px"
+            android:layout_width="@dimen/divider_size"
             android:layout_height="match_parent"
-            android:background="#888888" />
+            android:background="@color/emojicon_keyboard_divider" />
 
         <ImageButton
             android:id="@+id/emojis_tab_4_cars"
@@ -92,9 +91,9 @@
             android:src="@drawable/ic_emoji_places_light" />
 
         <View
-            android:layout_width="1px"
+            android:layout_width="@dimen/divider_size"
             android:layout_height="match_parent"
-            android:background="#888888" />
+            android:background="@color/emojicon_keyboard_divider" />
 
         <ImageButton
             android:id="@+id/emojis_tab_5_punctuation"
@@ -106,9 +105,9 @@
             android:src="@drawable/ic_emoji_symbols_light" />
 
         <View
-            android:layout_width="1px"
+            android:layout_width="@dimen/divider_size"
             android:layout_height="match_parent"
-            android:background="#888888" />
+            android:background="@color/emojicon_keyboard_divider" />
 
         <ImageButton
             android:id="@+id/emojis_backspace"
@@ -119,16 +118,17 @@
             android:src="@drawable/sym_keyboard_delete_holo_dark" />
     </LinearLayout>
 
+
     <android.support.v4.view.ViewPager
         android:id="@+id/emojis_pager"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_below="@id/emojis_tab" />
+        android:layout_marginTop="48dp" />
 
     <View
         android:layout_width="match_parent"
-        android:layout_height="1px"
-        android:layout_below="@id/emojis_tab"
-        android:background="#8f8f8f" />
-</RelativeLayout>
+        android:layout_height="@dimen/divider_size"
+        android:layout_marginTop="48dp"
+        android:background="@color/emojicon_keyboard_divider" />
+
+</FrameLayout>

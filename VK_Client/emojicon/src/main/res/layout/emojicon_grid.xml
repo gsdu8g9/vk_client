@@ -14,12 +14,12 @@
   -->
 
 <GridView
-    android:id="@+id/Emoji_GridView"
+    android:id="@+id/gridview"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/transparent"
-    android:cacheColorHint="@android:color/transparent"
+    android:background="@null"
+    android:cacheColorHint="@null"
     android:columnWidth="40dip"
     android:horizontalSpacing="0dip"
     android:numColumns="auto_fit"

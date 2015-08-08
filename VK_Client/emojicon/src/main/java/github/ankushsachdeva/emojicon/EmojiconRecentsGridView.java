@@ -44,7 +44,7 @@ public class EmojiconRecentsGridView extends EmojiconGridView implements Emojico
                 }
             }
         });
-        GridView gridView = (GridView) rootView.findViewById(R.id.Emoji_GridView);
+        GridView gridView = (GridView) rootView.findViewById(R.id.gridview);
         gridView.setAdapter(mAdapter);
     }
 
