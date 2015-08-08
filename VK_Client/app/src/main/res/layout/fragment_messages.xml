@@ -36,14 +36,17 @@
 
     </android.support.v4.widget.SwipeRefreshLayout>
 
-    <android.support.design.widget.FloatingActionButton
+    <com.github.clans.fab.FloatingActionButton
         android:id="@+id/fab_normal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|right"
-        android:layout_margin="8dp"
+        android:layout_marginBottom="16dp"
+        android:layout_marginRight="16dp"
         android:src="@drawable/ic_add_white_24dp"
-        app:fabSize="normal" />
+        app:fab_colorNormal="@color/accent"
+        app:fab_colorPressed="@color/accent_dark"
+        app:fab_colorRipple="@color/white_opacity_30" />
 
 
 </FrameLayout>
