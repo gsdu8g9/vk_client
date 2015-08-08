@@ -181,7 +181,7 @@ public class EmojiconsPopup extends PopupWindow
                 if (heightDifference > 100) {
                     keyBoardHeight = heightDifference;
                     setSize(LayoutParams.MATCH_PARENT, keyBoardHeight);
-                    if (isOpened == false) {
+                    if (!isOpened) {
                         if (onSoftKeyboardOpenCloseListener != null)
                             onSoftKeyboardOpenCloseListener.onKeyboardOpen(keyBoardHeight);
                     }
@@ -402,13 +402,13 @@ public class EmojiconsPopup extends PopupWindow
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
             View v = views.get(position).rootView;
-            ((ViewPager) container).addView(v, 0);
+            (container).addView(v, 0);
             return v;
         }
 
         @Override
         public void destroyItem(ViewGroup container, int position, Object view) {
-            ((ViewPager) container).removeView((View) view);
+            (container).removeView((View) view);
         }
 
         @Override
