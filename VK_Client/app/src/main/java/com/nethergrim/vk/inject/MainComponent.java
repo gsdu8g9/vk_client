@@ -6,6 +6,7 @@ import com.nethergrim.vk.activity.MainActivity;
 import com.nethergrim.vk.activity.UserProfileActivity;
 import com.nethergrim.vk.adapter.ConversationsAdapter;
 import com.nethergrim.vk.adapter.FriendsAdapter;
+import com.nethergrim.vk.fragment.ChatFragment;
 import com.nethergrim.vk.fragment.FriendsFragment;
 import com.nethergrim.vk.fragment.MessagesFragment;
 import com.nethergrim.vk.gcm.MyGcmListenerService;
@@ -68,4 +69,6 @@ public interface MainComponent {
     void inject(PaletteProviderImpl p);
 
     void inject(ChatActivity a);
+
+    void inject(ChatFragment c);
 }

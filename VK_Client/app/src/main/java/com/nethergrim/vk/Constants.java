@@ -14,6 +14,8 @@ public class Constants {
     public static final String PACKAGE_NAME = "com.nethergrim.vk";
     public static final String EXTRA_CONVERSATION_ID = Constants.PACKAGE_NAME
             + ".CONVERSATION_ID";
+    public static final String EXTRA_GROUP_CONVERSATION = Constants.PACKAGE_NAME
+            + ".GROUP_CONVERSATION";
 
 
     public static final String[] PERMISSIONS = new String[] {

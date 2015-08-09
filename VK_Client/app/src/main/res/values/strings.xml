@@ -17,4 +17,8 @@
     <string name="document">Документ</string>
     <string name="video">Видеозапись</string>
     <string name="action_settings">Настройки</string>
+    <string name="write_a_message">Написать Сообщение</string>
+    <string name="attach_file">Прикрепить Файл</string>
+    <string name="user_profile">Профиль Пользователя</string>
+    <string name="group_chat">Групповой Чат</string>
 </resources>

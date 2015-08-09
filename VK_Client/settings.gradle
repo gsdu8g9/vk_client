@@ -1,2 +1,3 @@
 include ':app', ':vksdk_library'
 include ':kissTools'
+include ':emojicon'

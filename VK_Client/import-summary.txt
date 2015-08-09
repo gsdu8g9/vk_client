@@ -1,16 +1,6 @@
 ECLIPSE ANDROID PROJECT IMPORT SUMMARY
 ======================================
 
-Ignored Files:
---------------
-The following files were *not* copied into the new Gradle project; you
-should evaluate whether these are still needed in your project and if
-so manually move them:
-
-* .gitignore
-* README.md
-* proguard-project.txt
-
 Replaced Jars with Dependencies:
 --------------------------------
 The importer recognized the following .jar files as third party
@@ -28,10 +18,10 @@ Moved Files:
 Android Gradle projects use a different directory structure than ADT
 Eclipse projects. Here's how the projects were restructured:
 
-* AndroidManifest.xml => kissTools/src/main/AndroidManifest.xml
-* libs/fastjson-1.1.21.jar => kissTools/libs/fastjson-1.1.21.jar
-* res/ => kissTools/src/main/res/
-* src/ => kissTools/src/main/java/
+* AndroidManifest.xml => emojicon/src/main/AndroidManifest.xml
+* lint.xml => emojicon/lint.xml
+* res/ => emojicon/src/main/res/
+* src/ => emojicon/src/main/java/
 
 Missing Android Support Repository:
 -----------------------------------

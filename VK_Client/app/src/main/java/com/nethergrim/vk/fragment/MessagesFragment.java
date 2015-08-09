@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -15,7 +14,7 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.nethergrim.vk.Constants;
+import com.github.clans.fab.FloatingActionButton;
 import com.nethergrim.vk.MyApplication;
 import com.nethergrim.vk.R;
 import com.nethergrim.vk.activity.ChatActivity;
@@ -24,6 +23,7 @@ import com.nethergrim.vk.callbacks.ToolbarScrollable;
 import com.nethergrim.vk.event.ConversationsUpdatedEvent;
 import com.nethergrim.vk.models.Conversation;
 import com.nethergrim.vk.utils.BasicRecyclerViewScroller;
+import com.nethergrim.vk.utils.FabAnimationManager;
 import com.nethergrim.vk.utils.SafeTimer;
 import com.nethergrim.vk.views.RecyclerviewPageScroller;
 import com.nethergrim.vk.web.DataManager;
@@ -57,15 +57,16 @@ public class MessagesFragment extends AbstractFragment implements
     SwipeRefreshLayout mSwipeRefreshLayout;
     @Inject
     DataManager mDataManager;
-
     @Inject
     Bus mBus;
     @InjectView(R.id.fab_normal)
     FloatingActionButton mFabNormal;
+    private boolean mIsFabAnimating;
     private SafeTimer mSafeTimer;
     private ConversationsAdapter mAdapter;
 
     private ToolbarScrollable mToolbarScrollable;
+    private FabAnimationManager mFabAnimationManager;
 
     @Override
     public void onAttach(Activity activity) {
@@ -101,6 +102,7 @@ public class MessagesFragment extends AbstractFragment implements
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        mFabAnimationManager = new FabAnimationManager(mFabNormal);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
         mRecyclerView.setHasFixedSize(true);
         mAdapter = new ConversationsAdapter(this);
@@ -184,21 +186,18 @@ public class MessagesFragment extends AbstractFragment implements
     @Override
     public void showToolbar() {
         if (mFabNormal != null) {
-            mFabNormal.animate().translationY(0f).setDuration(Constants.ANIMATION_DURATION).start();
+            mFabAnimationManager.showFab();
         }
         if (mToolbarScrollable != null) {
             mToolbarScrollable.showToolbar();
         }
-
     }
+
 
     @Override
     public void hideToolbar() {
         if (mFabNormal != null) {
-            mFabNormal.animate()
-                    .translationY(300f)
-                    .setDuration(Constants.ANIMATION_DURATION)
-                    .start();
+            mFabAnimationManager.hideFab();
         }
         if (mToolbarScrollable != null) {
             mToolbarScrollable.hideToolbar();
