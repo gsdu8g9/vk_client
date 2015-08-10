@@ -4,6 +4,7 @@ import com.nethergrim.vk.MyApplication;
 import com.nethergrim.vk.activity.ChatActivity;
 import com.nethergrim.vk.activity.MainActivity;
 import com.nethergrim.vk.activity.UserProfileActivity;
+import com.nethergrim.vk.adapter.ChatAdapter;
 import com.nethergrim.vk.adapter.ConversationsAdapter;
 import com.nethergrim.vk.adapter.FriendsAdapter;
 import com.nethergrim.vk.fragment.ChatFragment;
@@ -71,4 +72,6 @@ public interface MainComponent {
     void inject(ChatActivity a);
 
     void inject(ChatFragment c);
+
+    void inject(ChatAdapter c);
 }

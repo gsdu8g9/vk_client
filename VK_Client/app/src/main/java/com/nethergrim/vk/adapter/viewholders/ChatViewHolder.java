@@ -5,6 +5,11 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.nethergrim.vk.R;
+
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+
 /**
  * @author Andrey Drobyazko (c2q9450@gmail.com).
  *         All rights reserved.
@@ -12,12 +17,15 @@ import android.widget.TextView;
 public class ChatViewHolder extends RecyclerView.ViewHolder {
 
 
-    TextView textBody;
+    @InjectView(R.id.textBody)
+    public TextView textBody;
+    @InjectView(R.id.avatar)
+    public ImageView imageAvatar;
     View bubbleView;
     TextView textDate;
-    ImageView imageAvatar;
 
     public ChatViewHolder(View itemView) {
         super(itemView);
+        ButterKnife.inject(this, itemView);
     }
 }

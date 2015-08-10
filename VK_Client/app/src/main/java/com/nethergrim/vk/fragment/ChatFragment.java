@@ -157,7 +157,7 @@ public class ChatFragment extends AbstractFragment
     }
 
     private void initList(Context context) {
-        mRecyclerView.setAdapter(new ChatAdapter());
+        mRecyclerView.setAdapter(new ChatAdapter(mConversationId, mIsGroupChat));
         mRecyclerView.setLayoutManager(
                 new LinearLayoutManager(context, RecyclerView.VERTICAL, false));
     }
