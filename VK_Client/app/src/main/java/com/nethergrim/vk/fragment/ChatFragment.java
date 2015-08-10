@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
@@ -25,6 +26,7 @@ import com.nethergrim.vk.Constants;
 import com.nethergrim.vk.MyApplication;
 import com.nethergrim.vk.R;
 import com.nethergrim.vk.activity.AbstractActivity;
+import com.nethergrim.vk.adapter.ChatAdapter;
 import com.nethergrim.vk.caching.Prefs;
 import com.nethergrim.vk.callbacks.WebCallback;
 import com.nethergrim.vk.models.Conversation;
@@ -154,9 +156,16 @@ public class ChatFragment extends AbstractFragment
             return 0;
     }
 
+    private void initList(Context context) {
+        mRecyclerView.setAdapter(new ChatAdapter());
+        mRecyclerView.setLayoutManager(
+                new LinearLayoutManager(context, RecyclerView.VERTICAL, false));
+    }
+
     private void initViews() {
         View rootView = getActivity().findViewById(R.id.root);
         final Context context = rootView.getContext();
+        initList(context);
         final EmojiconsPopup popup = new EmojiconsPopup(rootView, context);
         popup.setSizeForSoftKeyboard();
 

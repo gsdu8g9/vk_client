@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.nethergrim.vk.views.CircularImageView
+        android:id="@+id/avatar"
+        android:layout_width="@dimen/chat.row.avatar.size"
+        android:layout_height="@dimen/chat.row.avatar.size"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginEnd="@dimen/chat.row.margins"
+        android:layout_marginRight="@dimen/chat.row.margins"
+        android:layout_marginTop="@dimen/chat.row.margin_vertical"
+        tools:background="@drawable/green_dot" />
+
+    <com.devspark.robototextview.widget.RobotoTextView
+        android:id="@+id/textBody"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/avatar"
+        android:layout_marginEnd="@dimen/chat.row.margins"
+        android:layout_marginLeft="@dimen/chat.row.margin_another_size"
+        android:layout_marginRight="@dimen/chat.row.margins"
+        android:layout_marginStart="@dimen/chat.row.margin_another_size"
+        android:layout_toLeftOf="@+id/avatar"
+        android:layout_toStartOf="@+id/avatar"
+        android:background="@drawable/rounded_background_primary_light"
+        android:padding="@dimen/chat.row.body_padding"
+        android:textColor="@color/primary_text"
+        tools:text="Text here, long message, long message, long message, long message, long message, long message, long message, " />
+
+
+</RelativeLayout>
