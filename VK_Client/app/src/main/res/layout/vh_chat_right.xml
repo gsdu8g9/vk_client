@@ -26,7 +26,7 @@
         android:layout_marginStart="@dimen/chat.row.margin_another_size"
         android:layout_toLeftOf="@+id/avatar"
         android:layout_toStartOf="@+id/avatar"
-        android:background="@drawable/rounded_background_primary_light"
+        android:background="@drawable/rounded_background_white"
         android:padding="@dimen/chat.row.body_padding"
         android:textColor="@color/primary_text"
         tools:text="Text here, long message, long message, long message, long message, long message, long message, long message, " />
