@@ -73,7 +73,9 @@
         android:layout_height="match_parent"
         android:layout_above="@+id/inputMessagesController"
         android:layout_marginTop="@dimen/action_bar_height"
-        android:background="@color/chat_background_color" />
+        android:background="@color/chat_background_color"
+        android:clipToPadding="false"
+        android:paddingBottom="4dp" />
 
 
     <include

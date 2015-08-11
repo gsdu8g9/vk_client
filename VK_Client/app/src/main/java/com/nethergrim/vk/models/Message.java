@@ -44,7 +44,7 @@ public class Message extends RealmObject {
      * тип сообщения (0 — полученное, 1 — отправленное, не возвращается для пересланных сообщений).
      */
     @JsonProperty("out")
-    private long out;
+    private int out;
     /**
      * заголовок сообщения или беседы.
      */
@@ -139,11 +139,11 @@ public class Message extends RealmObject {
     public Message() {
     }
 
-    public long getOut() {
+    public int getOut() {
         return out;
     }
 
-    public void setOut(long out) {
+    public void setOut(int out) {
         this.out = out;
     }
 
