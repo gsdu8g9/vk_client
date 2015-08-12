@@ -17,6 +17,7 @@ import com.nethergrim.vk.images.PaletteProviderImpl;
 import com.nethergrim.vk.utils.PushParserImpl;
 import com.nethergrim.vk.utils.RealmUserProviderImplementation;
 import com.nethergrim.vk.web.RealmDataManagerImpl;
+import com.nethergrim.vk.web.RetrofitRequestManagerImpl;
 import com.nethergrim.vk.web.StartupTasksIntentService;
 import com.nethergrim.vk.web.WebRequestManagerImpl;
 
@@ -74,4 +75,6 @@ public interface MainComponent {
     void inject(ChatFragment c);
 
     void inject(ChatAdapter c);
+
+    void inject(RetrofitRequestManagerImpl r);
 }

@@ -26,16 +26,7 @@ public interface WebRequestManager {
             final WebCallback<ConversationsList> callback);
 
     @UiThread
-    void getUsers(List<Long> ids,
-            List<String> fields,
-            String nameCase,
-            WebCallback<ListOfUsers> callback);
-
-    @UiThread
     void getUsers(List<Long> ids, WebCallback<ListOfUsers> callback);
-
-    @UiThread
-    void getUsersForConversations(ConversationsList list, WebCallback<ListOfUsers> callback);
 
     @UiThread
     void getCurrentUser(WebCallback<User> callback);
