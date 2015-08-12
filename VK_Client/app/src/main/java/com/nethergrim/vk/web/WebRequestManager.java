@@ -1,9 +1,7 @@
 package com.nethergrim.vk.web;
 
-import android.support.annotation.UiThread;
 import android.support.annotation.WorkerThread;
 
-import com.nethergrim.vk.callbacks.WebCallback;
 import com.nethergrim.vk.models.ConversationsList;
 import com.nethergrim.vk.models.ListOfFriendIds;
 import com.nethergrim.vk.models.ListOfMessages;
@@ -18,36 +16,34 @@ import java.util.List;
 
 public interface WebRequestManager {
 
-    @UiThread
-    void getConversations(int limit,
+    @WorkerThread
+    ConversationsList getConversations(int limit,
             int offset,
             boolean onlyUnread,
-            int previewLenght,
-            final WebCallback<ConversationsList> callback);
-
-    @UiThread
-    void getUsers(List<Long> ids, WebCallback<ListOfUsers> callback);
-
-    @UiThread
-    void getCurrentUser(WebCallback<User> callback);
+            int previewLenght);
 
     @WorkerThread
-    void registerToPushNotifications(String token);
-
-    @UiThread
-    void unregisterFromPushNotifications();
-
-    @UiThread
-    void getFriendsList(long userId, WebCallback<ListOfFriendIds> callback);
-
-    void registerOnline();
+    ListOfUsers getUsers(List<Long> ids);
 
     @WorkerThread
-    void getChatHistory(int offset,
+    User getCurrentUser();
+
+    @WorkerThread
+    boolean registerToPushNotifications(String token);
+
+    @WorkerThread
+    boolean unregisterFromPushNotifications();
+
+    @WorkerThread
+    ListOfFriendIds getFriendsList(long userId);
+
+    boolean registerOnline();
+
+    @WorkerThread
+    ListOfMessages getChatHistory(int offset,
             int count,
             long userId,
             long chatId,
             long startMessageId,
-            boolean reversedSorting,
-            WebCallback<ListOfMessages> callback);
+            boolean reversedSorting);
 }

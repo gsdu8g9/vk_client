@@ -5,7 +5,6 @@ import android.text.TextUtils;
 import com.nethergrim.vk.Constants;
 import com.nethergrim.vk.MyApplication;
 import com.nethergrim.vk.caching.Prefs;
-import com.nethergrim.vk.callbacks.WebCallback;
 import com.nethergrim.vk.models.ConversationsList;
 import com.nethergrim.vk.models.ListOfFriendIds;
 import com.nethergrim.vk.models.ListOfMessages;
@@ -43,56 +42,57 @@ public class RetrofitRequestManagerImpl implements WebRequestManager {
         initDefaultParamsMap();
     }
 
+
     @Override
-    public void getConversations(int limit,
+    public ConversationsList getConversations(int limit,
             int offset,
             boolean onlyUnread,
-            int previewLength,
-            WebCallback<ConversationsList> callback) {
-
+            int previewLenght) {
+        return null;
     }
 
     @Override
-    public void getUsers(List<Long> ids, WebCallback<ListOfUsers> callback) {
+    public ListOfUsers getUsers(List<Long> ids) {
+        return null;
+    }
 
+    @Override
+    public User getCurrentUser() {
+        return null;
+    }
+
+    @Override
+    public boolean registerToPushNotifications(String token) {
+        return false;
+    }
+
+    @Override
+    public boolean unregisterFromPushNotifications() {
+        return false;
     }
 
 
     @Override
-    public void getCurrentUser(WebCallback<User> callback) {
-
+    public ListOfFriendIds getFriendsList(long userId) {
+        return null;
     }
 
     @Override
-    public void registerToPushNotifications(String token) {
-
+    public boolean registerOnline() {
+        return false;
     }
 
-    @Override
-    public void unregisterFromPushNotifications() {
-
-    }
 
     @Override
-    public void getFriendsList(long userId, WebCallback<ListOfFriendIds> callback) {
-
-    }
-
-    @Override
-    public void registerOnline() {
-
-    }
-
-    @Override
-    public void getChatHistory(int offset,
+    public ListOfMessages getChatHistory(int offset,
             int count,
             long userId,
             long chatId,
             long startMessageId,
-            boolean reversedSorting,
-            WebCallback<ListOfMessages> callback) {
-
+            boolean reversedSorting) {
+        return null;
     }
+
 
     private void initDefaultParamsMap() {
         if (mDefaultParamsMap == null) {

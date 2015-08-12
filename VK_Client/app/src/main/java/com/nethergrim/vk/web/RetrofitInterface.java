@@ -3,6 +3,7 @@ package com.nethergrim.vk.web;
 import com.nethergrim.vk.Constants;
 import com.nethergrim.vk.models.ConversationsList;
 import com.nethergrim.vk.models.ListOfFriendIds;
+import com.nethergrim.vk.models.ListOfMessages;
 import com.nethergrim.vk.models.ListOfUsers;
 import com.nethergrim.vk.models.User;
 
@@ -38,4 +39,7 @@ public interface RetrofitInterface {
 
     @POST(Constants.Requests.ACCOUNT_SETONLINE)
     Response setOnline(@QueryMap Map<String, String> options);
+
+    @GET(Constants.Requests.MESSAGES_GET_HISTORY)
+    ListOfMessages getMessagesHistory(@QueryMap Map<String, String> options);
 }
