@@ -1,5 +1,6 @@
 package com.nethergrim.vk.web;
 
+import android.support.annotation.Nullable;
 import android.support.annotation.WorkerThread;
 
 import com.nethergrim.vk.models.ConversationsList;
@@ -17,15 +18,18 @@ import java.util.List;
 public interface WebRequestManager {
 
     @WorkerThread
+    @Nullable
     ConversationsList getConversations(int limit,
             int offset,
             boolean onlyUnread,
             int previewLenght);
 
     @WorkerThread
+    @Nullable
     ListOfUsers getUsers(List<Long> ids);
 
     @WorkerThread
+    @Nullable
     User getCurrentUser();
 
     @WorkerThread
@@ -35,11 +39,13 @@ public interface WebRequestManager {
     boolean unregisterFromPushNotifications();
 
     @WorkerThread
+    @Nullable
     ListOfFriendIds getFriendsList(long userId);
 
     boolean registerOnline();
 
     @WorkerThread
+    @Nullable
     ListOfMessages getChatHistory(int offset,
             int count,
             long userId,

@@ -1,6 +1,7 @@
 package com.nethergrim.vk.web;
 
-import android.text.TextUtils;
+import android.os.Build;
+import android.support.annotation.Nullable;
 
 import com.nethergrim.vk.Constants;
 import com.nethergrim.vk.MyApplication;
@@ -10,6 +11,7 @@ import com.nethergrim.vk.models.ListOfFriendIds;
 import com.nethergrim.vk.models.ListOfMessages;
 import com.nethergrim.vk.models.ListOfUsers;
 import com.nethergrim.vk.models.User;
+import com.nethergrim.vk.utils.Utils;
 
 import java.util.HashMap;
 import java.util.List;
@@ -19,6 +21,7 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import retrofit.RestAdapter;
+import retrofit.client.Response;
 import retrofit.converter.JacksonConverter;
 
 /**
@@ -29,7 +32,7 @@ public class RetrofitRequestManagerImpl implements WebRequestManager {
     RetrofitInterface mRetrofitInterface;
     @Inject
     Prefs mPrefs;
-    private Map<String, String> mDefaultParamsMap;
+
 
     public RetrofitRequestManagerImpl() {
         MyApplication.getInstance().getMainComponent().inject(this);
@@ -39,7 +42,6 @@ public class RetrofitRequestManagerImpl implements WebRequestManager {
                 .setConverter(new JacksonConverter())
                 .build();
         mRetrofitInterface = restAdapter.create(RetrofitInterface.class);
-        initDefaultParamsMap();
     }
 
 
@@ -48,40 +50,60 @@ public class RetrofitRequestManagerImpl implements WebRequestManager {
             int offset,
             boolean onlyUnread,
             int previewLenght) {
+        Map<String, String> params = getDefaultParamsMap();
+
         return null;
     }
 
     @Override
+    @Nullable
     public ListOfUsers getUsers(List<Long> ids) {
+        Map<String, String> params = getDefaultParamsMap();
+
         return null;
     }
 
     @Override
     public User getCurrentUser() {
+        Map<String, String> params = getDefaultParamsMap();
+
         return null;
     }
 
     @Override
     public boolean registerToPushNotifications(String token) {
-        return false;
+        Map<String, String> params = getDefaultParamsMap();
+        params.put("token", token);
+        params.put("device_model", "android");
+        params.put("device_id", Utils.generateAndroidId());
+        params.put("system_version", String.valueOf(Build.VERSION.SDK_INT));
+        // TODO fix settings
+        params.put("settings", "{\"msg\":\"on\", \"chat\":[\"no_sound\",\"no_text\"], "
+                + "\"friend\":\"on\", \"reply\":\"on\", \"mention\":\"fr_of_fr\"} ");
+        return isResponseSuccessful(mRetrofitInterface.registerToPushNotifications(params));
     }
 
     @Override
     public boolean unregisterFromPushNotifications() {
-        return false;
+        Map<String, String> params = getDefaultParamsMap();
+        params.put("device_id", Utils.generateAndroidId());
+        return isResponseSuccessful(mRetrofitInterface.unregisterFromPushes(params));
     }
 
 
     @Override
     public ListOfFriendIds getFriendsList(long userId) {
+        Map<String, String> params = getDefaultParamsMap();
+
         return null;
     }
 
     @Override
     public boolean registerOnline() {
-        return false;
+        Map<String, String> params = getDefaultParamsMap();
+        params.put("voip", "0");
+        return isResponseSuccessful(mRetrofitInterface.setOnline(params));
     }
-
 
     @Override
     public ListOfMessages getChatHistory(int offset,
@@ -90,28 +112,23 @@ public class RetrofitRequestManagerImpl implements WebRequestManager {
             long chatId,
             long startMessageId,
             boolean reversedSorting) {
+        Map<String, String> params = getDefaultParamsMap();
+
         return null;
     }
 
-
-    private void initDefaultParamsMap() {
-        if (mDefaultParamsMap == null) {
-            mDefaultParamsMap = new HashMap<>();
-        } else {
-            mDefaultParamsMap.clear();
-        }
-        mDefaultParamsMap.put("v", Constants.API_VERSION);
-        mDefaultParamsMap.put("https", "1");
-        mDefaultParamsMap.put("lang", Locale.getDefault().getDisplayCountry());
-        mDefaultParamsMap.put("access_token", mPrefs.getToken());
+    private boolean isResponseSuccessful(Response r) {
+        return r.getStatus() == 200 || r.getStatus() == 201;
     }
 
-    /**
-     * To be called before every web request that requires token
-     */
-    private boolean checkAccessToken() {
-        mDefaultParamsMap.put("access_token",
-                mPrefs.getToken()); // to update token for web requests from prefs
-        return !TextUtils.isEmpty(mPrefs.getToken());
+    private Map<String, String> getDefaultParamsMap() {
+        // TODO possible place to implement pools (for maps)
+        Map<String, String> defaultParamsMap = new HashMap<>();
+        defaultParamsMap.put("v", Constants.API_VERSION);
+        defaultParamsMap.put("https", "1");
+        defaultParamsMap.put("lang", Locale.getDefault().getDisplayCountry());
+        defaultParamsMap.put("access_token", mPrefs.getToken());
+        return defaultParamsMap;
     }
+
 }
