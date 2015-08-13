@@ -94,8 +94,10 @@ public class RetrofitRequestManagerImpl implements WebRequestManager {
     @Override
     public ListOfFriendIds getFriendsList(long userId) {
         Map<String, String> params = getDefaultParamsMap();
-
-        return null;
+        params.put("user_id", String.valueOf(userId));
+        params.put("order", "random");
+        ListOfFriendIds listOfFriendIds = mRetrofitInterface.getFriends(params);
+        return listOfFriendIds;
     }
 
     @Override
