@@ -81,7 +81,7 @@ public class MyGcmListenerService extends GcmListenerService {
     }
 
     private void updateConversations() {
-        mDataManager.manageConversationsAndUsers(5, 0, false);
+        mDataManager.fetchConversationsAndUsers(5, 0, false);
     }
 
     private void showNotification(@NonNull final PushMessage message) {
@@ -122,7 +122,7 @@ public class MyGcmListenerService extends GcmListenerService {
         } else {
             // fetch user from backend
             long userId = Long.parseLong(message.getUid());
-            mDataManager.manageUsers(Collections.singletonList(userId),
+            mDataManager.fetchUsers(Collections.singletonList(userId),
                     new WebCallback<ListOfUsers>() {
                         @Override
                         public void onResponseSucceed(ListOfUsers response) {

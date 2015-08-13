@@ -69,14 +69,14 @@ public class StartupTasksIntentService extends Service {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                mDataManager.manageConversationsAndUsers(10, 0, false);
+                mDataManager.fetchConversationsAndUsers(10, 0, false);
 
                 try {
                     Thread.sleep(2500);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                mDataManager.manageFriends(new WebCallback<ListOfUsers>() {
+                mDataManager.fetchMyFriends(new WebCallback<ListOfUsers>() {
                     @Override
                     public void onResponseSucceed(ListOfUsers response) {
                         Log.d(TAG, "fetched friends successfully");

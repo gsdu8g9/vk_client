@@ -216,7 +216,7 @@ public class MessagesFragment extends AbstractFragment implements
     }
 
     private void loadPage(int pageNumber) {
-        mDataManager.manageConversationsAndUsers(DEFAULT_PAGE_SIZE, pageNumber * DEFAULT_PAGE_SIZE,
+        mDataManager.fetchConversationsAndUsers(DEFAULT_PAGE_SIZE, pageNumber * DEFAULT_PAGE_SIZE,
                 false);
     }
 

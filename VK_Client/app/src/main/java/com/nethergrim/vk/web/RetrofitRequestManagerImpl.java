@@ -51,7 +51,7 @@ public class RetrofitRequestManagerImpl implements WebRequestManager {
     public ConversationsList getConversations(int limit,
             int offset,
             boolean onlyUnread,
-            int previewLenght) {
+            int previewLength) {
         Map<String, String> params = getDefaultParamsMap();
 
         if (offset > 0) {
@@ -63,8 +63,8 @@ public class RetrofitRequestManagerImpl implements WebRequestManager {
         if (onlyUnread) {
             params.put("unread", "1");
         }
-        if (previewLenght > 0) {
-            params.put("preview_length", String.valueOf(previewLenght));
+        if (previewLength > 0) {
+            params.put("preview_length", String.valueOf(previewLength));
         }
 
         return mRetrofitInterface.getConversations(params);
