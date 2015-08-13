@@ -3,6 +3,7 @@ package com.nethergrim.vk.web;
 import android.os.Build;
 import android.support.annotation.Nullable;
 
+import com.kisstools.utils.StringUtil;
 import com.nethergrim.vk.Constants;
 import com.nethergrim.vk.MyApplication;
 import com.nethergrim.vk.caching.Prefs;
@@ -11,6 +12,7 @@ import com.nethergrim.vk.models.ListOfFriendIds;
 import com.nethergrim.vk.models.ListOfMessages;
 import com.nethergrim.vk.models.ListOfUsers;
 import com.nethergrim.vk.models.User;
+import com.nethergrim.vk.utils.UserUtils;
 import com.nethergrim.vk.utils.Utils;
 
 import java.util.HashMap;
@@ -52,22 +54,55 @@ public class RetrofitRequestManagerImpl implements WebRequestManager {
             int previewLenght) {
         Map<String, String> params = getDefaultParamsMap();
 
-        return null;
+        if (offset > 0) {
+            params.put("offset", String.valueOf(offset));
+        }
+        if (limit != 0) {
+            params.put("count", String.valueOf(limit));
+        }
+        if (onlyUnread) {
+            params.put("unread", "1");
+        }
+        if (previewLenght > 0) {
+            params.put("preview_length", String.valueOf(previewLenght));
+        }
+
+        return mRetrofitInterface.getConversations(params);
     }
 
     @Override
     @Nullable
     public ListOfUsers getUsers(List<Long> ids) {
         Map<String, String> params = getDefaultParamsMap();
+        if (ids != null) {
+            if (ids.size() > 1000) {
+                throw new IllegalArgumentException("you want to fetch too much users. Max is 1000");
+            }
 
-        return null;
+            StringBuilder sb = new StringBuilder();
+            for (Long id : ids) {
+                sb.append(id);
+                sb.append(", ");
+            }
+            String idsValues = StringUtil.cutText(sb.toString(), sb.toString().length() - 2);
+            params.put("user_ids", idsValues);
+        }
+
+        StringBuilder sb = new StringBuilder();
+        for (String field : UserUtils.getDefaultUserFields()) {
+            sb.append(field);
+            sb.append(", ");
+        }
+        String idsValues = StringUtil.cutText(sb.toString(), sb.toString().length() - 2);
+        params.put("fields", idsValues);
+        return mRetrofitInterface.getUsers(params);
     }
 
     @Override
     public User getCurrentUser() {
         Map<String, String> params = getDefaultParamsMap();
-
-        return null;
+        params.put("fields", UserUtils.getDefaultUserFieldsAsString());
+        return mRetrofitInterface.getCurrentUser(params);
     }
 
     @Override
@@ -96,8 +131,7 @@ public class RetrofitRequestManagerImpl implements WebRequestManager {
         Map<String, String> params = getDefaultParamsMap();
         params.put("user_id", String.valueOf(userId));
         params.put("order", "random");
-        ListOfFriendIds listOfFriendIds = mRetrofitInterface.getFriends(params);
-        return listOfFriendIds;
+        return mRetrofitInterface.getFriends(params);
     }
 
     @Override
@@ -116,7 +150,26 @@ public class RetrofitRequestManagerImpl implements WebRequestManager {
             boolean reversedSorting) {
         Map<String, String> params = getDefaultParamsMap();
 
-        return null;
+        if (offset >= 0) {
+            params.put("offset", String.valueOf(offset));
+        }
+        if (count > 0 && count <= 200) {
+            params.put("count", String.valueOf(count));
+        }
+
+        if (userId > 0) {
+            params.put("user_id", String.valueOf(userId));
+        }
+        if (chatId > 0) {
+            params.put("chat_id", String.valueOf(chatId));
+        }
+        if (startMessageId > 0) {
+            params.put("start_message_id", String.valueOf(startMessageId));
+        } else if (reversedSorting) {
+            params.put("rev", "1");
+        }
+
+        return mRetrofitInterface.getMessagesHistory(params);
     }
 
     private boolean isResponseSuccessful(Response r) {
