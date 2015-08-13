@@ -1,4 +1,4 @@
-package com.nethergrim.vk.gcm;
+package com.nethergrim.vk.services;
 
 import android.app.Service;
 import android.content.Context;

@@ -5,6 +5,7 @@ import android.util.Log;
 import com.google.android.gms.iid.InstanceIDListenerService;
 import com.nethergrim.vk.MyApplication;
 import com.nethergrim.vk.caching.Prefs;
+import com.nethergrim.vk.services.PushNotificationsRegisterService;
 
 import javax.inject.Inject;
 

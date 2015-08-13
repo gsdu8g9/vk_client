@@ -1,4 +1,4 @@
-package com.nethergrim.vk.web;
+package com.nethergrim.vk.services;
 
 import android.app.Service;
 import android.content.Context;
@@ -9,8 +9,9 @@ import android.util.Log;
 
 import com.nethergrim.vk.MyApplication;
 import com.nethergrim.vk.callbacks.WebCallback;
-import com.nethergrim.vk.gcm.PushNotificationsRegisterService;
 import com.nethergrim.vk.models.ListOfUsers;
+import com.nethergrim.vk.web.DataManager;
+import com.nethergrim.vk.web.WebRequestManager;
 import com.vk.sdk.api.VKError;
 
 import javax.inject.Inject;
