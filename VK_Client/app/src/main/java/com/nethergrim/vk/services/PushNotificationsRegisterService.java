@@ -72,7 +72,7 @@ public class PushNotificationsRegisterService extends Service {
                                         token = instanceID.getToken(Constants.GCM_SENDER_ID,
                                                 GoogleCloudMessaging.INSTANCE_ID_SCOPE, null);
                                     } catch (IOException e) {
-                                        e.printStackTrace();
+//                                        e.printStackTrace();
                                     }
                                     mPrefs.setGcmToken(token);
                                 }

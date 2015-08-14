@@ -9,25 +9,39 @@ import java.util.List;
  */
 public class ConversationsUserObject {
 
-    @JsonProperty("dialogs")
-    private ConversationsList mConversations;
+    @JsonProperty("response")
+    private ConversationsUserObjectResponse response;
 
-    @JsonProperty("users")
-    private List<User> mUsers;
-
-    public ConversationsList getConversations() {
-        return mConversations;
+    public ConversationsUserObjectResponse getResponse() {
+        return response;
     }
 
-    public void setConversations(ConversationsList conversations) {
-        mConversations = conversations;
+    public void setResponse(ConversationsUserObjectResponse response) {
+        this.response = response;
     }
 
-    public List<User> getUsers() {
-        return mUsers;
-    }
+    public static class ConversationsUserObjectResponse {
 
-    public void setUsers(List<User> users) {
-        mUsers = users;
+        @JsonProperty("dialogs")
+        private ConversationsList mConversations;
+
+        @JsonProperty("users")
+        private List<User> mUsers;
+
+        public ConversationsList getConversations() {
+            return mConversations;
+        }
+
+        public void setConversations(ConversationsList conversations) {
+            mConversations = conversations;
+        }
+
+        public List<User> getUsers() {
+            return mUsers;
+        }
+
+        public void setUsers(List<User> users) {
+            mUsers = users;
+        }
     }
 }

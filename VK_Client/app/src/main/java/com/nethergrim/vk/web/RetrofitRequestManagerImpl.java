@@ -2,6 +2,7 @@ package com.nethergrim.vk.web;
 
 import android.os.Build;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import com.kisstools.utils.StringUtil;
 import com.nethergrim.vk.Constants;
@@ -23,7 +24,9 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
+import retrofit.ErrorHandler;
 import retrofit.RestAdapter;
+import retrofit.RetrofitError;
 import retrofit.client.Response;
 import retrofit.converter.JacksonConverter;
 
@@ -43,6 +46,13 @@ public class RetrofitRequestManagerImpl implements WebRequestManager {
                 .setEndpoint(Constants.BASIC_API_URL)
                 .setLogLevel(RestAdapter.LogLevel.BASIC)
                 .setConverter(new JacksonConverter())
+                .setErrorHandler(new ErrorHandler() {
+                    @Override
+                    public Throwable handleError(RetrofitError cause) {
+                        Log.e("TAG", "handling error " + cause.toString());
+                        return null;
+                    }
+                })
                 .build();
         mRetrofitInterface = restAdapter.create(RetrofitInterface.class);
     }

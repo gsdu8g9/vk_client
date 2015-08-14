@@ -100,7 +100,7 @@ public class WorkerService extends Service {
 
                     //saving conversations to db
                     ConversationsList conversationsList
-                            = conversationsUserObject.getConversations();
+                            = conversationsUserObject.getResponse().getConversations();
                     conversationsList.setResults(
                             DataHelper.normalizeConversationsList(conversationsList.getResults()));
                     mPrefs.setUnreadMessagesCount(conversationsList.getUnreadCount());
@@ -109,13 +109,12 @@ public class WorkerService extends Service {
                     realm.copyToRealmOrUpdate(conversationsList.getResults());
 
                     //saving users to db
-                    List<User> users = conversationsUserObject.getUsers();
+                    List<User> users = conversationsUserObject.getResponse().getUsers();
                     realm.copyToRealmOrUpdate(users);
 
                     realm.commitTransaction();
                     mBus.post(new ConversationsUpdatedEvent());
                     mBus.post(new UsersUpdatedEvent());
-
                 } else {
                     Log.e(TAG, "ConversationsUserObject is null. Should not happen.");
                 }
