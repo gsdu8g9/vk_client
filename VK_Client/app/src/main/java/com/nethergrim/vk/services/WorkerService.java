@@ -4,6 +4,7 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.nethergrim.vk.Constants;
@@ -85,7 +86,7 @@ public class WorkerService extends Service {
         });
     }
 
-    private void addRunnableToQueue(Runnable r) {
+    private void addRunnableToQueue(@NonNull Runnable r) {
         if (mExecutorService != null) {
             Future<?> f = mExecutorService.submit(r);
             mFutures.add(f);
