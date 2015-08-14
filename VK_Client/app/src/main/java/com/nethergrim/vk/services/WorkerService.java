@@ -6,10 +6,13 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import com.nethergrim.vk.Constants;
 import com.nethergrim.vk.MyApplication;
+import com.nethergrim.vk.caching.Prefs;
 import com.nethergrim.vk.models.ConversationsList;
+import com.nethergrim.vk.utils.DataHelper;
 import com.nethergrim.vk.web.WebRequestManager;
 
 import java.util.ArrayList;
@@ -21,11 +24,14 @@ import java.util.concurrent.Future;
 
 import javax.inject.Inject;
 
+import io.realm.Realm;
+
 /**
  * @author andrej on 14.08.15.
  */
 public class WorkerService extends Service {
 
+    public static final String TAG = WorkerService.class.getSimpleName();
     public static final String ACTION_FETCH_CONVERSATIONS_AND_USERS = Constants.PACKAGE_NAME
             + ".FETCH_CONVERSATIONS_AND_USERS";
     public static final String EXTRA_LIMIT = Constants.PACKAGE_NAME + ".LIMIT";
@@ -34,6 +40,9 @@ public class WorkerService extends Service {
     public static final int MAX_THREADS_COUNT = 3;
     @Inject
     WebRequestManager mWebRequestManager;
+
+    @Inject
+    Prefs mPrefs;
     private ExecutorService mExecutorService;
     private List<Future<?>> mFutures = new ArrayList<>(300);
 
@@ -80,7 +89,14 @@ public class WorkerService extends Service {
                 ConversationsList conversationsList = mWebRequestManager.getConversations(limit,
                         offset, unreadOnly, 0);
                 if (conversationsList != null) {
-                    // TODO
+                    conversationsList = DataHelper.normalizeConversationsList(conversationsList);
+                    mPrefs.setUnreadMessagesCount(conversationsList.getUnreadCount());
+                    Realm realm = Realm.getDefaultInstance();
+                    realm.beginTransaction();
+                    realm.copyToRealmOrUpdate(conversationsList.getResults());
+                    realm.commitTransaction();
+                } else {
+                    Log.e(TAG, "ConversationsList is null. Should not happen.");
                 }
             }
         });

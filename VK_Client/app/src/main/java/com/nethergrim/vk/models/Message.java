@@ -3,8 +3,11 @@ package com.nethergrim.vk.models;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.List;
+
 import io.realm.RealmList;
 import io.realm.RealmObject;
+import io.realm.annotations.Ignore;
 import io.realm.annotations.PrimaryKey;
 
 /**
@@ -136,7 +139,30 @@ public class Message extends RealmObject {
      */
     private String photo_200;
 
+    @Ignore
+    @JsonProperty("chat_active")
+    private List<Long> chat_active;
+
+    @Ignore
+    private long authorId;
+
     public Message() {
+    }
+
+    public long getAuthorId() {
+        return authorId;
+    }
+
+    public void setAuthorId(long authorId) {
+        this.authorId = authorId;
+    }
+
+    public List<Long> getChat_active() {
+        return chat_active;
+    }
+
+    public void setChat_active(List<Long> chat_active) {
+        this.chat_active = chat_active;
     }
 
     public int getOut() {
