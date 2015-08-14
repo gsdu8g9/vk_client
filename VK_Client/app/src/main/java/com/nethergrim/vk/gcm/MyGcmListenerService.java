@@ -13,9 +13,7 @@ import com.google.android.gms.gcm.GcmListenerService;
 import com.nethergrim.vk.MyApplication;
 import com.nethergrim.vk.R;
 import com.nethergrim.vk.caching.Prefs;
-import com.nethergrim.vk.callbacks.WebCallback;
 import com.nethergrim.vk.images.ImageLoader;
-import com.nethergrim.vk.models.ListOfUsers;
 import com.nethergrim.vk.models.User;
 import com.nethergrim.vk.models.push.PushMessage;
 import com.nethergrim.vk.models.push.PushObject;
@@ -26,9 +24,6 @@ import com.nethergrim.vk.web.DataManager;
 import com.squareup.otto.Bus;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
-import com.vk.sdk.api.VKError;
-
-import java.util.Collections;
 
 import javax.inject.Inject;
 
@@ -122,17 +117,19 @@ public class MyGcmListenerService extends GcmListenerService {
         } else {
             // fetch user from backend
             long userId = Long.parseLong(message.getUid());
-            mDataManager.fetchUsers(Collections.singletonList(userId),
-                    new WebCallback<ListOfUsers>() {
-                        @Override
-                        public void onResponseSucceed(ListOfUsers response) {
-                            showNotification(message);
-                        }
 
-                        @Override
-                        public void onResponseFailed(VKError e) {
-                        }
-                    });
+            // TODO
+//            mDataManager.fetchUsers(Collections.singletonList(userId),
+//                    new WebCallback<ListOfUsers>() {
+//                        @Override
+//                        public void onResponseSucceed(ListOfUsers response) {
+//                            showNotification(message);
+//                        }
+//
+//                        @Override
+//                        public void onResponseFailed(VKError e) {
+//                        }
+//                    });
         }
 
     }

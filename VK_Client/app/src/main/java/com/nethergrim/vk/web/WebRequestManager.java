@@ -4,6 +4,7 @@ import android.support.annotation.Nullable;
 import android.support.annotation.WorkerThread;
 
 import com.nethergrim.vk.models.ConversationsList;
+import com.nethergrim.vk.models.ConversationsUserObject;
 import com.nethergrim.vk.models.ListOfFriendIds;
 import com.nethergrim.vk.models.ListOfMessages;
 import com.nethergrim.vk.models.ListOfUsers;
@@ -19,10 +20,15 @@ public interface WebRequestManager {
 
     @WorkerThread
     @Nullable
+    @Deprecated
+    /**
+     * Use {@link WebRequestManager#getConversationsAndUsers(int, int, boolean)} instead.
+     * */
     ConversationsList getConversations(int limit,
             int offset,
             boolean onlyUnread,
             int previewLenght);
+
 
     @WorkerThread
     @Nullable
@@ -43,6 +49,9 @@ public interface WebRequestManager {
     ListOfFriendIds getFriendsList(long userId);
 
     boolean registerOnline();
+
+    @WorkerThread
+    ConversationsUserObject getConversationsAndUsers(int limit, int offset, boolean unread);
 
     @WorkerThread
     @Nullable

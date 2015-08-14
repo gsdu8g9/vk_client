@@ -1,0 +1,48 @@
+// Args: count (required)
+//       offset (not required, default - 0)
+//       unread (not required, default - 0)
+//       fields (not required)
+// Default fields:  photo_200, online, sex, photo_max, photo_100, photo_200_orig, photo_max_orig, friend_status
+var count = Args.count;
+var offset = Args.offset;
+var unread = Args.unread;
+var fields = Args.fields; // fields for get users request
+if (!offset){
+    offset = "0";
+}
+if (!unread){
+    unread = "0";
+}
+if (!fields){
+    fields = "photo_200, online, sex, photo_max, photo_100, photo_200_orig, photo_max_orig, friend_status";
+}
+
+var dialogs = API.messages.getDialogs({"count" : count,
+"offset" : offset, "unread" : unread});
+
+var user_ids = dialogs.items@.message@.user_id;
+
+
+
+// filling array with list of user ids (from regular group chats)
+var i = dialogs.items.length;
+while (i != 0) {
+    if (dialogs.items[i].message.chat_active){
+        var j = dialogs.items[i].message.chat_active.length;
+        while (j != 0){
+            user_ids.push(dialogs.items[i].message.chat_active[j]);
+            j = j - 1;
+        }
+    }
+    i = i - 1;
+}
+
+
+var users = API.users.get({"user_ids" : user_ids,
+    "fields" : fields
+});
+
+
+
+
+return {"dialogs" : dialogs, "users" : users};

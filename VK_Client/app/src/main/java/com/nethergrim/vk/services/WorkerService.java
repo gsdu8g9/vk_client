@@ -12,7 +12,10 @@ import com.nethergrim.vk.Constants;
 import com.nethergrim.vk.MyApplication;
 import com.nethergrim.vk.caching.Prefs;
 import com.nethergrim.vk.event.ConversationsUpdatedEvent;
+import com.nethergrim.vk.event.UsersUpdatedEvent;
 import com.nethergrim.vk.models.ConversationsList;
+import com.nethergrim.vk.models.ConversationsUserObject;
+import com.nethergrim.vk.models.User;
 import com.nethergrim.vk.utils.DataHelper;
 import com.nethergrim.vk.web.WebRequestManager;
 import com.squareup.otto.Bus;
@@ -36,7 +39,7 @@ public class WorkerService extends Service {
     public static final String TAG = WorkerService.class.getSimpleName();
     public static final String ACTION_FETCH_CONVERSATIONS_AND_USERS = Constants.PACKAGE_NAME
             + ".FETCH_CONVERSATIONS_AND_USERS";
-    public static final String EXTRA_LIMIT = Constants.PACKAGE_NAME + ".LIMIT";
+    public static final String EXTRA_COUNT = Constants.PACKAGE_NAME + ".COUNT";
     public static final String EXTRA_OFFSET = Constants.PACKAGE_NAME + ".OFFSET";
     public static final String EXTRA_ONLY_UNREAD = Constants.PACKAGE_NAME + ".UNREAD_ONLY";
     public static final int MAX_THREADS_COUNT = 3;
@@ -52,12 +55,12 @@ public class WorkerService extends Service {
     private List<Future<?>> mFutures = new ArrayList<>(300);
 
     public static void fetchConversationsAndUsers(Context context,
-            int limit,
+            int count,
             int offset,
             boolean unreadOnly) {
         Intent intent = new Intent(context, WorkerService.class);
         intent.setAction(ACTION_FETCH_CONVERSATIONS_AND_USERS);
-        intent.putExtra(EXTRA_LIMIT, limit);
+        intent.putExtra(EXTRA_COUNT, count);
         intent.putExtra(EXTRA_OFFSET, offset);
         intent.putExtra(EXTRA_ONLY_UNREAD, unreadOnly);
         context.startService(intent);
@@ -85,25 +88,36 @@ public class WorkerService extends Service {
     }
 
     private void handleActionFetchConversationsAndUsers(Intent intent) {
-        final int limit = intent.getIntExtra(EXTRA_LIMIT, 10);
+        final int limit = intent.getIntExtra(EXTRA_COUNT, 10);
         final int offset = intent.getIntExtra(EXTRA_OFFSET, 0);
         final boolean unreadOnly = intent.getBooleanExtra(EXTRA_ONLY_UNREAD, false);
         addRunnableToQueue(new Runnable() {
             @Override
             public void run() {
-                ConversationsList conversationsList = mWebRequestManager.getConversations(limit,
-                        offset, unreadOnly, 0);
-                if (conversationsList != null) {
+                ConversationsUserObject conversationsUserObject
+                        = mWebRequestManager.getConversationsAndUsers(limit, offset, unreadOnly);
+                if (conversationsUserObject != null) {
+
+                    //saving conversations to db
+                    ConversationsList conversationsList
+                            = conversationsUserObject.getConversations();
                     conversationsList.setResults(
                             DataHelper.normalizeConversationsList(conversationsList.getResults()));
                     mPrefs.setUnreadMessagesCount(conversationsList.getUnreadCount());
                     Realm realm = Realm.getDefaultInstance();
                     realm.beginTransaction();
                     realm.copyToRealmOrUpdate(conversationsList.getResults());
+
+                    //saving users to db
+                    List<User> users = conversationsUserObject.getUsers();
+                    realm.copyToRealmOrUpdate(users);
+
                     realm.commitTransaction();
                     mBus.post(new ConversationsUpdatedEvent());
+                    mBus.post(new UsersUpdatedEvent());
+
                 } else {
-                    Log.e(TAG, "ConversationsList is null. Should not happen.");
+                    Log.e(TAG, "ConversationsUserObject is null. Should not happen.");
                 }
             }
         });

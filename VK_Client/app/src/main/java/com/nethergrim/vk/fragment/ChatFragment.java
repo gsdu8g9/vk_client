@@ -28,15 +28,12 @@ import com.nethergrim.vk.R;
 import com.nethergrim.vk.activity.AbstractActivity;
 import com.nethergrim.vk.adapter.ChatAdapter;
 import com.nethergrim.vk.caching.Prefs;
-import com.nethergrim.vk.callbacks.WebCallback;
 import com.nethergrim.vk.models.Conversation;
-import com.nethergrim.vk.models.ListOfMessages;
 import com.nethergrim.vk.models.User;
 import com.nethergrim.vk.utils.ConversationUtils;
 import com.nethergrim.vk.utils.UserProvider;
 import com.nethergrim.vk.web.DataManager;
 import com.nethergrim.vk.web.WebRequestManager;
-import com.vk.sdk.api.VKError;
 
 import javax.inject.Inject;
 
@@ -324,17 +321,19 @@ public class ChatFragment extends AbstractFragment
 
     private void loadLastMessages() {
         // TODO refactor and make pagination
-        mWebRequestManager.getChatHistory(0, 18, mIsGroupChat ? 0 : mConversationId,
-                mIsGroupChat ? mConversationId : 0, 0, false, new WebCallback<ListOfMessages>() {
-                    @Override
-                    public void onResponseSucceed(ListOfMessages response) {
-                        Log.e("TAG", "messages received: " + response.getMessages().size());
-                    }
 
-                    @Override
-                    public void onResponseFailed(VKError e) {
-                        Log.e("TAG", "error");
-                    }
-                });
+        // TODO
+//        mWebRequestManager.getChatHistory(0, 18, mIsGroupChat ? 0 : mConversationId,
+//                mIsGroupChat ? mConversationId : 0, 0, false, new WebCallback<ListOfMessages>() {
+//                    @Override
+//                    public void onResponseSucceed(ListOfMessages response) {
+//                        Log.e("TAG", "messages received: " + response.getMessages().size());
+//                    }
+//
+//                    @Override
+//                    public void onResponseFailed(VKError e) {
+//                        Log.e("TAG", "error");
+//                    }
+//                });
     }
 }

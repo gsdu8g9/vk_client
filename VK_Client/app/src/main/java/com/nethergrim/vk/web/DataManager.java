@@ -16,7 +16,7 @@ import java.util.List;
 public interface DataManager {
 
     @UiThread
-    void fetchConversationsAndUsers(int limit, int offset, boolean onlyUnread);
+    void fetchConversationsAndUsers(int count, int offset, boolean onlyUnread);
 
     @UiThread
     void fetchUsers(@NonNull List<Long> userIds);

@@ -5,14 +5,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
 import com.nethergrim.vk.MyApplication;
-import com.nethergrim.vk.callbacks.WebCallback;
-import com.nethergrim.vk.models.ListOfUsers;
 import com.nethergrim.vk.web.DataManager;
 import com.nethergrim.vk.web.WebRequestManager;
-import com.vk.sdk.api.VKError;
 
 import javax.inject.Inject;
 
@@ -77,18 +73,19 @@ public class StartupTasksIntentService extends Service {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                mDataManager.fetchMyFriends(new WebCallback<ListOfUsers>() {
-                    @Override
-                    public void onResponseSucceed(ListOfUsers response) {
-                        Log.d(TAG, "fetched friends successfully");
-                    }
-
-                    @Override
-                    public void onResponseFailed(VKError e) {
-                        Log.e(TAG, "fetching friends error: " + e.toString());
-                        handleActionLaunchStartupTasks();
-                    }
-                });
+                // TODO
+//                mDataManager.fetchMyFriends(new WebCallback<ListOfUsers>() {
+//                    @Override
+//                    public void onResponseSucceed(ListOfUsers response) {
+//                        Log.d(TAG, "fetched friends successfully");
+//                    }
+//
+//                    @Override
+//                    public void onResponseFailed(VKError e) {
+//                        Log.e(TAG, "fetching friends error: " + e.toString());
+//                        handleActionLaunchStartupTasks();
+//                    }
+//                });
             }
         }).start();
     }

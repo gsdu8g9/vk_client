@@ -39,6 +39,7 @@ public class Constants {
         String ACCOUNT_UNREGISTER_DEVICE = "/account.unregisterDevice";
         String FRIENDS_GET = "/friends.get";
         String ACCOUNT_SETONLINE = "/account.setOnline";
+        String EXECUTE_GET_CONVERSATIONS_AND_USERS = "/execute.getConversationsAndUsers";
     }
 
     public static float getDensity() {

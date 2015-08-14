@@ -8,6 +8,7 @@ import com.nethergrim.vk.Constants;
 import com.nethergrim.vk.MyApplication;
 import com.nethergrim.vk.caching.Prefs;
 import com.nethergrim.vk.models.ConversationsList;
+import com.nethergrim.vk.models.ConversationsUserObject;
 import com.nethergrim.vk.models.ListOfFriendIds;
 import com.nethergrim.vk.models.ListOfMessages;
 import com.nethergrim.vk.models.ListOfUsers;
@@ -48,6 +49,7 @@ public class RetrofitRequestManagerImpl implements WebRequestManager {
 
 
     @Override
+    @Deprecated
     public ConversationsList getConversations(int limit,
             int offset,
             boolean onlyUnread,
@@ -139,6 +141,22 @@ public class RetrofitRequestManagerImpl implements WebRequestManager {
         Map<String, String> params = getDefaultParamsMap();
         params.put("voip", "0");
         return isResponseSuccessful(mRetrofitInterface.setOnline(params));
+    }
+
+    @Override
+    public ConversationsUserObject getConversationsAndUsers(int limit, int offset, boolean unread) {
+        Map<String, String> params = getDefaultParamsMap();
+
+        if (offset > 0) {
+            params.put("offset", String.valueOf(offset));
+        }
+        if (limit != 0) {
+            params.put("count", String.valueOf(limit));
+        }
+        if (unread) {
+            params.put("unread", "1");
+        }
+        return mRetrofitInterface.getConversationsAndUsers(params);
     }
 
     @Override

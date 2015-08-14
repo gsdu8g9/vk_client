@@ -19,8 +19,8 @@ public class RealmDataManagerImpl implements DataManager {
 
 
     @Override
-    public void fetchConversationsAndUsers(int limit, int offset, boolean onlyUnread) {
-        WorkerService.fetchConversationsAndUsers(MyApplication.getInstance(), limit, offset,
+    public void fetchConversationsAndUsers(int count, int offset, boolean onlyUnread) {
+        WorkerService.fetchConversationsAndUsers(MyApplication.getInstance(), count, offset,
                 onlyUnread);
     }
 
