@@ -11,9 +11,11 @@ import android.util.Log;
 import com.nethergrim.vk.Constants;
 import com.nethergrim.vk.MyApplication;
 import com.nethergrim.vk.caching.Prefs;
+import com.nethergrim.vk.event.ConversationsUpdatedEvent;
 import com.nethergrim.vk.models.ConversationsList;
 import com.nethergrim.vk.utils.DataHelper;
 import com.nethergrim.vk.web.WebRequestManager;
+import com.squareup.otto.Bus;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,6 +45,9 @@ public class WorkerService extends Service {
 
     @Inject
     Prefs mPrefs;
+
+    @Inject
+    Bus mBus;
     private ExecutorService mExecutorService;
     private List<Future<?>> mFutures = new ArrayList<>(300);
 
@@ -89,12 +94,14 @@ public class WorkerService extends Service {
                 ConversationsList conversationsList = mWebRequestManager.getConversations(limit,
                         offset, unreadOnly, 0);
                 if (conversationsList != null) {
-                    conversationsList = DataHelper.normalizeConversationsList(conversationsList);
+                    conversationsList.setResults(
+                            DataHelper.normalizeConversationsList(conversationsList.getResults()));
                     mPrefs.setUnreadMessagesCount(conversationsList.getUnreadCount());
                     Realm realm = Realm.getDefaultInstance();
                     realm.beginTransaction();
                     realm.copyToRealmOrUpdate(conversationsList.getResults());
                     realm.commitTransaction();
+                    mBus.post(new ConversationsUpdatedEvent());
                 } else {
                     Log.e(TAG, "ConversationsList is null. Should not happen.");
                 }

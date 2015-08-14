@@ -27,4 +27,11 @@ public interface DataManager {
     @UiThread
     void fetchMyUser();
 
+    @UiThread
+    /**
+     * This method will register to push-notifications, register online for 15 minutes, and fetch
+     * list of users.
+     * */
+    void launchStartupTasks();
+
 }

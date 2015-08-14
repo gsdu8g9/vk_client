@@ -3,10 +3,9 @@ package com.nethergrim.vk.utils;
 import android.support.annotation.NonNull;
 
 import com.nethergrim.vk.models.Conversation;
-import com.nethergrim.vk.models.ConversationsList;
 import com.nethergrim.vk.models.Message;
 
-import java.util.List;
+import java.util.ArrayList;
 
 /**
  * @author andrej on 14.08.15.
@@ -18,11 +17,10 @@ public class DataHelper {
      * It will generate ID for conversation, add Date field (from the last message), and normalize
      * messages;
      */
-    public static ConversationsList normalizeConversationsList(@NonNull ConversationsList
-            conversationsList) {
-        List<Conversation> conversationList = conversationsList.getResults();
-        for (int i = 0, size = conversationList.size(); i < size; i++) {
-            Conversation conversation = conversationList.get(i);
+    public static ArrayList<Conversation> normalizeConversationsList(
+            @NonNull ArrayList<Conversation> conversationsList) {
+        for (int i = 0, size = conversationsList.size(); i < size; i++) {
+            Conversation conversation = conversationsList.get(i);
 
             // setting date to the conversation
             conversation.setDate(conversation.getMessage().getDate());
