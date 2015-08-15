@@ -157,6 +157,7 @@ public class WorkerService extends Service {
                     realm.beginTransaction();
                     realm.copyToRealmOrUpdate(listOfUsers.getResponse());
                     realm.commitTransaction();
+                    mPaletteProvider.generateAndStorePalette(listOfUsers.getResponse());
                     mBus.post(new UsersUpdatedEvent());
                 }
             }
