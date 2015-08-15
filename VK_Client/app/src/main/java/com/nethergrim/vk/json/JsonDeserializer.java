@@ -21,7 +21,6 @@ public interface JsonDeserializer {
 
     PushMessage getPushMessage(JSONObject jsonObject);
 
-    ListOfFriendIds getFriendsIds(String s);
 
     ListOfMessages getListOfMessages(String s);
 }

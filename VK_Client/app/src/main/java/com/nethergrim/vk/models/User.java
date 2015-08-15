@@ -21,7 +21,7 @@ public class User extends RealmObject {
     @JsonProperty("last_name")
     private String lastName;
 
-    private int friendRating;
+    private int friendRating = 20000;
     /**
      * возвращается, если страница пользователя удалена или заблокирована, содержит значение
      * deleted

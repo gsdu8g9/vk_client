@@ -14,6 +14,7 @@ import com.nethergrim.vk.caching.Prefs;
 import com.nethergrim.vk.event.ConversationsUpdatedEvent;
 import com.nethergrim.vk.event.FriendsUpdatedEvent;
 import com.nethergrim.vk.event.UsersUpdatedEvent;
+import com.nethergrim.vk.images.PaletteProvider;
 import com.nethergrim.vk.models.ConversationsList;
 import com.nethergrim.vk.models.ConversationsUserObject;
 import com.nethergrim.vk.models.ListOfFriends;
@@ -58,6 +59,9 @@ public class WorkerService extends Service {
 
     @Inject
     Bus mBus;
+
+    @Inject
+    PaletteProvider mPaletteProvider;
     private ExecutorService mExecutorService;
     private List<Future<?>> mFutures = new ArrayList<>(300);
 
@@ -135,6 +139,7 @@ public class WorkerService extends Service {
                     }
                     realm.copyToRealmOrUpdate(friends);
                     realm.commitTransaction();
+                    mPaletteProvider.generateAndStorePalette(friends);
                     mBus.post(new FriendsUpdatedEvent(listOfFriends.getResponse().getCount()));
                 }
             }

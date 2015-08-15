@@ -291,43 +291,43 @@ public class WebRequestManagerImpl {
             }
         });
     }
-
-    @Deprecated
-    public void getFriendsList(long userId, final WebCallback<ListOfFriendIds> callback) {
-        Map<String, Object> params = new HashMap<>();
-        params.put("user_id", String.valueOf(userId));
-        params.put("order", "random");
-
-        VKRequest vkRequest = new VKRequest(Constants.Requests.FRIENDS_GET,
-                new VKParameters(params));
-        vkRequest.executeWithListener(new VKRequest.VKRequestListener() {
-            @Override
-            public void onComplete(VKResponse response) {
-                super.onComplete(response);
-
-                ListOfFriendIds listOfFriendIds = null;
-                try {
-                    listOfFriendIds = mJsonDeserializer.getFriendsIds(
-                            response.json.getJSONObject("response").toString());
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                if (callback != null) {
-                    callback.onResponseSucceed(listOfFriendIds);
-                }
-
-            }
-
-            @Override
-            public void onError(VKError error) {
-                super.onError(error);
-                Log.e("TAG", "error: " + error.toString());
-                if (callback != null) {
-                    callback.onResponseFailed(error);
-                }
-            }
-        });
-    }
+//
+//    @Deprecated
+//    public void getFriendsList(long userId, final WebCallback<ListOfFriendIds> callback) {
+//        Map<String, Object> params = new HashMap<>();
+//        params.put("user_id", String.valueOf(userId));
+//        params.put("order", "random");
+//
+//        VKRequest vkRequest = new VKRequest(Constants.Requests.FRIENDS_GET,
+//                new VKParameters(params));
+//        vkRequest.executeWithListener(new VKRequest.VKRequestListener() {
+//            @Override
+//            public void onComplete(VKResponse response) {
+//                super.onComplete(response);
+//
+//                ListOfFriendIds listOfFriendIds = null;
+//                try {
+//                    listOfFriendIds = mJsonDeserializer.getFriendsIds(
+//                            response.json.getJSONObject("response").toString());
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
+//                if (callback != null) {
+//                    callback.onResponseSucceed(listOfFriendIds);
+//                }
+//
+//            }
+//
+//            @Override
+//            public void onError(VKError error) {
+//                super.onError(error);
+//                Log.e("TAG", "error: " + error.toString());
+//                if (callback != null) {
+//                    callback.onResponseFailed(error);
+//                }
+//            }
+//        });
+//    }
 
     @Deprecated
     public void registerOnline() {

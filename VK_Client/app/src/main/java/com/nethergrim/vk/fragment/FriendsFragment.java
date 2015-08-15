@@ -5,7 +5,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,16 +17,13 @@ import com.nethergrim.vk.R;
 import com.nethergrim.vk.activity.UserProfileActivity;
 import com.nethergrim.vk.adapter.FriendsAdapter;
 import com.nethergrim.vk.callbacks.ToolbarScrollable;
-import com.nethergrim.vk.callbacks.WebCallback;
-import com.nethergrim.vk.event.UsersUpdatedEvent;
-import com.nethergrim.vk.models.ListOfUsers;
+import com.nethergrim.vk.event.FriendsUpdatedEvent;
 import com.nethergrim.vk.models.User;
 import com.nethergrim.vk.utils.BasicRecyclerViewScroller;
 import com.nethergrim.vk.views.VarColumnGridLayoutManager;
 import com.nethergrim.vk.web.DataManager;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
-import com.vk.sdk.api.VKError;
 
 import javax.inject.Inject;
 
@@ -38,7 +34,7 @@ import butterknife.InjectView;
  * @author andrej on 28.07.15.
  */
 public class FriendsFragment extends AbstractFragment
-        implements WebCallback<ListOfUsers>, FriendsAdapter.OnFriendClickedCallback {
+        implements FriendsAdapter.OnFriendClickedCallback {
 
     public static final String TAG = FriendsFragment.class.getName();
     @InjectView(R.id.progressBar2)
@@ -80,6 +76,7 @@ public class FriendsFragment extends AbstractFragment
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         initList(view.getContext());
+        mDataManager.fetchMyFriends(100, 0);
     }
 
     @Override
@@ -96,7 +93,7 @@ public class FriendsFragment extends AbstractFragment
     }
 
     @Subscribe
-    public void onDataChanged(UsersUpdatedEvent e) {
+    public void onDataChanged(FriendsUpdatedEvent e) {
         if (mProgressBar2 == null) {
             return;
         }
@@ -107,16 +104,6 @@ public class FriendsFragment extends AbstractFragment
             mTextViewNothingHere.setVisibility(View.VISIBLE);
             mProgressBar2.setVisibility(View.GONE);
         }
-    }
-
-    @Override
-    public void onResponseSucceed(ListOfUsers response) {
-        onDataChanged(new UsersUpdatedEvent());
-    }
-
-    @Override
-    public void onResponseFailed(VKError e) {
-        Log.e(TAG, "error: " + e.toString());
     }
 
     @Override

@@ -67,16 +67,6 @@ public class JacksonJsonDeserializerImpl implements JsonDeserializer {
     }
 
     @Override
-    public ListOfFriendIds getFriendsIds(String s) {
-        try {
-            return mapper.readValue(s, ListOfFriendIds.class);
-        } catch (IOException e) {
-            Log.e(TAG, e.getMessage());
-        }
-        return null;
-    }
-
-    @Override
     public ListOfMessages getListOfMessages(String s) {
         try {
             return mapper.readValue(s, ListOfMessages.class);
