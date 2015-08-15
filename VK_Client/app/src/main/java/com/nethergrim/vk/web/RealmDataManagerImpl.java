@@ -5,7 +5,7 @@ import android.support.annotation.NonNull;
 import com.nethergrim.vk.MyApplication;
 import com.nethergrim.vk.services.WorkerService;
 
-import java.util.List;
+import java.util.ArrayList;
 
 /**
  * Should be used from UI Thread, to fetch data from the backend, and persist it to the database.
@@ -25,7 +25,7 @@ public class RealmDataManagerImpl implements DataManager {
     }
 
     @Override
-    public void fetchUsers(@NonNull List<Long> userIds) {
+    public void fetchUsers(@NonNull ArrayList<Long> userIds) {
 
     }
 

@@ -15,6 +15,7 @@ import com.nethergrim.vk.event.ConversationsUpdatedEvent;
 import com.nethergrim.vk.event.UsersUpdatedEvent;
 import com.nethergrim.vk.models.ConversationsList;
 import com.nethergrim.vk.models.ConversationsUserObject;
+import com.nethergrim.vk.models.ListOfUsers;
 import com.nethergrim.vk.models.User;
 import com.nethergrim.vk.utils.DataHelper;
 import com.nethergrim.vk.web.WebRequestManager;
@@ -39,6 +40,8 @@ public class WorkerService extends Service {
     public static final String TAG = WorkerService.class.getSimpleName();
     public static final String ACTION_FETCH_CONVERSATIONS_AND_USERS = Constants.PACKAGE_NAME
             + ".FETCH_CONVERSATIONS_AND_USERS";
+    public static final String ACTION_FETCH_USERS = Constants.PACKAGE_NAME + ".FETCH_USERS";
+    public static final String EXTRA_IDS = Constants.PACKAGE_NAME + ".IDS";
     public static final String EXTRA_COUNT = Constants.PACKAGE_NAME + ".COUNT";
     public static final String EXTRA_OFFSET = Constants.PACKAGE_NAME + ".OFFSET";
     public static final String EXTRA_ONLY_UNREAD = Constants.PACKAGE_NAME + ".UNREAD_ONLY";
@@ -66,6 +69,13 @@ public class WorkerService extends Service {
         context.startService(intent);
     }
 
+    public static void fetchUsers(Context context, ArrayList<Long> ids) {
+        Intent intent = new Intent(context, WorkerService.class);
+        intent.setAction(ACTION_FETCH_USERS);
+        intent.putExtra(EXTRA_IDS, ids);
+        context.startService(intent);
+    }
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -77,6 +87,8 @@ public class WorkerService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (ACTION_FETCH_CONVERSATIONS_AND_USERS.equals(intent.getAction())) {
             handleActionFetchConversationsAndUsers(intent);
+        } else if (ACTION_FETCH_USERS.equals(intent.getAction())) {
+            handleActionFetchUsers(intent);
         }
         return START_REDELIVER_INTENT;
     }
@@ -85,6 +97,23 @@ public class WorkerService extends Service {
     @Override
     public IBinder onBind(Intent intent) {
         return null;
+    }
+
+    private void handleActionFetchUsers(Intent intent) {
+        final ArrayList<Long> ids = (ArrayList<Long>) intent.getSerializableExtra(EXTRA_IDS);
+        addRunnableToQueue(new Runnable() {
+            @Override
+            public void run() {
+                ListOfUsers listOfUsers = mWebRequestManager.getUsers(ids);
+                if (listOfUsers != null) {
+                    Realm realm = Realm.getDefaultInstance();
+                    realm.beginTransaction();
+                    realm.copyToRealmOrUpdate(listOfUsers.getResponse());
+                    realm.commitTransaction();
+                    mBus.post(new UsersUpdatedEvent());
+                }
+            }
+        });
     }
 
     private void handleActionFetchConversationsAndUsers(Intent intent) {

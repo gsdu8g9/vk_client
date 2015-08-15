@@ -3,7 +3,7 @@ package com.nethergrim.vk.web;
 import android.support.annotation.NonNull;
 import android.support.annotation.UiThread;
 
-import java.util.List;
+import java.util.ArrayList;
 
 /**
  * Should be used from Ui Thread, to fetch data from the backend, and persist it to the database.
@@ -19,7 +19,7 @@ public interface DataManager {
     void fetchConversationsAndUsers(int count, int offset, boolean onlyUnread);
 
     @UiThread
-    void fetchUsers(@NonNull List<Long> userIds);
+    void fetchUsers(@NonNull ArrayList<Long> userIds);
 
     @UiThread
     void fetchMyFriends();
