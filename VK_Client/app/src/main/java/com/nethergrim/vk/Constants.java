@@ -16,6 +16,8 @@ public class Constants {
             + ".CONVERSATION_ID";
     public static final String EXTRA_GROUP_CONVERSATION = Constants.PACKAGE_NAME
             + ".GROUP_CONVERSATION";
+    public static final String BASIC_API_URL = "https://api.vk.com/method/";
+    public static final String API_VERSION = "5.37";
 
 
     public static final String[] PERMISSIONS = new String[] {
@@ -30,14 +32,14 @@ public class Constants {
 
     public interface Requests {
 
-        String MESSAGES_GET_DIALOGS = "messages.getDialogs";
-        String MESSAGES_GET_HISTORY = "messages.getHistory";
-        String GET_USERS = "users.get";
-        String ACCOUNT_GET_PROFILE_INFO = "account.getProfileInfo";
-        String ACCOUNT_REGISTER_DEVICE = "account.registerDevice";
-        String ACCOUNT_UNREGISTER_DEVICE = "account.unregisterDevice";
-        String FRIENDS_GET = "friends.get";
-        String ACCOUNT_SETONLINE = "account.setOnline";
+        String MESSAGES_GET_DIALOGS = "/messages.getDialogs";
+        String MESSAGES_GET_HISTORY = "/messages.getHistory";
+        String GET_USERS = "/users.get";
+        String ACCOUNT_REGISTER_DEVICE = "/account.registerDevice";
+        String ACCOUNT_UNREGISTER_DEVICE = "/account.unregisterDevice";
+        String FRIENDS_GET = "/friends.get";
+        String ACCOUNT_SETONLINE = "/account.setOnline";
+        String EXECUTE_GET_CONVERSATIONS_AND_USERS = "/execute.getConversationsAndUsers";
     }
 
     public static float getDensity() {

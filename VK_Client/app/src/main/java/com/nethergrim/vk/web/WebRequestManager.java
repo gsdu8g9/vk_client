@@ -1,10 +1,10 @@
 package com.nethergrim.vk.web;
 
-import android.support.annotation.UiThread;
+import android.support.annotation.Nullable;
 import android.support.annotation.WorkerThread;
 
-import com.nethergrim.vk.callbacks.WebCallback;
 import com.nethergrim.vk.models.ConversationsList;
+import com.nethergrim.vk.models.ConversationsUserObject;
 import com.nethergrim.vk.models.ListOfFriendIds;
 import com.nethergrim.vk.models.ListOfMessages;
 import com.nethergrim.vk.models.ListOfUsers;
@@ -18,45 +18,47 @@ import java.util.List;
 
 public interface WebRequestManager {
 
-    @UiThread
-    void getConversations(int limit,
+    @WorkerThread
+    @Nullable
+    @Deprecated
+    /**
+     * Use {@link WebRequestManager#getConversationsAndUsers(int, int, boolean)} instead.
+     * */
+    ConversationsList getConversations(int limit,
             int offset,
             boolean onlyUnread,
-            int previewLenght,
-            final WebCallback<ConversationsList> callback);
+            int previewLenght);
 
-    @UiThread
-    void getUsers(List<Long> ids,
-            List<String> fields,
-            String nameCase,
-            WebCallback<ListOfUsers> callback);
-
-    @UiThread
-    void getUsers(List<Long> ids, WebCallback<ListOfUsers> callback);
-
-    @UiThread
-    void getUsersForConversations(ConversationsList list, WebCallback<ListOfUsers> callback);
-
-    @UiThread
-    void getCurrentUser(WebCallback<User> callback);
 
     @WorkerThread
-    void registerToPushNotifications(String token);
-
-    @UiThread
-    void unregisterFromPushNotifications();
-
-    @UiThread
-    void getFriendsList(long userId, WebCallback<ListOfFriendIds> callback);
-
-    void registerOnline();
+    @Nullable
+    ListOfUsers getUsers(List<Long> ids);
 
     @WorkerThread
-    void getChatHistory(int offset,
+    @Nullable
+    User getCurrentUser();
+
+    @WorkerThread
+    boolean registerToPushNotifications(String token);
+
+    @WorkerThread
+    boolean unregisterFromPushNotifications();
+
+    @WorkerThread
+    @Nullable
+    ListOfFriendIds getFriendsList(long userId);
+
+    boolean registerOnline();
+
+    @WorkerThread
+    ConversationsUserObject getConversationsAndUsers(int limit, int offset, boolean unread);
+
+    @WorkerThread
+    @Nullable
+    ListOfMessages getChatHistory(int offset,
             int count,
             long userId,
             long chatId,
             long startMessageId,
-            boolean reversedSorting,
-            WebCallback<ListOfMessages> callback);
+            boolean reversedSorting);
 }

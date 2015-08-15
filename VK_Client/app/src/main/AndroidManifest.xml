@@ -43,7 +43,7 @@
             android:theme="@style/Theme.Transparent" />
 
         <service
-            android:name=".gcm.PushNotificationsRegisterService"
+            android:name=".services.PushNotificationsRegisterService"
             android:exported="false" />
 
         <!-- GCM starts here -->
@@ -78,7 +78,11 @@
         <!-- GCM finishes here -->
 
         <service
-            android:name=".web.StartupTasksIntentService"
+            android:name=".services.StartupTasksIntentService"
+            android:exported="false" />
+
+        <service
+            android:name=".services.WorkerService"
             android:exported="false" />
 
         <activity

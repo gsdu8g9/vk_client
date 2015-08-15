@@ -38,7 +38,8 @@ import javax.inject.Inject;
 /**
  * @author andreydrobyazko on 4/3/15.
  */
-public class WebRequestManagerImpl implements WebRequestManager {
+@Deprecated
+public class WebRequestManagerImpl {
 
     public static final String TAG = WebRequestManagerImpl.class.getSimpleName();
     @Inject
@@ -52,7 +53,7 @@ public class WebRequestManagerImpl implements WebRequestManager {
         MyApplication.getInstance().getMainComponent().inject(this);
     }
 
-    @Override
+    @Deprecated
     public void getConversations(int limit,
             int offset,
             boolean onlyUnread,
@@ -128,7 +129,7 @@ public class WebRequestManagerImpl implements WebRequestManager {
 
     }
 
-    @Override
+    @Deprecated
     public void getUsers(List<Long> ids,
             List<String> fields,
             String nameCase,
@@ -184,13 +185,13 @@ public class WebRequestManagerImpl implements WebRequestManager {
         });
     }
 
-    @Override
+    @Deprecated
     public void getUsers(List<Long> ids, final WebCallback<ListOfUsers> callback) {
         getUsers(ids, UserUtils.getDefaultUserFields(), null, callback);
 
     }
 
-    @Override
+    @Deprecated
     public void getUsersForConversations(ConversationsList list,
             WebCallback<ListOfUsers> callback) {
         if (list != null && list.getResults() != null) {
@@ -208,7 +209,7 @@ public class WebRequestManagerImpl implements WebRequestManager {
         }
     }
 
-    @Override
+    @Deprecated
     public void getCurrentUser(final WebCallback<User> callback) {
         Map<String, Object> params = new HashMap<>();
 
@@ -243,7 +244,7 @@ public class WebRequestManagerImpl implements WebRequestManager {
         });
     }
 
-    @Override
+    @Deprecated
     public void registerToPushNotifications(String token) {
         Map<String, Object> params = new HashMap<>();
         params.put("token", token);
@@ -271,7 +272,7 @@ public class WebRequestManagerImpl implements WebRequestManager {
         vkRequest.start();
     }
 
-    @Override
+    @Deprecated
     public void unregisterFromPushNotifications() {
         Map<String, Object> params = new HashMap<>();
         params.put("device_id", Utils.generateAndroidId());
@@ -292,7 +293,7 @@ public class WebRequestManagerImpl implements WebRequestManager {
         });
     }
 
-    @Override
+    @Deprecated
     public void getFriendsList(long userId, final WebCallback<ListOfFriendIds> callback) {
         Map<String, Object> params = new HashMap<>();
         params.put("user_id", String.valueOf(userId));
@@ -329,7 +330,7 @@ public class WebRequestManagerImpl implements WebRequestManager {
         });
     }
 
-    @Override
+    @Deprecated
     public void registerOnline() {
         Map<String, Object> params = new HashMap<>();
         params.put("voip", String.valueOf(0));
@@ -350,7 +351,7 @@ public class WebRequestManagerImpl implements WebRequestManager {
         });
     }
 
-    @Override
+    @Deprecated
     public void getChatHistory(int offset,
             int count,
             long userId,

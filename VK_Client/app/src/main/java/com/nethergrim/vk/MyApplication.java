@@ -8,6 +8,7 @@ import com.nethergrim.vk.caching.Prefs;
 import com.nethergrim.vk.inject.DaggerMainComponent;
 import com.nethergrim.vk.inject.MainComponent;
 import com.nethergrim.vk.inject.ProviderModule;
+import com.nethergrim.vk.utils.UserUtils;
 import com.vk.sdk.VKAccessToken;
 import com.vk.sdk.VKSdk;
 import com.vk.sdk.VKSdkListener;
@@ -40,6 +41,9 @@ public class MyApplication extends Application {
         KissTools.setContext(this);
         _app = this;
         Constants.mDensity = getResources().getDisplayMetrics().density;
+
+        Log.e("FIELDS", UserUtils.getDefaultUserFieldsAsString());
+
         VKSdkListener vkSdkListener = new VKSdkListener() {
             @Override
             public void onCaptchaError(VKError captchaError) {
