@@ -8,9 +8,8 @@ import com.kisstools.utils.StringUtil;
 import com.nethergrim.vk.Constants;
 import com.nethergrim.vk.MyApplication;
 import com.nethergrim.vk.caching.Prefs;
-import com.nethergrim.vk.models.ConversationsList;
 import com.nethergrim.vk.models.ConversationsUserObject;
-import com.nethergrim.vk.models.ListOfFriendIds;
+import com.nethergrim.vk.models.ListOfFriends;
 import com.nethergrim.vk.models.ListOfMessages;
 import com.nethergrim.vk.models.ListOfUsers;
 import com.nethergrim.vk.models.User;
@@ -55,31 +54,6 @@ public class RetrofitRequestManagerImpl implements WebRequestManager {
                 })
                 .build();
         mRetrofitInterface = restAdapter.create(RetrofitInterface.class);
-    }
-
-
-    @Override
-    @Deprecated
-    public ConversationsList getConversations(int limit,
-            int offset,
-            boolean onlyUnread,
-            int previewLength) {
-        Map<String, String> params = getDefaultParamsMap();
-
-        if (offset > 0) {
-            params.put("offset", String.valueOf(offset));
-        }
-        if (limit != 0) {
-            params.put("count", String.valueOf(limit));
-        }
-        if (onlyUnread) {
-            params.put("unread", "1");
-        }
-        if (previewLength > 0) {
-            params.put("preview_length", String.valueOf(previewLength));
-        }
-
-        return mRetrofitInterface.getConversations(params);
     }
 
     @Override
@@ -137,14 +111,16 @@ public class RetrofitRequestManagerImpl implements WebRequestManager {
         return isResponseSuccessful(mRetrofitInterface.unregisterFromPushes(params));
     }
 
-
     @Override
-    public ListOfFriendIds getFriendsList(long userId) {
+    public ListOfFriends getFriends(long userId, int count, int offset) {
         Map<String, String> params = getDefaultParamsMap();
-        params.put("user_id", String.valueOf(userId));
-        params.put("order", "random");
+        params.put("userId", String.valueOf(userId));
+        params.put("count", String.valueOf(count));
+        params.put("offset", String.valueOf(offset));
+        params.put("fields", UserUtils.getDefaultUserFieldsAsString());
         return mRetrofitInterface.getFriends(params);
     }
+
 
     @Override
     public boolean registerOnline() {

@@ -22,7 +22,7 @@ public interface DataManager {
     void fetchUsers(@NonNull ArrayList<Long> userIds);
 
     @UiThread
-    void fetchMyFriends();
+    void fetchMyFriends(int count, int offset);
 
     @UiThread
     void fetchMyUser();

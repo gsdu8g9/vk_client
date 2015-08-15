@@ -3,7 +3,7 @@ package com.nethergrim.vk.web;
 import com.nethergrim.vk.Constants;
 import com.nethergrim.vk.models.ConversationsList;
 import com.nethergrim.vk.models.ConversationsUserObject;
-import com.nethergrim.vk.models.ListOfFriendIds;
+import com.nethergrim.vk.models.ListOfFriends;
 import com.nethergrim.vk.models.ListOfMessages;
 import com.nethergrim.vk.models.ListOfUsers;
 import com.nethergrim.vk.models.User;
@@ -35,8 +35,8 @@ public interface RetrofitInterface {
     @POST(Constants.Requests.ACCOUNT_UNREGISTER_DEVICE)
     Response unregisterFromPushes(@QueryMap Map<String, String> options);
 
-    @GET(Constants.Requests.FRIENDS_GET)
-    ListOfFriendIds getFriends(@QueryMap Map<String, String> options);
+    @GET(Constants.Requests.EXECUTE_GET_FRIENDS)
+    ListOfFriends getFriends(@QueryMap Map<String, String> options);
 
     @POST(Constants.Requests.ACCOUNT_SETONLINE)
     Response setOnline(@QueryMap Map<String, String> options);

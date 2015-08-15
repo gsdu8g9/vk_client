@@ -12,9 +12,11 @@ import com.nethergrim.vk.Constants;
 import com.nethergrim.vk.MyApplication;
 import com.nethergrim.vk.caching.Prefs;
 import com.nethergrim.vk.event.ConversationsUpdatedEvent;
+import com.nethergrim.vk.event.FriendsUpdatedEvent;
 import com.nethergrim.vk.event.UsersUpdatedEvent;
 import com.nethergrim.vk.models.ConversationsList;
 import com.nethergrim.vk.models.ConversationsUserObject;
+import com.nethergrim.vk.models.ListOfFriends;
 import com.nethergrim.vk.models.ListOfUsers;
 import com.nethergrim.vk.models.User;
 import com.nethergrim.vk.utils.DataHelper;
@@ -41,6 +43,8 @@ public class WorkerService extends Service {
     public static final String ACTION_FETCH_CONVERSATIONS_AND_USERS = Constants.PACKAGE_NAME
             + ".FETCH_CONVERSATIONS_AND_USERS";
     public static final String ACTION_FETCH_USERS = Constants.PACKAGE_NAME + ".FETCH_USERS";
+    public static final String ACTION_FETCH_MY_FRIENDS = Constants.PACKAGE_NAME
+            + ".FETCH_MY_FRIENDS";
     public static final String EXTRA_IDS = Constants.PACKAGE_NAME + ".IDS";
     public static final String EXTRA_COUNT = Constants.PACKAGE_NAME + ".COUNT";
     public static final String EXTRA_OFFSET = Constants.PACKAGE_NAME + ".OFFSET";
@@ -76,6 +80,14 @@ public class WorkerService extends Service {
         context.startService(intent);
     }
 
+    public static void fetchMyFriends(Context context, int count, int offset) {
+        Intent intent = new Intent(context, WorkerService.class);
+        intent.setAction(ACTION_FETCH_MY_FRIENDS);
+        intent.putExtra(EXTRA_COUNT, count);
+        intent.putExtra(EXTRA_OFFSET, offset);
+        context.startService(intent);
+    }
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -89,6 +101,8 @@ public class WorkerService extends Service {
             handleActionFetchConversationsAndUsers(intent);
         } else if (ACTION_FETCH_USERS.equals(intent.getAction())) {
             handleActionFetchUsers(intent);
+        } else if (ACTION_FETCH_MY_FRIENDS.equals(intent.getAction())) {
+            handleActionFetchMyFriends(intent);
         }
         return START_REDELIVER_INTENT;
     }
@@ -97,6 +111,34 @@ public class WorkerService extends Service {
     @Override
     public IBinder onBind(Intent intent) {
         return null;
+    }
+
+    private void handleActionFetchMyFriends(Intent intent) {
+        final int count = intent.getIntExtra(EXTRA_COUNT, 10);
+        final int offset = intent.getIntExtra(EXTRA_OFFSET, 0);
+        addRunnableToQueue(new Runnable() {
+            @Override
+            public void run() {
+                ListOfFriends listOfFriends = mWebRequestManager.getFriends(
+                        mPrefs.getCurrentUserId(), count, offset);
+                if (listOfFriends != null) {
+
+                    mPrefs.setFriendsCount(listOfFriends.getResponse().getCount());
+
+                    Realm realm = Realm.getDefaultInstance();
+                    realm.beginTransaction();
+                    List<User> friends = listOfFriends.getResponse().getFriends();
+                    for (int i = 0, size = friends.size(), rating = offset;
+                            i < size;
+                            i++, rating++) {
+                        friends.get(i).setFriendRating(rating);
+                    }
+                    realm.copyToRealmOrUpdate(friends);
+                    realm.commitTransaction();
+                    mBus.post(new FriendsUpdatedEvent(listOfFriends.getResponse().getCount()));
+                }
+            }
+        });
     }
 
     private void handleActionFetchUsers(Intent intent) {

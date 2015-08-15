@@ -26,12 +26,12 @@ public class RealmDataManagerImpl implements DataManager {
 
     @Override
     public void fetchUsers(@NonNull ArrayList<Long> userIds) {
-
+        WorkerService.fetchUsers(MyApplication.getInstance(), userIds);
     }
 
     @Override
-    public void fetchMyFriends() {
-
+    public void fetchMyFriends(int count, int offset) {
+        WorkerService.fetchMyFriends(MyApplication.getInstance(), count, offset);
     }
 
     @Override

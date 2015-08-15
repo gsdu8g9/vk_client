@@ -21,13 +21,13 @@ public class User extends RealmObject {
     @JsonProperty("last_name")
     private String lastName;
 
+    private int friendRating;
     /**
      * возвращается, если страница пользователя удалена или заблокирована, содержит значение
      * deleted
      * или banned. Обратите внимание, в этом случае дополнительные поля fields не возвращаются.
      */
     private String deactivated;
-
     @JsonProperty("hidden")
     /**
      * возвращается при вызове без access_token, если пользователь установил настройку «Кому в
@@ -35,7 +35,6 @@ public class User extends RealmObject {
      * этом случае дополнительные поля fields не возвращаются.
      * */
     private int hidden;
-
     @JsonProperty("photo_id")
     /**
      * id главной фотографии профиля пользователя в формате user_id+photo_id, например,
@@ -43,17 +42,14 @@ public class User extends RealmObject {
      * поле не возвращается.
      * */
     private String photoId;
-
     /**
      * возвращается 1, если страница пользователя верифицирована, 0 — если не верифицирована.
      */
     private int verified;
-
     /**
      * возвращается 1, если текущий пользователь находится в черном списке у запрашиваемого.
      */
     private int blacklisted;
-
     /**
      * пол пользователя. Возможные значения:
      * 1 — женский;
@@ -61,31 +57,21 @@ public class User extends RealmObject {
      * 0 — пол не указан.
      */
     private int sex;
-
     @JsonProperty("bdate")
     /**
      * дата рождения. Возвращается в формате DD.MM.YYYY или DD.MM (если год рождения скрыт). Если
      * дата рождения скрыта целиком, поле отсутствует в ответе.
      * */
     private String dateOfBirth;
-
     @JsonProperty("home_town")
     private String homeTown;
-
     private String photo_50;
-
     private String photo_100;
-
     private String photo_200_orig;
-
     private String photo_200;
-
     private String photo_400_orig;
-
     private String photo_max;
-
     private String photo_max_orig;
-
     /**
      * информация о том, находится ли пользователь сейчас на сайте. Возвращаемые значения: 1 —
      * находится, 0 — не находится. Если пользователь использует мобильное приложение либо
@@ -95,15 +81,10 @@ public class User extends RealmObject {
      * идентификатор.
      */
     private int online;
-
     private String domain;
-
     private int has_mobile;
-
     private String site;
-
     private String status;
-
     private int followers_count;
     private int common_count;
     private String nickname;
@@ -120,8 +101,6 @@ public class User extends RealmObject {
      * 3 – пользователь является другом;
      */
     private int friend_status;
-
-
     public interface Fields {
 
         String sex = "sex";
@@ -173,8 +152,15 @@ public class User extends RealmObject {
         String friend_status = "friend_status";
 
     }
-
     public User() {
+    }
+
+    public int getFriendRating() {
+        return friendRating;
+    }
+
+    public void setFriendRating(int friendRating) {
+        this.friendRating = friendRating;
     }
 
     public int getFriend_status() {

@@ -3,9 +3,8 @@ package com.nethergrim.vk.web;
 import android.support.annotation.Nullable;
 import android.support.annotation.WorkerThread;
 
-import com.nethergrim.vk.models.ConversationsList;
 import com.nethergrim.vk.models.ConversationsUserObject;
-import com.nethergrim.vk.models.ListOfFriendIds;
+import com.nethergrim.vk.models.ListOfFriends;
 import com.nethergrim.vk.models.ListOfMessages;
 import com.nethergrim.vk.models.ListOfUsers;
 import com.nethergrim.vk.models.User;
@@ -17,17 +16,6 @@ import java.util.List;
  */
 
 public interface WebRequestManager {
-
-    @WorkerThread
-    @Nullable
-    @Deprecated
-    /**
-     * Use {@link WebRequestManager#getConversationsAndUsers(int, int, boolean)} instead.
-     * */
-    ConversationsList getConversations(int limit,
-            int offset,
-            boolean onlyUnread,
-            int previewLenght);
 
 
     @WorkerThread
@@ -45,9 +33,9 @@ public interface WebRequestManager {
     boolean unregisterFromPushNotifications();
 
     @WorkerThread
-    @Nullable
-    ListOfFriendIds getFriendsList(long userId);
+    ListOfFriends getFriends(long userId, int count, int offset);
 
+    @WorkerThread
     boolean registerOnline();
 
     @WorkerThread
