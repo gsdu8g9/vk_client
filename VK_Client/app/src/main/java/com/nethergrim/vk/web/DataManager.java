@@ -24,13 +24,11 @@ public interface DataManager {
     @UiThread
     void fetchMyFriends(int count, int offset);
 
-    @UiThread
-    void fetchMyUser();
 
     @UiThread
     /**
      * This method will register to push-notifications, register online for 15 minutes, and fetch
-     * list of users.
+     * current user.
      * */
     void launchStartupTasks();
 

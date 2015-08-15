@@ -35,11 +35,6 @@ public class RealmDataManagerImpl implements DataManager {
     }
 
     @Override
-    public void fetchMyUser() {
-
-    }
-
-    @Override
     public void launchStartupTasks() {
 
     }
