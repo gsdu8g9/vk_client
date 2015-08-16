@@ -21,12 +21,11 @@ import com.nethergrim.vk.callbacks.ToolbarScrollable;
 import com.nethergrim.vk.callbacks.WebCallback;
 import com.nethergrim.vk.enums.MainActivityState;
 import com.nethergrim.vk.event.ConversationsUpdatedEvent;
-import com.nethergrim.vk.event.UsersUpdatedEvent;
+import com.nethergrim.vk.event.MyUserUpdatedEvent;
 import com.nethergrim.vk.fragment.FriendsFragment;
 import com.nethergrim.vk.fragment.MessagesFragment;
 import com.nethergrim.vk.images.ImageLoader;
 import com.nethergrim.vk.models.User;
-import com.nethergrim.vk.services.StartupTasksIntentService;
 import com.nethergrim.vk.utils.UserProvider;
 import com.nethergrim.vk.utils.Utils;
 import com.nethergrim.vk.views.MenuButton;
@@ -119,7 +118,7 @@ public class MainActivity extends AbstractActivity implements WebCallback<User>,
     }
 
     @Subscribe
-    public void loadCurrentUser(UsersUpdatedEvent r) {
+    public void loadCurrentUser(MyUserUpdatedEvent r) {
         if (mPrefs.getCurrentUserId() != 0) {
             User user = mUP.getUser(mPrefs.getCurrentUserId());
             if (user != null) {
@@ -176,13 +175,12 @@ public class MainActivity extends AbstractActivity implements WebCallback<User>,
         setContentView(R.layout.activity_main);
         ButterKnife.inject(this);
         MyApplication.getInstance().getMainComponent().inject(this);
-        StartupTasksIntentService.startActionLaunchStartupTasks(this);
         mBus.register(this);
         initMenu();
         initToolbar();
-        loadCurrentUser(new UsersUpdatedEvent());
-        mDataManager.fetchMyUser();
+        loadCurrentUser(new MyUserUpdatedEvent());
         onConversationsUpdated(new ConversationsUpdatedEvent());
+        mDataManager.launchStartupTasks();
     }
 
     @Override

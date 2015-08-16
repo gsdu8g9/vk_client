@@ -7,7 +7,7 @@ import com.nethergrim.vk.models.ConversationsUserObject;
 import com.nethergrim.vk.models.ListOfFriends;
 import com.nethergrim.vk.models.ListOfMessages;
 import com.nethergrim.vk.models.ListOfUsers;
-import com.nethergrim.vk.models.User;
+import com.nethergrim.vk.models.StartupResponse;
 
 import java.util.List;
 
@@ -23,20 +23,13 @@ public interface WebRequestManager {
     ListOfUsers getUsers(List<Long> ids);
 
     @WorkerThread
-    @Nullable
-    User getCurrentUser();
-
-    @WorkerThread
-    boolean registerToPushNotifications(String token);
-
-    @WorkerThread
     boolean unregisterFromPushNotifications();
 
     @WorkerThread
     ListOfFriends getFriends(long userId, int count, int offset);
 
     @WorkerThread
-    boolean registerOnline();
+    StartupResponse launchStartupTasks(String gcmToken);
 
     @WorkerThread
     ConversationsUserObject getConversationsAndUsers(int limit, int offset, boolean unread);

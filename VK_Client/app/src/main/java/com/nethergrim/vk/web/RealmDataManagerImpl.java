@@ -36,7 +36,7 @@ public class RealmDataManagerImpl implements DataManager {
 
     @Override
     public void launchStartupTasks() {
-
+        WorkerService.launchStartupTasks(MyApplication.getInstance());
     }
 
 }

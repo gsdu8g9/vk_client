@@ -13,8 +13,6 @@ import com.nethergrim.vk.fragment.MessagesFragment;
 import com.nethergrim.vk.gcm.MyGcmListenerService;
 import com.nethergrim.vk.gcm.MyInstanceIDListenerService;
 import com.nethergrim.vk.images.PaletteProviderImpl;
-import com.nethergrim.vk.services.PushNotificationsRegisterService;
-import com.nethergrim.vk.services.StartupTasksIntentService;
 import com.nethergrim.vk.services.WorkerService;
 import com.nethergrim.vk.utils.PushParserImpl;
 import com.nethergrim.vk.utils.RealmUserProviderImplementation;
@@ -51,8 +49,6 @@ public interface MainComponent {
 
     void inject(RealmUserProviderImplementation obj);
 
-    void inject(PushNotificationsRegisterService o);
-
     void inject(MyInstanceIDListenerService o);
 
     void inject(MyGcmListenerService o);
@@ -66,8 +62,6 @@ public interface MainComponent {
     void inject(FriendsFragment o);
 
     void inject(UserProfileActivity a);
-
-    void inject(StartupTasksIntentService s);
 
     void inject(PaletteProviderImpl p);
 

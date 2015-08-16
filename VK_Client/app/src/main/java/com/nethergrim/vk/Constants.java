@@ -41,6 +41,7 @@ public class Constants {
         String ACCOUNT_SETONLINE = "/account.setOnline";
         String EXECUTE_GET_CONVERSATIONS_AND_USERS = "/execute.getConversationsAndUsers";
         String EXECUTE_GET_FRIENDS = "/execute.getFriends";
+        String EXECUTE_POST_STARTUP = "/execute.startup";
     }
 
     public static float getDensity() {

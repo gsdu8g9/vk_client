@@ -6,24 +6,30 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import android.util.Log;
 
+import com.google.android.gms.gcm.GoogleCloudMessaging;
+import com.google.android.gms.iid.InstanceID;
 import com.nethergrim.vk.Constants;
 import com.nethergrim.vk.MyApplication;
 import com.nethergrim.vk.caching.Prefs;
 import com.nethergrim.vk.event.ConversationsUpdatedEvent;
 import com.nethergrim.vk.event.FriendsUpdatedEvent;
+import com.nethergrim.vk.event.MyUserUpdatedEvent;
 import com.nethergrim.vk.event.UsersUpdatedEvent;
 import com.nethergrim.vk.images.PaletteProvider;
 import com.nethergrim.vk.models.ConversationsList;
 import com.nethergrim.vk.models.ConversationsUserObject;
 import com.nethergrim.vk.models.ListOfFriends;
 import com.nethergrim.vk.models.ListOfUsers;
+import com.nethergrim.vk.models.StartupResponse;
 import com.nethergrim.vk.models.User;
 import com.nethergrim.vk.utils.DataHelper;
 import com.nethergrim.vk.web.WebRequestManager;
 import com.squareup.otto.Bus;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -46,6 +52,7 @@ public class WorkerService extends Service {
     public static final String ACTION_FETCH_USERS = Constants.PACKAGE_NAME + ".FETCH_USERS";
     public static final String ACTION_FETCH_MY_FRIENDS = Constants.PACKAGE_NAME
             + ".FETCH_MY_FRIENDS";
+    public static final String ACTION_LAUNCH_STARTUP_TASKS = Constants.PACKAGE_NAME + ".STARTUP";
     public static final String EXTRA_IDS = Constants.PACKAGE_NAME + ".IDS";
     public static final String EXTRA_COUNT = Constants.PACKAGE_NAME + ".COUNT";
     public static final String EXTRA_OFFSET = Constants.PACKAGE_NAME + ".OFFSET";
@@ -92,6 +99,12 @@ public class WorkerService extends Service {
         context.startService(intent);
     }
 
+    public static void launchStartupTasks(Context context) {
+        Intent intent = new Intent(context, WorkerService.class);
+        intent.setAction(ACTION_LAUNCH_STARTUP_TASKS);
+        context.startService(intent);
+    }
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -107,6 +120,8 @@ public class WorkerService extends Service {
             handleActionFetchUsers(intent);
         } else if (ACTION_FETCH_MY_FRIENDS.equals(intent.getAction())) {
             handleActionFetchMyFriends(intent);
+        } else if (ACTION_LAUNCH_STARTUP_TASKS.equals(intent.getAction())) {
+            handleActionLaunchStartupTasks();
         }
         return START_REDELIVER_INTENT;
     }
@@ -115,6 +130,31 @@ public class WorkerService extends Service {
     @Override
     public IBinder onBind(Intent intent) {
         return null;
+    }
+
+    private void handleActionLaunchStartupTasks() {
+        addRunnableToQueue(new Runnable() {
+            @Override
+            public void run() {
+                String token = mPrefs.getGcmToken();
+                if (TextUtils.isEmpty(token)) {
+                    InstanceID instanceID = InstanceID.getInstance(
+                            MyApplication.getInstance().getApplicationContext());
+                    try {
+                        token = instanceID.getToken(Constants.GCM_SENDER_ID,
+                                GoogleCloudMessaging.INSTANCE_ID_SCOPE, null);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    mPrefs.setGcmToken(token);
+                }
+                StartupResponse startupResponse = mWebRequestManager.launchStartupTasks(token);
+                if (startupResponse != null) {
+                    Log.e("TAG", "startup response: " + startupResponse.toString());
+                }
+                mBus.post(new MyUserUpdatedEvent());
+            }
+        });
     }
 
     private void handleActionFetchMyFriends(Intent intent) {
