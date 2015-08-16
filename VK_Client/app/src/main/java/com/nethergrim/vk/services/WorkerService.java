@@ -150,8 +150,13 @@ public class WorkerService extends Service {
                 }
                 StartupResponse startupResponse = mWebRequestManager.launchStartupTasks(token);
                 if (startupResponse != null) {
-                    Log.e("TAG", "startup response: " + startupResponse.toString());
+                    mPrefs.setCurrentUserId(startupResponse.getResponse().getMe().getId());
+                    Realm realm = Realm.getDefaultInstance();
+                    realm.beginTransaction();
+                    realm.copyToRealmOrUpdate(startupResponse.getResponse().getMe());
+                    realm.commitTransaction();
                 }
+
                 mBus.post(new MyUserUpdatedEvent());
             }
         });

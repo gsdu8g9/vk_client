@@ -10,6 +10,7 @@ import com.nethergrim.vk.R;
 import com.nethergrim.vk.adapter.viewholders.ChatViewHolder;
 import com.nethergrim.vk.images.ImageLoader;
 import com.nethergrim.vk.models.Message;
+import com.nethergrim.vk.models.User;
 import com.nethergrim.vk.utils.UserProvider;
 
 import javax.inject.Inject;
@@ -63,11 +64,14 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatViewHolder> {
 
         holder.textBody.setText(message.getBody());
         boolean isMine = isMessageFromMe(position);
+        User user;
         if (isMine) {
-            mImageLoader.displayUserAvatar(mUserProvider.getMyUser(), holder.imageAvatar);
+            user = mUserProvider.getMyUser();
         } else {
-            mImageLoader.displayUserAvatar(mUserProvider.getUser(message.getFrom_id()),
-                    holder.imageAvatar);
+            user = mUserProvider.getUser(message.getAuthorId());
+        }
+        if (user != null) {
+            mImageLoader.displayUserAvatar(user, holder.imageAvatar);
         }
         if (position > 0) {
             if ((isMine && isMessageFromMe(position - 1)) || (
@@ -83,7 +87,12 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatViewHolder> {
 
     @Override
     public int getItemViewType(int position) {
-        return mMessages.get(position).getOut();
+        if (mMessages.size() > position) {
+            return mMessages.get(position).getOut();
+        } else {
+            return -1;
+        }
+
     }
 
     @Override
