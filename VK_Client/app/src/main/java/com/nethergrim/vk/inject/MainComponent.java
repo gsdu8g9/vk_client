@@ -18,7 +18,6 @@ import com.nethergrim.vk.utils.PushParserImpl;
 import com.nethergrim.vk.utils.RealmUserProviderImplementation;
 import com.nethergrim.vk.web.RealmDataManagerImpl;
 import com.nethergrim.vk.web.RetrofitRequestManagerImpl;
-import com.nethergrim.vk.web.WebRequestManagerImpl;
 
 import javax.inject.Singleton;
 
@@ -38,8 +37,6 @@ import dagger.Component;
 public interface MainComponent {
 
     void inject(MessagesFragment mf);
-
-    void inject(WebRequestManagerImpl o);
 
     void inject(ConversationsAdapter o);
 

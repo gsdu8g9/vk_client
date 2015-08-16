@@ -4,7 +4,6 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,7 +17,6 @@ import com.nethergrim.vk.MyApplication;
 import com.nethergrim.vk.R;
 import com.nethergrim.vk.caching.Prefs;
 import com.nethergrim.vk.callbacks.ToolbarScrollable;
-import com.nethergrim.vk.callbacks.WebCallback;
 import com.nethergrim.vk.enums.MainActivityState;
 import com.nethergrim.vk.event.ConversationsUpdatedEvent;
 import com.nethergrim.vk.event.MyUserUpdatedEvent;
@@ -32,7 +30,6 @@ import com.nethergrim.vk.views.MenuButton;
 import com.nethergrim.vk.web.DataManager;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
-import com.vk.sdk.api.VKError;
 
 import javax.inject.Inject;
 
@@ -40,7 +37,7 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 import io.realm.Realm;
 
-public class MainActivity extends AbstractActivity implements WebCallback<User>,
+public class MainActivity extends AbstractActivity implements
         View.OnClickListener, ToolbarScrollable {
 
 
@@ -78,7 +75,6 @@ public class MainActivity extends AbstractActivity implements WebCallback<User>,
 
     private MainActivityState mCurrentState;
 
-    @Override
     public void onResponseSucceed(final User response) {
         mIL.displayUserAvatar(response, mProfileImageButton);
         mPrefs.setCurrentUserId(response.getId());
@@ -91,10 +87,6 @@ public class MainActivity extends AbstractActivity implements WebCallback<User>,
         });
     }
 
-    @Override
-    public void onResponseFailed(VKError e) {
-        Log.e(TAG, "error on get current user: " + e.toString());
-    }
 
     @Override
     public void onClick(View view) {
