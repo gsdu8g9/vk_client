@@ -42,10 +42,6 @@
             android:name=".activity.UserProfileActivity"
             android:theme="@style/Theme.Transparent" />
 
-        <service
-            android:name=".services.PushNotificationsRegisterService"
-            android:exported="false" />
-
         <!-- GCM starts here -->
 
         <receiver
@@ -76,10 +72,6 @@
         </service>
 
         <!-- GCM finishes here -->
-
-        <service
-            android:name=".services.StartupTasksIntentService"
-            android:exported="false" />
 
         <service
             android:name=".services.WorkerService"

@@ -1,7 +1,6 @@
 package com.nethergrim.vk.json;
 
 import com.nethergrim.vk.models.ConversationsList;
-import com.nethergrim.vk.models.ListOfFriendIds;
 import com.nethergrim.vk.models.ListOfMessages;
 import com.nethergrim.vk.models.ListOfUsers;
 import com.nethergrim.vk.models.UserResult;
@@ -22,7 +21,6 @@ public interface JsonDeserializer {
 
     PushMessage getPushMessage(JSONObject jsonObject);
 
-    ListOfFriendIds getFriendsIds(String s);
 
     ListOfMessages getListOfMessages(String s);
 }

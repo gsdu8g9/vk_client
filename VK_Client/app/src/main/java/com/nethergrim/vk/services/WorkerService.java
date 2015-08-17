@@ -6,20 +6,30 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import android.util.Log;
 
+import com.google.android.gms.gcm.GoogleCloudMessaging;
+import com.google.android.gms.iid.InstanceID;
 import com.nethergrim.vk.Constants;
 import com.nethergrim.vk.MyApplication;
 import com.nethergrim.vk.caching.Prefs;
 import com.nethergrim.vk.event.ConversationsUpdatedEvent;
+import com.nethergrim.vk.event.FriendsUpdatedEvent;
+import com.nethergrim.vk.event.MyUserUpdatedEvent;
 import com.nethergrim.vk.event.UsersUpdatedEvent;
+import com.nethergrim.vk.images.PaletteProvider;
 import com.nethergrim.vk.models.ConversationsList;
 import com.nethergrim.vk.models.ConversationsUserObject;
+import com.nethergrim.vk.models.ListOfFriends;
+import com.nethergrim.vk.models.ListOfUsers;
+import com.nethergrim.vk.models.StartupResponse;
 import com.nethergrim.vk.models.User;
 import com.nethergrim.vk.utils.DataHelper;
 import com.nethergrim.vk.web.WebRequestManager;
 import com.squareup.otto.Bus;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -39,6 +49,11 @@ public class WorkerService extends Service {
     public static final String TAG = WorkerService.class.getSimpleName();
     public static final String ACTION_FETCH_CONVERSATIONS_AND_USERS = Constants.PACKAGE_NAME
             + ".FETCH_CONVERSATIONS_AND_USERS";
+    public static final String ACTION_FETCH_USERS = Constants.PACKAGE_NAME + ".FETCH_USERS";
+    public static final String ACTION_FETCH_MY_FRIENDS = Constants.PACKAGE_NAME
+            + ".FETCH_MY_FRIENDS";
+    public static final String ACTION_LAUNCH_STARTUP_TASKS = Constants.PACKAGE_NAME + ".STARTUP";
+    public static final String EXTRA_IDS = Constants.PACKAGE_NAME + ".IDS";
     public static final String EXTRA_COUNT = Constants.PACKAGE_NAME + ".COUNT";
     public static final String EXTRA_OFFSET = Constants.PACKAGE_NAME + ".OFFSET";
     public static final String EXTRA_ONLY_UNREAD = Constants.PACKAGE_NAME + ".UNREAD_ONLY";
@@ -51,6 +66,9 @@ public class WorkerService extends Service {
 
     @Inject
     Bus mBus;
+
+    @Inject
+    PaletteProvider mPaletteProvider;
     private ExecutorService mExecutorService;
     private List<Future<?>> mFutures = new ArrayList<>(300);
 
@@ -66,6 +84,27 @@ public class WorkerService extends Service {
         context.startService(intent);
     }
 
+    public static void fetchUsers(Context context, ArrayList<Long> ids) {
+        Intent intent = new Intent(context, WorkerService.class);
+        intent.setAction(ACTION_FETCH_USERS);
+        intent.putExtra(EXTRA_IDS, ids);
+        context.startService(intent);
+    }
+
+    public static void fetchMyFriends(Context context, int count, int offset) {
+        Intent intent = new Intent(context, WorkerService.class);
+        intent.setAction(ACTION_FETCH_MY_FRIENDS);
+        intent.putExtra(EXTRA_COUNT, count);
+        intent.putExtra(EXTRA_OFFSET, offset);
+        context.startService(intent);
+    }
+
+    public static void launchStartupTasks(Context context) {
+        Intent intent = new Intent(context, WorkerService.class);
+        intent.setAction(ACTION_LAUNCH_STARTUP_TASKS);
+        context.startService(intent);
+    }
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -77,6 +116,12 @@ public class WorkerService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (ACTION_FETCH_CONVERSATIONS_AND_USERS.equals(intent.getAction())) {
             handleActionFetchConversationsAndUsers(intent);
+        } else if (ACTION_FETCH_USERS.equals(intent.getAction())) {
+            handleActionFetchUsers(intent);
+        } else if (ACTION_FETCH_MY_FRIENDS.equals(intent.getAction())) {
+            handleActionFetchMyFriends(intent);
+        } else if (ACTION_LAUNCH_STARTUP_TASKS.equals(intent.getAction())) {
+            handleActionLaunchStartupTasks();
         }
         return START_REDELIVER_INTENT;
     }
@@ -85,6 +130,83 @@ public class WorkerService extends Service {
     @Override
     public IBinder onBind(Intent intent) {
         return null;
+    }
+
+    private void handleActionLaunchStartupTasks() {
+        addRunnableToQueue(new Runnable() {
+            @Override
+            public void run() {
+                String token = mPrefs.getGcmToken();
+                if (TextUtils.isEmpty(token)) {
+                    InstanceID instanceID = InstanceID.getInstance(
+                            MyApplication.getInstance().getApplicationContext());
+                    try {
+                        token = instanceID.getToken(Constants.GCM_SENDER_ID,
+                                GoogleCloudMessaging.INSTANCE_ID_SCOPE, null);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    mPrefs.setGcmToken(token);
+                }
+                StartupResponse startupResponse = mWebRequestManager.launchStartupTasks(token);
+                if (startupResponse != null) {
+                    mPrefs.setCurrentUserId(startupResponse.getResponse().getMe().getId());
+                    Realm realm = Realm.getDefaultInstance();
+                    realm.beginTransaction();
+                    realm.copyToRealmOrUpdate(startupResponse.getResponse().getMe());
+                    realm.commitTransaction();
+                }
+
+                mBus.post(new MyUserUpdatedEvent());
+            }
+        });
+    }
+
+    private void handleActionFetchMyFriends(Intent intent) {
+        final int count = intent.getIntExtra(EXTRA_COUNT, 10);
+        final int offset = intent.getIntExtra(EXTRA_OFFSET, 0);
+        addRunnableToQueue(new Runnable() {
+            @Override
+            public void run() {
+                ListOfFriends listOfFriends = mWebRequestManager.getFriends(
+                        mPrefs.getCurrentUserId(), count, offset);
+                if (listOfFriends != null) {
+
+                    mPrefs.setFriendsCount(listOfFriends.getResponse().getCount());
+
+                    Realm realm = Realm.getDefaultInstance();
+                    realm.beginTransaction();
+                    List<User> friends = listOfFriends.getResponse().getFriends();
+                    for (int i = 0, size = friends.size(), rating = offset;
+                            i < size;
+                            i++, rating++) {
+                        friends.get(i).setFriendRating(rating);
+                    }
+                    realm.copyToRealmOrUpdate(friends);
+                    realm.commitTransaction();
+                    mPaletteProvider.generateAndStorePalette(friends);
+                    mBus.post(new FriendsUpdatedEvent(listOfFriends.getResponse().getCount()));
+                }
+            }
+        });
+    }
+
+    private void handleActionFetchUsers(Intent intent) {
+        final ArrayList<Long> ids = (ArrayList<Long>) intent.getSerializableExtra(EXTRA_IDS);
+        addRunnableToQueue(new Runnable() {
+            @Override
+            public void run() {
+                ListOfUsers listOfUsers = mWebRequestManager.getUsers(ids);
+                if (listOfUsers != null) {
+                    Realm realm = Realm.getDefaultInstance();
+                    realm.beginTransaction();
+                    realm.copyToRealmOrUpdate(listOfUsers.getResponse());
+                    realm.commitTransaction();
+                    mPaletteProvider.generateAndStorePalette(listOfUsers.getResponse());
+                    mBus.post(new UsersUpdatedEvent());
+                }
+            }
+        });
     }
 
     private void handleActionFetchConversationsAndUsers(Intent intent) {

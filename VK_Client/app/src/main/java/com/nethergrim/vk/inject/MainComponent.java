@@ -13,14 +13,11 @@ import com.nethergrim.vk.fragment.MessagesFragment;
 import com.nethergrim.vk.gcm.MyGcmListenerService;
 import com.nethergrim.vk.gcm.MyInstanceIDListenerService;
 import com.nethergrim.vk.images.PaletteProviderImpl;
-import com.nethergrim.vk.services.PushNotificationsRegisterService;
-import com.nethergrim.vk.services.StartupTasksIntentService;
 import com.nethergrim.vk.services.WorkerService;
 import com.nethergrim.vk.utils.PushParserImpl;
 import com.nethergrim.vk.utils.RealmUserProviderImplementation;
 import com.nethergrim.vk.web.RealmDataManagerImpl;
 import com.nethergrim.vk.web.RetrofitRequestManagerImpl;
-import com.nethergrim.vk.web.WebRequestManagerImpl;
 
 import javax.inject.Singleton;
 
@@ -41,8 +38,6 @@ public interface MainComponent {
 
     void inject(MessagesFragment mf);
 
-    void inject(WebRequestManagerImpl o);
-
     void inject(ConversationsAdapter o);
 
     void inject(MainActivity m);
@@ -50,8 +45,6 @@ public interface MainComponent {
     void inject(MyApplication m);
 
     void inject(RealmUserProviderImplementation obj);
-
-    void inject(PushNotificationsRegisterService o);
 
     void inject(MyInstanceIDListenerService o);
 
@@ -66,8 +59,6 @@ public interface MainComponent {
     void inject(FriendsFragment o);
 
     void inject(UserProfileActivity a);
-
-    void inject(StartupTasksIntentService s);
 
     void inject(PaletteProviderImpl p);
 

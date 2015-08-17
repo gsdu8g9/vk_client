@@ -1,5 +1,7 @@
 package com.nethergrim.vk.utils;
 
+import android.support.annotation.Nullable;
+
 import com.nethergrim.vk.models.User;
 
 /**
@@ -9,9 +11,12 @@ import com.nethergrim.vk.models.User;
 public interface UserProvider {
 
 
+    @Nullable
     User getUser(long userId);
 
+    @Nullable
     User getUser(String userId);
 
+    @Nullable
     User getMyUser();
 }

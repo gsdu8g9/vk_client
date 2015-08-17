@@ -5,7 +5,7 @@ import android.util.Log;
 import com.google.android.gms.iid.InstanceIDListenerService;
 import com.nethergrim.vk.MyApplication;
 import com.nethergrim.vk.caching.Prefs;
-import com.nethergrim.vk.services.PushNotificationsRegisterService;
+import com.nethergrim.vk.web.DataManager;
 
 import javax.inject.Inject;
 
@@ -17,6 +17,9 @@ public class MyInstanceIDListenerService extends InstanceIDListenerService {
 
     @Inject
     Prefs mPrefs;
+
+    @Inject
+    DataManager mDataManager;
 
     @Override
     public void onCreate() {
@@ -30,8 +33,7 @@ public class MyInstanceIDListenerService extends InstanceIDListenerService {
 
         Log.e("TAG", "token refreshed");
         mPrefs.setGcmToken(null);
-        PushNotificationsRegisterService.start(
-                MyApplication.getInstance().getApplicationContext());
+        mDataManager.launchStartupTasks();
     }
 
 }

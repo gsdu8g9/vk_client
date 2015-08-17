@@ -15,6 +15,7 @@ public class DefaultPrefsImpl implements Prefs {
     public static final String KEY_ACTIVITY_STATE_ID = "activity_state_id";
     public static final String KEY_GCM_TOKEN = "gcm_token";
     public static final String KEY_UNREAD_MESSAGES_COUNT = "unread_messages_count";
+    public static final String KEY_FRIENDS_COUNT = "fr_c";
     private static final String KEY_TOKEN = "token";
     private SharedPreferences mPrefs;
 
@@ -71,6 +72,16 @@ public class DefaultPrefsImpl implements Prefs {
     @Override
     public void setUnreadMessagesCount(int count) {
         mPrefs.edit().putInt(KEY_UNREAD_MESSAGES_COUNT, count).apply();
+    }
+
+    @Override
+    public int getFriendsCount() {
+        return mPrefs.getInt(KEY_FRIENDS_COUNT, 0);
+    }
+
+    @Override
+    public void setFriendsCount(int count) {
+        mPrefs.edit().putInt(KEY_FRIENDS_COUNT, count).apply();
     }
 
 }

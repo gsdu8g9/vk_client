@@ -24,4 +24,8 @@ public interface Prefs {
     int getUnreadMessagesCount();
 
     void setUnreadMessagesCount(int count);
+
+    int getFriendsCount();
+
+    void setFriendsCount(int count);
 }

@@ -8,12 +8,11 @@ import com.kisstools.utils.StringUtil;
 import com.nethergrim.vk.Constants;
 import com.nethergrim.vk.MyApplication;
 import com.nethergrim.vk.caching.Prefs;
-import com.nethergrim.vk.models.ConversationsList;
 import com.nethergrim.vk.models.ConversationsUserObject;
-import com.nethergrim.vk.models.ListOfFriendIds;
+import com.nethergrim.vk.models.ListOfFriends;
 import com.nethergrim.vk.models.ListOfMessages;
 import com.nethergrim.vk.models.ListOfUsers;
-import com.nethergrim.vk.models.User;
+import com.nethergrim.vk.models.StartupResponse;
 import com.nethergrim.vk.utils.UserUtils;
 import com.nethergrim.vk.utils.Utils;
 
@@ -49,37 +48,12 @@ public class RetrofitRequestManagerImpl implements WebRequestManager {
                 .setErrorHandler(new ErrorHandler() {
                     @Override
                     public Throwable handleError(RetrofitError cause) {
-                        Log.e("TAG", "handling error " + cause.toString());
+                        Log.e("TAG", "RETROFIT error " + cause.toString());
                         return null;
                     }
                 })
                 .build();
         mRetrofitInterface = restAdapter.create(RetrofitInterface.class);
-    }
-
-
-    @Override
-    @Deprecated
-    public ConversationsList getConversations(int limit,
-            int offset,
-            boolean onlyUnread,
-            int previewLength) {
-        Map<String, String> params = getDefaultParamsMap();
-
-        if (offset > 0) {
-            params.put("offset", String.valueOf(offset));
-        }
-        if (limit != 0) {
-            params.put("count", String.valueOf(limit));
-        }
-        if (onlyUnread) {
-            params.put("unread", "1");
-        }
-        if (previewLength > 0) {
-            params.put("preview_length", String.valueOf(previewLength));
-        }
-
-        return mRetrofitInterface.getConversations(params);
     }
 
     @Override
@@ -111,46 +85,34 @@ public class RetrofitRequestManagerImpl implements WebRequestManager {
     }
 
     @Override
-    public User getCurrentUser() {
-        Map<String, String> params = getDefaultParamsMap();
-        params.put("fields", UserUtils.getDefaultUserFieldsAsString());
-        return mRetrofitInterface.getCurrentUser(params);
-    }
-
-    @Override
-    public boolean registerToPushNotifications(String token) {
-        Map<String, String> params = getDefaultParamsMap();
-        params.put("token", token);
-        params.put("device_model", "android");
-        params.put("device_id", Utils.generateAndroidId());
-        params.put("system_version", String.valueOf(Build.VERSION.SDK_INT));
-        // TODO fix settings
-        params.put("settings", "{\"msg\":\"on\", \"chat\":[\"no_sound\",\"no_text\"], "
-                + "\"friend\":\"on\", \"reply\":\"on\", \"mention\":\"fr_of_fr\"} ");
-        return isResponseSuccessful(mRetrofitInterface.registerToPushNotifications(params));
-    }
-
-    @Override
     public boolean unregisterFromPushNotifications() {
         Map<String, String> params = getDefaultParamsMap();
         params.put("device_id", Utils.generateAndroidId());
         return isResponseSuccessful(mRetrofitInterface.unregisterFromPushes(params));
     }
 
-
     @Override
-    public ListOfFriendIds getFriendsList(long userId) {
+    public ListOfFriends getFriends(long userId, int count, int offset) {
         Map<String, String> params = getDefaultParamsMap();
-        params.put("user_id", String.valueOf(userId));
-        params.put("order", "random");
+        params.put("userId", String.valueOf(userId));
+        params.put("count", String.valueOf(count));
+        params.put("offset", String.valueOf(offset));
+        params.put("fields", UserUtils.getDefaultUserFieldsAsString());
         return mRetrofitInterface.getFriends(params);
     }
 
     @Override
-    public boolean registerOnline() {
+    public StartupResponse launchStartupTasks(String gcmToken) {
         Map<String, String> params = getDefaultParamsMap();
-        params.put("voip", "0");
-        return isResponseSuccessful(mRetrofitInterface.setOnline(params));
+        params.put("gcmToken", gcmToken);
+        params.put("fields", UserUtils.getDefaultUserFieldsAsString());
+        params.put("deviceId", Utils.generateAndroidId());
+        params.put("systemVersion", String.valueOf(Build.VERSION.SDK_INT));
+        // TODO fix settings
+        params.put("settings", "{\"msg\":\"on\", \"chat\":[\"no_sound\",\"no_text\"], "
+                + "\"friend\":\"on\", \"reply\":\"on\", \"mention\":\"fr_of_fr\"} ");
+
+        return mRetrofitInterface.launchStartupTasks(params);
     }
 
     @Override
