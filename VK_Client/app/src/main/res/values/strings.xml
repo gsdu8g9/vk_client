@@ -21,4 +21,5 @@
     <string name="attach_file">Прикрепить Файл</string>
     <string name="user_profile">Профиль Пользователя</string>
     <string name="group_chat">Групповой Чат</string>
+    <string name="sign_in">Войти</string>
 </resources>
