@@ -55,9 +55,8 @@
 # For example:
 # -keep class com.yourcompany.realm.** { *; }
 
+-keep class io.realm.annotations.RealmModule
 -keep @io.realm.annotations.RealmModule class *
--keep @io.realm.**
--keep class io.realm.** { *; }
 -dontwarn javax.**
 -dontwarn io.realm.**
 
