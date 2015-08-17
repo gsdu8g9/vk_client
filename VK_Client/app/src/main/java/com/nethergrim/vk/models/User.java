@@ -5,11 +5,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
+import io.realm.annotations.RealmClass;
 
 /**
  * @author andreydrobyazko on 4/6/15.
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
+@RealmClass
 public class User extends RealmObject {
 
     @PrimaryKey

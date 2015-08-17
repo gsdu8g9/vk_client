@@ -4,11 +4,13 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
+import io.realm.annotations.RealmClass;
 
 /**
  * @author andreydrobyazko on 3/20/15.
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
+@RealmClass
 public class Conversation extends RealmObject {
 
     /**
