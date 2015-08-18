@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -42,21 +41,20 @@
         android:layout_toRightOf="@+id/text_name"
         android:background="@drawable/green_dot" />
 
-    <com.devspark.robototextview.widget.RobotoTextView
+    <TextView
         android:id="@+id/text_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
         android:layout_toEndOf="@+id/image_avatar"
         android:layout_toRightOf="@+id/image_avatar"
         android:ellipsize="end"
         android:maxLength="30"
-        android:singleLine="true"
+        android:maxLines="1"
+        android:layout_marginTop="-4dp"
         android:textSize="@dimen/text_size_regular"
-        app:typeface="roboto_regular"
         tools:text="Steve Jobs" />
 
-    <com.devspark.robototextview.widget.RobotoTextView
+    <TextView
         android:id="@+id/text_details"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -69,10 +67,9 @@
         android:maxLines="@integer/conversation_item_max_message_lines"
         android:textColor="@color/secondary_text"
         android:textSize="@dimen/text_size_small"
-        app:typeface="roboto_regular"
-        tools:text="Hi! I'm proud of you!" />
+        android:visibility="gone" />
 
-    <com.devspark.robototextview.widget.RobotoTextView
+    <TextView
         android:id="@+id/text_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -85,7 +82,6 @@
         android:singleLine="true"
         android:textColor="@color/secondary_text"
         android:textSize="@dimen/text_size_small"
-        app:typeface="roboto_regular"
         tools:text="Yesterday" />
 
 </RelativeLayout>

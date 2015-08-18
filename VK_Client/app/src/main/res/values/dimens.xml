@@ -15,7 +15,7 @@
     <!--            Conversations         -->
     <dimen name="conversation_item_padding_horizontal">16dp</dimen>
     <dimen name="conversation_item_online_indicator">8dp</dimen>
-    <dimen name="conversation_avatar_size">48dp</dimen>
+    <dimen name="conversation_avatar_size">52dp</dimen>
     <integer name="conversation_item_max_message_lines">3</integer>
     <dimen name="conversation_item_image_size">48dp</dimen>
 

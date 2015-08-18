@@ -129,9 +129,7 @@ public class PicassoImageLoaderImpl implements ImageLoader {
             Canvas canvas = new Canvas(output);
             canvas.drawCircle((source.getWidth()) / 2, (source.getHeight()) / 2, radius - 2, paint);
 
-            if (source != output) {
-                source.recycle();
-            }
+
 
             Paint paint1 = new Paint();
             paint1.setColor(Color.WHITE);
@@ -139,6 +137,9 @@ public class PicassoImageLoaderImpl implements ImageLoader {
             paint1.setAntiAlias(true);
             canvas.drawCircle((source.getWidth()) / 2, (source.getHeight()) / 2, radius - 2,
                     paint1);
+            if (source != output) {
+                source.recycle();
+            }
             return output;
         }
 

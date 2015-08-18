@@ -2,6 +2,7 @@ package com.nethergrim.vk.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -142,15 +143,20 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationViewH
             }
         }
         if (MessageUtils.isMessageWithSticker(message)) {
-            String url = MessageUtils.getStickerFromMessage(message).getPhoto64();
+            String url = MessageUtils.getStickerFromMessage(message).getPhoto256();
             mImageLoader.displayImage(
                     url,
                     conversationViewHolder.mImageViewDetails);
         } else {
             conversationViewHolder.mImageViewDetails.setImageBitmap(null);
         }
+        if (!TextUtils.isEmpty(details)) {
+            conversationViewHolder.textDetails.setText(details);
+            conversationViewHolder.textDetails.setVisibility(View.VISIBLE);
+        } else {
+            conversationViewHolder.textDetails.setVisibility(View.GONE);
+        }
 
-        conversationViewHolder.textDetails.setText(details);
         conversationViewHolder.textDate.setText(
                 DateUtils.getRelativeTimeSpanString(message.getDate() * 1000,
                         System.currentTimeMillis(), 0L, DateUtils.FORMAT_ABBREV_ALL));
