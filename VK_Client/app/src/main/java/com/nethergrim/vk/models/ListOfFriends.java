@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * @author andrej on 15.08.15.
  */
-public class ListOfFriends {
+public class ListOfFriends extends WebResponse {
 
     @JsonProperty("response")
     private FriendsResponse mResponse;

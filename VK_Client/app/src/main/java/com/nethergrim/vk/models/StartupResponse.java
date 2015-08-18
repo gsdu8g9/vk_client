@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 /**
  * @author andrej on 16.08.15.
  */
-public class StartupResponse {
+public class StartupResponse extends WebResponse {
 
 
     @JsonProperty("response")

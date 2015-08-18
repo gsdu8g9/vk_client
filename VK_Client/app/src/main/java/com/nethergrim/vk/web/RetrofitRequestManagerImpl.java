@@ -48,7 +48,7 @@ public class RetrofitRequestManagerImpl implements WebRequestManager {
                 .setErrorHandler(new ErrorHandler() {
                     @Override
                     public Throwable handleError(RetrofitError cause) {
-                        Log.e("TAG", "RETROFIT error " + cause.toString());
+                        Log.e("TAG", cause.toString() + "\nbody: " + cause.getResponse().getBody());
                         return null;
                     }
                 })

@@ -1,7 +1,6 @@
 package com.nethergrim.vk.web;
 
 import com.nethergrim.vk.Constants;
-import com.nethergrim.vk.models.ConversationsList;
 import com.nethergrim.vk.models.ConversationsUserObject;
 import com.nethergrim.vk.models.ListOfFriends;
 import com.nethergrim.vk.models.ListOfMessages;
@@ -19,9 +18,6 @@ import retrofit.http.QueryMap;
  * @author andrej on 12.08.15.
  */
 public interface RetrofitInterface {
-
-    @GET(Constants.Requests.MESSAGES_GET_DIALOGS)
-    ConversationsList getConversations(@QueryMap Map<String, String> options);
 
     @GET(Constants.Requests.GET_USERS)
     ListOfUsers getUsers(@QueryMap Map<String, String> options);

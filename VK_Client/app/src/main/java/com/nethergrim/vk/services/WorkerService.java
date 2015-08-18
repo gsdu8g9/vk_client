@@ -18,6 +18,7 @@ import com.nethergrim.vk.event.ConversationsUpdatedEvent;
 import com.nethergrim.vk.event.FriendsUpdatedEvent;
 import com.nethergrim.vk.event.MyUserUpdatedEvent;
 import com.nethergrim.vk.event.UsersUpdatedEvent;
+import com.nethergrim.vk.images.ImageLoader;
 import com.nethergrim.vk.images.PaletteProvider;
 import com.nethergrim.vk.models.ConversationsList;
 import com.nethergrim.vk.models.ConversationsUserObject;
@@ -66,6 +67,9 @@ public class WorkerService extends Service {
 
     @Inject
     Bus mBus;
+
+    @Inject
+    ImageLoader mImageLoader;
 
     @Inject
     PaletteProvider mPaletteProvider;
@@ -149,12 +153,14 @@ public class WorkerService extends Service {
                     mPrefs.setGcmToken(token);
                 }
                 StartupResponse startupResponse = mWebRequestManager.launchStartupTasks(token);
-                if (startupResponse != null) {
+                if (startupResponse != null && startupResponse.ok()) {
                     mPrefs.setCurrentUserId(startupResponse.getResponse().getMe().getId());
                     Realm realm = Realm.getDefaultInstance();
                     realm.beginTransaction();
                     realm.copyToRealmOrUpdate(startupResponse.getResponse().getMe());
                     realm.commitTransaction();
+                } else if (startupResponse != null){
+                    Log.e("TAG","error: " + startupResponse.getError().toString());
                 }
 
                 mBus.post(new MyUserUpdatedEvent());
@@ -170,7 +176,7 @@ public class WorkerService extends Service {
             public void run() {
                 ListOfFriends listOfFriends = mWebRequestManager.getFriends(
                         mPrefs.getCurrentUserId(), count, offset);
-                if (listOfFriends != null) {
+                if (listOfFriends.ok()) {
 
                     mPrefs.setFriendsCount(listOfFriends.getResponse().getCount());
 
@@ -185,7 +191,12 @@ public class WorkerService extends Service {
                     realm.copyToRealmOrUpdate(friends);
                     realm.commitTransaction();
                     mPaletteProvider.generateAndStorePalette(friends);
+                    for (int i = 0, size = friends.size(); i < size; i++) {
+                        mImageLoader.cacheUserAvatars(friends.get(i));
+                    }
                     mBus.post(new FriendsUpdatedEvent(listOfFriends.getResponse().getCount()));
+                } else {
+                    Log.e("TAG","error: " + listOfFriends.getError().toString());
                 }
             }
         });
@@ -197,13 +208,18 @@ public class WorkerService extends Service {
             @Override
             public void run() {
                 ListOfUsers listOfUsers = mWebRequestManager.getUsers(ids);
-                if (listOfUsers != null) {
+                if (listOfUsers.ok()) {
                     Realm realm = Realm.getDefaultInstance();
                     realm.beginTransaction();
                     realm.copyToRealmOrUpdate(listOfUsers.getResponse());
                     realm.commitTransaction();
                     mPaletteProvider.generateAndStorePalette(listOfUsers.getResponse());
                     mBus.post(new UsersUpdatedEvent());
+                    for (int i = 0, size = listOfUsers.getResponse().size(); i < size; i++) {
+                        mImageLoader.cacheUserAvatars(listOfUsers.getResponse().get(i));
+                    }
+                } else {
+                    Log.e("TAG","error: " + listOfUsers.getError().toString());
                 }
             }
         });
@@ -218,7 +234,7 @@ public class WorkerService extends Service {
             public void run() {
                 ConversationsUserObject conversationsUserObject
                         = mWebRequestManager.getConversationsAndUsers(limit, offset, unreadOnly);
-                if (conversationsUserObject != null) {
+                if (conversationsUserObject.ok()) {
 
                     //saving conversations to db
                     ConversationsList conversationsList
@@ -238,7 +254,7 @@ public class WorkerService extends Service {
                     mBus.post(new ConversationsUpdatedEvent());
                     mBus.post(new UsersUpdatedEvent());
                 } else {
-                    Log.e(TAG, "ConversationsUserObject is null. Should not happen.");
+                    Log.e(TAG, conversationsUserObject.getError().toString());
                 }
             }
         });

@@ -9,7 +9,7 @@ import java.util.List;
  * @author andrej on 05.08.15.
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ListOfMessages {
+public class ListOfMessages extends WebResponse {
 
     @JsonProperty("count")
     private int count;
