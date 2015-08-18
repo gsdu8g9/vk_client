@@ -4,7 +4,6 @@ import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -144,6 +143,7 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationViewH
             }
         }
         if (MessageUtils.isMessageWithSticker(message)) {
+            details = details + "[ " + ctx.getString(R.string.sticker) + " ]";
             conversationViewHolder.mImageViewDetails.setVisibility(View.VISIBLE);
             String url = MessageUtils.getStickerFromMessage(message).getPhoto128();
             mImageLoader.displayImage(
