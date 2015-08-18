@@ -76,7 +76,6 @@ public class MessagesFragment extends AbstractFragment implements
         mSafeTimer = new SafeTimer(new Runnable() {
             @Override
             public void run() {
-                Log.e("TAG", "timer tick");
                 loadPage(0);
             }
         }, UPDATE_DELAY_SEC);
