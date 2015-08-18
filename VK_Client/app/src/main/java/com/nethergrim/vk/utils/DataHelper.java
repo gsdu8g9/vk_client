@@ -50,7 +50,7 @@ public class DataHelper {
         }
 
         if (MessageUtils.isMessageWithSticker(message)) {
-            String url = MessageUtils.getStickerFromMessage(message).getPhoto128();
+            String url = MessageUtils.getStickerFromMessage(message).getPhoto256();
             MyApplication.getInstance().getImageLoader().cacheImage(url);
         }
         return message;

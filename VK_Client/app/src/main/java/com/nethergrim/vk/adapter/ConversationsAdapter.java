@@ -145,7 +145,7 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationViewH
         if (MessageUtils.isMessageWithSticker(message)) {
             details = details + "[ " + ctx.getString(R.string.sticker) + " ]";
             conversationViewHolder.mImageViewDetails.setVisibility(View.VISIBLE);
-            String url = MessageUtils.getStickerFromMessage(message).getPhoto128();
+            String url = MessageUtils.getStickerFromMessage(message).getPhoto256();
             mImageLoader.displayImage(
                     url,
                     conversationViewHolder.mImageViewDetails);
