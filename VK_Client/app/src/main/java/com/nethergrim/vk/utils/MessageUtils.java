@@ -68,15 +68,14 @@ public class MessageUtils {
         if (!isMessageWithAttachments(message)) {
             return false;
         }
-        boolean result = false;
         List<Attachment> attachmentList = message.getAttachments();
         for (int i = 0, size = attachmentList.size(); i < size; i++) {
-            if (attachmentList.get(i).getWall() != null) {
-                result = true;
-                break;
+            Attachment attachment = attachmentList.get(i);
+            if ("wall".equalsIgnoreCase(attachment.getType()) || attachment.getWall() != null) {
+                return true;
             }
         }
-        return result;
+        return false;
     }
 
     public static boolean isMessageWithReply(@NonNull Message message) {

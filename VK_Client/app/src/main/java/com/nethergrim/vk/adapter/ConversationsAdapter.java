@@ -110,15 +110,13 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationViewH
             conversationViewHolder.textName.setText(message.getTitle());
 
             if (ConversationUtils.isMessageFromMe(message)) {
-                details = details + conversationViewHolder.itemView.getResources()
-                        .getString(R.string.me_)
+                details =  conversationViewHolder.itemView.getResources()
+                        .getString(R.string.me_) + " " + details
                         + " " + message.getBody();
             } else {
                 user = mUserProvider.getUser(message.getUser_id());
                 if (user != null) {
-                    details = user.getFirstName() + ": " + message.getBody();
-                } else {
-                    details = message.getBody();
+                    details = user.getFirstName() + ": "  + details + message.getBody();
                 }
 
             }
