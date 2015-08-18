@@ -1,6 +1,5 @@
 package com.nethergrim.vk.web;
 
-import android.support.annotation.Nullable;
 import android.support.annotation.WorkerThread;
 
 import com.nethergrim.vk.models.ConversationsUserObject;
@@ -19,7 +18,6 @@ public interface WebRequestManager {
 
 
     @WorkerThread
-    @Nullable
     ListOfUsers getUsers(List<Long> ids);
 
     @WorkerThread
@@ -35,7 +33,6 @@ public interface WebRequestManager {
     ConversationsUserObject getConversationsAndUsers(int limit, int offset, boolean unread);
 
     @WorkerThread
-    @Nullable
     ListOfMessages getChatHistory(int offset,
             int count,
             long userId,

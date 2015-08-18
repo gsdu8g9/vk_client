@@ -35,6 +35,7 @@ public class PicassoImageLoaderImpl implements ImageLoader {
     @Override
     public void displayUserAvatar(@NonNull User user, @NonNull ImageView imageView) {
         boolean deactivated = user.getDeactivated() != null && user.getDeactivated().length() > 0;
+        Picasso.with(context).cancelRequest(imageView);
         if (deactivated) {
             Picasso.with(context)
                     .load(R.drawable.ic_deactivated_200)
@@ -49,17 +50,8 @@ public class PicassoImageLoaderImpl implements ImageLoader {
                 Picasso.with(context)
                         .load(url)
                         .fit()
-                        .centerCrop()
                         .config(Bitmap.Config.RGB_565)
-                        .placeholder(R.drawable.ic_action_account_circle)
-                        .transform(new RoundedTransformation())
-                        .into(imageView);
-            } else {
-                Picasso.with(context)
-                        .load(R.drawable.ic_action_account_circle)
-                        .fit()
-                        .centerCrop()
-                        .config(Bitmap.Config.RGB_565)
+                        .error(R.drawable.ic_action_account_circle)
                         .transform(new RoundedTransformation())
                         .into(imageView);
             }
@@ -70,7 +62,7 @@ public class PicassoImageLoaderImpl implements ImageLoader {
     @Override
     public void displayImage(@NonNull String url, @NonNull ImageView imageView) {
         if (!TextUtils.isEmpty(url)) {
-            Picasso.with(context).load(url).config(Bitmap.Config.RGB_565).into(imageView);
+            Picasso.with(context).load(url).noFade().into(imageView);
         }
     }
 
@@ -137,9 +129,7 @@ public class PicassoImageLoaderImpl implements ImageLoader {
             Canvas canvas = new Canvas(output);
             canvas.drawCircle((source.getWidth()) / 2, (source.getHeight()) / 2, radius - 2, paint);
 
-            if (source != output) {
-                source.recycle();
-            }
+
 
             Paint paint1 = new Paint();
             paint1.setColor(Color.WHITE);
@@ -147,6 +137,9 @@ public class PicassoImageLoaderImpl implements ImageLoader {
             paint1.setAntiAlias(true);
             canvas.drawCircle((source.getWidth()) / 2, (source.getHeight()) / 2, radius - 2,
                     paint1);
+            if (source != output) {
+                source.recycle();
+            }
             return output;
         }
 

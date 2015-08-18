@@ -9,6 +9,7 @@ import com.nethergrim.vk.images.PaletteProviderImpl;
 import com.nethergrim.vk.images.PicassoImageLoaderImpl;
 import com.nethergrim.vk.json.JacksonJsonDeserializerImpl;
 import com.nethergrim.vk.json.JsonDeserializer;
+import com.nethergrim.vk.utils.AndroidBus;
 import com.nethergrim.vk.utils.PushParser;
 import com.nethergrim.vk.utils.PushParserImpl;
 import com.nethergrim.vk.utils.RealmUserProviderImplementation;
@@ -18,7 +19,6 @@ import com.nethergrim.vk.web.RealmDataManagerImpl;
 import com.nethergrim.vk.web.RetrofitRequestManagerImpl;
 import com.nethergrim.vk.web.WebRequestManager;
 import com.squareup.otto.Bus;
-import com.squareup.otto.ThreadEnforcer;
 
 import javax.inject.Singleton;
 
@@ -75,7 +75,7 @@ public class ProviderModule {
     @Provides
     @Singleton
     Bus provideBus() {
-        return new Bus(ThreadEnforcer.MAIN);
+        return new AndroidBus();
     }
 
     @Provides

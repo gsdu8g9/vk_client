@@ -14,6 +14,7 @@ import com.nethergrim.vk.gcm.MyGcmListenerService;
 import com.nethergrim.vk.gcm.MyInstanceIDListenerService;
 import com.nethergrim.vk.images.PaletteProviderImpl;
 import com.nethergrim.vk.services.WorkerService;
+import com.nethergrim.vk.utils.DataHelper;
 import com.nethergrim.vk.utils.PushParserImpl;
 import com.nethergrim.vk.utils.RealmUserProviderImplementation;
 import com.nethergrim.vk.web.RealmDataManagerImpl;
@@ -71,4 +72,6 @@ public interface MainComponent {
     void inject(RetrofitRequestManagerImpl r);
 
     void inject(WorkerService w);
+
+    void inject(DataHelper m);
 }

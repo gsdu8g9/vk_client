@@ -22,7 +22,7 @@ public class Attachment extends RealmObject {
      * wall_reply — комментарий к записи на стене;
      * sticker — стикер.
      */
-    @JsonProperty("unread_dialogs")
+    @JsonProperty("type")
     private String type;
     @JsonProperty("photo")
     private Photo photo;

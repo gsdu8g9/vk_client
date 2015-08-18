@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * @author andrej on 14.08.15.
  */
-public class ConversationsUserObject {
+public class ConversationsUserObject extends WebResponse{
 
     @JsonProperty("response")
     private ConversationsUserObjectResponse response;

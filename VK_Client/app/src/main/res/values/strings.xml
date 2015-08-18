@@ -2,7 +2,7 @@
     <string name="app_name">Вконтакте</string>
     <string name="user_avatar">Аватар Пользователя</string>
     <string name="nothing_here_yet">Здесь пока что ничего нет</string>
-    <string name="me_">Я:</string>
+    <string name="me_">Вы:</string>
 
     <string name="conversations">Сообщения</string>
     <string name="friends">Друзья</string>
@@ -22,4 +22,5 @@
     <string name="user_profile">Профиль Пользователя</string>
     <string name="group_chat">Групповой Чат</string>
     <string name="sign_in">Войти</string>
+    <string name="sticker">Стикер</string>
 </resources>

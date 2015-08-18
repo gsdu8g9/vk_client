@@ -2,6 +2,7 @@ package com.nethergrim.vk.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -44,10 +45,11 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationViewH
     @Inject
     Realm mRealm;
 
-    private int mUnreadColor;
-
     private RealmResults<Conversation> mData;
     private OnConversationClickListener mCallback;
+
+    private int textColorPrimary;
+    private int textColorSecondary;
 
     public interface OnConversationClickListener {
 
@@ -65,8 +67,9 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationViewH
 
     @Override
     public ConversationViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
-        if (mUnreadColor == 0) {
-            mUnreadColor = viewGroup.getResources().getColor(R.color.conversation_row_unread);
+        if (textColorPrimary == 0) {
+            textColorPrimary = viewGroup.getResources().getColor(R.color.primary_text);
+            textColorSecondary = viewGroup.getResources().getColor(R.color.secondary_text);
         }
         return new ConversationViewHolder(LayoutInflater.from(viewGroup.getContext())
                 .inflate(R.layout.vh_conversation, viewGroup, false));
@@ -107,15 +110,13 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationViewH
             conversationViewHolder.textName.setText(message.getTitle());
 
             if (ConversationUtils.isMessageFromMe(message)) {
-                details = details + conversationViewHolder.itemView.getResources()
-                        .getString(R.string.me_)
+                details =  conversationViewHolder.itemView.getResources()
+                        .getString(R.string.me_) + " " + details
                         + " " + message.getBody();
             } else {
                 user = mUserProvider.getUser(message.getUser_id());
                 if (user != null) {
-                    details = user.getFirstName() + ": " + message.getBody();
-                } else {
-                    details = message.getBody();
+                    details = user.getFirstName() + ": "  + details + message.getBody();
                 }
 
             }
@@ -140,22 +141,31 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationViewH
             }
         }
         if (MessageUtils.isMessageWithSticker(message)) {
-            String url = MessageUtils.getStickerFromMessage(message).getPhoto64();
+            details = details + "[ " + ctx.getString(R.string.sticker) + " ]";
+            conversationViewHolder.mImageViewDetails.setVisibility(View.VISIBLE);
+            String url = MessageUtils.getStickerFromMessage(message).getPhoto256();
             mImageLoader.displayImage(
                     url,
                     conversationViewHolder.mImageViewDetails);
         } else {
-            conversationViewHolder.mImageViewDetails.setImageBitmap(null);
+            conversationViewHolder.mImageViewDetails.setVisibility(View.GONE);
+        }
+        if (!TextUtils.isEmpty(details)) {
+            conversationViewHolder.textDetails.setText(details);
+            conversationViewHolder.textDetails.setVisibility(View.VISIBLE);
+        } else {
+            conversationViewHolder.textDetails.setVisibility(View.GONE);
         }
 
-        conversationViewHolder.textDetails.setText(details);
         conversationViewHolder.textDate.setText(
                 DateUtils.getRelativeTimeSpanString(message.getDate() * 1000,
                         System.currentTimeMillis(), 0L, DateUtils.FORMAT_ABBREV_ALL));
         if (ConversationUtils.isConversationUnread(conversation)) {
-            conversationViewHolder.itemView.setBackgroundColor(mUnreadColor);
+            conversationViewHolder.textName.setTextColor(textColorPrimary);
+            conversationViewHolder.textDetails.setTextColor(textColorPrimary);
         } else {
-            conversationViewHolder.itemView.setBackgroundResource(0);
+            conversationViewHolder.textName.setTextColor(textColorSecondary);
+            conversationViewHolder.textDetails.setTextColor(textColorSecondary);
         }
         conversationViewHolder.itemView.setOnClickListener(this);
         conversationViewHolder.itemView.setTag(i);

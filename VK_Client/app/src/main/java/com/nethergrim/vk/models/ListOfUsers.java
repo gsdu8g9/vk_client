@@ -8,7 +8,7 @@ import java.util.List;
  * @author andreydrobyazko on 4/6/15.
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ListOfUsers {
+public class ListOfUsers extends WebResponse {
 
     private List<User> response;
 
