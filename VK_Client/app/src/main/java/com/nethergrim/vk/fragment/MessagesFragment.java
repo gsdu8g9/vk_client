@@ -1,10 +1,8 @@
 package com.nethergrim.vk.fragment;
 
 import android.app.Activity;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -29,7 +27,6 @@ import com.nethergrim.vk.views.RecyclerviewPageScroller;
 import com.nethergrim.vk.web.DataManager;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
-import com.yqritc.recyclerviewflexibledivider.HorizontalDividerItemDecoration;
 
 import javax.inject.Inject;
 
@@ -41,8 +38,7 @@ import butterknife.OnClick;
  * @author andreydrobyazko on 3/20/15.
  */
 public class MessagesFragment extends AbstractFragment implements
-        RecyclerviewPageScroller.OnRecyclerViewScrolledToPageListener,
-        SwipeRefreshLayout.OnRefreshListener, ToolbarScrollable,
+        RecyclerviewPageScroller.OnRecyclerViewScrolledToPageListener, ToolbarScrollable,
         ConversationsAdapter.OnConversationClickListener {
 
     public static final int DEFAULT_PAGE_SIZE = 20;
@@ -53,15 +49,12 @@ public class MessagesFragment extends AbstractFragment implements
     ProgressBar mProgressBar;
     @InjectView(R.id.textViewNothingHere)
     TextView mNothingHereTextView;
-    @InjectView(R.id.refresh_layout)
-    SwipeRefreshLayout mSwipeRefreshLayout;
     @Inject
     DataManager mDataManager;
     @Inject
     Bus mBus;
     @InjectView(R.id.fab_normal)
     FloatingActionButton mFabNormal;
-    private boolean mIsFabAnimating;
     private SafeTimer mSafeTimer;
     private ConversationsAdapter mAdapter;
 
@@ -80,10 +73,10 @@ public class MessagesFragment extends AbstractFragment implements
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         MyApplication.getInstance().getMainComponent().inject(this);
-        mBus.register(this);
         mSafeTimer = new SafeTimer(new Runnable() {
             @Override
             public void run() {
+                Log.e("TAG","timer tick");
                 loadPage(0);
             }
         }, UPDATE_DELAY_SEC);
@@ -94,6 +87,7 @@ public class MessagesFragment extends AbstractFragment implements
     public View onCreateView(LayoutInflater inflater,
             ViewGroup container,
             Bundle savedInstanceState) {
+        mBus.register(this);
         View v = inflater.inflate(R.layout.fragment_messages, container, false);
         ButterKnife.inject(this, v);
         return v;
@@ -107,13 +101,6 @@ public class MessagesFragment extends AbstractFragment implements
         mRecyclerView.setHasFixedSize(true);
         mAdapter = new ConversationsAdapter(this);
         mRecyclerView.setAdapter(mAdapter);
-        Resources res = view.getResources();
-        int additionalLeftMarginForDividers =
-                2 * (res.getDimensionPixelSize(R.dimen.conversation_item_padding_horizontal))
-                        + res.getDimensionPixelSize(R.dimen.conversation_avatar_size);
-        mRecyclerView.addItemDecoration(
-                new HorizontalDividerItemDecoration.Builder(view.getContext()).margin(
-                        additionalLeftMarginForDividers, 0).build());
         mRecyclerView.addOnScrollListener(
                 new RecyclerviewPageScroller(DEFAULT_PAGE_SIZE, this, 5));
         mRecyclerView.addOnScrollListener(new BasicRecyclerViewScroller(this));
@@ -121,9 +108,6 @@ public class MessagesFragment extends AbstractFragment implements
             mProgressBar.setVisibility(View.VISIBLE);
             mNothingHereTextView.setVisibility(View.GONE);
         }
-        mSwipeRefreshLayout.setRefreshing(true);
-        mSwipeRefreshLayout.setOnRefreshListener(this);
-        mSwipeRefreshLayout.setColorSchemeResources(R.color.primary);
     }
 
     @Override
@@ -142,11 +126,6 @@ public class MessagesFragment extends AbstractFragment implements
     public void onDestroyView() {
         super.onDestroyView();
         ButterKnife.reset(this);
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
         mBus.unregister(this);
     }
 
@@ -161,16 +140,9 @@ public class MessagesFragment extends AbstractFragment implements
         loadPage(pageNumber);
     }
 
-    @Override
-    public void onRefresh() {
-        loadPage(0);
-    }
-
     @Subscribe
-    public void conversationsUpdated(ConversationsUpdatedEvent event) {
-        if (mSwipeRefreshLayout != null) {
-            mSwipeRefreshLayout.setRefreshing(false);
-        }
+    public void onDataUpdated(ConversationsUpdatedEvent event) {
+        Log.e("TAG", "on conversations updated");
         if (mProgressBar != null) {
             mProgressBar.setVisibility(View.GONE);
         }

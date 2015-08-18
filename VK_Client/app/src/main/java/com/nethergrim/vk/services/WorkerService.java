@@ -235,8 +235,14 @@ public class WorkerService extends Service {
                     realm.copyToRealmOrUpdate(users);
 
                     realm.commitTransaction();
-                    mBus.post(new ConversationsUpdatedEvent());
-                    mBus.post(new UsersUpdatedEvent());
+                    Log.e("TAG", "posting conversations and users updated events");
+                    try {
+                        mBus.post(new ConversationsUpdatedEvent());
+                        mBus.post(new UsersUpdatedEvent());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    Log.e("TAG", "POSTED conversations and users updated events");
                 } else {
                     Log.e(TAG, "ConversationsUserObject is null. Should not happen.");
                 }

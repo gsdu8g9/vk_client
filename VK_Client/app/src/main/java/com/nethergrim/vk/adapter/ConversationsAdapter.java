@@ -50,7 +50,6 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationViewH
     private OnConversationClickListener mCallback;
 
     public interface OnConversationClickListener {
-
         void onConversationClicked(Conversation conversation, View v);
     }
 
