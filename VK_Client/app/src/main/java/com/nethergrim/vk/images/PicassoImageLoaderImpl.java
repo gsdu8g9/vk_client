@@ -62,7 +62,7 @@ public class PicassoImageLoaderImpl implements ImageLoader {
     @Override
     public void displayImage(@NonNull String url, @NonNull ImageView imageView) {
         if (!TextUtils.isEmpty(url)) {
-            Picasso.with(context).load(url).config(Bitmap.Config.RGB_565).into(imageView);
+            Picasso.with(context).load(url).noFade().into(imageView);
         }
     }
 

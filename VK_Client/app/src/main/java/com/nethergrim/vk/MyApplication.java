@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.kisstools.KissTools;
 import com.nethergrim.vk.caching.Prefs;
+import com.nethergrim.vk.images.ImageLoader;
 import com.nethergrim.vk.inject.DaggerMainComponent;
 import com.nethergrim.vk.inject.MainComponent;
 import com.nethergrim.vk.inject.ProviderModule;
@@ -29,6 +30,13 @@ public class MyApplication extends Application {
     private static MyApplication _app;
     @Inject
     Prefs mPrefs;
+    @Inject
+    ImageLoader mImageLoader;
+
+    public ImageLoader getImageLoader() {
+        return mImageLoader;
+    }
+
     private MainComponent mMainComponent;
 
     public synchronized static MyApplication getInstance() {

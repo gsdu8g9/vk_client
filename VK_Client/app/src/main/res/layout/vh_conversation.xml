@@ -19,14 +19,7 @@
         android:contentDescription="@string/user_avatar"
         tools:background="@android:color/holo_blue_light" />
 
-    <ImageView
-        android:id="@+id/imageViewDetails"
-        android:layout_width="@dimen/conversation_item_image_size"
-        android:layout_height="@dimen/conversation_item_image_size"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        tools:background="@android:color/holo_blue_light" />
+
 
     <View
         android:id="@+id/online_indicator"
@@ -36,7 +29,7 @@
         android:layout_centerVertical="true"
         android:layout_marginLeft="4dp"
         android:layout_marginStart="4dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="4dp"
         android:layout_toEndOf="@+id/text_name"
         android:layout_toRightOf="@+id/text_name"
         android:background="@drawable/green_dot" />
@@ -83,5 +76,13 @@
         android:textColor="@color/secondary_text"
         android:textSize="@dimen/text_size_small"
         tools:text="Yesterday" />
+
+    <ImageView
+        android:id="@+id/imageViewDetails"
+        android:layout_width="@dimen/conversation_item_image_size"
+        android:layout_height="@dimen/conversation_item_image_size"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true" />
 
 </RelativeLayout>

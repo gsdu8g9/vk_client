@@ -15,13 +15,21 @@ import java.util.List;
 public class MessageUtils {
 
     public static boolean isMessageWithAttachments(@NonNull Message message) {
-        return !message.getAttachments().isEmpty();
+        return message.getAttachments() != null && !message.getAttachments().isEmpty();
     }
 
     public static boolean isMessageWithSticker(@NonNull Message message) {
-        return isMessageWithAttachments(message) && message.getAttachments()
-                .get(0)
-                .getSticker() != null;
+        boolean result = false;
+        if (isMessageWithAttachments(message)) {
+            List<Attachment> attachmentList = message.getAttachments();
+            for (int i = 0, size = attachmentList.size(); i < size; i++) {
+                if (attachmentList.get(i).getSticker() != null) {
+                    result = true;
+                    break;
+                }
+            }
+        }
+        return result;
     }
 
     public static Sticker getStickerFromMessage(@NonNull Message message) {
