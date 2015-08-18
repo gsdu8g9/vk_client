@@ -44,12 +44,14 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationViewH
     @Inject
     Realm mRealm;
 
-    private int mUnreadColor;
-
     private RealmResults<Conversation> mData;
     private OnConversationClickListener mCallback;
 
+    private int textColorPrimary;
+    private int textColorSecondary;
+
     public interface OnConversationClickListener {
+
         void onConversationClicked(Conversation conversation, View v);
     }
 
@@ -64,8 +66,9 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationViewH
 
     @Override
     public ConversationViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
-        if (mUnreadColor == 0) {
-            mUnreadColor = viewGroup.getResources().getColor(R.color.conversation_row_unread);
+        if (textColorPrimary == 0) {
+            textColorPrimary = viewGroup.getResources().getColor(R.color.primary_text);
+            textColorSecondary = viewGroup.getResources().getColor(R.color.secondary_text);
         }
         return new ConversationViewHolder(LayoutInflater.from(viewGroup.getContext())
                 .inflate(R.layout.vh_conversation, viewGroup, false));
@@ -152,9 +155,11 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationViewH
                 DateUtils.getRelativeTimeSpanString(message.getDate() * 1000,
                         System.currentTimeMillis(), 0L, DateUtils.FORMAT_ABBREV_ALL));
         if (ConversationUtils.isConversationUnread(conversation)) {
-            conversationViewHolder.itemView.setBackgroundColor(mUnreadColor);
+            conversationViewHolder.textName.setTextColor(textColorPrimary);
+            conversationViewHolder.textDetails.setTextColor(textColorPrimary);
         } else {
-            conversationViewHolder.itemView.setBackgroundResource(0);
+            conversationViewHolder.textName.setTextColor(textColorSecondary);
+            conversationViewHolder.textDetails.setTextColor(textColorSecondary);
         }
         conversationViewHolder.itemView.setOnClickListener(this);
         conversationViewHolder.itemView.setTag(i);
