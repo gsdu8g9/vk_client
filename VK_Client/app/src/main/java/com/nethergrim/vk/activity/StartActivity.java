@@ -16,7 +16,14 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
 
-
+/**
+ * Starter {@link AbstractActivity} that should launch at the app start.
+ * Should display sign-in screen, or redirect to {@link MainActivity} if user is currently logged
+ * in.
+ *
+ * @author Andrey Drobyazko (c2q9450@gmail.com).
+ *         All rights reserved.
+ */
 public class StartActivity extends AbstractActivity {
 
     @InjectView(R.id.image)
@@ -24,6 +31,11 @@ public class StartActivity extends AbstractActivity {
     @InjectView(R.id.btn_sign_in)
     Button mBtnSignIn;
     private boolean mIsLoggedIn;
+
+    @OnClick(R.id.btn_sign_in)
+    public void signIn(View v) {
+        VKSdk.authorize(Constants.PERMISSIONS, false, true);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,17 +47,24 @@ public class StartActivity extends AbstractActivity {
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        checkSession();
+    protected void onPostResume() {
+        super.onPostResume();
+        if (!mIsLoggedIn) {
+            mImage.animate()
+                    .scaleX(1f)
+                    .scaleY(1f)
+                    .setStartDelay(30)
+                    .rotation(360)
+                    .setDuration(1000)
+                    .setInterpolator(new AnticipateOvershootInterpolator())
+                    .start();
+        }
     }
 
     @Override
-    protected void onPostResume() {
-        super.onPostResume();
-        if (!mIsLoggedIn){
-            mImage.animate().scaleX(1f).scaleY(1f).setStartDelay(30).rotation(360).setDuration(1000).setInterpolator(new AnticipateOvershootInterpolator()).start();
-        }
+    protected void onResume() {
+        super.onResume();
+        checkSession();
     }
 
     private void checkSession() {
@@ -54,10 +73,5 @@ public class StartActivity extends AbstractActivity {
             startActivity(new Intent(this, MainActivity.class));
             finish();
         }
-    }
-
-    @OnClick(R.id.btn_sign_in)
-    public void signIn(View v) {
-        VKSdk.authorize(Constants.PERMISSIONS, false, true);
     }
 }
