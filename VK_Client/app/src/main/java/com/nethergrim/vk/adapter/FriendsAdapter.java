@@ -24,7 +24,11 @@ import io.realm.RealmChangeListener;
 import io.realm.RealmResults;
 
 /**
- * @author andrej on 28.07.15.
+ * {@link android.support.v7.widget.RecyclerView.Adapter} that should be used to display list of
+ * friends at {@link com.nethergrim.vk.fragment.FriendsFragment}
+ *
+ * @author Andrey Drobyazko (c2q9450@gmail.com)
+ *         All rights reserved.
  */
 public class FriendsAdapter extends RecyclerView.Adapter<FriendsViewHolder>
         implements RealmChangeListener, View.OnClickListener {
@@ -40,8 +44,15 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsViewHolder>
     private RealmResults<User> mData;
     private OnFriendClickedCallback mOnFriendClickedCallback;
 
+    /**
+     * Callback interface, to be notified when user was selected from {@link FriendsAdapter}
+     */
     public interface OnFriendClickedCallback {
 
+        /**
+         * @param v View that was clicked by user.
+         * @param user User that was selected by click.
+         */
         void onFriendClicked(View v, User user);
     }
 

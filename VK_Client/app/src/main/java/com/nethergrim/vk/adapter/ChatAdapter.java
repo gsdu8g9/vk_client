@@ -19,6 +19,9 @@ import io.realm.Realm;
 import io.realm.RealmResults;
 
 /**
+ * {@link android.support.v7.widget.RecyclerView.Adapter} that should be used to display list of
+ * messages in {@link com.nethergrim.vk.fragment.ChatFragment}
+ *
  * @author Andrey Drobyazko (c2q9450@gmail.com).
  *         All rights reserved.
  */
@@ -54,8 +57,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatViewHolder> {
             v = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.vh_chat_left, parent, false);
         }
-        ChatViewHolder chatViewHolder = new ChatViewHolder(v);
-        return chatViewHolder;
+        return new ChatViewHolder(v); // FIXME: 22.08.15 good place to implement pools of objects
     }
 
     @Override
@@ -100,6 +102,11 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatViewHolder> {
         return mMessages.size();
     }
 
+
+    /**
+     * @return <code>true</code> if message in position is written by the current user.
+     * <p><code>false</code> if message is written by someine else.</p>
+     */
     private boolean isMessageFromMe(int position) {
         return getItemViewType(position) == 1;
     }

@@ -11,7 +11,11 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 
 /**
- * @author andreydrobyazko on 4/6/15.
+ * {@link android.support.v7.widget.RecyclerView.ViewHolder} for {@link
+ * com.nethergrim.vk.adapter.ConversationsAdapter}.
+ *
+ * @author andreydrobyazko on 4/6/15 (c2q9450@gmail.com).
+ *         All rights reserved.
  */
 public class ConversationViewHolder extends RecyclerView.ViewHolder {
 

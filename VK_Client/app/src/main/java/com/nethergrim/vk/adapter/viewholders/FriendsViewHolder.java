@@ -11,7 +11,11 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 
 /**
- * @author andrej on 28.07.15.
+ * {@link android.support.v7.widget.RecyclerView.ViewHolder} for {@link
+ * com.nethergrim.vk.adapter.FriendsAdapter}
+ *
+ * @author Andrey Drobyazko (c2q9450@gmail.com)
+ *         All rights reserved.
  */
 public class FriendsViewHolder extends RecyclerView.ViewHolder {
 
