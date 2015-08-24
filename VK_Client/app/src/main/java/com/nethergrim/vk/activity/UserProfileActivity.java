@@ -34,6 +34,9 @@ import butterknife.InjectView;
 import io.realm.Realm;
 
 /**
+ * {@link AbstractActivity} that should display user profile.
+ * Please use only {@link #show(long, Activity, ImageView)} method to display current Activity.
+ *
  * @author Andrey Drobyazko (c2q9450@gmail.com).
  *         All rights reserved.
  */

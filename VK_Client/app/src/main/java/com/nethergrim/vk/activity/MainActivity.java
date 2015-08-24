@@ -37,6 +37,13 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 import io.realm.Realm;
 
+/**
+ * {@link AbstractActivity} that should represent start (main) screen.
+ * Menu view + {@link Toolbar} + fragment container.
+ *
+ * @author Andrey Drobyazko (c2q9450@gmail.com)
+ *         All rights reserved.
+ */
 public class MainActivity extends AbstractActivity implements
         View.OnClickListener, ToolbarScrollable {
 
@@ -75,7 +82,7 @@ public class MainActivity extends AbstractActivity implements
 
     private MainActivityState mCurrentState;
 
-    public void onResponseSucceed(final User response) {
+    public void onUserLoaded(final User response) {
         mIL.displayUserAvatar(response, mProfileImageButton);
         mPrefs.setCurrentUserId(response.getId());
         Realm realm = Realm.getDefaultInstance();
@@ -114,7 +121,7 @@ public class MainActivity extends AbstractActivity implements
         if (mPrefs.getCurrentUserId() != 0) {
             User user = mUP.getUser(mPrefs.getCurrentUserId());
             if (user != null) {
-                onResponseSucceed(user);
+                onUserLoaded(user);
             }
         }
     }
@@ -197,6 +204,11 @@ public class MainActivity extends AbstractActivity implements
         mProfileImageButton.setScaleType(ImageView.ScaleType.FIT_CENTER);
     }
 
+    /**
+     * Setter for {@link MainActivity} state. Should change toolbar view, fragment in container,
+     * and
+     * should change selection of the menu.
+     */
     private void setState(@NonNull MainActivityState mainActivityState) {
         if (!mainActivityState.equals(mCurrentState)) {
             mCurrentState = mainActivityState;
@@ -232,6 +244,9 @@ public class MainActivity extends AbstractActivity implements
         }
     }
 
+    /**
+     * Should reset menu state to the default (all icons and views de-selected).
+     */
     private void deselectIcons() {
         mMessagesImageButton.setImageDrawable(
                 Utils.tintIcon(R.drawable.ic_action_question_answer, R.color.icons_color));

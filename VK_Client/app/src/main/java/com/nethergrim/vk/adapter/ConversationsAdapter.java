@@ -27,7 +27,11 @@ import io.realm.RealmChangeListener;
 import io.realm.RealmResults;
 
 /**
- * @author andreydrobyazko on 4/6/15.
+ * {@link android.support.v7.widget.RecyclerView.Adapter} that should be used to display list of
+ * conversations in {@link com.nethergrim.vk.fragment.MessagesFragment}
+ *
+ * @author Andrey Drobyazko (c2q9450@gmail.com).
+ *         All rights reserved.
  */
 public class ConversationsAdapter extends RecyclerView.Adapter<ConversationViewHolder>
         implements RealmChangeListener, View.OnClickListener {
@@ -110,13 +114,13 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationViewH
             conversationViewHolder.textName.setText(message.getTitle());
 
             if (ConversationUtils.isMessageFromMe(message)) {
-                details =  conversationViewHolder.itemView.getResources()
+                details = conversationViewHolder.itemView.getResources()
                         .getString(R.string.me_) + " " + details
                         + " " + message.getBody();
             } else {
                 user = mUserProvider.getUser(message.getUser_id());
                 if (user != null) {
-                    details = user.getFirstName() + ": "  + details + message.getBody();
+                    details = user.getFirstName() + ": " + details + message.getBody();
                 }
 
             }

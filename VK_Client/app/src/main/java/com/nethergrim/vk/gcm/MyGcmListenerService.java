@@ -122,7 +122,7 @@ public class MyGcmListenerService extends GcmListenerService {
 //            mDataManager.fetchUsers(Collections.singletonList(userId),
 //                    new WebCallback<ListOfUsers>() {
 //                        @Override
-//                        public void onResponseSucceed(ListOfUsers response) {
+//                        public void onUserLoaded(ListOfUsers response) {
 //                            showNotification(message);
 //                        }
 //

@@ -326,7 +326,7 @@ public class ChatFragment extends AbstractFragment
 //        mWebRequestManager.getChatHistory(0, 18, mIsGroupChat ? 0 : mConversationId,
 //                mIsGroupChat ? mConversationId : 0, 0, false, new WebCallback<ListOfMessages>() {
 //                    @Override
-//                    public void onResponseSucceed(ListOfMessages response) {
+//                    public void onUserLoaded(ListOfMessages response) {
 //                        Log.e("TAG", "messages received: " + response.getMessages().size());
 //                    }
 //

@@ -11,6 +11,14 @@ import com.nethergrim.vk.fragment.ChatFragment;
 import com.nethergrim.vk.models.Conversation;
 import com.nethergrim.vk.utils.ConversationUtils;
 
+/**
+ * Activity for screen with conversation. By default will open {@link ChatFragment} as a main
+ * {@link
+ * android.app.Fragment}
+ *
+ * @author Andrey Drobyazko (c2q9450@gmail.com)
+ *         All rights reserved.
+ */
 public class ChatActivity extends AbstractActivity {
 
 
