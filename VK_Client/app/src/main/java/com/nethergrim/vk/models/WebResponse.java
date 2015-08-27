@@ -10,7 +10,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class WebResponse {
 
     @JsonProperty("error")
-    private WebError mError;
+    protected WebError mError;
 
     public boolean ok(){
         return mError == null;
@@ -18,5 +18,13 @@ public class WebResponse {
 
     public WebError getError() {
         return mError;
+    }
+
+    @Override
+    public String toString() {
+        if (mError != null){
+            return mError.toString();
+        }
+        return super.toString();
     }
 }

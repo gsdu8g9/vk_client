@@ -19,4 +19,13 @@ public class ListOfUsers extends WebResponse {
     public void setResponse(List<User> response) {
         this.response = response;
     }
+
+    @Override
+    public String toString() {
+        if (mError == null){ // valid response with no error
+            return response.toString();
+        } else {
+            return super.toString();
+        }
+    }
 }

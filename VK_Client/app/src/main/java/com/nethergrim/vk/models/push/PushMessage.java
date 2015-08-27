@@ -58,6 +58,10 @@ public class PushMessage extends PushObject {
         return badge;
     }
 
+    public long getUserId(){
+        return Long.parseLong(uid);
+    }
+
     public void setBadge(String badge) {
         this.badge = badge;
     }

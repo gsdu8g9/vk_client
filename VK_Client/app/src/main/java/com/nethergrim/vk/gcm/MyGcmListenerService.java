@@ -21,17 +21,25 @@ import com.nethergrim.vk.utils.PushParser;
 import com.nethergrim.vk.utils.UserProvider;
 import com.nethergrim.vk.utils.Utils;
 import com.nethergrim.vk.web.DataManager;
+import com.nethergrim.vk.web.WebRequestManager;
 import com.squareup.otto.Bus;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
+import java.util.Collections;
+
 import javax.inject.Inject;
+
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * @author Andrey Drobyazko (c2q9450@gmail.com).
  *         All rights reserved.
  */
 public class MyGcmListenerService extends GcmListenerService {
+
+    public static final String TAG = MyGcmListenerService.class.getSimpleName();
 
     @Inject
     DataManager mDataManager;
@@ -46,6 +54,9 @@ public class MyGcmListenerService extends GcmListenerService {
     ImageLoader mImageLoader;
 
     @Inject
+    WebRequestManager mWebRequestManager;
+
+    @Inject
     Bus mBus;
 
     @Inject
@@ -54,7 +65,7 @@ public class MyGcmListenerService extends GcmListenerService {
     @Override
     public void onMessageReceived(String from, Bundle data) {
         super.onMessageReceived(from, data);
-        Log.e("TAG", "message received: " + Utils.convertBundleToJson(data).toString());
+        Log.e(TAG, "message received: \n        " + Utils.convertBundleToJson(data).toString());
         MyApplication.getInstance().getMainComponent().inject(this);
 
         PushObject pushObject = mPushParser.parsePushObject(data);
@@ -79,11 +90,13 @@ public class MyGcmListenerService extends GcmListenerService {
         mDataManager.fetchConversationsAndUsers(5, 0, false);
     }
 
+    public static final String GROUP_MESSAGE = "msg";
+
     private void showNotification(@NonNull final PushMessage message) {
         User user = mUserProvider.getUser(message.getUid());
         mPrefs.setUnreadMessagesCount(Integer.parseInt(message.getBadge()));
         if (user != null) {
-            // just show notification
+            // just show notification, we have a user
 
             final String firstName = user.getFirstName();
             final String lastName = user.getLastName();
@@ -95,6 +108,7 @@ public class MyGcmListenerService extends GcmListenerService {
                             new NotificationCompat.Builder(MyGcmListenerService.this)
                                     .setSmallIcon(R.drawable.ic_stat_content_mail)
                                     .setLargeIcon(bitmap)
+                                    .setGroup(GROUP_MESSAGE)
                                     .setContentTitle(firstName + " " + lastName)
                                     .setContentText(message.getText());
 
@@ -116,20 +130,16 @@ public class MyGcmListenerService extends GcmListenerService {
 
         } else {
             // fetch user from backend
-            long userId = Long.parseLong(message.getUid());
+            mWebRequestManager
+                    .getUsersObservable(Collections.singletonList(message.getUserId()))
+                    .observeOn(Schedulers.io())
+                    .subscribeOn(AndroidSchedulers.mainThread())
+                    .subscribe(listOfUsers -> {
 
-            // TODO
-//            mDataManager.fetchUsers(Collections.singletonList(userId),
-//                    new WebCallback<ListOfUsers>() {
-//                        @Override
-//                        public void onUserLoaded(ListOfUsers response) {
-//                            showNotification(message);
-//                        }
-//
-//                        @Override
-//                        public void onResponseFailed(VKError e) {
-//                        }
-//                    });
+                    }, throwable -> {
+                        Log.e(TAG, throwable.toString());
+                        // just ignore
+                    });
         }
 
     }
