@@ -28,6 +28,7 @@ import retrofit.RestAdapter;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 import retrofit.converter.JacksonConverter;
+import rx.Observable;
 
 /**
  * @author andrej on 12.08.15.
@@ -82,6 +83,33 @@ public class RetrofitRequestManagerImpl implements WebRequestManager {
         String idsValues = StringUtil.cutText(sb.toString(), sb.toString().length() - 2);
         params.put("fields", idsValues);
         return mRetrofitInterface.getUsers(params);
+    }
+
+    @Override
+    public Observable<ListOfUsers> getUsersObservable(List<Long> ids) {
+        Map<String, String> params = getDefaultParamsMap();
+        if (ids != null) {
+            if (ids.size() > 1000) {
+                throw new IllegalArgumentException("you want to fetch too much users. Max is 1000");
+            }
+
+            StringBuilder sb = new StringBuilder();
+            for (Long id : ids) {
+                sb.append(id);
+                sb.append(", ");
+            }
+            String idsValues = StringUtil.cutText(sb.toString(), sb.toString().length() - 2);
+            params.put("user_ids", idsValues);
+        }
+
+        StringBuilder sb = new StringBuilder();
+        for (String field : UserUtils.getDefaultUserFields()) {
+            sb.append(field);
+            sb.append(", ");
+        }
+        String idsValues = StringUtil.cutText(sb.toString(), sb.toString().length() - 2);
+        params.put("fields", idsValues);
+        return mRetrofitInterface.getUsersObservable(params);
     }
 
     @Override

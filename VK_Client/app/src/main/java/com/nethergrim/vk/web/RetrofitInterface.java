@@ -13,6 +13,7 @@ import retrofit.client.Response;
 import retrofit.http.GET;
 import retrofit.http.POST;
 import retrofit.http.QueryMap;
+import rx.Observable;
 
 /**
  * @author andrej on 12.08.15.
@@ -21,6 +22,9 @@ public interface RetrofitInterface {
 
     @GET(Constants.Requests.GET_USERS)
     ListOfUsers getUsers(@QueryMap Map<String, String> options);
+
+    @GET(Constants.Requests.GET_USERS)
+    Observable<ListOfUsers> getUsersObservable(@QueryMap Map<String, String> options);
 
     @POST(Constants.Requests.EXECUTE_POST_STARTUP)
     StartupResponse launchStartupTasks(@QueryMap Map<String, String> options);

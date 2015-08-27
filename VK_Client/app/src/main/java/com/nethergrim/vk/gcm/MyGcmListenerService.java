@@ -14,6 +14,7 @@ import com.nethergrim.vk.MyApplication;
 import com.nethergrim.vk.R;
 import com.nethergrim.vk.caching.Prefs;
 import com.nethergrim.vk.images.ImageLoader;
+import com.nethergrim.vk.models.ListOfUsers;
 import com.nethergrim.vk.models.User;
 import com.nethergrim.vk.models.push.PushMessage;
 import com.nethergrim.vk.models.push.PushObject;
@@ -21,17 +22,26 @@ import com.nethergrim.vk.utils.PushParser;
 import com.nethergrim.vk.utils.UserProvider;
 import com.nethergrim.vk.utils.Utils;
 import com.nethergrim.vk.web.DataManager;
+import com.nethergrim.vk.web.WebRequestManager;
 import com.squareup.otto.Bus;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
+import java.util.Collections;
+
 import javax.inject.Inject;
+
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.schedulers.Schedulers;
 
 /**
  * @author Andrey Drobyazko (c2q9450@gmail.com).
  *         All rights reserved.
  */
 public class MyGcmListenerService extends GcmListenerService {
+
+    public static final String TAG = MyGcmListenerService.class.getSimpleName();
 
     @Inject
     DataManager mDataManager;
@@ -46,6 +56,9 @@ public class MyGcmListenerService extends GcmListenerService {
     ImageLoader mImageLoader;
 
     @Inject
+    WebRequestManager mWebRequestManager;
+
+    @Inject
     Bus mBus;
 
     @Inject
@@ -54,7 +67,7 @@ public class MyGcmListenerService extends GcmListenerService {
     @Override
     public void onMessageReceived(String from, Bundle data) {
         super.onMessageReceived(from, data);
-        Log.e("TAG", "message received: " + Utils.convertBundleToJson(data).toString());
+        Log.e(TAG, "message received: \n        " + Utils.convertBundleToJson(data).toString());
         MyApplication.getInstance().getMainComponent().inject(this);
 
         PushObject pushObject = mPushParser.parsePushObject(data);
@@ -83,7 +96,7 @@ public class MyGcmListenerService extends GcmListenerService {
         User user = mUserProvider.getUser(message.getUid());
         mPrefs.setUnreadMessagesCount(Integer.parseInt(message.getBadge()));
         if (user != null) {
-            // just show notification
+            // just show notification, we have a user
 
             final String firstName = user.getFirstName();
             final String lastName = user.getLastName();
@@ -117,6 +130,16 @@ public class MyGcmListenerService extends GcmListenerService {
         } else {
             // fetch user from backend
             long userId = Long.parseLong(message.getUid());
+            mWebRequestManager
+                    .getUsersObservable(Collections.singletonList(userId))
+                    .observeOn(Schedulers.io())
+                    .subscribeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Action1<ListOfUsers>() {
+                        @Override
+                        public void call(ListOfUsers listOfUsers) {
+
+                        }
+                    });
 
             // TODO
 //            mDataManager.fetchUsers(Collections.singletonList(userId),

@@ -10,6 +10,8 @@ import com.nethergrim.vk.models.StartupResponse;
 
 import java.util.List;
 
+import rx.Observable;
+
 /**
  * @author andreydrobyazko on 4/3/15.
  */
@@ -19,6 +21,9 @@ public interface WebRequestManager {
 
     @WorkerThread
     ListOfUsers getUsers(List<Long> ids);
+
+    @WorkerThread
+    Observable<ListOfUsers> getUsersObservable(List<Long> ids);
 
     @WorkerThread
     boolean unregisterFromPushNotifications();
