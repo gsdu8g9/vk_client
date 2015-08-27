@@ -14,7 +14,6 @@ import com.nethergrim.vk.MyApplication;
 import com.nethergrim.vk.R;
 import com.nethergrim.vk.caching.Prefs;
 import com.nethergrim.vk.images.ImageLoader;
-import com.nethergrim.vk.models.ListOfUsers;
 import com.nethergrim.vk.models.User;
 import com.nethergrim.vk.models.push.PushMessage;
 import com.nethergrim.vk.models.push.PushObject;
@@ -32,7 +31,6 @@ import java.util.Collections;
 import javax.inject.Inject;
 
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 
 /**
@@ -129,30 +127,16 @@ public class MyGcmListenerService extends GcmListenerService {
 
         } else {
             // fetch user from backend
-            long userId = Long.parseLong(message.getUid());
             mWebRequestManager
-                    .getUsersObservable(Collections.singletonList(userId))
+                    .getUsersObservable(Collections.singletonList(message.getUserId()))
                     .observeOn(Schedulers.io())
                     .subscribeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new Action1<ListOfUsers>() {
-                        @Override
-                        public void call(ListOfUsers listOfUsers) {
+                    .subscribe(listOfUsers -> {
 
-                        }
+                    }, throwable -> {
+                        Log.e(TAG, throwable.toString());
+                        // just ignore
                     });
-
-            // TODO
-//            mDataManager.fetchUsers(Collections.singletonList(userId),
-//                    new WebCallback<ListOfUsers>() {
-//                        @Override
-//                        public void onUserLoaded(ListOfUsers response) {
-//                            showNotification(message);
-//                        }
-//
-//                        @Override
-//                        public void onResponseFailed(VKError e) {
-//                        }
-//                    });
         }
 
     }

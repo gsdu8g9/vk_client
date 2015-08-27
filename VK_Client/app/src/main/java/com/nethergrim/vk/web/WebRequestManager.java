@@ -21,8 +21,7 @@ public interface WebRequestManager {
 
     @WorkerThread
     ListOfUsers getUsers(List<Long> ids);
-
-    @WorkerThread
+    // any thread
     Observable<ListOfUsers> getUsersObservable(List<Long> ids);
 
     @WorkerThread
