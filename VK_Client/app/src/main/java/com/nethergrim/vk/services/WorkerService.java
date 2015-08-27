@@ -137,90 +137,81 @@ public class WorkerService extends Service {
     }
 
     private void handleActionLaunchStartupTasks() {
-        addRunnableToQueue(new Runnable() {
-            @Override
-            public void run() {
-                String token = mPrefs.getGcmToken();
-                if (TextUtils.isEmpty(token)) {
-                    InstanceID instanceID = InstanceID.getInstance(
-                            MyApplication.getInstance().getApplicationContext());
-                    try {
-                        token = instanceID.getToken(Constants.GCM_SENDER_ID,
-                                GoogleCloudMessaging.INSTANCE_ID_SCOPE, null);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    mPrefs.setGcmToken(token);
+        addRunnableToQueue(() -> {
+            String token = mPrefs.getGcmToken();
+            if (TextUtils.isEmpty(token)) {
+                InstanceID instanceID = InstanceID.getInstance(
+                        MyApplication.getInstance().getApplicationContext());
+                try {
+                    token = instanceID.getToken(Constants.GCM_SENDER_ID,
+                            GoogleCloudMessaging.INSTANCE_ID_SCOPE, null);
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-                StartupResponse startupResponse = mWebRequestManager.launchStartupTasks(token);
-                if (startupResponse != null && startupResponse.ok()) {
-                    mPrefs.setCurrentUserId(startupResponse.getResponse().getMe().getId());
-                    Realm realm = Realm.getDefaultInstance();
-                    realm.beginTransaction();
-                    realm.copyToRealmOrUpdate(startupResponse.getResponse().getMe());
-                    realm.commitTransaction();
-                } else if (startupResponse != null){
-                    Log.e("TAG","error: " + startupResponse.getError().toString());
-                }
-
-                mBus.post(new MyUserUpdatedEvent());
+                mPrefs.setGcmToken(token);
             }
+            StartupResponse startupResponse = mWebRequestManager.launchStartupTasks(token);
+            if (startupResponse != null && startupResponse.ok()) {
+                mPrefs.setCurrentUserId(startupResponse.getResponse().getMe().getId());
+                Realm realm = Realm.getDefaultInstance();
+                realm.beginTransaction();
+                realm.copyToRealmOrUpdate(startupResponse.getResponse().getMe());
+                realm.commitTransaction();
+            } else if (startupResponse != null){
+                Log.e("TAG","error: " + startupResponse.getError().toString());
+            }
+
+            mBus.post(new MyUserUpdatedEvent());
         });
     }
 
     private void handleActionFetchMyFriends(Intent intent) {
         final int count = intent.getIntExtra(EXTRA_COUNT, 10);
         final int offset = intent.getIntExtra(EXTRA_OFFSET, 0);
-        addRunnableToQueue(new Runnable() {
-            @Override
-            public void run() {
-                ListOfFriends listOfFriends = mWebRequestManager.getFriends(
-                        mPrefs.getCurrentUserId(), count, offset);
-                if (listOfFriends.ok()) {
+        addRunnableToQueue(() -> {
+            ListOfFriends listOfFriends = mWebRequestManager.getFriends(
+                    mPrefs.getCurrentUserId(), count, offset);
+            if (listOfFriends.ok()) {
 
-                    mPrefs.setFriendsCount(listOfFriends.getResponse().getCount());
+                mPrefs.setFriendsCount(listOfFriends.getResponse().getCount());
 
-                    Realm realm = Realm.getDefaultInstance();
-                    realm.beginTransaction();
-                    List<User> friends = listOfFriends.getResponse().getFriends();
-                    for (int i = 0, size = friends.size(), rating = offset;
-                            i < size;
-                            i++, rating++) {
-                        friends.get(i).setFriendRating(rating);
-                    }
-                    realm.copyToRealmOrUpdate(friends);
-                    realm.commitTransaction();
-                    mPaletteProvider.generateAndStorePalette(friends);
-                    for (int i = 0, size = friends.size(); i < size; i++) {
-                        mImageLoader.cacheUserAvatars(friends.get(i));
-                    }
-                    mBus.post(new FriendsUpdatedEvent(listOfFriends.getResponse().getCount()));
-                } else {
-                    Log.e("TAG","error: " + listOfFriends.getError().toString());
+                Realm realm = Realm.getDefaultInstance();
+                realm.beginTransaction();
+                List<User> friends = listOfFriends.getResponse().getFriends();
+                for (int i = 0, size = friends.size(), rating = offset;
+                        i < size;
+                        i++, rating++) {
+                    friends.get(i).setFriendRating(rating);
                 }
+                realm.copyToRealmOrUpdate(friends);
+                realm.commitTransaction();
+                mPaletteProvider.generateAndStorePalette(friends);
+                for (int i = 0, size = friends.size(); i < size; i++) {
+                    mImageLoader.cacheUserAvatars(friends.get(i));
+                }
+                mBus.post(new FriendsUpdatedEvent(listOfFriends.getResponse().getCount()));
+            } else {
+                Log.e("TAG","error: " + listOfFriends.getError().toString());
             }
         });
     }
 
     private void handleActionFetchUsers(Intent intent) {
         final ArrayList<Long> ids = (ArrayList<Long>) intent.getSerializableExtra(EXTRA_IDS);
-        addRunnableToQueue(new Runnable() {
-            @Override
-            public void run() {
-                ListOfUsers listOfUsers = mWebRequestManager.getUsers(ids);
-                if (listOfUsers.ok()) {
-                    Realm realm = Realm.getDefaultInstance();
-                    realm.beginTransaction();
-                    realm.copyToRealmOrUpdate(listOfUsers.getResponse());
-                    realm.commitTransaction();
-                    mPaletteProvider.generateAndStorePalette(listOfUsers.getResponse());
-                    mBus.post(new UsersUpdatedEvent());
-                    for (int i = 0, size = listOfUsers.getResponse().size(); i < size; i++) {
-                        mImageLoader.cacheUserAvatars(listOfUsers.getResponse().get(i));
-                    }
-                } else {
-                    Log.e("TAG","error: " + listOfUsers.getError().toString());
+        addRunnableToQueue(() -> {
+            ListOfUsers listOfUsers = mWebRequestManager.getUsers(ids);
+            if (listOfUsers.ok()) {
+                Realm realm = Realm.getDefaultInstance();
+                realm.beginTransaction();
+                realm.copyToRealmOrUpdate(listOfUsers.getResponse());
+                realm.commitTransaction();
+                mPaletteProvider.generateAndStorePalette(listOfUsers.getResponse());
+                mBus.post(new UsersUpdatedEvent());
+                for (int i = 0, size = listOfUsers.getResponse().size(); i < size; i++) {
+                    mImageLoader.cacheUserAvatars(listOfUsers.getResponse().get(i));
                 }
+            } else {
+                Log.e("TAG","error: " + listOfUsers.getError().toString());
             }
         });
     }
@@ -229,33 +220,30 @@ public class WorkerService extends Service {
         final int limit = intent.getIntExtra(EXTRA_COUNT, 10);
         final int offset = intent.getIntExtra(EXTRA_OFFSET, 0);
         final boolean unreadOnly = intent.getBooleanExtra(EXTRA_ONLY_UNREAD, false);
-        addRunnableToQueue(new Runnable() {
-            @Override
-            public void run() {
-                ConversationsUserObject conversationsUserObject
-                        = mWebRequestManager.getConversationsAndUsers(limit, offset, unreadOnly);
-                if (conversationsUserObject.ok()) {
+        addRunnableToQueue(() -> {
+            ConversationsUserObject conversationsUserObject
+                    = mWebRequestManager.getConversationsAndUsers(limit, offset, unreadOnly);
+            if (conversationsUserObject.ok()) {
 
-                    //saving conversations to db
-                    ConversationsList conversationsList
-                            = conversationsUserObject.getResponse().getConversations();
-                    conversationsList.setResults(
-                            DataHelper.normalizeConversationsList(conversationsList.getResults()));
-                    mPrefs.setUnreadMessagesCount(conversationsList.getUnreadCount());
-                    Realm realm = Realm.getDefaultInstance();
-                    realm.beginTransaction();
-                    realm.copyToRealmOrUpdate(conversationsList.getResults());
+                //saving conversations to db
+                ConversationsList conversationsList
+                        = conversationsUserObject.getResponse().getConversations();
+                conversationsList.setResults(
+                        DataHelper.normalizeConversationsList(conversationsList.getResults()));
+                mPrefs.setUnreadMessagesCount(conversationsList.getUnreadCount());
+                Realm realm = Realm.getDefaultInstance();
+                realm.beginTransaction();
+                realm.copyToRealmOrUpdate(conversationsList.getResults());
 
-                    //saving users to db
-                    List<User> users = conversationsUserObject.getResponse().getUsers();
-                    realm.copyToRealmOrUpdate(users);
+                //saving users to db
+                List<User> users = conversationsUserObject.getResponse().getUsers();
+                realm.copyToRealmOrUpdate(users);
 
-                    realm.commitTransaction();
-                    mBus.post(new ConversationsUpdatedEvent());
-                    mBus.post(new UsersUpdatedEvent());
-                } else {
-                    Log.e(TAG, conversationsUserObject.getError().toString());
-                }
+                realm.commitTransaction();
+                mBus.post(new ConversationsUpdatedEvent());
+                mBus.post(new UsersUpdatedEvent());
+            } else {
+                Log.e(TAG, conversationsUserObject.getError().toString());
             }
         });
     }

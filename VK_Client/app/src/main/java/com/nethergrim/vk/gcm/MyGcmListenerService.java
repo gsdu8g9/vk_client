@@ -90,6 +90,8 @@ public class MyGcmListenerService extends GcmListenerService {
         mDataManager.fetchConversationsAndUsers(5, 0, false);
     }
 
+    public static final String GROUP_MESSAGE = "msg";
+
     private void showNotification(@NonNull final PushMessage message) {
         User user = mUserProvider.getUser(message.getUid());
         mPrefs.setUnreadMessagesCount(Integer.parseInt(message.getBadge()));
@@ -106,6 +108,7 @@ public class MyGcmListenerService extends GcmListenerService {
                             new NotificationCompat.Builder(MyGcmListenerService.this)
                                     .setSmallIcon(R.drawable.ic_stat_content_mail)
                                     .setLargeIcon(bitmap)
+                                    .setGroup(GROUP_MESSAGE)
                                     .setContentTitle(firstName + " " + lastName)
                                     .setContentText(message.getText());
 
