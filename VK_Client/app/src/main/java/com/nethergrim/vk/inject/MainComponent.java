@@ -17,7 +17,7 @@ import com.nethergrim.vk.services.WorkerService;
 import com.nethergrim.vk.utils.DataHelper;
 import com.nethergrim.vk.utils.PushParserImpl;
 import com.nethergrim.vk.utils.RealmUserProviderImplementation;
-import com.nethergrim.vk.web.RealmDataManagerImpl;
+import com.nethergrim.vk.web.WebIntentHandlerImpl;
 import com.nethergrim.vk.web.RetrofitRequestManagerImpl;
 
 import javax.inject.Singleton;
@@ -53,7 +53,7 @@ public interface MainComponent {
 
     void inject(PushParserImpl o);
 
-    void inject(RealmDataManagerImpl o);
+    void inject(WebIntentHandlerImpl o);
 
     void inject(FriendsAdapter o);
 

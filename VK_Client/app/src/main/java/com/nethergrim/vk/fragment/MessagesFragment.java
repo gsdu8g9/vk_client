@@ -24,7 +24,7 @@ import com.nethergrim.vk.utils.BasicRecyclerViewScroller;
 import com.nethergrim.vk.utils.FabAnimationManager;
 import com.nethergrim.vk.utils.SafeTimer;
 import com.nethergrim.vk.views.RecyclerviewPageScroller;
-import com.nethergrim.vk.web.DataManager;
+import com.nethergrim.vk.web.WebIntentHandler;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 
@@ -50,7 +50,7 @@ public class MessagesFragment extends AbstractFragment implements
     @InjectView(R.id.textViewNothingHere)
     TextView mNothingHereTextView;
     @Inject
-    DataManager mDataManager;
+    WebIntentHandler mWebIntentHandler;
     @Inject
     Bus mBus;
     @InjectView(R.id.fab_normal)
@@ -186,7 +186,7 @@ public class MessagesFragment extends AbstractFragment implements
     }
 
     private void loadPage(int pageNumber) {
-        mDataManager.fetchConversationsAndUsers(DEFAULT_PAGE_SIZE, pageNumber * DEFAULT_PAGE_SIZE,
+        mWebIntentHandler.fetchConversationsAndUsers(DEFAULT_PAGE_SIZE, pageNumber * DEFAULT_PAGE_SIZE,
                 false);
     }
 

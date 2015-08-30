@@ -24,7 +24,7 @@ import com.nethergrim.vk.models.push.PushObject;
 import com.nethergrim.vk.utils.PushParser;
 import com.nethergrim.vk.utils.UserProvider;
 import com.nethergrim.vk.utils.Utils;
-import com.nethergrim.vk.web.DataManager;
+import com.nethergrim.vk.web.WebIntentHandler;
 import com.nethergrim.vk.web.WebRequestManager;
 import com.squareup.otto.Bus;
 import com.squareup.picasso.Picasso;
@@ -46,7 +46,7 @@ public class MyGcmListenerService extends GcmListenerService {
     public static final String TAG = MyGcmListenerService.class.getSimpleName();
     public static final String GROUP_MESSAGE = "msg";
     @Inject
-    DataManager mDataManager;
+    WebIntentHandler mWebIntentHandler;
     @Inject
     PushParser mPushParser;
     @Inject
@@ -85,7 +85,7 @@ public class MyGcmListenerService extends GcmListenerService {
     }
 
     private void updateConversations() {
-        mDataManager.fetchConversationsAndUsers(5, 0, false);
+        mWebIntentHandler.fetchConversationsAndUsers(5, 0, false);
     }
 
     private void showNotification(@NonNull final PushMessage message) {
