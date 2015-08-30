@@ -10,6 +10,7 @@ import com.nethergrim.vk.MyApplication;
 import com.nethergrim.vk.caching.Prefs;
 import com.nethergrim.vk.event.FriendsUpdatedEvent;
 import com.nethergrim.vk.event.MyUserUpdatedEvent;
+import com.nethergrim.vk.event.UsersUpdatedEvent;
 import com.nethergrim.vk.images.ImageLoader;
 import com.nethergrim.vk.images.PaletteProvider;
 import com.nethergrim.vk.models.ConversationsUserObject;
@@ -125,8 +126,23 @@ public class DataManagerImpl implements DataManager {
     }
 
     @Override
-    public Observable<ListOfUsers> fetchUsersAndPersistToDB(long[] ids) {
-        return null;
+    public Observable<ListOfUsers> fetchUsersAndPersistToDB(List<Long> ids) {
+        ListOfUsers listOfUsers = mWebRequestManager.getUsers(ids);
+        if (listOfUsers.ok()) {
+            Realm realm = Realm.getDefaultInstance();
+            realm.beginTransaction();
+            realm.copyToRealmOrUpdate(listOfUsers.getResponse());
+            realm.commitTransaction();
+            mPaletteProvider.generateAndStorePalette(listOfUsers.getResponse());
+            mBus.post(new UsersUpdatedEvent());
+            for (int i = 0, size = listOfUsers.getResponse().size(); i < size; i++) {
+                mImageLoader.cacheUserAvatars(listOfUsers.getResponse().get(i));
+            }
+        } else {
+            // TODO: 30.08.15 handle errors
+            Log.e("TAG", "error: " + listOfUsers.getError().toString());
+        }
+        return Observable.just(listOfUsers);
     }
 
     @Override

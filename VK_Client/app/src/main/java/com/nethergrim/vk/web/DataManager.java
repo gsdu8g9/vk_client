@@ -7,6 +7,8 @@ import com.nethergrim.vk.models.ListOfFriends;
 import com.nethergrim.vk.models.ListOfUsers;
 import com.nethergrim.vk.models.StartupResponse;
 
+import java.util.List;
+
 import rx.Observable;
 
 /**
@@ -29,7 +31,7 @@ public interface DataManager {
     Observable<ListOfFriends> fetchFriendsAndPersistToDb(int count, int offset);
 
     @WorkerThread
-    Observable<ListOfUsers> fetchUsersAndPersistToDB(long[] ids);
+    Observable<ListOfUsers> fetchUsersAndPersistToDB(List<Long> ids);
 
     @WorkerThread
     Observable<ConversationsUserObject> fetchConversationsUserAndPersist(int limit,

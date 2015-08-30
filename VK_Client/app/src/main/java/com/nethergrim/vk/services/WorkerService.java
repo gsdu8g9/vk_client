@@ -14,7 +14,6 @@ import com.nethergrim.vk.event.ConversationsUpdatedEvent;
 import com.nethergrim.vk.event.UsersUpdatedEvent;
 import com.nethergrim.vk.models.ConversationsList;
 import com.nethergrim.vk.models.ConversationsUserObject;
-import com.nethergrim.vk.models.ListOfUsers;
 import com.nethergrim.vk.models.User;
 import com.nethergrim.vk.utils.DataHelper;
 import com.nethergrim.vk.web.DataManager;
@@ -126,22 +125,7 @@ public class WorkerService extends Service {
 
     private void handleActionFetchUsers(Intent intent) {
         final ArrayList<Long> ids = (ArrayList<Long>) intent.getSerializableExtra(EXTRA_IDS);
-        addRunnableToQueue(() -> {
-            ListOfUsers listOfUsers = mWebRequestManager.getUsers(ids);
-            if (listOfUsers.ok()) {
-                Realm realm = Realm.getDefaultInstance();
-                realm.beginTransaction();
-                realm.copyToRealmOrUpdate(listOfUsers.getResponse());
-                realm.commitTransaction();
-                mPaletteProvider.generateAndStorePalette(listOfUsers.getResponse());
-                mBus.post(new UsersUpdatedEvent());
-                for (int i = 0, size = listOfUsers.getResponse().size(); i < size; i++) {
-                    mImageLoader.cacheUserAvatars(listOfUsers.getResponse().get(i));
-                }
-            } else {
-                Log.e("TAG", "error: " + listOfUsers.getError().toString());
-            }
-        });
+        addRunnableToQueue(() -> mDataManager.fetchUsersAndPersistToDB(ids));
     }
 
     private void handleActionFetchConversationsAndUsers(Intent intent) {
