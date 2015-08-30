@@ -122,6 +122,10 @@ public class MyApplication extends Application {
         RealmConfiguration config = new RealmConfiguration.Builder(this)
                 .name("vk_main_realm")
                 .schemaVersion(1)
+                .migration((realm, version) -> {
+                    Log.e("TAG","migrating to " + version);
+                    return 0;
+                })
                 .build();
         Realm.setDefaultConfiguration(config);
     }
