@@ -15,6 +15,7 @@ import com.google.android.gms.gcm.GcmListenerService;
 import com.nethergrim.vk.MyApplication;
 import com.nethergrim.vk.R;
 import com.nethergrim.vk.activity.ChatActivity;
+import com.nethergrim.vk.activity.MainActivity;
 import com.nethergrim.vk.caching.Prefs;
 import com.nethergrim.vk.images.ImageLoader;
 import com.nethergrim.vk.models.User;
@@ -101,11 +102,14 @@ public class MyGcmListenerService extends GcmListenerService {
                 public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
 
                     // Create an intent for the reply action
-                    Intent actionIntent = ChatActivity.getIntentForReplyAction(
-                            MyGcmListenerService.this, message);
+                    Intent actionIntent = ChatActivity.getIntentForReplyAction(MyGcmListenerService.this, message);
+                    Intent actionMainActivityIntent = new Intent(MyGcmListenerService.this,
+                            MainActivity.class);
                     PendingIntent actionPendingIntent =
                             PendingIntent.getActivity(MyGcmListenerService.this, 0, actionIntent,
                                     PendingIntent.FLAG_UPDATE_CURRENT);
+
+                    PendingIntent actionMainActivityPendingIntent = PendingIntent.getActivity(MyGcmListenerService.this,0, actionMainActivityIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
                     // Create the action to reply
                     NotificationCompat.Action action =
@@ -119,6 +123,8 @@ public class MyGcmListenerService extends GcmListenerService {
                                     .setLargeIcon(bitmap)
                                     .setGroup(GROUP_MESSAGE)
                                     .addAction(action)
+                                    .setAutoCancel(true)
+                                    .setContentIntent(actionMainActivityPendingIntent)
                                     .setContentTitle(firstName + " " + lastName)
                                     .setContentText(message.getText());
 
