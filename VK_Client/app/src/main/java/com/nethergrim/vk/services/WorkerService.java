@@ -13,13 +13,10 @@ import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.android.gms.iid.InstanceID;
 import com.nethergrim.vk.Constants;
 import com.nethergrim.vk.MyApplication;
-import com.nethergrim.vk.caching.Prefs;
 import com.nethergrim.vk.event.ConversationsUpdatedEvent;
 import com.nethergrim.vk.event.FriendsUpdatedEvent;
 import com.nethergrim.vk.event.MyUserUpdatedEvent;
 import com.nethergrim.vk.event.UsersUpdatedEvent;
-import com.nethergrim.vk.images.ImageLoader;
-import com.nethergrim.vk.images.PaletteProvider;
 import com.nethergrim.vk.models.ConversationsList;
 import com.nethergrim.vk.models.ConversationsUserObject;
 import com.nethergrim.vk.models.ListOfFriends;
@@ -27,8 +24,7 @@ import com.nethergrim.vk.models.ListOfUsers;
 import com.nethergrim.vk.models.StartupResponse;
 import com.nethergrim.vk.models.User;
 import com.nethergrim.vk.utils.DataHelper;
-import com.nethergrim.vk.web.WebRequestManager;
-import com.squareup.otto.Bus;
+import com.nethergrim.vk.web.DataManager;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -59,22 +55,12 @@ public class WorkerService extends Service {
     public static final String EXTRA_OFFSET = Constants.PACKAGE_NAME + ".OFFSET";
     public static final String EXTRA_ONLY_UNREAD = Constants.PACKAGE_NAME + ".UNREAD_ONLY";
     public static final int MAX_THREADS_COUNT = 3;
-    @Inject
-    WebRequestManager mWebRequestManager;
 
     @Inject
-    Prefs mPrefs;
+    DataManager mDataManager;
 
-    @Inject
-    Bus mBus;
-
-    @Inject
-    ImageLoader mImageLoader;
-
-    @Inject
-    PaletteProvider mPaletteProvider;
     private ExecutorService mExecutorService;
-    private List<Future<?>> mFutures = new ArrayList<>(300);
+    private List<Future<?>> mFuturesList = new ArrayList<>(300);
 
     public static void fetchConversationsAndUsers(Context context,
             int count,
@@ -137,32 +123,7 @@ public class WorkerService extends Service {
     }
 
     private void handleActionLaunchStartupTasks() {
-        addRunnableToQueue(() -> {
-            String token = mPrefs.getGcmToken();
-            if (TextUtils.isEmpty(token)) {
-                InstanceID instanceID = InstanceID.getInstance(
-                        MyApplication.getInstance().getApplicationContext());
-                try {
-                    token = instanceID.getToken(Constants.GCM_SENDER_ID,
-                            GoogleCloudMessaging.INSTANCE_ID_SCOPE, null);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                mPrefs.setGcmToken(token);
-            }
-            StartupResponse startupResponse = mWebRequestManager.launchStartupTasks(token);
-            if (startupResponse != null && startupResponse.ok()) {
-                mPrefs.setCurrentUserId(startupResponse.getResponse().getMe().getId());
-                Realm realm = Realm.getDefaultInstance();
-                realm.beginTransaction();
-                realm.copyToRealmOrUpdate(startupResponse.getResponse().getMe());
-                realm.commitTransaction();
-            } else if (startupResponse != null){
-                Log.e("TAG","error: " + startupResponse.getError().toString());
-            }
-
-            mBus.post(new MyUserUpdatedEvent());
-        });
+        addRunnableToQueue(mDataManager::launchStartupTasksAndPersistToDb);
     }
 
     private void handleActionFetchMyFriends(Intent intent) {
@@ -251,7 +212,7 @@ public class WorkerService extends Service {
     private void addRunnableToQueue(@NonNull Runnable r) {
         if (mExecutorService != null) {
             Future<?> f = mExecutorService.submit(r);
-            mFutures.add(f);
+            mFuturesList.add(f);
         }
     }
 
@@ -260,9 +221,9 @@ public class WorkerService extends Service {
      * This means that current Service can be stopped correctly.
      */
     private boolean canBeKilled() {
-        for (int i = 0, size = mFutures.size(); i < size; i++) {
+        for (int i = 0, size = mFuturesList.size(); i < size; i++) {
             try {
-                if (mFutures.get(i).get() != null) {
+                if (mFuturesList.get(i).get() != null) {
                     return false;
                 }
             } catch (InterruptedException | ExecutionException e) {

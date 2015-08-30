@@ -17,6 +17,7 @@ import com.nethergrim.vk.services.WorkerService;
 import com.nethergrim.vk.utils.DataHelper;
 import com.nethergrim.vk.utils.PushParserImpl;
 import com.nethergrim.vk.utils.RealmUserProviderImplementation;
+import com.nethergrim.vk.web.DataManagerImpl;
 import com.nethergrim.vk.web.WebIntentHandlerImpl;
 import com.nethergrim.vk.web.WebRequestManagerImpl;
 
@@ -74,4 +75,6 @@ public interface MainComponent {
     void inject(WorkerService w);
 
     void inject(DataHelper m);
+
+    void inject(DataManagerImpl d);
 }
