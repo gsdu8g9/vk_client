@@ -134,8 +134,8 @@ public class PicassoImageLoaderImpl implements ImageLoader {
                                 .into(target);
                     }
                 });
-        bitmapObservable.subscribeOn(Schedulers.newThread());
-        bitmapObservable.observeOn(AndroidSchedulers.mainThread());
+        bitmapObservable.subscribeOn(AndroidSchedulers.mainThread());
+        bitmapObservable.observeOn(Schedulers.io());
         return bitmapObservable;
     }
 

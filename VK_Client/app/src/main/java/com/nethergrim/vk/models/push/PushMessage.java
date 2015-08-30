@@ -84,4 +84,16 @@ public class PushMessage extends PushObject {
     public PushType getPushType() {
         return PushType.Message;
     }
+
+    @Override
+    public String toString() {
+        return "PushMessage{" +
+                "msgId='" + msgId + '\'' +
+                ", uid='" + uid + '\'' +
+                ", text='" + text + '\'' +
+                ", type='" + type + '\'' +
+                ", badge='" + badge + '\'' +
+                ", collapseKey='" + collapseKey + '\'' +
+                '}';
+    }
 }

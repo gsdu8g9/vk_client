@@ -2,12 +2,9 @@ package com.nethergrim.vk.images;
 
 import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
-import android.support.annotation.WorkerThread;
 import android.widget.ImageView;
 
 import com.nethergrim.vk.models.User;
-
-import java.io.IOException;
 
 import rx.Observable;
 
@@ -20,16 +17,14 @@ public interface ImageLoader {
 
     void displayImage(@NonNull String url, @NonNull ImageView imageView);
 
-    Observable<Bitmap> getUserAvatar(@NonNull User user) throws IOException;
+    Observable<Bitmap> getUserAvatar(@NonNull User user);
 
     void cacheImage(@NonNull String url);
 
     void cacheUserAvatars(@NonNull User user);
 
-    @WorkerThread
     Observable<Bitmap> getBitmap(@NonNull String url);
 
-    @WorkerThread
     Observable<Bitmap> getBitmap(@NonNull User user);
 
 }

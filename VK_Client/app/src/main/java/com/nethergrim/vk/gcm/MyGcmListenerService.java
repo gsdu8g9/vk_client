@@ -4,8 +4,6 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.NotificationCompat;
@@ -17,6 +15,7 @@ import com.nethergrim.vk.R;
 import com.nethergrim.vk.activity.ChatActivity;
 import com.nethergrim.vk.activity.MainActivity;
 import com.nethergrim.vk.caching.Prefs;
+import com.nethergrim.vk.data.PersistingManager;
 import com.nethergrim.vk.images.ImageLoader;
 import com.nethergrim.vk.models.User;
 import com.nethergrim.vk.models.push.PushMessage;
@@ -27,8 +26,6 @@ import com.nethergrim.vk.utils.Utils;
 import com.nethergrim.vk.web.WebIntentHandler;
 import com.nethergrim.vk.web.WebRequestManager;
 import com.squareup.otto.Bus;
-import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
 
 import java.util.Collections;
 
@@ -60,10 +57,13 @@ public class MyGcmListenerService extends GcmListenerService {
     @Inject
     Prefs mPrefs;
 
+    @Inject
+    PersistingManager mPersistingManager;
+
     @Override
     public void onMessageReceived(String from, Bundle data) {
         super.onMessageReceived(from, data);
-        Log.e(TAG, "message received: \n        " + Utils.convertBundleToJson(data).toString());
+        Log.d(TAG, "message received: \n        " + Utils.convertBundleToJson(data).toString());
         MyApplication.getInstance().getMainComponent().inject(this);
 
         PushObject pushObject = mPushParser.parsePushObject(data);
@@ -89,6 +89,7 @@ public class MyGcmListenerService extends GcmListenerService {
     }
 
     private void showNotification(@NonNull final PushMessage message) {
+
         User user = mUserProvider.getUser(message.getUid());
         mPrefs.setUnreadMessagesCount(Integer.parseInt(message.getBadge()));
         if (user != null) {
@@ -96,66 +97,66 @@ public class MyGcmListenerService extends GcmListenerService {
 
             final String firstName = user.getFirstName();
             final String lastName = user.getLastName();
+            mImageLoader
+                    .getUserAvatar(user)
+                    .subscribeOn(AndroidSchedulers.mainThread())
+                    .subscribe(bitmap -> {
+                        // Create an intent for the reply action
+                        Intent actionIntent = ChatActivity.getIntentForReplyAction
+                                (MyGcmListenerService.this, message);
+                        Intent actionMainActivityIntent = new Intent(MyGcmListenerService.this,
+                                MainActivity.class);
+                        PendingIntent actionPendingIntent =
+                                PendingIntent.getActivity(MyGcmListenerService.this, 0,
+                                        actionIntent,
+                                        PendingIntent.FLAG_UPDATE_CURRENT);
 
-            mImageLoader.getUserAvatar(user, new Target() {
-                @Override
-                public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                        PendingIntent actionMainActivityPendingIntent
+                                = PendingIntent.getActivity
+                                (MyGcmListenerService.this, 0, actionMainActivityIntent,
+                                        PendingIntent.FLAG_UPDATE_CURRENT);
 
-                    // Create an intent for the reply action
-                    Intent actionIntent = ChatActivity.getIntentForReplyAction(MyGcmListenerService.this, message);
-                    Intent actionMainActivityIntent = new Intent(MyGcmListenerService.this,
-                            MainActivity.class);
-                    PendingIntent actionPendingIntent =
-                            PendingIntent.getActivity(MyGcmListenerService.this, 0, actionIntent,
-                                    PendingIntent.FLAG_UPDATE_CURRENT);
+                        // Create the action to reply
+                        NotificationCompat.Action action =
+                                new NotificationCompat.Action.Builder(R.drawable
+                                        .ic_stat_content_reply,
+                                        getString(R.string.reply_to), actionPendingIntent)
+                                        .build();
 
-                    PendingIntent actionMainActivityPendingIntent = PendingIntent.getActivity(MyGcmListenerService.this,0, actionMainActivityIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                        NotificationCompat.Builder mBuilder =
+                                new NotificationCompat.Builder(MyGcmListenerService.this)
+                                        .setSmallIcon(R.drawable.ic_stat_content_mail)
+                                        .setLargeIcon(bitmap)
+                                        .setGroup(GROUP_MESSAGE)
+                                        .addAction(action)
+                                        .setAutoCancel(true)
+                                        .setContentIntent(actionMainActivityPendingIntent)
+                                        .setContentTitle(firstName + " " + lastName)
+                                        .setContentText(message.getText());
 
-                    // Create the action to reply
-                    NotificationCompat.Action action =
-                            new NotificationCompat.Action.Builder(R.drawable.ic_stat_content_reply,
-                                    getString(R.string.reply_to), actionPendingIntent)
-                                    .build();
-
-                    NotificationCompat.Builder mBuilder =
-                            new NotificationCompat.Builder(MyGcmListenerService.this)
-                                    .setSmallIcon(R.drawable.ic_stat_content_mail)
-                                    .setLargeIcon(bitmap)
-                                    .setGroup(GROUP_MESSAGE)
-                                    .addAction(action)
-                                    .setAutoCancel(true)
-                                    .setContentIntent(actionMainActivityPendingIntent)
-                                    .setContentTitle(firstName + " " + lastName)
-                                    .setContentText(message.getText());
-
-                    NotificationManager mNotificationManager =
-                            (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-                    mNotificationManager.notify(message.getUid().hashCode(), mBuilder.build());
-                }
-
-                @Override
-                public void onBitmapFailed(Drawable errorDrawable) {
-
-                }
-
-                @Override
-                public void onPrepareLoad(Drawable placeHolderDrawable) {
-
-                }
-            });
+                        NotificationManager mNotificationManager =
+                                (NotificationManager) getSystemService(
+                                        Context.NOTIFICATION_SERVICE);
+                        Log.d(TAG,
+                                "displaying notification for message: " + message.toString());
+                        mNotificationManager.notify(message.getUid().hashCode(),
+                                mBuilder.build());
+                    }, throwable -> Log.e(TAG, throwable.toString()));
 
         } else {
+            Log.d(TAG, "user is null, fetching it");
             // fetch user from backend
             mWebRequestManager
                     .getUsersObservable(Collections.singletonList(message.getUserId()))
                     .observeOn(Schedulers.io())
                     .subscribeOn(AndroidSchedulers.mainThread())
+                    .doOnError(throwable -> Log.e(TAG, throwable.toString()))
                     .subscribe(listOfUsers -> {
-                        // TODO: 30.08.15 persist user to db, and do all mapping stuff
-                    }, throwable -> {
-                        Log.e(TAG, throwable.toString());
-                        // just ignore
-                    });
+                        mPersistingManager.manage(listOfUsers);
+                        showNotification(message);
+
+                    })
+            ;
         }
 
     }
