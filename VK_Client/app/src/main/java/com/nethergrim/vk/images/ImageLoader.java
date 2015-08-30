@@ -2,11 +2,11 @@ package com.nethergrim.vk.images;
 
 import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
-import android.support.annotation.WorkerThread;
 import android.widget.ImageView;
 
 import com.nethergrim.vk.models.User;
-import com.squareup.picasso.Target;
+
+import rx.Observable;
 
 /**
  * @author andreydrobyazko on 4/7/15.
@@ -17,16 +17,14 @@ public interface ImageLoader {
 
     void displayImage(@NonNull String url, @NonNull ImageView imageView);
 
-    void getUserAvatar(@NonNull User user, @NonNull Target target);
+    Observable<Bitmap> getUserAvatar(@NonNull User user);
 
     void cacheImage(@NonNull String url);
 
     void cacheUserAvatars(@NonNull User user);
 
-    @WorkerThread
-    Bitmap getBitmap(@NonNull String url);
+    Observable<Bitmap> getBitmap(@NonNull String url);
 
-    @WorkerThread
-    Bitmap getBitmap(@NonNull User user);
+    Observable<Bitmap> getBitmap(@NonNull User user);
 
 }

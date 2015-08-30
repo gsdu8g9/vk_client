@@ -32,7 +32,7 @@ import com.nethergrim.vk.models.Conversation;
 import com.nethergrim.vk.models.User;
 import com.nethergrim.vk.utils.ConversationUtils;
 import com.nethergrim.vk.utils.UserProvider;
-import com.nethergrim.vk.web.DataManager;
+import com.nethergrim.vk.web.WebIntentHandler;
 import com.nethergrim.vk.web.WebRequestManager;
 
 import javax.inject.Inject;
@@ -55,7 +55,7 @@ public class ChatFragment extends AbstractFragment
     @Inject
     Realm mRealm;
     @Inject
-    DataManager mDataManager;
+    WebIntentHandler mWebIntentHandler;
     @Inject
     UserProvider mUserProvider;
     @Inject

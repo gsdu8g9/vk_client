@@ -21,7 +21,7 @@ import com.nethergrim.vk.event.FriendsUpdatedEvent;
 import com.nethergrim.vk.models.User;
 import com.nethergrim.vk.utils.BasicRecyclerViewScroller;
 import com.nethergrim.vk.views.VarColumnGridLayoutManager;
-import com.nethergrim.vk.web.DataManager;
+import com.nethergrim.vk.web.WebIntentHandler;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 
@@ -44,7 +44,7 @@ public class FriendsFragment extends AbstractFragment
     @InjectView(R.id.list)
     RecyclerView mList;
     @Inject
-    DataManager mDataManager;
+    WebIntentHandler mWebIntentHandler;
     @Inject
     Bus mBus;
 
@@ -76,7 +76,7 @@ public class FriendsFragment extends AbstractFragment
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         initList(view.getContext());
-        mDataManager.fetchMyFriends(100, 0);
+        mWebIntentHandler.fetchMyFriends(100, 0);
     }
 
     @Override

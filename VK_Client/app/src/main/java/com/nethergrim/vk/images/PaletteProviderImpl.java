@@ -1,8 +1,8 @@
 package com.nethergrim.vk.images;
 
-import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
 import android.support.v7.graphics.Palette;
+import android.util.Log;
 
 import com.nethergrim.vk.MyApplication;
 import com.nethergrim.vk.R;
@@ -15,6 +15,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import io.realm.Realm;
+import rx.schedulers.Schedulers;
 
 /**
  * @author Andrey Drobyazko (c2q9450@gmail.com).
@@ -22,6 +23,7 @@ import io.realm.Realm;
  */
 public class PaletteProviderImpl implements PaletteProvider {
 
+    public static final String TAG = PaletteProviderImpl.class.getSimpleName();
     public static final int MIN_DELAY_TO_UPDATE_PALETTE_MS = 1000 * 60 * 60 * 24 * 2; // 2 days
 
     @Inject
@@ -34,32 +36,30 @@ public class PaletteProviderImpl implements PaletteProvider {
     @Override
     public void generateAndStorePalette(@NonNull User user) {
         if (doesPaletteNeedToBeUpdated(user.getId())) {
-            Bitmap bitmap = mImageLoader.getBitmap(user);
-            if (bitmap != null) {
-                Palette palette = Palette.from(bitmap).generate();
-                final UserPalette userPalette = UserPaletteUtils.convert(palette, user.getId(),
-                        MyApplication.getInstance().getResources().getColor(
-                                R.color.primary_light));
-                Realm.getDefaultInstance().executeTransaction(new Realm.Transaction() {
-                    @Override
-                    public void execute(Realm realm) {
-                        realm.copyToRealmOrUpdate(userPalette);
-                    }
-                });
+            mImageLoader
+                    .getBitmap(user)
+                    .doOnNext(bitmap -> {
+                        Palette palette = Palette.from(bitmap).generate();
+                        final UserPalette userPalette = UserPaletteUtils.convert(palette,
+                                user.getId(),
+                                MyApplication.getInstance().getResources().getColor(
+                                        R.color.primary_light));
+                        Realm.getDefaultInstance().executeTransaction(
+                                realm -> realm.copyToRealmOrUpdate(userPalette));
+                    })
+                    .doOnError(throwable -> Log.e(TAG, throwable.toString()))
+                    .observeOn(Schedulers.computation());
 
-            }
         }
     }
 
+
     @Override
     public void generateAndStorePalette(@NonNull final List<User> userList) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
-                for (int i = 0, size = userList.size(); i < size; i++) {
-                    generateAndStorePalette(userList.get(i));
-                }
+        new Thread(() -> {
+            Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
+            for (int i = 0, size = userList.size(); i < size; i++) {
+                generateAndStorePalette(userList.get(i));
             }
         }).start();
     }

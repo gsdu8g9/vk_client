@@ -33,14 +33,14 @@ import rx.Observable;
 /**
  * @author andrej on 12.08.15.
  */
-public class RetrofitRequestManagerImpl implements WebRequestManager {
+public class WebRequestManagerImpl implements WebRequestManager {
 
     RetrofitInterface mRetrofitInterface;
     @Inject
     Prefs mPrefs;
 
 
-    public RetrofitRequestManagerImpl() {
+    public WebRequestManagerImpl() {
         MyApplication.getInstance().getMainComponent().inject(this);
         RestAdapter restAdapter = new RestAdapter.Builder()
                 .setEndpoint(Constants.BASIC_API_URL)

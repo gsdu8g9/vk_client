@@ -1,35 +1,42 @@
 package com.nethergrim.vk.web;
 
-import android.support.annotation.NonNull;
-import android.support.annotation.UiThread;
+import android.support.annotation.WorkerThread;
 
-import java.util.ArrayList;
+import com.nethergrim.vk.models.ConversationsUserObject;
+import com.nethergrim.vk.models.ListOfFriends;
+import com.nethergrim.vk.models.ListOfUsers;
+import com.nethergrim.vk.models.StartupResponse;
+
+import java.util.List;
+
+import rx.Observable;
 
 /**
- * Should be used from Ui Thread, to fetch data from the backend, and persist it to the database.
- * After that on the Ui Thread Subscriber should be notified with {@link com.squareup.otto.Bus}
- * Inside, it will call web requests in {@link android.app.Service} in the background thread, to
- * process and persist all the data.
+ * Class that will handle results of every web request. Should be used to map, persist data, and
+ * notify UI thread to be updated.
+ * <p>
+ * This should be the only way to handle web requests results.
+ * <p>
+ * By default every method of current class should return {@link rx.Observable} as result.
  *
- * @author andrej on 24.07.15.
+ * @author andrej on 30.08.15 (c2q9450@gmail.com).
+ *         All rights reserved.
  */
 public interface DataManager {
 
-    @UiThread
-    void fetchConversationsAndUsers(int count, int offset, boolean onlyUnread);
+    @WorkerThread
+    Observable<StartupResponse> launchStartupTasksAndPersistToDb();
 
-    @UiThread
-    void fetchUsers(@NonNull ArrayList<Long> userIds);
+    @WorkerThread
+    Observable<ListOfFriends> fetchFriendsAndPersistToDb(int count, int offset);
 
-    @UiThread
-    void fetchMyFriends(int count, int offset);
+    @WorkerThread
+    Observable<ListOfUsers> fetchUsersAndPersistToDB(List<Long> ids);
 
+    @WorkerThread
+    Observable<ConversationsUserObject> fetchConversationsUserAndPersist(int limit,
+            int offset,
+            boolean unreadOnly);
 
-    @UiThread
-    /**
-     * This method will register to push-notifications, register online for 15 minutes, and fetch
-     * current user.
-     * */
-    void launchStartupTasks();
 
 }

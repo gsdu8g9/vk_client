@@ -78,7 +78,7 @@ dependencies {
     compile 'com.kogitune:pre-lollipop-activity-transition:1.0.0'
     compile 'com.github.dmytrodanylyk.shadow-layout:library:1.0.3'
     compile 'com.github.clans:fab:1.5.5'
-
+    compile 'io.realm:realm-android:0.82.1'
     compile "org.parceler:parceler-api:1.0.3"
     apt "org.parceler:parceler:1.0.3"
 }

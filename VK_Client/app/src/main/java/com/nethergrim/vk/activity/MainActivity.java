@@ -27,7 +27,7 @@ import com.nethergrim.vk.models.User;
 import com.nethergrim.vk.utils.UserProvider;
 import com.nethergrim.vk.utils.Utils;
 import com.nethergrim.vk.views.MenuButton;
-import com.nethergrim.vk.web.DataManager;
+import com.nethergrim.vk.web.WebIntentHandler;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 
@@ -50,7 +50,7 @@ public class MainActivity extends AbstractActivity implements
 
     public static final String TAG = MainActivity.class.getName();
     @Inject
-    DataManager mDataManager;
+    WebIntentHandler mWebIntentHandler;
     @Inject
     Bus mBus;
     @Inject
@@ -179,7 +179,7 @@ public class MainActivity extends AbstractActivity implements
         initToolbar();
         loadCurrentUser(new MyUserUpdatedEvent());
         onConversationsUpdated(new ConversationsUpdatedEvent());
-        mDataManager.launchStartupTasks();
+        mWebIntentHandler.launchStartupTasks();
     }
 
     @Override

@@ -7,10 +7,11 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Shader;
-import android.os.Handler;
+import android.graphics.drawable.Drawable;
 import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
+import android.util.Log;
 import android.widget.ImageView;
 
 import com.nethergrim.vk.R;
@@ -19,7 +20,10 @@ import com.nethergrim.vk.utils.UserUtils;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
-import java.io.IOException;
+import rx.Observable;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * @author andreydrobyazko on 4/7/15.
@@ -67,24 +71,9 @@ public class PicassoImageLoaderImpl implements ImageLoader {
     }
 
     @Override
-    public void getUserAvatar(@NonNull final User user, @NonNull final Target target) {
+    public Observable<Bitmap> getUserAvatar(@NonNull User user) {
         final String url = UserUtils.getStablePhotoUrl(user);
-        new Handler(Looper.getMainLooper()).post(new Runnable() {
-            @Override
-            public void run() {
-                if (!TextUtils.isEmpty(url)) {
-                    Picasso.with(context)
-                            .load(url)
-                            .config(Bitmap.Config.RGB_565)
-                            .into(target);
-                } else {
-                    Picasso.with(context)
-                            .load(R.drawable.ic_action_account_circle)
-                            .config(Bitmap.Config.RGB_565)
-                            .into(target);
-                }
-            }
-        });
+        return getBitmapObservable(url);
     }
 
     @Override
@@ -99,18 +88,55 @@ public class PicassoImageLoaderImpl implements ImageLoader {
     }
 
     @Override
-    public Bitmap getBitmap(@NonNull String url) {
-        try {
-            return Picasso.with(context).load(url).get();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
+    public Observable<Bitmap> getBitmap(@NonNull String url) {
+        return getBitmapObservable(url);
     }
 
     @Override
-    public Bitmap getBitmap(@NonNull User user) {
+    public Observable<Bitmap> getBitmap(@NonNull User user) {
         return getBitmap(UserUtils.getStablePhotoUrl(user));
+    }
+
+    private Observable<Bitmap> getBitmapObservable(String url) {
+        Observable<Bitmap> bitmapObservable = Observable.create(
+                new Observable.OnSubscribe<Bitmap>() {
+                    @Override
+                    public void call(final Subscriber<? super Bitmap> subscriber) {
+                        if (subscriber.isUnsubscribed()) {
+                            subscriber.onCompleted();
+                            return;
+                        }
+                        if (Looper.myLooper() == Looper.getMainLooper()) {
+                            Log.i("ISSUE5", " call - main thread ");
+                        }
+                        Target target = new Target() {
+                            @Override
+                            public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                                Log.i("picasso", " onBitmapLoaded ");
+                                if (Looper.myLooper() == Looper.getMainLooper()) {
+                                    Log.i("ISSUE5", " Target - onBitmapLoaded - main thread ");
+                                }
+                                subscriber.onNext(bitmap);
+                                subscriber.onCompleted();
+                            }
+
+                            @Override
+                            public void onBitmapFailed(Drawable errorDrawable) {
+                                subscriber.onError(new Exception(" Failed to load bitmap"));
+                            }
+
+                            @Override
+                            public void onPrepareLoad(Drawable placeHolderDrawable) {
+                            }
+                        };
+                        Picasso.with(context).load(url)
+                                .config(Bitmap.Config.RGB_565)
+                                .into(target);
+                    }
+                });
+        bitmapObservable.subscribeOn(AndroidSchedulers.mainThread());
+        bitmapObservable.observeOn(Schedulers.io());
+        return bitmapObservable;
     }
 
     public class RoundedTransformation implements com.squareup.picasso.Transformation {
@@ -128,8 +154,6 @@ public class PicassoImageLoaderImpl implements ImageLoader {
                     Bitmap.Config.ARGB_8888);
             Canvas canvas = new Canvas(output);
             canvas.drawCircle((source.getWidth()) / 2, (source.getHeight()) / 2, radius - 2, paint);
-
-
 
             Paint paint1 = new Paint();
             paint1.setColor(Color.WHITE);

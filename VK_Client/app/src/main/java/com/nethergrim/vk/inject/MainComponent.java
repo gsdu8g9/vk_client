@@ -7,6 +7,7 @@ import com.nethergrim.vk.activity.UserProfileActivity;
 import com.nethergrim.vk.adapter.ChatAdapter;
 import com.nethergrim.vk.adapter.ConversationsAdapter;
 import com.nethergrim.vk.adapter.FriendsAdapter;
+import com.nethergrim.vk.data.RealmPersistingManagerImpl;
 import com.nethergrim.vk.fragment.ChatFragment;
 import com.nethergrim.vk.fragment.FriendsFragment;
 import com.nethergrim.vk.fragment.MessagesFragment;
@@ -17,8 +18,9 @@ import com.nethergrim.vk.services.WorkerService;
 import com.nethergrim.vk.utils.DataHelper;
 import com.nethergrim.vk.utils.PushParserImpl;
 import com.nethergrim.vk.utils.RealmUserProviderImplementation;
-import com.nethergrim.vk.web.RealmDataManagerImpl;
-import com.nethergrim.vk.web.RetrofitRequestManagerImpl;
+import com.nethergrim.vk.web.DataManagerImpl;
+import com.nethergrim.vk.web.WebIntentHandlerImpl;
+import com.nethergrim.vk.web.WebRequestManagerImpl;
 
 import javax.inject.Singleton;
 
@@ -53,7 +55,7 @@ public interface MainComponent {
 
     void inject(PushParserImpl o);
 
-    void inject(RealmDataManagerImpl o);
+    void inject(WebIntentHandlerImpl o);
 
     void inject(FriendsAdapter o);
 
@@ -69,9 +71,13 @@ public interface MainComponent {
 
     void inject(ChatAdapter c);
 
-    void inject(RetrofitRequestManagerImpl r);
+    void inject(WebRequestManagerImpl r);
 
     void inject(WorkerService w);
 
     void inject(DataHelper m);
+
+    void inject(DataManagerImpl d);
+
+    void inject(RealmPersistingManagerImpl r);
 }
