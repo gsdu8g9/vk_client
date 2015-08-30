@@ -3,6 +3,8 @@ package com.nethergrim.vk.inject;
 import com.nethergrim.vk.MyApplication;
 import com.nethergrim.vk.caching.DefaultPrefsImpl;
 import com.nethergrim.vk.caching.Prefs;
+import com.nethergrim.vk.data.PersistingManager;
+import com.nethergrim.vk.data.RealmPersistingManagerImpl;
 import com.nethergrim.vk.images.ImageLoader;
 import com.nethergrim.vk.images.PaletteProvider;
 import com.nethergrim.vk.images.PaletteProviderImpl;
@@ -96,6 +98,12 @@ public class ProviderModule {
     @Singleton
     DataManager provideDataManager() {
         return new DataManagerImpl();
+    }
+
+    @Provides
+    @Singleton
+    PersistingManager providePersistingManager() {
+        return new RealmPersistingManagerImpl();
     }
 
 }
