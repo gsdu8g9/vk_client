@@ -7,6 +7,7 @@ import com.nethergrim.vk.activity.UserProfileActivity;
 import com.nethergrim.vk.adapter.ChatAdapter;
 import com.nethergrim.vk.adapter.ConversationsAdapter;
 import com.nethergrim.vk.adapter.FriendsAdapter;
+import com.nethergrim.vk.data.RealmPersistingManagerImpl;
 import com.nethergrim.vk.fragment.ChatFragment;
 import com.nethergrim.vk.fragment.FriendsFragment;
 import com.nethergrim.vk.fragment.MessagesFragment;
@@ -77,4 +78,6 @@ public interface MainComponent {
     void inject(DataHelper m);
 
     void inject(DataManagerImpl d);
+
+    void inject(RealmPersistingManagerImpl r);
 }

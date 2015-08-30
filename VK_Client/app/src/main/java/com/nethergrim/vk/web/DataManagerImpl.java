@@ -8,27 +8,17 @@ import com.google.android.gms.iid.InstanceID;
 import com.nethergrim.vk.Constants;
 import com.nethergrim.vk.MyApplication;
 import com.nethergrim.vk.caching.Prefs;
-import com.nethergrim.vk.event.ConversationsUpdatedEvent;
-import com.nethergrim.vk.event.FriendsUpdatedEvent;
-import com.nethergrim.vk.event.MyUserUpdatedEvent;
-import com.nethergrim.vk.event.UsersUpdatedEvent;
-import com.nethergrim.vk.images.ImageLoader;
-import com.nethergrim.vk.images.PaletteProvider;
-import com.nethergrim.vk.models.ConversationsList;
+import com.nethergrim.vk.data.PersistingManager;
 import com.nethergrim.vk.models.ConversationsUserObject;
 import com.nethergrim.vk.models.ListOfFriends;
 import com.nethergrim.vk.models.ListOfUsers;
 import com.nethergrim.vk.models.StartupResponse;
-import com.nethergrim.vk.models.User;
-import com.nethergrim.vk.utils.DataHelper;
-import com.squareup.otto.Bus;
 
 import java.io.IOException;
 import java.util.List;
 
 import javax.inject.Inject;
 
-import io.realm.Realm;
 import rx.Observable;
 
 /**
@@ -50,17 +40,12 @@ public class DataManagerImpl implements DataManager {
     @Inject
     Prefs mPrefs;
 
-    @Inject
-    Bus mBus;
-
-    @Inject
-    ImageLoader mImageLoader;
-
-    @Inject
-    PaletteProvider mPaletteProvider;
 
     @Inject
     WebRequestManager mWebRequestManager;
+
+    @Inject
+    PersistingManager mPersistingManager;
 
     public DataManagerImpl() {
         MyApplication.getInstance().getMainComponent().inject(this);
@@ -86,17 +71,11 @@ public class DataManagerImpl implements DataManager {
         // make web request
         StartupResponse startupResponse = mWebRequestManager.launchStartupTasks(token);
         if (startupResponse.ok()) {
-            mPrefs.setCurrentUserId(startupResponse.getResponse().getMe().getId());
-            Realm realm = Realm.getDefaultInstance();
-            realm.beginTransaction();
-            realm.copyToRealmOrUpdate(startupResponse.getResponse().getMe());
-            realm.commitTransaction();
+            mPersistingManager.manage(startupResponse);
         } else {
             // TODO: 30.08.15 handle errors
             Log.e(TAG, "error: " + startupResponse.getError().toString());
         }
-
-        mBus.post(new MyUserUpdatedEvent());
         return Observable.just(startupResponse);
     }
 
@@ -105,24 +84,7 @@ public class DataManagerImpl implements DataManager {
         ListOfFriends listOfFriends = mWebRequestManager.getFriends(
                 mPrefs.getCurrentUserId(), count, offset);
         if (listOfFriends.ok()) {
-
-            mPrefs.setFriendsCount(listOfFriends.getResponse().getCount());
-
-            Realm realm = Realm.getDefaultInstance();
-            realm.beginTransaction();
-            List<User> friends = listOfFriends.getResponse().getFriends();
-            for (int i = 0, size = friends.size(), rating = offset;
-                    i < size;
-                    i++, rating++) {
-                friends.get(i).setFriendRating(rating);
-            }
-            realm.copyToRealmOrUpdate(friends);
-            realm.commitTransaction();
-            mPaletteProvider.generateAndStorePalette(friends);
-            for (int i = 0, size = friends.size(); i < size; i++) {
-                mImageLoader.cacheUserAvatars(friends.get(i));
-            }
-            mBus.post(new FriendsUpdatedEvent(listOfFriends.getResponse().getCount()));
+            mPersistingManager.manage(listOfFriends, offset);
         } else {
             // TODO: 30.08.15 handle errors
             Log.e(TAG, "error: " + listOfFriends.getError().toString());
@@ -135,15 +97,7 @@ public class DataManagerImpl implements DataManager {
     public Observable<ListOfUsers> fetchUsersAndPersistToDB(List<Long> ids) {
         ListOfUsers listOfUsers = mWebRequestManager.getUsers(ids);
         if (listOfUsers.ok()) {
-            Realm realm = Realm.getDefaultInstance();
-            realm.beginTransaction();
-            realm.copyToRealmOrUpdate(listOfUsers.getResponse());
-            realm.commitTransaction();
-            mPaletteProvider.generateAndStorePalette(listOfUsers.getResponse());
-            mBus.post(new UsersUpdatedEvent());
-            for (int i = 0, size = listOfUsers.getResponse().size(); i < size; i++) {
-                mImageLoader.cacheUserAvatars(listOfUsers.getResponse().get(i));
-            }
+            mPersistingManager.manage(listOfUsers);
         } else {
             // TODO: 30.08.15 handle errors
             Log.e(TAG, "error: " + listOfUsers.getError().toString());
@@ -158,24 +112,7 @@ public class DataManagerImpl implements DataManager {
         ConversationsUserObject conversationsUserObject
                 = mWebRequestManager.getConversationsAndUsers(limit, offset, unreadOnly);
         if (conversationsUserObject.ok()) {
-
-            //saving conversations to db
-            ConversationsList conversationsList
-                    = conversationsUserObject.getResponse().getConversations();
-            conversationsList.setResults(
-                    DataHelper.normalizeConversationsList(conversationsList.getResults()));
-            mPrefs.setUnreadMessagesCount(conversationsList.getUnreadCount());
-            Realm realm = Realm.getDefaultInstance();
-            realm.beginTransaction();
-            realm.copyToRealmOrUpdate(conversationsList.getResults());
-
-            //saving users to db
-            List<User> users = conversationsUserObject.getResponse().getUsers();
-            realm.copyToRealmOrUpdate(users);
-
-            realm.commitTransaction();
-            mBus.post(new ConversationsUpdatedEvent());
-            mBus.post(new UsersUpdatedEvent());
+            mPersistingManager.manage(conversationsUserObject);
         } else {
             // TODO: 30.08.15 handle errors
             Log.e(TAG, conversationsUserObject.getError().toString());

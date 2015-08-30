@@ -22,7 +22,7 @@ public interface PersistingManager {
     void manage(StartupResponse startupResponse);
 
     @WorkerThread
-    void manage(ListOfFriends listOfFriends);
+    void manage(ListOfFriends listOfFriends, int offset);
 
     @WorkerThread
     void manage(ListOfUsers listOfUsers);
