@@ -8,6 +8,7 @@ import com.google.android.gms.iid.InstanceID;
 import com.nethergrim.vk.Constants;
 import com.nethergrim.vk.MyApplication;
 import com.nethergrim.vk.caching.Prefs;
+import com.nethergrim.vk.event.FriendsUpdatedEvent;
 import com.nethergrim.vk.event.MyUserUpdatedEvent;
 import com.nethergrim.vk.images.ImageLoader;
 import com.nethergrim.vk.images.PaletteProvider;
@@ -15,9 +16,11 @@ import com.nethergrim.vk.models.ConversationsUserObject;
 import com.nethergrim.vk.models.ListOfFriends;
 import com.nethergrim.vk.models.ListOfUsers;
 import com.nethergrim.vk.models.StartupResponse;
+import com.nethergrim.vk.models.User;
 import com.squareup.otto.Bus;
 
 import java.io.IOException;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -92,7 +95,33 @@ public class DataManagerImpl implements DataManager {
 
     @Override
     public Observable<ListOfFriends> fetchFriendsAndPersistToDb(int count, int offset) {
-        return null;
+        ListOfFriends listOfFriends = mWebRequestManager.getFriends(
+                mPrefs.getCurrentUserId(), count, offset);
+        if (listOfFriends.ok()) {
+
+            mPrefs.setFriendsCount(listOfFriends.getResponse().getCount());
+
+            Realm realm = Realm.getDefaultInstance();
+            realm.beginTransaction();
+            List<User> friends = listOfFriends.getResponse().getFriends();
+            for (int i = 0, size = friends.size(), rating = offset;
+                    i < size;
+                    i++, rating++) {
+                friends.get(i).setFriendRating(rating);
+            }
+            realm.copyToRealmOrUpdate(friends);
+            realm.commitTransaction();
+            mPaletteProvider.generateAndStorePalette(friends);
+            for (int i = 0, size = friends.size(); i < size; i++) {
+                mImageLoader.cacheUserAvatars(friends.get(i));
+            }
+            mBus.post(new FriendsUpdatedEvent(listOfFriends.getResponse().getCount()));
+        } else {
+            // TODO: 30.08.15 handle errors
+            Log.e("TAG","error: " + listOfFriends.getError().toString());
+        }
+
+        return Observable.just(listOfFriends);
     }
 
     @Override

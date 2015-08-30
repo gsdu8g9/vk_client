@@ -6,27 +6,19 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.text.TextUtils;
 import android.util.Log;
 
-import com.google.android.gms.gcm.GoogleCloudMessaging;
-import com.google.android.gms.iid.InstanceID;
 import com.nethergrim.vk.Constants;
 import com.nethergrim.vk.MyApplication;
 import com.nethergrim.vk.event.ConversationsUpdatedEvent;
-import com.nethergrim.vk.event.FriendsUpdatedEvent;
-import com.nethergrim.vk.event.MyUserUpdatedEvent;
 import com.nethergrim.vk.event.UsersUpdatedEvent;
 import com.nethergrim.vk.models.ConversationsList;
 import com.nethergrim.vk.models.ConversationsUserObject;
-import com.nethergrim.vk.models.ListOfFriends;
 import com.nethergrim.vk.models.ListOfUsers;
-import com.nethergrim.vk.models.StartupResponse;
 import com.nethergrim.vk.models.User;
 import com.nethergrim.vk.utils.DataHelper;
 import com.nethergrim.vk.web.DataManager;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -129,32 +121,7 @@ public class WorkerService extends Service {
     private void handleActionFetchMyFriends(Intent intent) {
         final int count = intent.getIntExtra(EXTRA_COUNT, 10);
         final int offset = intent.getIntExtra(EXTRA_OFFSET, 0);
-        addRunnableToQueue(() -> {
-            ListOfFriends listOfFriends = mWebRequestManager.getFriends(
-                    mPrefs.getCurrentUserId(), count, offset);
-            if (listOfFriends.ok()) {
-
-                mPrefs.setFriendsCount(listOfFriends.getResponse().getCount());
-
-                Realm realm = Realm.getDefaultInstance();
-                realm.beginTransaction();
-                List<User> friends = listOfFriends.getResponse().getFriends();
-                for (int i = 0, size = friends.size(), rating = offset;
-                        i < size;
-                        i++, rating++) {
-                    friends.get(i).setFriendRating(rating);
-                }
-                realm.copyToRealmOrUpdate(friends);
-                realm.commitTransaction();
-                mPaletteProvider.generateAndStorePalette(friends);
-                for (int i = 0, size = friends.size(); i < size; i++) {
-                    mImageLoader.cacheUserAvatars(friends.get(i));
-                }
-                mBus.post(new FriendsUpdatedEvent(listOfFriends.getResponse().getCount()));
-            } else {
-                Log.e("TAG","error: " + listOfFriends.getError().toString());
-            }
-        });
+        addRunnableToQueue(() -> mDataManager.fetchFriendsAndPersistToDb(count, offset));
     }
 
     private void handleActionFetchUsers(Intent intent) {
@@ -172,7 +139,7 @@ public class WorkerService extends Service {
                     mImageLoader.cacheUserAvatars(listOfUsers.getResponse().get(i));
                 }
             } else {
-                Log.e("TAG","error: " + listOfUsers.getError().toString());
+                Log.e("TAG", "error: " + listOfUsers.getError().toString());
             }
         });
     }
