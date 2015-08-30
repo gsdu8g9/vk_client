@@ -14,10 +14,12 @@ import com.nethergrim.vk.utils.PushParser;
 import com.nethergrim.vk.utils.PushParserImpl;
 import com.nethergrim.vk.utils.RealmUserProviderImplementation;
 import com.nethergrim.vk.utils.UserProvider;
-import com.nethergrim.vk.web.WebIntentHandlerImpl;
+import com.nethergrim.vk.web.DataManager;
+import com.nethergrim.vk.web.DataManagerImpl;
 import com.nethergrim.vk.web.WebIntentHandler;
-import com.nethergrim.vk.web.WebRequestManagerImpl;
+import com.nethergrim.vk.web.WebIntentHandlerImpl;
 import com.nethergrim.vk.web.WebRequestManager;
+import com.nethergrim.vk.web.WebRequestManagerImpl;
 import com.squareup.otto.Bus;
 
 import javax.inject.Singleton;
@@ -80,7 +82,7 @@ public class ProviderModule {
 
     @Provides
     @Singleton
-    WebIntentHandler provideDataManager() {
+    WebIntentHandler provideWebIntentHandler() {
         return new WebIntentHandlerImpl();
     }
 
@@ -88,6 +90,12 @@ public class ProviderModule {
     @Singleton
     PaletteProvider providePaletteProvider() {
         return new PaletteProviderImpl();
+    }
+
+    @Provides
+    @Singleton
+    DataManager provideDataManager() {
+        return new DataManagerImpl();
     }
 
 }
