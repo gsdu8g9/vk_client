@@ -23,4 +23,5 @@
     <string name="group_chat">Групповой Чат</string>
     <string name="sign_in">Войти</string>
     <string name="sticker">Стикер</string>
+    <string name="reply_to">Ответить</string>
 </resources>

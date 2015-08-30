@@ -2,25 +2,31 @@ package com.nethergrim.vk.models.push;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import org.parceler.Parcel;
+
 /**
  * @author andrej on 23.07.15.
  */
+@Parcel
 public class PushMessage extends PushObject {
 
 //        Bundle[{msg_id=8345, uid=69621580, text=lol, type=msg, badge=1, collapse_key=msg}]
 
     @JsonProperty("msg_id")
-    private String msgId;
+
+    String msgId;
     @JsonProperty("uid")
-    private String uid;
+    String uid;
     @JsonProperty("text")
-    private String text;
+    String text;
     @JsonProperty("type")
-    private String type;
+    String type;
     @JsonProperty("badge")
-    private String badge;
+    String badge;
     @JsonProperty("collapse_key")
-    private String collapseKey;
+    String collapseKey;
+    public PushMessage() {
+    }
 
     public String getMsgId() {
         return msgId;
@@ -58,12 +64,12 @@ public class PushMessage extends PushObject {
         return badge;
     }
 
-    public long getUserId(){
-        return Long.parseLong(uid);
-    }
-
     public void setBadge(String badge) {
         this.badge = badge;
+    }
+
+    public long getUserId() {
+        return Long.parseLong(uid);
     }
 
     public String getCollapseKey() {
