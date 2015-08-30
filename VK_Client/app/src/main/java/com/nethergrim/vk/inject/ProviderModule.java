@@ -16,7 +16,7 @@ import com.nethergrim.vk.utils.RealmUserProviderImplementation;
 import com.nethergrim.vk.utils.UserProvider;
 import com.nethergrim.vk.web.WebIntentHandlerImpl;
 import com.nethergrim.vk.web.WebIntentHandler;
-import com.nethergrim.vk.web.RetrofitRequestManagerImpl;
+import com.nethergrim.vk.web.WebRequestManagerImpl;
 import com.nethergrim.vk.web.WebRequestManager;
 import com.squareup.otto.Bus;
 
@@ -35,7 +35,7 @@ public class ProviderModule {
     @Provides
     @Singleton
     WebRequestManager provideWebRequestManager() {
-        return new RetrofitRequestManagerImpl();
+        return new WebRequestManagerImpl();
     }
 
     @Provides

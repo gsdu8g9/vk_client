@@ -18,7 +18,7 @@ import com.nethergrim.vk.utils.DataHelper;
 import com.nethergrim.vk.utils.PushParserImpl;
 import com.nethergrim.vk.utils.RealmUserProviderImplementation;
 import com.nethergrim.vk.web.WebIntentHandlerImpl;
-import com.nethergrim.vk.web.RetrofitRequestManagerImpl;
+import com.nethergrim.vk.web.WebRequestManagerImpl;
 
 import javax.inject.Singleton;
 
@@ -69,7 +69,7 @@ public interface MainComponent {
 
     void inject(ChatAdapter c);
 
-    void inject(RetrofitRequestManagerImpl r);
+    void inject(WebRequestManagerImpl r);
 
     void inject(WorkerService w);
 
