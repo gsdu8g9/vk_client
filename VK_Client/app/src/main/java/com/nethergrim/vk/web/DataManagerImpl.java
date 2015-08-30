@@ -8,16 +8,19 @@ import com.google.android.gms.iid.InstanceID;
 import com.nethergrim.vk.Constants;
 import com.nethergrim.vk.MyApplication;
 import com.nethergrim.vk.caching.Prefs;
+import com.nethergrim.vk.event.ConversationsUpdatedEvent;
 import com.nethergrim.vk.event.FriendsUpdatedEvent;
 import com.nethergrim.vk.event.MyUserUpdatedEvent;
 import com.nethergrim.vk.event.UsersUpdatedEvent;
 import com.nethergrim.vk.images.ImageLoader;
 import com.nethergrim.vk.images.PaletteProvider;
+import com.nethergrim.vk.models.ConversationsList;
 import com.nethergrim.vk.models.ConversationsUserObject;
 import com.nethergrim.vk.models.ListOfFriends;
 import com.nethergrim.vk.models.ListOfUsers;
 import com.nethergrim.vk.models.StartupResponse;
 import com.nethergrim.vk.models.User;
+import com.nethergrim.vk.utils.DataHelper;
 import com.squareup.otto.Bus;
 
 import java.io.IOException;
@@ -40,6 +43,9 @@ import rx.Observable;
  *         All rights reserved.
  */
 public class DataManagerImpl implements DataManager {
+
+
+    public static final String TAG = DataManager.class.getSimpleName();
 
     @Inject
     Prefs mPrefs;
@@ -87,7 +93,7 @@ public class DataManagerImpl implements DataManager {
             realm.commitTransaction();
         } else {
             // TODO: 30.08.15 handle errors
-            Log.e("TAG", "error: " + startupResponse.getError().toString());
+            Log.e(TAG, "error: " + startupResponse.getError().toString());
         }
 
         mBus.post(new MyUserUpdatedEvent());
@@ -119,7 +125,7 @@ public class DataManagerImpl implements DataManager {
             mBus.post(new FriendsUpdatedEvent(listOfFriends.getResponse().getCount()));
         } else {
             // TODO: 30.08.15 handle errors
-            Log.e("TAG","error: " + listOfFriends.getError().toString());
+            Log.e(TAG, "error: " + listOfFriends.getError().toString());
         }
 
         return Observable.just(listOfFriends);
@@ -140,7 +146,7 @@ public class DataManagerImpl implements DataManager {
             }
         } else {
             // TODO: 30.08.15 handle errors
-            Log.e("TAG", "error: " + listOfUsers.getError().toString());
+            Log.e(TAG, "error: " + listOfUsers.getError().toString());
         }
         return Observable.just(listOfUsers);
     }
@@ -149,6 +155,31 @@ public class DataManagerImpl implements DataManager {
     public Observable<ConversationsUserObject> fetchConversationsUserAndPersist(int limit,
             int offset,
             boolean unreadOnly) {
-        return null;
+        ConversationsUserObject conversationsUserObject
+                = mWebRequestManager.getConversationsAndUsers(limit, offset, unreadOnly);
+        if (conversationsUserObject.ok()) {
+
+            //saving conversations to db
+            ConversationsList conversationsList
+                    = conversationsUserObject.getResponse().getConversations();
+            conversationsList.setResults(
+                    DataHelper.normalizeConversationsList(conversationsList.getResults()));
+            mPrefs.setUnreadMessagesCount(conversationsList.getUnreadCount());
+            Realm realm = Realm.getDefaultInstance();
+            realm.beginTransaction();
+            realm.copyToRealmOrUpdate(conversationsList.getResults());
+
+            //saving users to db
+            List<User> users = conversationsUserObject.getResponse().getUsers();
+            realm.copyToRealmOrUpdate(users);
+
+            realm.commitTransaction();
+            mBus.post(new ConversationsUpdatedEvent());
+            mBus.post(new UsersUpdatedEvent());
+        } else {
+            // TODO: 30.08.15 handle errors
+            Log.e(TAG, conversationsUserObject.getError().toString());
+        }
+        return Observable.just(conversationsUserObject);
     }
 }

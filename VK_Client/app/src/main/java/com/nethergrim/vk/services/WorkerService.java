@@ -6,16 +6,9 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
 import com.nethergrim.vk.Constants;
 import com.nethergrim.vk.MyApplication;
-import com.nethergrim.vk.event.ConversationsUpdatedEvent;
-import com.nethergrim.vk.event.UsersUpdatedEvent;
-import com.nethergrim.vk.models.ConversationsList;
-import com.nethergrim.vk.models.ConversationsUserObject;
-import com.nethergrim.vk.models.User;
-import com.nethergrim.vk.utils.DataHelper;
 import com.nethergrim.vk.web.DataManager;
 
 import java.util.ArrayList;
@@ -26,8 +19,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import javax.inject.Inject;
-
-import io.realm.Realm;
 
 /**
  * @author andrej on 14.08.15.
@@ -132,32 +123,8 @@ public class WorkerService extends Service {
         final int limit = intent.getIntExtra(EXTRA_COUNT, 10);
         final int offset = intent.getIntExtra(EXTRA_OFFSET, 0);
         final boolean unreadOnly = intent.getBooleanExtra(EXTRA_ONLY_UNREAD, false);
-        addRunnableToQueue(() -> {
-            ConversationsUserObject conversationsUserObject
-                    = mWebRequestManager.getConversationsAndUsers(limit, offset, unreadOnly);
-            if (conversationsUserObject.ok()) {
-
-                //saving conversations to db
-                ConversationsList conversationsList
-                        = conversationsUserObject.getResponse().getConversations();
-                conversationsList.setResults(
-                        DataHelper.normalizeConversationsList(conversationsList.getResults()));
-                mPrefs.setUnreadMessagesCount(conversationsList.getUnreadCount());
-                Realm realm = Realm.getDefaultInstance();
-                realm.beginTransaction();
-                realm.copyToRealmOrUpdate(conversationsList.getResults());
-
-                //saving users to db
-                List<User> users = conversationsUserObject.getResponse().getUsers();
-                realm.copyToRealmOrUpdate(users);
-
-                realm.commitTransaction();
-                mBus.post(new ConversationsUpdatedEvent());
-                mBus.post(new UsersUpdatedEvent());
-            } else {
-                Log.e(TAG, conversationsUserObject.getError().toString());
-            }
-        });
+        addRunnableToQueue(
+                () -> mDataManager.fetchConversationsUserAndPersist(limit, offset, unreadOnly));
     }
 
     private void addRunnableToQueue(@NonNull Runnable r) {
