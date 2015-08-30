@@ -1,7 +1,9 @@
 package com.nethergrim.vk.gcm;
 
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -12,6 +14,7 @@ import android.util.Log;
 import com.google.android.gms.gcm.GcmListenerService;
 import com.nethergrim.vk.MyApplication;
 import com.nethergrim.vk.R;
+import com.nethergrim.vk.activity.ChatActivity;
 import com.nethergrim.vk.caching.Prefs;
 import com.nethergrim.vk.images.ImageLoader;
 import com.nethergrim.vk.models.User;
@@ -40,25 +43,19 @@ import rx.schedulers.Schedulers;
 public class MyGcmListenerService extends GcmListenerService {
 
     public static final String TAG = MyGcmListenerService.class.getSimpleName();
-
+    public static final String GROUP_MESSAGE = "msg";
     @Inject
     DataManager mDataManager;
-
     @Inject
     PushParser mPushParser;
-
     @Inject
     UserProvider mUserProvider;
-
     @Inject
     ImageLoader mImageLoader;
-
     @Inject
     WebRequestManager mWebRequestManager;
-
     @Inject
     Bus mBus;
-
     @Inject
     Prefs mPrefs;
 
@@ -90,8 +87,6 @@ public class MyGcmListenerService extends GcmListenerService {
         mDataManager.fetchConversationsAndUsers(5, 0, false);
     }
 
-    public static final String GROUP_MESSAGE = "msg";
-
     private void showNotification(@NonNull final PushMessage message) {
         User user = mUserProvider.getUser(message.getUid());
         mPrefs.setUnreadMessagesCount(Integer.parseInt(message.getBadge()));
@@ -104,11 +99,26 @@ public class MyGcmListenerService extends GcmListenerService {
             mImageLoader.getUserAvatar(user, new Target() {
                 @Override
                 public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+
+                    // Create an intent for the reply action
+                    Intent actionIntent = ChatActivity.getIntentForReplyAction(
+                            MyGcmListenerService.this, message);
+                    PendingIntent actionPendingIntent =
+                            PendingIntent.getActivity(MyGcmListenerService.this, 0, actionIntent,
+                                    PendingIntent.FLAG_UPDATE_CURRENT);
+
+                    // Create the action to reply
+                    NotificationCompat.Action action =
+                            new NotificationCompat.Action.Builder(R.drawable.ic_stat_content_reply,
+                                    getString(R.string.reply_to), actionPendingIntent)
+                                    .build();
+
                     NotificationCompat.Builder mBuilder =
                             new NotificationCompat.Builder(MyGcmListenerService.this)
                                     .setSmallIcon(R.drawable.ic_stat_content_mail)
                                     .setLargeIcon(bitmap)
                                     .setGroup(GROUP_MESSAGE)
+                                    .addAction(action)
                                     .setContentTitle(firstName + " " + lastName)
                                     .setContentText(message.getText());
 
@@ -135,7 +145,7 @@ public class MyGcmListenerService extends GcmListenerService {
                     .observeOn(Schedulers.io())
                     .subscribeOn(AndroidSchedulers.mainThread())
                     .subscribe(listOfUsers -> {
-
+                        // TODO: 30.08.15 persist user to db, and do all mapping stuff
                     }, throwable -> {
                         Log.e(TAG, throwable.toString());
                         // just ignore

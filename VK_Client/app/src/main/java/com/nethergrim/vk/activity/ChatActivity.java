@@ -9,7 +9,10 @@ import com.nethergrim.vk.Constants;
 import com.nethergrim.vk.R;
 import com.nethergrim.vk.fragment.ChatFragment;
 import com.nethergrim.vk.models.Conversation;
+import com.nethergrim.vk.models.push.PushMessage;
 import com.nethergrim.vk.utils.ConversationUtils;
+
+import org.parceler.Parcels;
 
 /**
  * Activity for screen with conversation. By default will open {@link ChatFragment} as a main
@@ -21,6 +24,14 @@ import com.nethergrim.vk.utils.ConversationUtils;
  */
 public class ChatActivity extends AbstractActivity {
 
+    private static final String EXTRA_PUSH_MESSAGE = "epm";
+
+
+    public static Intent getIntentForReplyAction(Context context, PushMessage pushMessage) {
+        Intent intent = new Intent(context, ChatActivity.class);
+        intent.putExtra(EXTRA_PUSH_MESSAGE, Parcels.wrap(pushMessage));
+        return intent;
+    }
 
     public static void start(Context context, Conversation conversation) {
         Intent intent = new Intent(context, ChatActivity.class);
@@ -52,8 +63,17 @@ public class ChatActivity extends AbstractActivity {
                 boolean isGroupConversation = extras.getBoolean(Constants.EXTRA_GROUP_CONVERSATION);
                 showFragment(ChatFragment.getInstance(mConversationId, isGroupConversation), false,
                         false, R.id.root);
+            } else if (extras.containsKey(EXTRA_PUSH_MESSAGE)) {
+                handleExtrasForReplyToPush(
+                        Parcels.unwrap(extras.getParcelable(EXTRA_PUSH_MESSAGE)));
             }
         }
 
+    }
+
+    private void handleExtrasForReplyToPush(PushMessage pushMessage) {
+        // TODO: 30.08.15 remove notification with this current message
+        // notification id = message.getUid().hashCode()
+        // TODO: 30.08.15 handle it
     }
 }
