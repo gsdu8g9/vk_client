@@ -1,7 +1,5 @@
 package com.nethergrim.vk.web;
 
-import android.support.annotation.WorkerThread;
-
 import com.nethergrim.vk.models.ConversationsUserObject;
 import com.nethergrim.vk.models.ListOfFriends;
 import com.nethergrim.vk.models.ListOfMessages;
@@ -10,6 +8,7 @@ import com.nethergrim.vk.models.StartupResponse;
 
 import java.util.List;
 
+import retrofit.client.Response;
 import rx.Observable;
 
 /**
@@ -19,25 +18,19 @@ import rx.Observable;
 public interface WebRequestManager {
 
 
-    @WorkerThread
-    ListOfUsers getUsers(List<Long> ids);
-    // any thread
-    Observable<ListOfUsers> getUsersObservable(List<Long> ids);
+    Observable<ListOfUsers> getUsers(List<Long> ids);
 
-    @WorkerThread
-    boolean unregisterFromPushNotifications();
+    Observable<Response> unregisterFromPushNotifications();
 
-    @WorkerThread
-    ListOfFriends getFriends(long userId, int count, int offset);
+    Observable<ListOfFriends> getFriends(long userId, int count, int offset);
 
-    @WorkerThread
-    StartupResponse launchStartupTasks(String gcmToken);
+    Observable<StartupResponse> launchStartupTasks(String gcmToken);
 
-    @WorkerThread
-    ConversationsUserObject getConversationsAndUsers(int limit, int offset, boolean unread);
+    Observable<ConversationsUserObject> getConversationsAndUsers(int limit,
+            int offset,
+            boolean unread);
 
-    @WorkerThread
-    ListOfMessages getChatHistory(int offset,
+    Observable<ListOfMessages> getChatHistory(int offset,
             int count,
             long userId,
             long chatId,

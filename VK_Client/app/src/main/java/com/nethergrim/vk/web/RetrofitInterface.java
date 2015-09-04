@@ -21,23 +21,24 @@ import rx.Observable;
 public interface RetrofitInterface {
 
     @GET(Constants.Requests.GET_USERS)
-    ListOfUsers getUsers(@QueryMap Map<String, String> options);
+    Observable<ListOfUsers> getUsers(@QueryMap Map<String, String> options);
 
     @GET(Constants.Requests.GET_USERS)
     Observable<ListOfUsers> getUsersObservable(@QueryMap Map<String, String> options);
 
     @POST(Constants.Requests.EXECUTE_POST_STARTUP)
-    StartupResponse launchStartupTasks(@QueryMap Map<String, String> options);
+    Observable<StartupResponse> launchStartupTasks(@QueryMap Map<String, String> options);
 
     @POST(Constants.Requests.ACCOUNT_UNREGISTER_DEVICE)
-    Response unregisterFromPushes(@QueryMap Map<String, String> options);
+    Observable<Response> unregisterFromPushes(@QueryMap Map<String, String> options);
 
     @GET(Constants.Requests.EXECUTE_GET_FRIENDS)
-    ListOfFriends getFriends(@QueryMap Map<String, String> options);
+    Observable<ListOfFriends> getFriends(@QueryMap Map<String, String> options);
 
     @GET(Constants.Requests.MESSAGES_GET_HISTORY)
-    ListOfMessages getMessagesHistory(@QueryMap Map<String, String> options);
+    Observable<ListOfMessages> getMessagesHistory(@QueryMap Map<String, String> options);
 
     @GET(Constants.Requests.EXECUTE_GET_CONVERSATIONS_AND_USERS)
-    ConversationsUserObject getConversationsAndUsers(@QueryMap Map<String, String> options);
+    Observable<ConversationsUserObject> getConversationsAndUsers(
+            @QueryMap Map<String, String> options);
 }

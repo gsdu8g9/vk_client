@@ -32,7 +32,6 @@ import java.util.Collections;
 import javax.inject.Inject;
 
 import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 
 /**
  * @author Andrey Drobyazko (c2q9450@gmail.com).
@@ -146,15 +145,11 @@ public class MyGcmListenerService extends GcmListenerService {
         } else {
             Log.d(TAG, "user is null, fetching it");
             // fetch user from backend
-            mWebRequestManager
-                    .getUsersObservable(Collections.singletonList(message.getUserId()))
-                    .observeOn(Schedulers.io())
-                    .subscribeOn(AndroidSchedulers.mainThread())
-                    .doOnError(throwable -> Log.e(TAG, throwable.toString()))
+            mWebRequestManager.getUsers(Collections.singletonList(message.getUserId()))
+                    .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(listOfUsers -> {
                         mPersistingManager.manage(listOfUsers);
                         showNotification(message);
-
                     })
             ;
         }
