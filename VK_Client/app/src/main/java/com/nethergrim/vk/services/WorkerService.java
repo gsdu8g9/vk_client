@@ -4,7 +4,6 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.nethergrim.vk.Constants;
@@ -12,11 +11,6 @@ import com.nethergrim.vk.MyApplication;
 import com.nethergrim.vk.web.DataManager;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
 import javax.inject.Inject;
 
@@ -41,8 +35,6 @@ public class WorkerService extends Service {
     @Inject
     DataManager mDataManager;
 
-    private ExecutorService mExecutorService;
-    private List<Future<?>> mFuturesList = new ArrayList<>(300);
 
     public static void fetchConversationsAndUsers(Context context,
             int count,
@@ -81,7 +73,6 @@ public class WorkerService extends Service {
     public void onCreate() {
         super.onCreate();
         MyApplication.getInstance().getMainComponent().inject(this);
-        mExecutorService = Executors.newFixedThreadPool(MAX_THREADS_COUNT);
     }
 
     @Override
@@ -105,51 +96,25 @@ public class WorkerService extends Service {
     }
 
     private void handleActionLaunchStartupTasks() {
-        addRunnableToQueue(mDataManager::launchStartupTasksAndPersistToDb);
+        mDataManager.launchStartupTasksAndPersistToDb().subscribe();
     }
 
     private void handleActionFetchMyFriends(Intent intent) {
         final int count = intent.getIntExtra(EXTRA_COUNT, 10);
         final int offset = intent.getIntExtra(EXTRA_OFFSET, 0);
-        addRunnableToQueue(() -> mDataManager.fetchFriendsAndPersistToDb(count, offset));
+        mDataManager.fetchFriendsAndPersistToDb(count, offset).subscribe();
     }
 
     private void handleActionFetchUsers(Intent intent) {
         final ArrayList<Long> ids = (ArrayList<Long>) intent.getSerializableExtra(EXTRA_IDS);
-        addRunnableToQueue(() -> mDataManager.fetchUsersAndPersistToDB(ids));
+        mDataManager.fetchUsersAndPersistToDB(ids).subscribe();
     }
 
     private void handleActionFetchConversationsAndUsers(Intent intent) {
         final int limit = intent.getIntExtra(EXTRA_COUNT, 10);
         final int offset = intent.getIntExtra(EXTRA_OFFSET, 0);
         final boolean unreadOnly = intent.getBooleanExtra(EXTRA_ONLY_UNREAD, false);
-        addRunnableToQueue(
-                () -> mDataManager.fetchConversationsUserAndPersist(limit, offset, unreadOnly));
-    }
-
-    private void addRunnableToQueue(@NonNull Runnable r) {
-        if (mExecutorService != null) {
-            Future<?> f = mExecutorService.submit(r);
-            mFuturesList.add(f);
-        }
-    }
-
-    /**
-     * @return true if all Futures that are representing web requests are finished and done.
-     * This means that current Service can be stopped correctly.
-     */
-    private boolean canBeKilled() {
-        for (int i = 0, size = mFuturesList.size(); i < size; i++) {
-            try {
-                if (mFuturesList.get(i).get() != null) {
-                    return false;
-                }
-            } catch (InterruptedException | ExecutionException e) {
-                e.printStackTrace();
-                return false;
-            }
-        }
-        return true;
+        mDataManager.fetchConversationsUserAndPersist(limit, offset, unreadOnly).subscribe();
     }
 
 }

@@ -26,6 +26,7 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import retrofit.RestAdapter;
+import retrofit.client.OkClient;
 import retrofit.client.Response;
 import retrofit.converter.JacksonConverter;
 import rx.Observable;
@@ -58,10 +59,12 @@ public class WebRequestManagerImpl implements WebRequestManager {
 
     public WebRequestManagerImpl() {
         MyApplication.getInstance().getMainComponent().inject(this);
+
         RestAdapter restAdapter = new RestAdapter.Builder()
                 .setEndpoint(Constants.BASIC_API_URL)
                 .setLogLevel(RestAdapter.LogLevel.BASIC)
                 .setConverter(new JacksonConverter())
+                .setClient(new OkClient())
                 .build();
         mRetrofitInterface = restAdapter.create(RetrofitInterface.class);
     }
