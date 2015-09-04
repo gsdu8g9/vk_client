@@ -1,7 +1,6 @@
 package com.nethergrim.vk.web;
 
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.android.gms.iid.InstanceID;
@@ -67,56 +66,27 @@ public class DataManagerImpl implements DataManager {
             }
             mPrefs.setGcmToken(token);
         }
-
-        // make web request
-        StartupResponse startupResponse = mWebRequestManager.launchStartupTasks(token);
-        if (startupResponse.ok()) {
-            mPersistingManager.manage(startupResponse);
-        } else {
-            // TODO: 30.08.15 handle errors
-            Log.e(TAG, "error: " + startupResponse.getError().toString());
-        }
-        return Observable.just(startupResponse);
+        return mWebRequestManager
+                .launchStartupTasks(token)
+                .doOnNext(mPersistingManager::manage);
     }
 
     @Override
     public Observable<ListOfFriends> fetchFriendsAndPersistToDb(int count, int offset) {
-        ListOfFriends listOfFriends = mWebRequestManager.getFriends(
-                mPrefs.getCurrentUserId(), count, offset);
-        if (listOfFriends.ok()) {
-            mPersistingManager.manage(listOfFriends, offset);
-        } else {
-            // TODO: 30.08.15 handle errors
-            Log.e(TAG, "error: " + listOfFriends.getError().toString());
-        }
-
-        return Observable.just(listOfFriends);
+        return mWebRequestManager.getFriends(mPrefs.getCurrentUserId(), count, offset)
+                .doOnNext(listOfFriends -> mPersistingManager.manage(listOfFriends, offset));
     }
 
     @Override
     public Observable<ListOfUsers> fetchUsersAndPersistToDB(List<Long> ids) {
-        ListOfUsers listOfUsers = mWebRequestManager.getUsers(ids);
-        if (listOfUsers.ok()) {
-            mPersistingManager.manage(listOfUsers);
-        } else {
-            // TODO: 30.08.15 handle errors
-            Log.e(TAG, "error: " + listOfUsers.getError().toString());
-        }
-        return Observable.just(listOfUsers);
+        return mWebRequestManager.getUsers(ids).doOnNext(mPersistingManager::manage);
     }
 
     @Override
     public Observable<ConversationsUserObject> fetchConversationsUserAndPersist(int limit,
             int offset,
             boolean unreadOnly) {
-        ConversationsUserObject conversationsUserObject
-                = mWebRequestManager.getConversationsAndUsers(limit, offset, unreadOnly);
-        if (conversationsUserObject.ok()) {
-            mPersistingManager.manage(conversationsUserObject);
-        } else {
-            // TODO: 30.08.15 handle errors
-            Log.e(TAG, conversationsUserObject.getError().toString());
-        }
-        return Observable.just(conversationsUserObject);
+        return mWebRequestManager.getConversationsAndUsers(limit, offset, unreadOnly)
+                .doOnNext(mPersistingManager::manage);
     }
 }
