@@ -150,7 +150,7 @@ public class MyGcmListenerService extends GcmListenerService {
                     .subscribe(listOfUsers -> {
                         mPersistingManager.manage(listOfUsers);
                         showNotification(message);
-                    })
+                    }, throwable -> Log.e(TAG, throwable.getMessage()))
             ;
         }
 

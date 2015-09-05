@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 
 import com.nethergrim.vk.Constants;
 import com.nethergrim.vk.MyApplication;
+import com.nethergrim.vk.utils.LoggerObserver;
 import com.nethergrim.vk.web.DataManager;
 
 import java.util.ArrayList;
@@ -96,25 +97,26 @@ public class WorkerService extends Service {
     }
 
     private void handleActionLaunchStartupTasks() {
-        mDataManager.launchStartupTasksAndPersistToDb().subscribe();
+        mDataManager.launchStartupTasksAndPersistToDb().subscribe(new LoggerObserver());
     }
 
     private void handleActionFetchMyFriends(Intent intent) {
         final int count = intent.getIntExtra(EXTRA_COUNT, 10);
         final int offset = intent.getIntExtra(EXTRA_OFFSET, 0);
-        mDataManager.fetchFriendsAndPersistToDb(count, offset).subscribe();
+        mDataManager.fetchFriendsAndPersistToDb(count, offset).subscribe(new LoggerObserver());
     }
 
     private void handleActionFetchUsers(Intent intent) {
         final ArrayList<Long> ids = (ArrayList<Long>) intent.getSerializableExtra(EXTRA_IDS);
-        mDataManager.fetchUsersAndPersistToDB(ids).subscribe();
+        mDataManager.fetchUsersAndPersistToDB(ids).subscribe(new LoggerObserver());
     }
 
     private void handleActionFetchConversationsAndUsers(Intent intent) {
         final int limit = intent.getIntExtra(EXTRA_COUNT, 10);
         final int offset = intent.getIntExtra(EXTRA_OFFSET, 0);
         final boolean unreadOnly = intent.getBooleanExtra(EXTRA_ONLY_UNREAD, false);
-        mDataManager.fetchConversationsUserAndPersist(limit, offset, unreadOnly).subscribe();
+        mDataManager.fetchConversationsUserAndPersist(limit, offset, unreadOnly)
+                .subscribe(new LoggerObserver());
     }
 
 }

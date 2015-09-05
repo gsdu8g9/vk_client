@@ -18,6 +18,7 @@ import com.nethergrim.vk.utils.RetryWithDelay;
 import com.nethergrim.vk.utils.UserUtils;
 import com.nethergrim.vk.utils.Utils;
 
+import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -51,9 +52,13 @@ public class WebRequestManagerImpl implements WebRequestManager {
         }
     };
     private RetryWithDelay mRetryCall = new RetryWithDelay(MAX_RETRY_COUNT, MIN_RETRY_DELAY_MS);
-    private Action1<Throwable> mErrorCall = (throwable -> {
-        Log.e(TAG, throwable.toString());
-        // TODO: 05.09.15 use analytics logging here
+    private Action1<Throwable> mErrorCall = (e -> {
+        if (e instanceof UnknownHostException) {
+            // ignore, just no internet connection
+        } else {
+            Log.e("WebError", e.toString() + " " + e.getMessage());
+            // TODO: 05.09.15 add analytics handling here
+        }
     }
     );
 
@@ -62,7 +67,7 @@ public class WebRequestManagerImpl implements WebRequestManager {
 
         RestAdapter restAdapter = new RestAdapter.Builder()
                 .setEndpoint(Constants.BASIC_API_URL)
-                .setLogLevel(RestAdapter.LogLevel.BASIC)
+                .setLogLevel(RestAdapter.LogLevel.NONE)
                 .setConverter(new JacksonConverter())
                 .setClient(new OkClient())
                 .build();
