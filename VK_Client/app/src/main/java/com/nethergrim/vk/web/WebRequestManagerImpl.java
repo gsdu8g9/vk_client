@@ -2,7 +2,6 @@ package com.nethergrim.vk.web;
 
 import android.os.Build;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
 import com.kisstools.utils.StringUtil;
 import com.nethergrim.vk.Constants;
@@ -51,18 +50,13 @@ public class WebRequestManagerImpl implements WebRequestManager {
         }
     };
     private RetryWithDelay mRetryCall = new RetryWithDelay(MAX_RETRY_COUNT, MIN_RETRY_DELAY_MS);
-    private Action1<Throwable> mErrorCall = (throwable -> {
-        Log.e(TAG, throwable.toString());
-        // TODO: 05.09.15 use analytics logging here
-    }
-    );
 
     public WebRequestManagerImpl() {
         MyApplication.getInstance().getMainComponent().inject(this);
 
         RestAdapter restAdapter = new RestAdapter.Builder()
                 .setEndpoint(Constants.BASIC_API_URL)
-                .setLogLevel(RestAdapter.LogLevel.BASIC)
+                .setLogLevel(RestAdapter.LogLevel.NONE)
                 .setConverter(new JacksonConverter())
                 .setClient(new OkClient())
                 .build();
@@ -101,7 +95,6 @@ public class WebRequestManagerImpl implements WebRequestManager {
         return mRetrofitInterface.getUsers(params)
                 .doOnNext(mDefaultResponseChecker)
                 .retryWhen(mRetryCall)
-                .doOnError(mErrorCall)
                 .observeOn(getDefaultScheduler())
                 .subscribeOn(getDefaultScheduler());
     }
@@ -112,7 +105,6 @@ public class WebRequestManagerImpl implements WebRequestManager {
         params.put("device_id", Utils.generateAndroidId());
         return mRetrofitInterface.unregisterFromPushes(params)
                 .retryWhen(mRetryCall)
-                .doOnError(mErrorCall)
                 .observeOn(getDefaultScheduler())
                 .subscribeOn(getDefaultScheduler());
     }
@@ -127,7 +119,6 @@ public class WebRequestManagerImpl implements WebRequestManager {
         return mRetrofitInterface.getFriends(params)
                 .doOnNext(mDefaultResponseChecker)
                 .retryWhen(mRetryCall)
-                .doOnError(mErrorCall)
                 .observeOn(getDefaultScheduler())
                 .subscribeOn(getDefaultScheduler());
     }
@@ -146,7 +137,6 @@ public class WebRequestManagerImpl implements WebRequestManager {
         return mRetrofitInterface.launchStartupTasks(params)
                 .doOnNext(mDefaultResponseChecker)
                 .retryWhen(mRetryCall)
-                .doOnError(mErrorCall)
                 .observeOn(getDefaultScheduler())
                 .subscribeOn(getDefaultScheduler());
     }
@@ -169,7 +159,6 @@ public class WebRequestManagerImpl implements WebRequestManager {
         return mRetrofitInterface.getConversationsAndUsers(params)
                 .doOnNext(mDefaultResponseChecker)
                 .retryWhen(mRetryCall)
-                .doOnError(mErrorCall)
                 .observeOn(getDefaultScheduler())
                 .subscribeOn(getDefaultScheduler());
     }
@@ -205,7 +194,6 @@ public class WebRequestManagerImpl implements WebRequestManager {
         return mRetrofitInterface.getMessagesHistory(params)
                 .doOnNext(mDefaultResponseChecker)
                 .retryWhen(mRetryCall)
-                .doOnError(mErrorCall)
                 .observeOn(getDefaultScheduler())
                 .subscribeOn(getDefaultScheduler());
     }

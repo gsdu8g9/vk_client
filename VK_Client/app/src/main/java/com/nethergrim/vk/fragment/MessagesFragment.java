@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +15,7 @@ import com.github.clans.fab.FloatingActionButton;
 import com.nethergrim.vk.MyApplication;
 import com.nethergrim.vk.R;
 import com.nethergrim.vk.activity.ChatActivity;
+import com.nethergrim.vk.activity.NewChatActivity;
 import com.nethergrim.vk.adapter.ConversationsAdapter;
 import com.nethergrim.vk.callbacks.ToolbarScrollable;
 import com.nethergrim.vk.event.ConversationsUpdatedEvent;
@@ -176,8 +176,7 @@ public class MessagesFragment extends AbstractFragment implements
 
     @OnClick(R.id.fab_normal)
     public void onFabClicked(View v) {
-        Log.e("TAG", "on fab clicked");
-        // TODo handle fab click
+        NewChatActivity.start(v.getContext());
     }
 
     @Override
@@ -186,7 +185,8 @@ public class MessagesFragment extends AbstractFragment implements
     }
 
     private void loadPage(int pageNumber) {
-        mWebIntentHandler.fetchConversationsAndUsers(DEFAULT_PAGE_SIZE, pageNumber * DEFAULT_PAGE_SIZE,
+        mWebIntentHandler.fetchConversationsAndUsers(DEFAULT_PAGE_SIZE,
+                pageNumber * DEFAULT_PAGE_SIZE,
                 false);
     }
 

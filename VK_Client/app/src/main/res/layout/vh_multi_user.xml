@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/new.chat.row_height">
+
+    <com.nethergrim.vk.views.imageViews.UserImageView
+        android:id="@+id/avatar"
+        android:layout_width="@dimen/new.chat.avatar_size"
+        android:layout_height="@dimen/new.chat.avatar_size"
+        android:layout_gravity="start|center_vertical"
+        android:layout_marginLeft="@dimen/new.chat.row.padding"
+        android:layout_marginRight="@dimen/new.chat.row.padding"
+        tools:background="@android:color/holo_orange_light" />
+
+    <com.devspark.robototextview.widget.RobotoTextView
+        android:id="@+id/text_name"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:ellipsize="end"
+        android:gravity="left|center_vertical"
+        android:singleLine="true"
+        app:typeface="roboto_regular"
+        tools:text="Steve Jobs" />
+
+</LinearLayout>

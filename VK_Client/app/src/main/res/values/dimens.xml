@@ -5,9 +5,9 @@
 
 
     <!--           Text          -->
-    <dimen name="text_size_regular">15sp</dimen>
-    <dimen name="text_size_big">17sp</dimen>
-    <dimen name="text_size_small">13sp</dimen>
+    <dimen name="text_size_regular">16sp</dimen>
+    <dimen name="text_size_big">18sp</dimen>
+    <dimen name="text_size_small">14sp</dimen>
 
 
     <dimen name="divider_size">1dp</dimen>
@@ -30,6 +30,11 @@
     <dimen name="chat.row.margin_vertical">3dp</dimen>
     <dimen name="chat.row.margin_another_size">56dp</dimen>
     <dimen name="chat.row.body_padding">4dp</dimen>
+
+    <!--                New Chat Screen           -->
+    <dimen name="new.chat.avatar_size">40dp</dimen>
+    <dimen name="new.chat.row_height">48dp</dimen>
+    <dimen name="new.chat.row.padding">16dp</dimen>
 
 
 </resources>
