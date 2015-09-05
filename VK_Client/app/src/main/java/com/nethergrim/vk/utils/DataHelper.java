@@ -2,7 +2,6 @@ package com.nethergrim.vk.utils;
 
 import android.support.annotation.NonNull;
 
-import com.nethergrim.vk.MyApplication;
 import com.nethergrim.vk.models.Conversation;
 import com.nethergrim.vk.models.Message;
 
@@ -51,7 +50,6 @@ public class DataHelper {
 
         if (MessageUtils.isMessageWithSticker(message)) {
             String url = MessageUtils.getStickerFromMessage(message).getPhoto256();
-            MyApplication.getInstance().getImageLoader().cacheImage(url);
         }
         return message;
     }

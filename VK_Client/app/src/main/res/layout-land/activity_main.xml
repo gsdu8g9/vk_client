@@ -53,12 +53,11 @@
             android:layout_height="0dp"
             android:layout_weight="1">
 
-            <ImageButton
+            <com.nethergrim.vk.views.imageViews.UserImageView
                 android:id="@+id/profileImageButton"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/menu_height"
-                android:layout_gravity="center"
-                android:background="@drawable/menu_button_selector" />
+                android:layout_gravity="center" />
 
         </FrameLayout>
 

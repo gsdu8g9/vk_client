@@ -2,10 +2,11 @@ package com.nethergrim.vk.adapter.viewholders;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.nethergrim.vk.R;
+import com.nethergrim.vk.views.imageViews.UserImageView;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -20,7 +21,7 @@ import butterknife.InjectView;
 public class ConversationViewHolder extends RecyclerView.ViewHolder {
 
     @InjectView(R.id.image_avatar)
-    public ImageView imageAvatar;
+    public UserImageView imageAvatar;
     @InjectView(R.id.text_date)
     public TextView textDate;
     @InjectView(R.id.text_details)
@@ -30,7 +31,7 @@ public class ConversationViewHolder extends RecyclerView.ViewHolder {
     @InjectView(R.id.online_indicator)
     public View mOnlineIndicator;
     @InjectView(R.id.imageViewDetails)
-    public ImageView mImageViewDetails;
+    public SimpleDraweeView mImageViewDetails;
 
     public ConversationViewHolder(View itemView) {
         super(itemView);

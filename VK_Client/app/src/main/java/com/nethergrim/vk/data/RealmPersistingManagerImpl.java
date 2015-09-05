@@ -72,9 +72,6 @@ public class RealmPersistingManagerImpl implements PersistingManager {
         realm.copyToRealmOrUpdate(friends);
         realm.commitTransaction();
         mPaletteProvider.generateAndStorePalette(friends);
-        for (int i = 0, size = friends.size(); i < size; i++) {
-            mImageLoader.cacheUserAvatars(friends.get(i));
-        }
         mBus.post(new FriendsUpdatedEvent(listOfFriends.getResponse().getCount()));
     }
 
@@ -86,9 +83,6 @@ public class RealmPersistingManagerImpl implements PersistingManager {
         realm.commitTransaction();
         mPaletteProvider.generateAndStorePalette(listOfUsers.getResponse());
         mBus.post(new UsersUpdatedEvent());
-        for (int i = 0, size = listOfUsers.getResponse().size(); i < size; i++) {
-            mImageLoader.cacheUserAvatars(listOfUsers.getResponse().get(i));
-        }
     }
 
     @Override

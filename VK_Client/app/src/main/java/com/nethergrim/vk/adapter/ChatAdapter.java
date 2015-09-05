@@ -8,7 +8,6 @@ import android.view.ViewGroup;
 import com.nethergrim.vk.MyApplication;
 import com.nethergrim.vk.R;
 import com.nethergrim.vk.adapter.viewholders.ChatViewHolder;
-import com.nethergrim.vk.images.ImageLoader;
 import com.nethergrim.vk.models.Message;
 import com.nethergrim.vk.models.User;
 import com.nethergrim.vk.utils.UserProvider;
@@ -27,8 +26,6 @@ import io.realm.RealmResults;
  */
 public class ChatAdapter extends RecyclerView.Adapter<ChatViewHolder> {
 
-    @Inject
-    ImageLoader mImageLoader;
     @Inject
     UserProvider mUserProvider;
     private RealmResults<Message> mMessages;
@@ -73,7 +70,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatViewHolder> {
             user = mUserProvider.getUser(message.getAuthorId());
         }
         if (user != null) {
-            mImageLoader.displayUserAvatar(user, holder.imageAvatar);
+            holder.imageAvatar.display(user, true);
         }
         if (position > 0) {
             if ((isMine && isMessageFromMe(position - 1)) || (

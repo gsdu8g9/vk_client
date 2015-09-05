@@ -3,6 +3,7 @@ package com.nethergrim.vk;
 import android.app.Application;
 import android.util.Log;
 
+import com.facebook.drawee.backends.pipeline.Fresco;
 import com.kisstools.KissTools;
 import com.nethergrim.vk.caching.Prefs;
 import com.nethergrim.vk.images.ImageLoader;
@@ -32,12 +33,11 @@ public class MyApplication extends Application {
     Prefs mPrefs;
     @Inject
     ImageLoader mImageLoader;
+    private MainComponent mMainComponent;
 
     public ImageLoader getImageLoader() {
         return mImageLoader;
     }
-
-    private MainComponent mMainComponent;
 
     public synchronized static MyApplication getInstance() {
         return _app;
@@ -93,6 +93,7 @@ public class MyApplication extends Application {
 //        printFingerPrints();
         initDagger2();
         initRealm();
+        initFresco();
     }
 
     public MainComponent getMainComponent() {
@@ -101,6 +102,10 @@ public class MyApplication extends Application {
 
     public Prefs getPrefs() {
         return mPrefs;
+    }
+
+    private void initFresco() {
+        Fresco.initialize(this);
     }
 
     private void printFingerPrints() {

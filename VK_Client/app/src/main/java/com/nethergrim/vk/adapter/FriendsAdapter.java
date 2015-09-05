@@ -11,9 +11,7 @@ import com.nethergrim.vk.R;
 import com.nethergrim.vk.adapter.viewholders.FriendsViewHolder;
 import com.nethergrim.vk.caching.Prefs;
 import com.nethergrim.vk.event.UsersUpdatedEvent;
-import com.nethergrim.vk.images.ImageLoader;
 import com.nethergrim.vk.models.User;
-import com.nethergrim.vk.utils.UserUtils;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 
@@ -38,8 +36,6 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsViewHolder>
 
     @Inject
     Prefs mPrefs;
-    @Inject
-    ImageLoader mImageLoader;
 
     private RealmResults<User> mData;
     private OnFriendClickedCallback mOnFriendClickedCallback;
@@ -79,8 +75,7 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsViewHolder>
     @Override
     public void onBindViewHolder(FriendsViewHolder holder, int position) {
         User user = mData.get(position);
-        String avatarUrl = UserUtils.getStablePhotoUrl(user);
-        mImageLoader.displayImage(avatarUrl, holder.mImageView);
+        holder.mImageView.display(user, false);
         holder.mTextViewName.setText(user.getFirstName() + "\n " + user.getLastName());
         holder.itemView.setTag(Integer.valueOf(position));
         holder.itemView.setOnClickListener(this);

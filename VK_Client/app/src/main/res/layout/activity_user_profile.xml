@@ -58,7 +58,7 @@
 
             </com.dd.ShadowLayout>
 
-            <ImageView
+            <com.nethergrim.vk.views.imageViews.UserImageView
                 android:id="@+id/imageView2"
                 android:layout_width="140dp"
                 android:layout_height="140dp"

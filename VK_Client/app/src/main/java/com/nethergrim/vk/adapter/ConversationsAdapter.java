@@ -1,6 +1,7 @@
 package com.nethergrim.vk.adapter;
 
 import android.content.Context;
+import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
@@ -12,7 +13,6 @@ import com.nethergrim.vk.MyApplication;
 import com.nethergrim.vk.R;
 import com.nethergrim.vk.adapter.viewholders.ConversationViewHolder;
 import com.nethergrim.vk.caching.Prefs;
-import com.nethergrim.vk.images.ImageLoader;
 import com.nethergrim.vk.models.Conversation;
 import com.nethergrim.vk.models.Message;
 import com.nethergrim.vk.models.User;
@@ -37,15 +37,9 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationViewH
         implements RealmChangeListener, View.OnClickListener {
 
     @Inject
-    ImageLoader mImageLoader;
-
-    @Inject
     UserProvider mUserProvider;
-
     @Inject
     Prefs mPrefs;
-
-
     @Inject
     Realm mRealm;
 
@@ -109,8 +103,7 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationViewH
         if (ConversationUtils.isConversationAGroupChat(conversation)) {
 
 //            group chat
-            conversationViewHolder.imageAvatar.setImageResource(
-                    R.drawable.ic_social_people_outline);
+            conversationViewHolder.imageAvatar.displayGroupChat();
             conversationViewHolder.textName.setText(message.getTitle());
 
             if (ConversationUtils.isMessageFromMe(message)) {
@@ -139,7 +132,7 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationViewH
             if (user != null) {
                 conversationViewHolder.mOnlineIndicator.setVisibility(
                         user.getOnline() == 1 ? View.VISIBLE : View.GONE);
-                mImageLoader.displayUserAvatar(user, conversationViewHolder.imageAvatar);
+                conversationViewHolder.imageAvatar.display(user, true);
                 conversationViewHolder.textName.setText(
                         user.getFirstName() + " " + user.getLastName());
             }
@@ -148,9 +141,7 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationViewH
             details = details + "[ " + ctx.getString(R.string.sticker) + " ]";
             conversationViewHolder.mImageViewDetails.setVisibility(View.VISIBLE);
             String url = MessageUtils.getStickerFromMessage(message).getPhoto256();
-            mImageLoader.displayImage(
-                    url,
-                    conversationViewHolder.mImageViewDetails);
+            conversationViewHolder.mImageViewDetails.setImageURI(Uri.parse(url));
         } else {
             conversationViewHolder.mImageViewDetails.setVisibility(View.GONE);
         }

@@ -21,11 +21,10 @@ import com.kogitune.activity_transition.ActivityTransitionLauncher;
 import com.kogitune.activity_transition.ExitActivityTransition;
 import com.nethergrim.vk.MyApplication;
 import com.nethergrim.vk.R;
-import com.nethergrim.vk.images.ImageLoader;
 import com.nethergrim.vk.images.PaletteProvider;
 import com.nethergrim.vk.models.User;
-import com.nethergrim.vk.utils.UserUtils;
 import com.nethergrim.vk.views.RevealContainer;
+import com.nethergrim.vk.views.imageViews.UserImageView;
 
 import javax.inject.Inject;
 
@@ -45,12 +44,10 @@ public class UserProfileActivity extends AbstractActivity {
     public static final String BUNDLE_EXTRA_USER_ID = "user_id";
     public static final int ANIMATION_DURATION = 220;
     @InjectView(R.id.imageView2)
-    ImageView mAvatarImageView;
+    UserImageView mAvatarImageView;
 
     @Inject
     Realm mRealm;
-    @Inject
-    ImageLoader mImageLoader;
     @InjectView(R.id.shadow_layout)
     ShadowLayout mShadowLayout;
     @InjectView(R.id.backgroundLayout)
@@ -124,7 +121,7 @@ public class UserProfileActivity extends AbstractActivity {
     private void startFirstAnimation(Bundle savedInstanceState) {
         if (mUser != null) {
             mToolbarLayout.setAlpha(0f);
-            mImageLoader.displayImage(UserUtils.getStablePhotoUrl(mUser), mAvatarImageView);
+            mAvatarImageView.display(mUser, false);
             mExitActivityTransition = ActivityTransition.with(getIntent())
                     .to(mAvatarImageView)
                     .duration(ANIMATION_DURATION)
