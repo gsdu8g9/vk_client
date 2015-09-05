@@ -3,6 +3,7 @@ package com.nethergrim.vk.inject;
 import com.nethergrim.vk.MyApplication;
 import com.nethergrim.vk.activity.ChatActivity;
 import com.nethergrim.vk.activity.MainActivity;
+import com.nethergrim.vk.activity.NewChatActivity;
 import com.nethergrim.vk.activity.UserProfileActivity;
 import com.nethergrim.vk.adapter.ChatAdapter;
 import com.nethergrim.vk.adapter.ConversationsAdapter;
@@ -80,4 +81,6 @@ public interface MainComponent {
     void inject(DataManagerImpl d);
 
     void inject(RealmPersistingManagerImpl r);
+
+    void inject(NewChatActivity newChatActivity);
 }

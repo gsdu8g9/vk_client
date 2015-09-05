@@ -7,11 +7,21 @@ import com.nethergrim.vk.models.WebResponse;
 import java.net.UnknownHostException;
 
 import rx.Observer;
+import rx.functions.Action1;
 
 /**
  * @author Andrew Drobyazko (andrey.drobyazko@applikeysolutions.com) on 05.09.15.
  */
 public class LoggerObserver implements Observer<WebResponse> {
+
+    private Action1<WebResponse> mOnNextObserver;
+
+    public LoggerObserver(Action1<WebResponse> onNextObserver) {
+        mOnNextObserver = onNextObserver;
+    }
+
+    public LoggerObserver() {
+    }
 
     @Override
     public void onCompleted() {
@@ -30,6 +40,9 @@ public class LoggerObserver implements Observer<WebResponse> {
 
     @Override
     public void onNext(WebResponse webResponse) {
+        if (mOnNextObserver != null) {
+            mOnNextObserver.call(webResponse);
+        }
 
     }
 }

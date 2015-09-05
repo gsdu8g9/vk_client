@@ -24,4 +24,6 @@
     <string name="sign_in">Войти</string>
     <string name="sticker">Стикер</string>
     <string name="reply_to">Ответить</string>
+    <string name="new_dialog">Новый Диалог</string>
+    <string name="new_chat">Новый Чат</string>
 </resources>

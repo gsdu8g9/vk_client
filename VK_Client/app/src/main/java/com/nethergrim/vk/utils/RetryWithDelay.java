@@ -23,20 +23,17 @@ public class RetryWithDelay
 
     @Override
     public Observable<?> call(Observable<? extends Throwable> attempts) {
-        return attempts.flatMap(new Func1<Throwable, Observable<?>>() {
-            @Override
-            public Observable<?> call(Throwable throwable) {
-                if (++_retryCount < _maxRetries) {
-                    // When this Observable calls onNext, the original
-                    // Observable will be retried (i.e. re-subscribed).
+        return attempts.flatMap(throwable -> {
+            if (++_retryCount < _maxRetries) {
+                // When this Observable calls onNext, the original
+                // Observable will be retried (i.e. re-subscribed).
 
-                    return Observable.timer(_retryCount * _retryDelayMillis,
-                            TimeUnit.MILLISECONDS);
-                }
-
-                // Max retries hit. Just pass the error along.
-                return Observable.error(throwable);
+                return Observable.timer(_retryCount * _retryDelayMillis,
+                        TimeUnit.MILLISECONDS);
             }
+
+            // Max retries hit. Just pass the error along.
+            return Observable.error(throwable);
         });
     }
 }

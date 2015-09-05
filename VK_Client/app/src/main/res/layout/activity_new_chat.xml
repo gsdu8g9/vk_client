@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include
+        android:id="@+id/toolbar_layout"
+        layout="@layout/toolbar" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/action_bar_height">
+
+
+        <com.devspark.robototextview.widget.RobotoEditText
+            android:id="@+id/etSearch"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:gravity="center_vertical|left"
+            android:hint="@string/search"
+            android:paddingLeft="@dimen/new.chat.row.padding"
+            android:paddingRight="@dimen/new.chat.row.padding"
+            android:textSize="@dimen/text_size_regular"
+            app:typeface="roboto_light" />
+
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/etSearch"
+            android:clipToPadding="false"
+            android:paddingTop="@dimen/new.chat.row.padding" />
+
+        <requestFocus />
+
+
+    </RelativeLayout>
+
+</FrameLayout>

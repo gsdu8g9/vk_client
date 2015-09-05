@@ -80,6 +80,10 @@
         <activity
             android:name=".activity.ChatActivity"
             android:windowSoftInputMode="adjustResize|stateHidden" />
+
+        <activity
+            android:name=".activity.NewChatActivity"
+            android:windowSoftInputMode="adjustResize|stateUnchanged" />
     </application>
 
 </manifest>
