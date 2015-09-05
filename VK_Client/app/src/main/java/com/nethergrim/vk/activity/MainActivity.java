@@ -8,7 +8,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
@@ -22,11 +21,11 @@ import com.nethergrim.vk.event.ConversationsUpdatedEvent;
 import com.nethergrim.vk.event.MyUserUpdatedEvent;
 import com.nethergrim.vk.fragment.FriendsFragment;
 import com.nethergrim.vk.fragment.MessagesFragment;
-import com.nethergrim.vk.images.ImageLoader;
 import com.nethergrim.vk.models.User;
 import com.nethergrim.vk.utils.UserProvider;
 import com.nethergrim.vk.utils.Utils;
 import com.nethergrim.vk.views.MenuButton;
+import com.nethergrim.vk.views.imageViews.UserImageView;
 import com.nethergrim.vk.web.WebIntentHandler;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
@@ -54,8 +53,6 @@ public class MainActivity extends AbstractActivity implements
     @Inject
     Bus mBus;
     @Inject
-    ImageLoader mIL;
-    @Inject
     Prefs mPrefs;
     @Inject
     UserProvider mUP;
@@ -68,7 +65,7 @@ public class MainActivity extends AbstractActivity implements
     @InjectView(R.id.friendsImageButton)
     MenuButton mFriendsImageButton;
     @InjectView(R.id.profileImageButton)
-    ImageButton mProfileImageButton;
+    UserImageView mProfileImageButton;
     @InjectView(R.id.photosImageButton)
     MenuButton mPhotosImageButton;
     @InjectView(R.id.settingsImageButton)
@@ -83,15 +80,10 @@ public class MainActivity extends AbstractActivity implements
     private MainActivityState mCurrentState;
 
     public void onUserLoaded(final User response) {
-        mIL.displayUserAvatar(response, mProfileImageButton);
+        mProfileImageButton.display(response, true);
         mPrefs.setCurrentUserId(response.getId());
         Realm realm = Realm.getDefaultInstance();
-        realm.executeTransaction(new Realm.Transaction() {
-            @Override
-            public void execute(Realm realm) {
-                realm.copyToRealmOrUpdate(response);
-            }
-        });
+        realm.executeTransaction(realm1 -> realm1.copyToRealmOrUpdate(response));
     }
 
 

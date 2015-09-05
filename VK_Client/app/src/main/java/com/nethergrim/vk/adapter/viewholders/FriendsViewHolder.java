@@ -2,10 +2,10 @@ package com.nethergrim.vk.adapter.viewholders;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.nethergrim.vk.R;
+import com.nethergrim.vk.views.imageViews.UserImageView;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -20,7 +20,7 @@ import butterknife.InjectView;
 public class FriendsViewHolder extends RecyclerView.ViewHolder {
 
     @InjectView(R.id.image_avatar)
-    public ImageView mImageView;
+    public UserImageView mImageView;
     @InjectView(R.id.textViewName)
     public TextView mTextViewName;
 

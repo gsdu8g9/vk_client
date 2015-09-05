@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <ImageView
+    <com.nethergrim.vk.views.imageViews.UserImageView
         android:id="@+id/image_avatar"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

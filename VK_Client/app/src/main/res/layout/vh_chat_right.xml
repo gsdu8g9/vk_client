@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.nethergrim.vk.views.CircularImageView
+    <com.nethergrim.vk.views.imageViews.UserImageView
         android:id="@+id/avatar"
         android:layout_width="@dimen/chat.row.avatar.size"
         android:layout_height="@dimen/chat.row.avatar.size"
