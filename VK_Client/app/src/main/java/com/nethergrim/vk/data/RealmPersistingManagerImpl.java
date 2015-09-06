@@ -10,6 +10,7 @@ import com.nethergrim.vk.event.MyUserUpdatedEvent;
 import com.nethergrim.vk.event.UsersUpdatedEvent;
 import com.nethergrim.vk.images.ImageLoader;
 import com.nethergrim.vk.images.PaletteProvider;
+import com.nethergrim.vk.models.Conversation;
 import com.nethergrim.vk.models.ConversationsList;
 import com.nethergrim.vk.models.ConversationsUserObject;
 import com.nethergrim.vk.models.ListOfFriends;
@@ -86,7 +87,8 @@ public class RealmPersistingManagerImpl implements PersistingManager {
     }
 
     @Override
-    public void manage(ConversationsUserObject conversationsUserObject) {
+    public void manage(ConversationsUserObject conversationsUserObject,
+            boolean clearDataBeforePersist) {
         //saving conversations to db
         ConversationsList conversationsList
                 = conversationsUserObject.getResponse().getConversations();
@@ -94,7 +96,13 @@ public class RealmPersistingManagerImpl implements PersistingManager {
                 DataHelper.normalizeConversationsList(conversationsList.getResults()));
         mPrefs.setUnreadMessagesCount(conversationsList.getUnreadCount());
         Realm realm = Realm.getDefaultInstance();
+
         realm.beginTransaction();
+
+        if (clearDataBeforePersist) {
+            realm.clear(Conversation.class);
+        }
+
         realm.copyToRealmOrUpdate(conversationsList.getResults());
 
         //saving users to db

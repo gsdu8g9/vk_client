@@ -28,6 +28,6 @@ public interface PersistingManager {
     void manage(ListOfUsers listOfUsers);
 
     @WorkerThread
-    void manage(ConversationsUserObject conversationsUserObject);
+    void manage(ConversationsUserObject conversationsUserObject, boolean clearDataBeforePersist);
 
 }
