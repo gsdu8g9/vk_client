@@ -1,6 +1,6 @@
 package com.nethergrim.vk.fragment;
 
-import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
@@ -24,6 +24,7 @@ import com.nethergrim.vk.utils.BasicRecyclerViewScroller;
 import com.nethergrim.vk.utils.FabAnimationManager;
 import com.nethergrim.vk.views.RecyclerviewPageScroller;
 import com.nethergrim.vk.web.WebIntentHandler;
+import com.rey.material.widget.ProgressView;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 
@@ -53,13 +54,15 @@ public class MessagesFragment extends AbstractFragment implements
     Bus mBus;
     @InjectView(R.id.fab_normal)
     FloatingActionButton mFabNormal;
+    @InjectView(R.id.progressBottom)
+    ProgressView mProgressBottom;
     private ConversationsAdapter mAdapter;
 
     private ToolbarScrollable mToolbarScrollable;
     private FabAnimationManager mFabAnimationManager;
 
     @Override
-    public void onAttach(Activity activity) {
+    public void onAttach(Context activity) {
         super.onAttach(activity);
         if (activity instanceof ToolbarScrollable) {
             mToolbarScrollable = (ToolbarScrollable) activity;
@@ -121,6 +124,8 @@ public class MessagesFragment extends AbstractFragment implements
 
     @Subscribe
     public void onDataUpdated(ConversationsUpdatedEvent event) {
+        mProgressBottom.stop();
+        mAdapter.setFooterVisibility(View.GONE);
         if (mProgressBar != null) {
             mProgressBar.setVisibility(View.GONE);
         }
@@ -165,6 +170,11 @@ public class MessagesFragment extends AbstractFragment implements
     }
 
     private void loadPage(int pageNumber) {
+        if (pageNumber == 0) {
+            mProgressBottom.start();
+//            mProgressBottom.setVisibility(View.VISIBLE);
+        }
+        mAdapter.setFooterVisibility(View.VISIBLE);
         mWebIntentHandler.fetchConversationsAndUsers(DEFAULT_PAGE_SIZE,
                 pageNumber * DEFAULT_PAGE_SIZE,
                 false);

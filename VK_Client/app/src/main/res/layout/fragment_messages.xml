@@ -41,5 +41,16 @@
         app:fab_colorPressed="@color/primary_light"
         app:fab_colorRipple="@color/white_opacity_30" />
 
+    <com.rey.material.widget.ProgressView
+        android:id="@+id/progressBottom"
+        android:layout_width="match_parent"
+        android:layout_height="3dp"
+        android:layout_gravity="bottom"
+        app:lpd_outAnimDuration="900"
+        app:lpd_strokeSize="3dp"
+        app:pv_autostart="true"
+        app:pv_circular="false"
+        app:pv_progressMode="indeterminate" />
+
 
 </FrameLayout>
