@@ -10,11 +10,19 @@ public class RecyclerviewPageScroller extends RecyclerView.OnScrollListener {
 
     private final int mDefaultPageSize;
     private final OnRecyclerViewScrolledToPageListener mCallback;
-    private int mLastDeliveredPage;
-    private int mMaxScrolledPage;
     private int mOffset;
+    private LinearLayoutManager mLayoutManager;
+    private boolean loading;
+    private int previousTotal;
 
-    public RecyclerviewPageScroller(int defaultPageSize, OnRecyclerViewScrolledToPageListener callback, int offset) {
+    public interface OnRecyclerViewScrolledToPageListener {
+
+        void onRecyclerViewScrolledToPage(int pageNumber);
+    }
+
+    public RecyclerviewPageScroller(int defaultPageSize,
+            OnRecyclerViewScrolledToPageListener callback,
+            int offset) {
         this.mDefaultPageSize = defaultPageSize;
         this.mCallback = callback;
         this.mOffset = offset;
@@ -24,6 +32,7 @@ public class RecyclerviewPageScroller extends RecyclerView.OnScrollListener {
         if (mOffset < 0) {
             mOffset *= -1;
         }
+
     }
 
     @Override
@@ -34,25 +43,30 @@ public class RecyclerviewPageScroller extends RecyclerView.OnScrollListener {
     @Override
     public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
         super.onScrolled(recyclerView, dx, dy);
-
-        RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
-        int visibleItemCount = layoutManager.getChildCount();
-//        int totalItemCount = layoutManager.getItemCount();
-        int firstVisibleItemPosition = ((LinearLayoutManager) layoutManager).findFirstVisibleItemPosition();
-
-        int lastVisiblePositionWithOffset = firstVisibleItemPosition + visibleItemCount + mOffset;
-        if (lastVisiblePositionWithOffset % mDefaultPageSize == 0) {
-            int newPageNumber = lastVisiblePositionWithOffset / mDefaultPageSize;
-            if (mLastDeliveredPage != newPageNumber) {
-                mLastDeliveredPage = newPageNumber;
-                mCallback.onRecyclerViewScrolledToPage(newPageNumber);
-            }
-
+        if (mLayoutManager == null) {
+            mLayoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
         }
 
-    }
+        int visibleItemCount = recyclerView.getChildCount();
+        int totalItemCount = mLayoutManager.getItemCount();
+        int firstVisibleItem = mLayoutManager.findFirstVisibleItemPosition();
+        int lastVisibleItem = firstVisibleItem + visibleItemCount;
 
-    public interface OnRecyclerViewScrolledToPageListener {
-        void onRecyclerViewScrolledToPage(int pageNumber);
+        if (loading) {
+            if (totalItemCount > previousTotal) {
+                loading = false;
+                previousTotal = totalItemCount;
+            }
+        }
+        if (!loading && (lastVisibleItem + mOffset) >= totalItemCount) {
+            // End has been reached
+
+            mCallback.onRecyclerViewScrolledToPage(totalItemCount / mDefaultPageSize + 1);
+
+            // Do something
+
+            loading = true;
+        }
+
     }
 }

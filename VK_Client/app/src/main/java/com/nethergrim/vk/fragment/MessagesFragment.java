@@ -1,6 +1,6 @@
 package com.nethergrim.vk.fragment;
 
-import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
@@ -22,9 +22,9 @@ import com.nethergrim.vk.event.ConversationsUpdatedEvent;
 import com.nethergrim.vk.models.Conversation;
 import com.nethergrim.vk.utils.BasicRecyclerViewScroller;
 import com.nethergrim.vk.utils.FabAnimationManager;
-import com.nethergrim.vk.utils.SafeTimer;
 import com.nethergrim.vk.views.RecyclerviewPageScroller;
 import com.nethergrim.vk.web.WebIntentHandler;
+import com.rey.material.widget.ProgressView;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 
@@ -42,7 +42,6 @@ public class MessagesFragment extends AbstractFragment implements
         ConversationsAdapter.OnConversationClickListener {
 
     public static final int DEFAULT_PAGE_SIZE = 20;
-    public static final int UPDATE_DELAY_SEC = 30;
     @InjectView(R.id.list)
     RecyclerView mRecyclerView;
     @InjectView(R.id.progressBar2)
@@ -55,14 +54,15 @@ public class MessagesFragment extends AbstractFragment implements
     Bus mBus;
     @InjectView(R.id.fab_normal)
     FloatingActionButton mFabNormal;
-    private SafeTimer mSafeTimer;
+    @InjectView(R.id.progressBottom)
+    ProgressView mProgressBottom;
     private ConversationsAdapter mAdapter;
 
     private ToolbarScrollable mToolbarScrollable;
     private FabAnimationManager mFabAnimationManager;
 
     @Override
-    public void onAttach(Activity activity) {
+    public void onAttach(Context activity) {
         super.onAttach(activity);
         if (activity instanceof ToolbarScrollable) {
             mToolbarScrollable = (ToolbarScrollable) activity;
@@ -73,12 +73,6 @@ public class MessagesFragment extends AbstractFragment implements
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         MyApplication.getInstance().getMainComponent().inject(this);
-        mSafeTimer = new SafeTimer(new Runnable() {
-            @Override
-            public void run() {
-                loadPage(0);
-            }
-        }, UPDATE_DELAY_SEC);
     }
 
     @Nullable
@@ -101,24 +95,13 @@ public class MessagesFragment extends AbstractFragment implements
         mAdapter = new ConversationsAdapter(this);
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.addOnScrollListener(
-                new RecyclerviewPageScroller(DEFAULT_PAGE_SIZE, this, 5));
+                new RecyclerviewPageScroller(DEFAULT_PAGE_SIZE, this, DEFAULT_PAGE_SIZE / 2));
         mRecyclerView.addOnScrollListener(new BasicRecyclerViewScroller(this));
         if (mAdapter.getItemCount() == 0) {
             mProgressBar.setVisibility(View.VISIBLE);
             mNothingHereTextView.setVisibility(View.GONE);
         }
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        mSafeTimer.start();
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        mSafeTimer.finish();
+        loadPage(0);
     }
 
     @Override
@@ -136,11 +119,13 @@ public class MessagesFragment extends AbstractFragment implements
 
     @Override
     public void onRecyclerViewScrolledToPage(int pageNumber) {
-        loadPage(pageNumber);
+        loadPage(pageNumber + 1);
     }
 
     @Subscribe
     public void onDataUpdated(ConversationsUpdatedEvent event) {
+        mProgressBottom.stop();
+        mAdapter.setFooterVisibility(View.GONE);
         if (mProgressBar != null) {
             mProgressBar.setVisibility(View.GONE);
         }
@@ -185,6 +170,11 @@ public class MessagesFragment extends AbstractFragment implements
     }
 
     private void loadPage(int pageNumber) {
+        if (pageNumber == 0) {
+            mProgressBottom.start();
+//            mProgressBottom.setVisibility(View.VISIBLE);
+        }
+        mAdapter.setFooterVisibility(View.VISIBLE);
         mWebIntentHandler.fetchConversationsAndUsers(DEFAULT_PAGE_SIZE,
                 pageNumber * DEFAULT_PAGE_SIZE,
                 false);

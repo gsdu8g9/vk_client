@@ -2,12 +2,9 @@ package com.nethergrim.vk.adapter;
 
 import android.content.Context;
 import android.net.Uri;
-import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 
 import com.nethergrim.vk.MyApplication;
 import com.nethergrim.vk.R;
@@ -33,8 +30,8 @@ import io.realm.RealmResults;
  * @author Andrey Drobyazko (c2q9450@gmail.com).
  *         All rights reserved.
  */
-public class ConversationsAdapter extends RecyclerView.Adapter<ConversationViewHolder>
-        implements RealmChangeListener, View.OnClickListener {
+public class ConversationsAdapter extends UltimateAdapter
+        implements RealmChangeListener, View.OnClickListener, UltimateAdapter.FooterInterface {
 
     @Inject
     UserProvider mUserProvider;
@@ -55,26 +52,60 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationViewH
     }
 
     public ConversationsAdapter(OnConversationClickListener callback) {
+        super();
         this.mCallback = callback;
         MyApplication.getInstance().getMainComponent().inject(this);
         mRealm.setAutoRefresh(true);
         this.mData = mRealm.where(Conversation.class)
                 .findAllSorted("date", false);
-        setHasStableIds(true);
+        Context ctx = MyApplication.getInstance();
+        textColorPrimary = ctx.getResources().getColor(R.color.primary_text);
+        textColorSecondary = ctx.getResources().getColor(R.color.secondary_text);
+    }
+
+
+    @Override
+    public void onChange() {
+        notifyDataSetChanged();
     }
 
     @Override
-    public ConversationViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
-        if (textColorPrimary == 0) {
-            textColorPrimary = viewGroup.getResources().getColor(R.color.primary_text);
-            textColorSecondary = viewGroup.getResources().getColor(R.color.secondary_text);
+    public void onClick(View v) {
+        int position = (int) v.getTag();
+        Conversation conversation = mData.get(position);
+        if (mCallback != null) {
+            mCallback.onConversationClicked(conversation, v);
         }
-        return new ConversationViewHolder(LayoutInflater.from(viewGroup.getContext())
-                .inflate(R.layout.vh_conversation, viewGroup, false));
     }
 
     @Override
-    public void onBindViewHolder(ConversationViewHolder conversationViewHolder, int i) {
+    public int getDataSize() {
+        return mData.size();
+    }
+
+    @Override
+    public int getDataViewResId() {
+        return R.layout.vh_conversation;
+    }
+
+    @Override
+    public long getDataId(int dataPosition) {
+        return mData.get(dataPosition).getId();
+    }
+
+    @Override
+    public int getDataViewType(int dataPosition) {
+        return 1;
+    }
+
+    @Override
+    public DataVH getDataViewHolder(View v, int dataViewType) {
+        return new ConversationViewHolder(v);
+    }
+
+    @Override
+    public void bindDataVH(DataVH vh, int i) {
+        ConversationViewHolder conversationViewHolder = (ConversationViewHolder) vh;
         Conversation conversation = mData.get(i);
         Message message = conversation.getMessage();
         String details = "";
@@ -167,26 +198,25 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationViewH
     }
 
     @Override
-    public long getItemId(int position) {
-        return mData.get(position).getId();
+    public FooterVH getFooterVH(View v) {
+        return new MyFooterVH(v);
     }
 
     @Override
-    public int getItemCount() {
-        return mData.size();
+    public int getFooterViewResId() {
+        return R.layout.spinner;
     }
 
     @Override
-    public void onChange() {
-        notifyDataSetChanged();
+    public void bindFooterVH(FooterVH vh) {
+        // nothing to bind
     }
 
-    @Override
-    public void onClick(View v) {
-        int position = (int) v.getTag();
-        Conversation conversation = mData.get(position);
-        if (mCallback != null) {
-            mCallback.onConversationClicked(conversation, v);
+    public static class MyFooterVH extends FooterVH {
+
+
+        public MyFooterVH(View itemView) {
+            super(itemView);
         }
     }
 }

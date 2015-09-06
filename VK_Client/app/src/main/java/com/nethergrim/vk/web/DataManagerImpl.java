@@ -8,10 +8,15 @@ import com.nethergrim.vk.Constants;
 import com.nethergrim.vk.MyApplication;
 import com.nethergrim.vk.caching.Prefs;
 import com.nethergrim.vk.data.PersistingManager;
+import com.nethergrim.vk.event.ConversationsUpdatedEvent;
+import com.nethergrim.vk.event.FriendsUpdatedEvent;
+import com.nethergrim.vk.event.MyUserUpdatedEvent;
+import com.nethergrim.vk.event.UsersUpdatedEvent;
 import com.nethergrim.vk.models.ConversationsUserObject;
 import com.nethergrim.vk.models.ListOfFriends;
 import com.nethergrim.vk.models.ListOfUsers;
 import com.nethergrim.vk.models.StartupResponse;
+import com.squareup.otto.Bus;
 
 import java.io.IOException;
 import java.util.List;
@@ -46,6 +51,9 @@ public class DataManagerImpl implements DataManager {
     @Inject
     PersistingManager mPersistingManager;
 
+    @Inject
+    Bus mBus;
+
     public DataManagerImpl() {
         MyApplication.getInstance().getMainComponent().inject(this);
     }
@@ -68,18 +76,24 @@ public class DataManagerImpl implements DataManager {
         }
         return mWebRequestManager
                 .launchStartupTasks(token)
-                .doOnNext(mPersistingManager::manage);
+                .doOnNext(mPersistingManager::manage)
+                .doOnNext(startupResponse -> mBus.post(new MyUserUpdatedEvent()))
+                ;
     }
 
     @Override
     public Observable<ListOfFriends> fetchFriendsAndPersistToDb(int count, int offset) {
         return mWebRequestManager.getFriends(mPrefs.getCurrentUserId(), count, offset)
-                .doOnNext(listOfFriends -> mPersistingManager.manage(listOfFriends, offset));
+                .doOnNext(listOfFriends -> mPersistingManager.manage(listOfFriends, offset))
+                .doOnNext(listOfFriends -> mBus.post(new FriendsUpdatedEvent(count)))
+                ;
     }
 
     @Override
     public Observable<ListOfUsers> fetchUsersAndPersistToDB(List<Long> ids) {
-        return mWebRequestManager.getUsers(ids).doOnNext(mPersistingManager::manage);
+        return mWebRequestManager.getUsers(ids).doOnNext(mPersistingManager::manage)
+                .doOnNext(listOfUsers -> mBus.post(new UsersUpdatedEvent()))
+                ;
     }
 
     @Override
@@ -87,6 +101,11 @@ public class DataManagerImpl implements DataManager {
             int offset,
             boolean unreadOnly) {
         return mWebRequestManager.getConversationsAndUsers(limit, offset, unreadOnly)
-                .doOnNext(mPersistingManager::manage);
+                .doOnNext(conversationsUserObject -> mPersistingManager.manage(
+                        conversationsUserObject, offset == 0))
+                .doOnNext(conversationsUserObject -> {
+                    mBus.post(new ConversationsUpdatedEvent());
+                    mBus.post(new UsersUpdatedEvent());
+                });
     }
 }
