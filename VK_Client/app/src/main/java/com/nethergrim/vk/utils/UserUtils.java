@@ -2,7 +2,6 @@ package com.nethergrim.vk.utils;
 
 import android.text.TextUtils;
 
-import com.kisstools.utils.StringUtil;
 import com.nethergrim.vk.MyApplication;
 import com.nethergrim.vk.models.User;
 
@@ -30,8 +29,8 @@ public class UserUtils {
             sb.append(field);
             sb.append(", ");
         }
-
-        return StringUtil.cutText(sb.toString(), sb.toString().length() - 2);
+        String s = sb.toString();
+        return s.substring(0, s.length() - 2);
     }
 
     public static String getStablePhotoUrl(User user) {

@@ -7,19 +7,14 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageButton;
-import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 
 import com.nethergrim.vk.Constants;
@@ -39,10 +34,6 @@ import javax.inject.Inject;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
-import github.ankushsachdeva.emojicon.EmojiconEditText;
-import github.ankushsachdeva.emojicon.EmojiconGridView;
-import github.ankushsachdeva.emojicon.EmojiconsPopup;
-import github.ankushsachdeva.emojicon.emoji.Emojicon;
 import io.realm.Realm;
 
 /**
@@ -66,8 +57,6 @@ public class ChatFragment extends AbstractFragment
     WebRequestManager mWebRequestManager;
     @InjectView(R.id.recyclerView)
     RecyclerView mRecyclerView;
-    @InjectView(R.id.et_message)
-    EmojiconEditText mEtMessage;
     @InjectView(R.id.btn_emoji)
     ImageButton mBtnEmoji;
     @InjectView(R.id.btn_send)
@@ -163,128 +152,7 @@ public class ChatFragment extends AbstractFragment
         View rootView = getActivity().findViewById(R.id.root);
         final Context context = rootView.getContext();
         initList(context);
-        final EmojiconsPopup popup = new EmojiconsPopup(rootView, context);
-        popup.setSizeForSoftKeyboard();
 
-        mEtMessage.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                mBtnSend.setVisibility(s != null && s.length() > 0 ? View.VISIBLE : View.GONE);
-            }
-        });
-
-        //If the emoji popup is dismissed, change emojiButton to smiley icon
-        popup.setOnDismissListener(new PopupWindow.OnDismissListener() {
-
-            @Override
-            public void onDismiss() {
-                Log.e("TAG", "popup onDismiss");
-            }
-        });
-
-        //If the text keyboard closes, also dismiss the emoji popup
-        popup.setOnSoftKeyboardOpenCloseListener(
-                new EmojiconsPopup.OnSoftKeyboardOpenCloseListener() {
-
-                    @Override
-                    public void onKeyboardOpen(int keyBoardHeight) {
-                        Log.e("TAG", "onKeyboardOpen");
-                    }
-
-                    @Override
-                    public void onKeyboardClose() {
-                        Log.e("TAG", "onKeyboardClose");
-                        if (popup.isShowing())
-                            popup.dismiss();
-                    }
-                });
-
-        //On emoji clicked, add it to edittext
-        popup.setOnEmojiconClickedListener(new EmojiconGridView.OnEmojiconClickedListener() {
-
-            @Override
-            public void onEmojiconClicked(Emojicon emojicon) {
-                Log.e("TAG", "onEmojiconClicked");
-                if (mEtMessage == null || emojicon == null) {
-                    return;
-                }
-
-                int start = mEtMessage.getSelectionStart();
-                int end = mEtMessage.getSelectionEnd();
-                if (start < 0) {
-                    mEtMessage.append(emojicon.getEmoji());
-                } else {
-                    mEtMessage.getText().replace(Math.min(start, end),
-                            Math.max(start, end), emojicon.getEmoji(), 0,
-                            emojicon.getEmoji().length());
-                }
-            }
-        });
-
-        //On backspace clicked, emulate the KEYCODE_DEL key event
-        popup.setOnEmojiconBackspaceClickedListener(
-                new EmojiconsPopup.OnEmojiconBackspaceClickedListener() {
-
-                    @Override
-                    public void onEmojiconBackspaceClicked(View v) {
-                        Log.e("TAG", "onEmojiconBackspaceClicked");
-                        KeyEvent event = new KeyEvent(
-                                0, 0, 0, KeyEvent.KEYCODE_DEL, 0, 0, 0, 0,
-                                KeyEvent.KEYCODE_ENDCALL);
-                        mEtMessage.dispatchKeyEvent(event);
-                    }
-                });
-
-        // To toggle between text keyboard and emoji keyboard keyboard(Popup)
-        mBtnEmoji.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                Log.e("TAG", "emoji button clicked");
-
-                //If popup is not showing => emoji keyboard is not visible, we need to show it
-                if (!popup.isShowing()) {
-                    mBtnEmoji.setImageResource(R.drawable.ic_hardware_keyboard);
-                    Log.e("TAG", "popup is not showing");
-                    //If keyboard is visible, simply show the emoji popup
-                    if (popup.isKeyBoardOpen()) {
-                        Log.e("TAG", "keyboard is shown, opening a popup");
-                        popup.showAtBottom();
-                    }
-
-                    //else, open the text keyboard first and immediately after that show the
-                    // emoji popup
-                    else {
-                        Log.e("TAG", "keyboard is not shown, opening a keyboard and a popup");
-                        mEtMessage.setFocusableInTouchMode(true);
-                        mEtMessage.requestFocus();
-                        popup.showAtBottomPending();
-                        final InputMethodManager inputMethodManager
-                                = (InputMethodManager) context.getSystemService(
-                                Context.INPUT_METHOD_SERVICE);
-                        inputMethodManager.showSoftInput(mEtMessage,
-                                InputMethodManager.SHOW_FORCED);
-                    }
-                }
-
-                //If popup is showing, simply dismiss it to show the underlying text keyboard
-                else {
-                    Log.e("TAG", "popup is showing, dismissing now");
-                    popup.dismiss();
-                    mBtnEmoji.setImageResource(R.drawable.ic_action_social_mood);
-                }
-            }
-        });
 
     }
 

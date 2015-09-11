@@ -4,7 +4,6 @@ import android.app.Application;
 import android.util.Log;
 
 import com.facebook.drawee.backends.pipeline.Fresco;
-import com.kisstools.KissTools;
 import com.nethergrim.vk.caching.Prefs;
 import com.nethergrim.vk.images.ImageLoader;
 import com.nethergrim.vk.inject.DaggerMainComponent;
@@ -46,7 +45,6 @@ public class MyApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        KissTools.setContext(this);
         _app = this;
         Constants.mDensity = getResources().getDisplayMetrics().density;
 

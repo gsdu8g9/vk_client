@@ -1,5 +1,4 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -15,27 +14,6 @@
         android:layout_alignParentBottom="true"
         android:background="@android:color/white"
         android:minHeight="@dimen/input.messages.controller.height">
-
-
-        <github.ankushsachdeva.emojicon.EmojiconEditText
-            android:id="@+id/et_message"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:layout_toLeftOf="@+id/btn_send"
-            android:layout_toRightOf="@+id/btn_emoji"
-            android:background="@null"
-            android:gravity="center_vertical|left"
-            android:hint="@string/write_a_message"
-            android:inputType="textMultiLine"
-            android:maxLines="5"
-            android:minHeight="@dimen/input.messages.controller.height"
-            android:textColor="@color/primary_text"
-            android:textColorHint="@color/hint_text"
-            android:textCursorDrawable="@null"
-            android:textSize="@dimen/text_size_regular"
-            app:typeface="roboto_light"
-            tools:text="Message here  \nMessage \nMessage \nMessage\nMessage" />
 
 
         <ImageButton
@@ -54,7 +32,6 @@
             android:id="@+id/btn_send"
             android:layout_width="wrap_content"
             android:layout_height="@dimen/input.messages.controller.height"
-            android:layout_alignBottom="@+id/et_message"
             android:layout_alignParentRight="true"
             android:layout_gravity="right|bottom"
             android:background="?android:attr/selectableItemBackground"
