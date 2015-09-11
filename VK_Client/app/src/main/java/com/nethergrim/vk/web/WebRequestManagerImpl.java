@@ -3,7 +3,6 @@ package com.nethergrim.vk.web;
 import android.os.Build;
 import android.support.annotation.Nullable;
 
-import com.kisstools.utils.StringUtil;
 import com.nethergrim.vk.Constants;
 import com.nethergrim.vk.MyApplication;
 import com.nethergrim.vk.caching.Prefs;
@@ -81,7 +80,8 @@ public class WebRequestManagerImpl implements WebRequestManager {
                 sb.append(id);
                 sb.append(", ");
             }
-            String idsValues = StringUtil.cutText(sb.toString(), sb.toString().length() - 2);
+            String s = sb.toString();
+            String idsValues = s.substring(0, s.length() - 2);
             params.put("user_ids", idsValues);
         }
 
@@ -90,7 +90,8 @@ public class WebRequestManagerImpl implements WebRequestManager {
             sb.append(field);
             sb.append(", ");
         }
-        String idsValues = StringUtil.cutText(sb.toString(), sb.toString().length() - 2);
+        String s = sb.toString();
+        String idsValues = s.substring(0, s.length() - 2);
         params.put("fields", idsValues);
         return mRetrofitInterface.getUsers(params)
                 .doOnNext(mDefaultResponseChecker)
