@@ -111,6 +111,7 @@ public class RealmPersistingManagerImpl implements PersistingManager {
         realm.copyToRealmOrUpdate(users);
 
         realm.commitTransaction();
+        realm.close();
         mBus.post(new ConversationsUpdatedEvent());
         mBus.post(new UsersUpdatedEvent());
     }
@@ -121,6 +122,6 @@ public class RealmPersistingManagerImpl implements PersistingManager {
         realm.beginTransaction();
         realm.copyToRealmOrUpdate(listOfMessages.getMessages());
         realm.commitTransaction();
-        mBus.post(new ConversationsUpdatedEvent());
+        realm.close();
     }
 }

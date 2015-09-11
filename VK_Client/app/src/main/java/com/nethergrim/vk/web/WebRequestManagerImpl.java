@@ -186,10 +186,13 @@ public class WebRequestManagerImpl implements WebRequestManager {
         if (chatId > 0) {
             params.put("chat_id", String.valueOf(chatId));
         }
+        params.put("start_message_id", "0");
+        params.put("rev", "0");
 
         return mRetrofitInterface.getMessagesHistory(params)
                 .doOnNext(mDefaultResponseChecker)
                 .retryWhen(mRetryCall)
+                .map(listOfMessagesResponse -> listOfMessagesResponse.getListOfMessages())
                 .observeOn(getDefaultScheduler())
                 .subscribeOn(getDefaultScheduler());
     }

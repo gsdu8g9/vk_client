@@ -3,7 +3,7 @@ package com.nethergrim.vk.web;
 import com.nethergrim.vk.Constants;
 import com.nethergrim.vk.models.ConversationsUserObject;
 import com.nethergrim.vk.models.ListOfFriends;
-import com.nethergrim.vk.models.ListOfMessages;
+import com.nethergrim.vk.models.ListOfMessagesResponse;
 import com.nethergrim.vk.models.ListOfUsers;
 import com.nethergrim.vk.models.StartupResponse;
 
@@ -36,7 +36,7 @@ public interface RetrofitInterface {
     Observable<ListOfFriends> getFriends(@QueryMap Map<String, String> options);
 
     @GET(Constants.Requests.MESSAGES_GET_HISTORY)
-    Observable<ListOfMessages> getMessagesHistory(@QueryMap Map<String, String> options);
+    Observable<ListOfMessagesResponse> getMessagesHistory(@QueryMap Map<String, String> options);
 
     @GET(Constants.Requests.EXECUTE_GET_CONVERSATIONS_AND_USERS)
     Observable<ConversationsUserObject> getConversationsAndUsers(

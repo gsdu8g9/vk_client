@@ -23,11 +23,14 @@ import com.nethergrim.vk.R;
 import com.nethergrim.vk.activity.AbstractActivity;
 import com.nethergrim.vk.adapter.ChatAdapter;
 import com.nethergrim.vk.caching.Prefs;
+import com.nethergrim.vk.event.ConversationsUpdatedEvent;
 import com.nethergrim.vk.models.Conversation;
 import com.nethergrim.vk.models.User;
 import com.nethergrim.vk.utils.ConversationUtils;
 import com.nethergrim.vk.utils.UserProvider;
 import com.nethergrim.vk.web.WebIntentHandler;
+import com.squareup.otto.Bus;
+import com.squareup.otto.Subscribe;
 
 import javax.inject.Inject;
 
@@ -43,13 +46,17 @@ public class ChatFragment extends AbstractFragment
 
     public static final String EXTRA_CONVERSATION_ID = Constants.PACKAGE_NAME + ".CONV_ID";
     @Inject
-    Realm mRealm;
-    @Inject
     WebIntentHandler mWebIntentHandler;
     @Inject
     UserProvider mUserProvider;
     @Inject
     Prefs mPrefs;
+    @Inject
+    Realm mRealm;
+    @Inject
+    Bus mBus;
+
+
     @InjectView(R.id.toolbar)
     Toolbar mToolbar;
     @InjectView(R.id.recyclerView)
@@ -64,6 +71,7 @@ public class ChatFragment extends AbstractFragment
     private Conversation mConversation;
     private boolean mIsGroupChat;
     private User mAnotherUser;
+    private ChatAdapter mChatAdapter;
 
     public static ChatFragment getInstance(long conversationId, boolean isAGroupChat) {
         ChatFragment chatFragment = new ChatFragment();
@@ -88,6 +96,7 @@ public class ChatFragment extends AbstractFragment
     public View onCreateView(LayoutInflater inflater,
             ViewGroup container,
             Bundle savedInstanceState) {
+        mBus.register(this);
         View v = inflater.inflate(R.layout.fragment_chat, container, false);
         ButterKnife.inject(this, v);
         initViews();
@@ -97,7 +106,6 @@ public class ChatFragment extends AbstractFragment
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
         loadConversation();
         initToolbar();
         loadLastMessages();
@@ -105,6 +113,7 @@ public class ChatFragment extends AbstractFragment
 
     @Override
     public void onDestroyView() {
+        mBus.unregister(this);
         super.onDestroyView();
         ButterKnife.reset(this);
     }
@@ -120,12 +129,17 @@ public class ChatFragment extends AbstractFragment
         }
     }
 
-
     @Override
     public boolean onMenuItemClick(MenuItem item) {
         Log.e("TAG", "menu item click " + item.getTitle());
         // TODO handle
         return false;
+    }
+
+    @Subscribe
+    public void onDataUpdated(ConversationsUpdatedEvent e) {
+        Log.e("TAG", "chat data updated");
+        mChatAdapter.notifyDataSetChanged();
     }
 
     private long getConversationIdFromExtras(Bundle extras) {
@@ -140,7 +154,8 @@ public class ChatFragment extends AbstractFragment
     }
 
     private void initList(Context context) {
-        mRecyclerView.setAdapter(new ChatAdapter(mConversationId, mIsGroupChat));
+        mChatAdapter = new ChatAdapter(mConversationId, mIsGroupChat);
+        mRecyclerView.setAdapter(mChatAdapter);
         mRecyclerView.setLayoutManager(
                 new LinearLayoutManager(context, RecyclerView.VERTICAL, false));
     }
@@ -149,7 +164,6 @@ public class ChatFragment extends AbstractFragment
         View rootView = getActivity().findViewById(R.id.root);
         final Context context = rootView.getContext();
         initList(context);
-
 
     }
 
@@ -184,21 +198,21 @@ public class ChatFragment extends AbstractFragment
 
     }
 
-    private void loadLastMessages() {
-        // TODO refactor and make pagination
+    private String getUserId() {
+        if (mIsGroupChat) {
+            return null;
+        }
+        return String.valueOf(mConversationId);
+    }
 
-        // TODO
-//        mWebRequestManager.getChatHistory(0, 18, mIsGroupChat ? 0 : mConversationId,
-//                mIsGroupChat ? mConversationId : 0, 0, false, new WebCallback<ListOfMessages>() {
-//                    @Override
-//                    public void onUserLoaded(ListOfMessages response) {
-//                        Log.e("TAG", "messages received: " + response.getMessages().size());
-//                    }
-//
-//                    @Override
-//                    public void onResponseFailed(VKError e) {
-//                        Log.e("TAG", "error");
-//                    }
-//                });
+    private long getChatId() {
+        if (!mIsGroupChat) {
+            return 0;
+        }
+        return mConversationId;
+    }
+
+    private void loadLastMessages() {
+        mWebIntentHandler.fetchMessagesHistory(20, 0, getUserId(), getChatId());
     }
 }

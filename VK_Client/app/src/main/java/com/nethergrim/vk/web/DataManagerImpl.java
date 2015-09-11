@@ -117,6 +117,7 @@ public class DataManagerImpl implements DataManager {
             long chatId) {
         return mWebRequestManager
                 .getChatHistory(offset, count, userId, chatId)
-                .doOnNext(mPersistingManager::manage);
+                .doOnNext(mPersistingManager::manage)
+                .doOnNext(listOfMessages -> mBus.post(new ConversationsUpdatedEvent()));
     }
 }
