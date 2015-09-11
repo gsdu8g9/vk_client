@@ -14,6 +14,7 @@ import com.nethergrim.vk.event.MyUserUpdatedEvent;
 import com.nethergrim.vk.event.UsersUpdatedEvent;
 import com.nethergrim.vk.models.ConversationsUserObject;
 import com.nethergrim.vk.models.ListOfFriends;
+import com.nethergrim.vk.models.ListOfMessages;
 import com.nethergrim.vk.models.ListOfUsers;
 import com.nethergrim.vk.models.StartupResponse;
 import com.squareup.otto.Bus;
@@ -107,5 +108,15 @@ public class DataManagerImpl implements DataManager {
                     mBus.post(new ConversationsUpdatedEvent());
                     mBus.post(new UsersUpdatedEvent());
                 });
+    }
+
+    @Override
+    public Observable<ListOfMessages> fetchMessagesHistory(int count,
+            int offset,
+            String userId,
+            long chatId) {
+        return mWebRequestManager
+                .getChatHistory(offset, count, userId, chatId)
+                .doOnNext(mPersistingManager::manage);
     }
 }

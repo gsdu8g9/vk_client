@@ -2,6 +2,7 @@ package com.nethergrim.vk.web;
 
 import android.os.Build;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 
 import com.nethergrim.vk.Constants;
 import com.nethergrim.vk.MyApplication;
@@ -167,10 +168,9 @@ public class WebRequestManagerImpl implements WebRequestManager {
     @Override
     public Observable<ListOfMessages> getChatHistory(int offset,
             int count,
-            long userId,
-            long chatId,
-            long startMessageId,
-            boolean reversedSorting) {
+            String userId,
+            long chatId
+    ) {
         Map<String, String> params = getDefaultParamsMap();
 
         if (offset >= 0) {
@@ -180,16 +180,11 @@ public class WebRequestManagerImpl implements WebRequestManager {
             params.put("count", String.valueOf(count));
         }
 
-        if (userId > 0) {
-            params.put("user_id", String.valueOf(userId));
+        if (!TextUtils.isEmpty(userId)) {
+            params.put("user_id", userId);
         }
         if (chatId > 0) {
             params.put("chat_id", String.valueOf(chatId));
-        }
-        if (startMessageId > 0) {
-            params.put("start_message_id", String.valueOf(startMessageId));
-        } else if (reversedSorting) {
-            params.put("rev", "1");
         }
 
         return mRetrofitInterface.getMessagesHistory(params)

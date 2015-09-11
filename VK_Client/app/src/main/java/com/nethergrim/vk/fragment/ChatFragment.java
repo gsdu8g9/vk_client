@@ -28,7 +28,6 @@ import com.nethergrim.vk.models.User;
 import com.nethergrim.vk.utils.ConversationUtils;
 import com.nethergrim.vk.utils.UserProvider;
 import com.nethergrim.vk.web.WebIntentHandler;
-import com.nethergrim.vk.web.WebRequestManager;
 
 import javax.inject.Inject;
 
@@ -53,8 +52,6 @@ public class ChatFragment extends AbstractFragment
     Prefs mPrefs;
     @InjectView(R.id.toolbar)
     Toolbar mToolbar;
-    @Inject
-    WebRequestManager mWebRequestManager;
     @InjectView(R.id.recyclerView)
     RecyclerView mRecyclerView;
     @InjectView(R.id.btn_emoji)

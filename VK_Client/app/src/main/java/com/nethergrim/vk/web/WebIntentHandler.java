@@ -32,4 +32,6 @@ public interface WebIntentHandler {
      * */
     void launchStartupTasks();
 
+    void fetchMessagesHistory(int count, int offset, String userId, long chatId);
+
 }
