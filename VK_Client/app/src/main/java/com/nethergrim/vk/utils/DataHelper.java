@@ -42,15 +42,7 @@ public class DataHelper {
      * It will generate AuthorId, to optimize and simplify data usage.
      */
     public static Message normalizeMessage(@NonNull Message message) {
-        if (message.getChat_id() > 0) {
-            message.setAuthorId(message.getChat_active().get(0));
-        } else {
-            message.setAuthorId(message.getUser_id());
-        }
 
-        if (MessageUtils.isMessageWithSticker(message)) {
-            String url = MessageUtils.getStickerFromMessage(message).getPhoto256();
-        }
         return message;
     }
 }

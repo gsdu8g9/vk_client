@@ -24,9 +24,8 @@ public class ChatViewHolder extends RecyclerView.ViewHolder {
     public TextView textBody;
     @InjectView(R.id.avatar)
     public UserImageView imageAvatar;
-
-    View bubbleView; // TODO: 22.08.15 inject these views
-    TextView textDate;// TODO: 22.08.15 inject these views
+    @InjectView(R.id.textDate)
+    public TextView textDate;
 
     public ChatViewHolder(View itemView) {
         super(itemView);

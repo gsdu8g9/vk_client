@@ -40,7 +40,9 @@ public class UserImageView extends SimpleDraweeView {
     public void display(User user, boolean roundAsCircle) {
         this.mRoundAsCircle = roundAsCircle;
         init();
-        display(UserUtils.getStablePhotoUrl(user));
+        if (user != null) {
+            display(UserUtils.getStablePhotoUrl(user));
+        }
     }
 
     public void displayGroupChat() {

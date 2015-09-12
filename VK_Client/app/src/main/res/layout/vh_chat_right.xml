@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:paddingBottom="8dp"
+    android:paddingTop="8dp"
+    tools:background="@android:color/darker_gray">
 
     <com.nethergrim.vk.views.imageViews.UserImageView
         android:id="@+id/avatar"
@@ -15,21 +19,41 @@
         android:layout_marginTop="@dimen/chat.row.margin_vertical"
         tools:background="@drawable/green_dot" />
 
-    <com.devspark.robototextview.widget.RobotoTextView
-        android:id="@+id/textBody"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/avatar"
-        android:layout_marginEnd="@dimen/chat.row.margins"
         android:layout_marginLeft="@dimen/chat.row.margin_another_size"
-        android:layout_marginRight="@dimen/chat.row.margins"
-        android:layout_marginStart="@dimen/chat.row.margin_another_size"
+        android:layout_marginRight="4dp"
         android:layout_toLeftOf="@+id/avatar"
-        android:layout_toStartOf="@+id/avatar"
-        android:background="@drawable/rounded_background_white"
-        android:padding="@dimen/chat.row.body_padding"
-        android:textColor="@color/primary_text"
-        tools:text="Text here, long message, long message, long message, long message, long message, long message, long message, " />
+        android:background="@drawable/right_triangle"
+        android:minHeight="@dimen/chat.row.avatar.size"
+        android:orientation="vertical">
 
 
+        <com.devspark.robototextview.widget.RobotoTextView
+            android:id="@+id/textBody"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="12dp"
+            android:layout_marginRight="4dp"
+            android:layout_marginTop="4dp"
+            android:textColor="@color/primary_text"
+            app:typeface="roboto_regular"
+            tools:text="n anf kjfnkj nfakjs kfj snkjadfn asd fsad fas f asdf sadf sdaf das  " />
+
+        <com.devspark.robototextview.widget.RobotoTextView
+            android:id="@+id/textDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:paddingBottom="4dp"
+            android:paddingRight="4dp"
+            android:paddingTop="4dp"
+            android:textColor="@color/secondary_text"
+            android:textSize="14sp"
+            app:typeface="roboto_light"
+            tools:text="Hi" />
+
+    </LinearLayout>
 </RelativeLayout>
