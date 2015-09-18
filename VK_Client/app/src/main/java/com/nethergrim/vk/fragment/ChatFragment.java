@@ -47,8 +47,8 @@ public class ChatFragment extends AbstractFragment
         PaginationManager.OnRecyclerViewScrolledToPageListener {
 
     public static final String EXTRA_CONVERSATION_ID = Constants.PACKAGE_NAME + ".CONV_ID";
-    public static final int PAGE_SIZE = 100;
-    public static final int PAGE_OFFSET_PRELOAD = 50;
+    public static final int PAGE_SIZE = 5;
+    public static final int PAGE_OFFSET_PRELOAD = 0;
     @Inject
     WebIntentHandler mWebIntentHandler;
     @Inject
@@ -74,7 +74,6 @@ public class ChatFragment extends AbstractFragment
     private User mAnotherUser;
     private ChatAdapter mChatAdapter;
     private long mDataCount;
-    private boolean mLoading;
 
     public static ChatFragment getInstance(long conversationId, boolean isAGroupChat) {
         ChatFragment chatFragment = new ChatFragment();
@@ -150,7 +149,6 @@ public class ChatFragment extends AbstractFragment
     public void onDataUpdated(ConversationUpdatedEvent e) {
         if (mIsGroupChat && e.getChatId() == getChatId() || !mIsGroupChat && e.getUserId()
                 .equals(getUserId())) {
-            mLoading = false;
             mDataCount = e.getCount();
             mChatAdapter.notifyDataSetChanged();
             mChatAdapter.setHeaderVisibility(View.GONE);
@@ -159,8 +157,7 @@ public class ChatFragment extends AbstractFragment
 
     @Override
     public void onRecyclerViewScrolledToPage(int pageNumber) {
-        if (!mLoading && mChatAdapter.getDataSize() != mDataCount) {
-            mLoading = true;
+        if (mChatAdapter.getDataSize() != mDataCount) {
             mChatAdapter.setHeaderVisibility(View.VISIBLE);
             int offset = pageNumber * PAGE_SIZE;
             Log.e("TAG", "loading data, offset: " + offset);

@@ -72,9 +72,8 @@ public class PaginationManager extends RecyclerView.OnScrollListener {
 
         int visibleItemCount = recyclerView.getChildCount();
         int totalItemCount = mLayoutManager.getItemCount();
-        int firstVisibleItem = mLayoutManager.findFirstVisibleItemPosition();
+        int firstVisibleItem = mLayoutManager.findFirstCompletelyVisibleItemPosition();
         int lastVisibleItem = firstVisibleItem + visibleItemCount;
-
         if (loading) {
             if (totalItemCount > previousTotal) {
                 loading = false;
@@ -83,8 +82,9 @@ public class PaginationManager extends RecyclerView.OnScrollListener {
         }
 
         if (mStackFromBottom) {
-            if (!loading && firstVisibleItem <= mOffset) {
+            if (!loading && !recyclerView.canScrollVertically(-1)) {
                 mCallback.onRecyclerViewScrolledToPage(totalItemCount / mDefaultPageSize);
+                loading = true;
             }
         } else {
 
