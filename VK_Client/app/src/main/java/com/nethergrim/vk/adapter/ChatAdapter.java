@@ -34,7 +34,6 @@ public class ChatAdapter extends UltimateAdapter implements UltimateAdapter.Head
     UserProvider mUserProvider;
     @Inject
     Prefs mPrefs;
-    private long mMyId;
     private RealmResults<Message> mMessages;
 
     // key - Long, user id, value = user;
@@ -46,7 +45,6 @@ public class ChatAdapter extends UltimateAdapter implements UltimateAdapter.Head
         Realm realm = Realm.getDefaultInstance();
         setHasStableIds(true);
         mUsersMap = new HashMap<>();
-        mMyId = mPrefs.getCurrentUserId();
         if (isAGroupChat) {
             mMessages = realm.where(Message.class)
                     .equalTo("chat_id", conversationId)

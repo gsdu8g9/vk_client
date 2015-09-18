@@ -94,7 +94,7 @@ public abstract class UltimateAdapter
     }
 
     @Override
-    public final long getItemId(int position) {
+    public long getItemId(int position) {
         if (position == 0 && withHeader()) {
             return -111l;
         } else if (withFooter() && position == getFooterPosition()) {

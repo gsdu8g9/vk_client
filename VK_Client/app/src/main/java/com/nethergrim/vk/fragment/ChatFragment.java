@@ -47,8 +47,8 @@ public class ChatFragment extends AbstractFragment
         PaginationManager.OnRecyclerViewScrolledToPageListener {
 
     public static final String EXTRA_CONVERSATION_ID = Constants.PACKAGE_NAME + ".CONV_ID";
-    public static final int PAGE_SIZE = 5;
-    public static final int PAGE_OFFSET_PRELOAD = 0;
+    public static final int PAGE_SIZE = 100;
+    public static final int PAGE_OFFSET_PRELOAD = 50;
     @Inject
     WebIntentHandler mWebIntentHandler;
     @Inject

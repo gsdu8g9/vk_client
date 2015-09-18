@@ -110,6 +110,9 @@ public class ConversationsAdapter extends UltimateAdapter
         String details = "";
         User user;
         Context ctx = conversationViewHolder.itemView.getContext();
+        if (message == null) {
+            return;
+        }
 
         if (MessageUtils.isMessageWithPhoto(message)) {
             details = "[ " + ctx.getString(R.string.photo) + " ] " + details;
