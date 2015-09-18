@@ -63,7 +63,6 @@ public class ConversationsAdapter extends UltimateAdapter
         textColorSecondary = ctx.getResources().getColor(R.color.secondary_text);
     }
 
-
     @Override
     public void onChange() {
         notifyDataSetChanged();
@@ -84,7 +83,7 @@ public class ConversationsAdapter extends UltimateAdapter
     }
 
     @Override
-    public int getDataViewResId() {
+    public int getDataViewResId(int viewType) {
         return R.layout.vh_conversation;
     }
 

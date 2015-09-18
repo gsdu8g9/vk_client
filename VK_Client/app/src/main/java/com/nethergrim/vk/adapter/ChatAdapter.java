@@ -1,10 +1,7 @@
 package com.nethergrim.vk.adapter;
 
-import android.support.v7.widget.RecyclerView;
 import android.text.format.DateUtils;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 
 import com.nethergrim.vk.MyApplication;
 import com.nethergrim.vk.R;
@@ -29,7 +26,7 @@ import io.realm.RealmResults;
  * @author Andrey Drobyazko (c2q9450@gmail.com).
  *         All rights reserved.
  */
-public class ChatAdapter extends RecyclerView.Adapter<ChatViewHolder> {
+public class ChatAdapter extends UltimateAdapter implements UltimateAdapter.HeaderInterface {
 
     public static final int TYPE_MY = 1;
     public static final int TYPE_NOT_MINE = 0;
@@ -61,54 +58,72 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatViewHolder> {
         }
     }
 
+
     @Override
-    public ChatViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v;
-        if (viewType == TYPE_MY) {
-            v = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.vh_chat_right, parent, false);
-        } else if (viewType == TYPE_NOT_MINE) {
-            v = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.vh_chat_left, parent, false);
-        } else {
-            v = null;
+    public int getDataSize() {
+        return mMessages.size();
+    }
+
+    @Override
+    public int getDataViewResId(int viewType) {
+        switch (viewType) {
+            case TYPE_MY:
+                return R.layout.vh_chat_right;
+            case TYPE_NOT_MINE:
+                return R.layout.vh_chat_left;
+            default:
+                return 0;
         }
-        return new ChatViewHolder(v);
     }
 
 
     @Override
-    public void onBindViewHolder(ChatViewHolder holder, int position) {
-        Message message = mMessages.get(position);
-        int type = getItemViewType(position);
-        User user = getUserById(message.getFrom_id());
-
-        holder.textBody.setText(message.getBody());
-        holder.imageAvatar.display(user, true);
-        holder.textDate.setText(DateUtils.getRelativeTimeSpanString(message.getDate() * 1000));
-
-    }
-
-    @Override
-    public int getItemViewType(int position) {
-        if (position >= mMessages.size()) {
+    public long getDataId(int dataPosition) {
+        if (dataPosition >= mMessages.size()) {
             return -1;
         }
-        Message message = mMessages.get(position);
+        return mMessages.get(dataPosition).getId();
+    }
+
+    @Override
+    public int getDataViewType(int dataPosition) {
+        if (dataPosition >= mMessages.size()) {
+            return -5;
+        }
+        Message message = mMessages.get(dataPosition);
         return message.getOut() == 1 ? TYPE_MY : TYPE_NOT_MINE;
     }
 
     @Override
-    public long getItemId(int position) {
-        if (position >= mMessages.size()) {
-            return -1;
-        }
-        return mMessages.get(position).getId();
+    public DataVH getDataViewHolder(View v, int dataViewType) {
+        return new ChatViewHolder(v);
     }
 
     @Override
-    public int getItemCount() {
-        return mMessages.size();
+    public void bindDataVH(DataVH vh, int dataPosition) {
+        ChatViewHolder chatViewHolder = (ChatViewHolder) vh;
+        Message message = mMessages.get(dataPosition);
+        User user = getUserById(message.getFrom_id());
+
+        chatViewHolder.textBody.setText(message.getBody());
+        chatViewHolder.imageAvatar.display(user, true);
+        chatViewHolder.textDate.setText(
+                DateUtils.getRelativeTimeSpanString(message.getDate() * 1000));
+    }
+
+    @Override
+    public HeaderVH getHeaderVH(View v) {
+        return new MyHeaderVH(v);
+    }
+
+    @Override
+    public int getHeaderViewResId() {
+        return R.layout.spinner;
+    }
+
+    @Override
+    public void bindHeaderVH(HeaderVH vh) {
+        // nothing here, just empty spinner
     }
 
     private User getUserById(long id) {
@@ -118,5 +133,12 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatViewHolder> {
             mUsersMap.put(id, user);
         }
         return user;
+    }
+
+    public static class MyHeaderVH extends HeaderVH {
+
+        public MyHeaderVH(View itemView) {
+            super(itemView);
+        }
     }
 }

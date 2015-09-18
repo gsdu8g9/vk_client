@@ -4,9 +4,10 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
 /**
- * Created by nethergrim on 18.04.2015.
+ * @author Andrew Drobyazko (c2q9450@gmail.com).
+ *         All rights reserved!
  */
-public class RecyclerviewPageScroller extends RecyclerView.OnScrollListener {
+public class PaginationManager extends RecyclerView.OnScrollListener {
 
     private final int mDefaultPageSize;
     private final OnRecyclerViewScrolledToPageListener mCallback;
@@ -15,12 +16,19 @@ public class RecyclerviewPageScroller extends RecyclerView.OnScrollListener {
     private boolean loading;
     private int previousTotal;
 
+    /**
+     * For stacking list from the bottom. Will call {@link com.nethergrim.vk.views
+     * .PaginationManager.OnRecyclerViewScrolledToPageListener#onRecyclerViewScrolledToPage(int)
+     * after scrolling to the top}
+     */
+    private boolean mStackFromBottom;
+
     public interface OnRecyclerViewScrolledToPageListener {
 
         void onRecyclerViewScrolledToPage(int pageNumber);
     }
 
-    public RecyclerviewPageScroller(int defaultPageSize,
+    public PaginationManager(int defaultPageSize,
             OnRecyclerViewScrolledToPageListener callback,
             int offset) {
         this.mDefaultPageSize = defaultPageSize;
@@ -32,7 +40,22 @@ public class RecyclerviewPageScroller extends RecyclerView.OnScrollListener {
         if (mOffset < 0) {
             mOffset *= -1;
         }
+    }
 
+    public PaginationManager(int defaultPageSize,
+            OnRecyclerViewScrolledToPageListener callback,
+            int offset, boolean stackFromBottom) {
+        this.mCallback = callback;
+        if (mCallback == null) {
+            throw new IllegalStateException("OnRecyclerViewScrolledToPageListener is NULL");
+        }
+        this.mStackFromBottom = stackFromBottom;
+        this.mDefaultPageSize = defaultPageSize;
+        this.mOffset = offset;
+
+        if (mOffset < 0) {
+            mOffset *= -1;
+        }
     }
 
     @Override
@@ -58,14 +81,22 @@ public class RecyclerviewPageScroller extends RecyclerView.OnScrollListener {
                 previousTotal = totalItemCount;
             }
         }
-        if (!loading && (lastVisibleItem + mOffset) >= totalItemCount) {
-            // End has been reached
 
-            mCallback.onRecyclerViewScrolledToPage(totalItemCount / mDefaultPageSize + 1);
+        if (mStackFromBottom) {
+            if (!loading && firstVisibleItem <= mOffset) {
+                mCallback.onRecyclerViewScrolledToPage(totalItemCount / mDefaultPageSize);
+            }
+        } else {
 
-            // Do something
+            if (!loading && (lastVisibleItem + mOffset) >= totalItemCount) {
+                // End has been reached
 
-            loading = true;
+                mCallback.onRecyclerViewScrolledToPage(totalItemCount / mDefaultPageSize + 1);
+
+                // Do something
+
+                loading = true;
+            }
         }
 
     }

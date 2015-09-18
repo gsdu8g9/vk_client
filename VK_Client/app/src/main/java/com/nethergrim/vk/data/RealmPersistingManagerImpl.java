@@ -16,6 +16,7 @@ import com.nethergrim.vk.models.ConversationsUserObject;
 import com.nethergrim.vk.models.ListOfFriends;
 import com.nethergrim.vk.models.ListOfMessages;
 import com.nethergrim.vk.models.ListOfUsers;
+import com.nethergrim.vk.models.Message;
 import com.nethergrim.vk.models.StartupResponse;
 import com.nethergrim.vk.models.User;
 import com.nethergrim.vk.utils.DataHelper;
@@ -26,6 +27,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import io.realm.Realm;
+import io.realm.RealmResults;
 
 /**
  * @author andrej on 30.08.15.
@@ -117,9 +119,27 @@ public class RealmPersistingManagerImpl implements PersistingManager {
     }
 
     @Override
-    public void manage(ListOfMessages listOfMessages) {
+    public void manage(ListOfMessages listOfMessages, boolean clearData) {
         Realm realm = Realm.getDefaultInstance();
         realm.beginTransaction();
+        if (clearData) {
+            Message message = listOfMessages.getMessages().get(0);
+            if (message.getChat_id() > 0) {
+                RealmResults<Message> messages = realm.where(Message.class)
+                        .equalTo("chat_id", message.getChat_id())
+                        .findAll();
+                for (int i = messages.size() - 1; i >= 0; i--) {
+                    messages.get(i).removeFromRealm();
+                }
+            } else if (message.getUser_id() > 0) {
+                RealmResults<Message> messages = realm.where(Message.class)
+                        .equalTo("user_id", message.getUser_id())
+                        .findAll();
+                for (int i = messages.size() - 1; i >= 0; i--) {
+                    messages.get(i).removeFromRealm();
+                }
+            }
+        }
         realm.copyToRealmOrUpdate(listOfMessages.getMessages());
         realm.commitTransaction();
         realm.close();

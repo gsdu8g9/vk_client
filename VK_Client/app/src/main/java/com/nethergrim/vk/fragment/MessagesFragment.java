@@ -22,7 +22,7 @@ import com.nethergrim.vk.event.ConversationsUpdatedEvent;
 import com.nethergrim.vk.models.Conversation;
 import com.nethergrim.vk.utils.BasicRecyclerViewScroller;
 import com.nethergrim.vk.utils.FabAnimationManager;
-import com.nethergrim.vk.views.RecyclerviewPageScroller;
+import com.nethergrim.vk.views.PaginationManager;
 import com.nethergrim.vk.web.WebIntentHandler;
 import com.rey.material.widget.ProgressView;
 import com.squareup.otto.Bus;
@@ -38,7 +38,7 @@ import butterknife.OnClick;
  * @author andreydrobyazko on 3/20/15.
  */
 public class MessagesFragment extends AbstractFragment implements
-        RecyclerviewPageScroller.OnRecyclerViewScrolledToPageListener, ToolbarScrollable,
+        PaginationManager.OnRecyclerViewScrolledToPageListener, ToolbarScrollable,
         ConversationsAdapter.OnConversationClickListener {
 
     public static final int DEFAULT_PAGE_SIZE = 20;
@@ -95,7 +95,7 @@ public class MessagesFragment extends AbstractFragment implements
         mAdapter = new ConversationsAdapter(this);
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.addOnScrollListener(
-                new RecyclerviewPageScroller(DEFAULT_PAGE_SIZE, this, DEFAULT_PAGE_SIZE / 2));
+                new PaginationManager(DEFAULT_PAGE_SIZE, this, DEFAULT_PAGE_SIZE / 2));
         mRecyclerView.addOnScrollListener(new BasicRecyclerViewScroller(this));
         if (mAdapter.getItemCount() == 0) {
             mProgressBar.setVisibility(View.VISIBLE);

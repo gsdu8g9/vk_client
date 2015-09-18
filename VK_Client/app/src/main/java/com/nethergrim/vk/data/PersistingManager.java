@@ -33,5 +33,5 @@ public interface PersistingManager {
 
 
     @WorkerThread
-    void manage(ListOfMessages listOfMessages);
+    void manage(ListOfMessages listOfMessages, boolean clearData);
 }

@@ -1,6 +1,7 @@
 package com.nethergrim.vk.web;
 
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.android.gms.iid.InstanceID;
@@ -8,6 +9,7 @@ import com.nethergrim.vk.Constants;
 import com.nethergrim.vk.MyApplication;
 import com.nethergrim.vk.caching.Prefs;
 import com.nethergrim.vk.data.PersistingManager;
+import com.nethergrim.vk.event.ConversationUpdatedEvent;
 import com.nethergrim.vk.event.ConversationsUpdatedEvent;
 import com.nethergrim.vk.event.FriendsUpdatedEvent;
 import com.nethergrim.vk.event.MyUserUpdatedEvent;
@@ -25,6 +27,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import rx.Observable;
+import rx.schedulers.Schedulers;
 
 /**
  * Class that will handle results of every web request. Should be used to map, persist data, and
@@ -62,24 +65,30 @@ public class DataManagerImpl implements DataManager {
     @Override
     public Observable<StartupResponse> launchStartupTasksAndPersistToDb() {
 
-        // prepare parameters
-        String token = mPrefs.getGcmToken();
-        if (TextUtils.isEmpty(token)) {
-            InstanceID instanceID = InstanceID.getInstance(
-                    MyApplication.getInstance().getApplicationContext());
-            try {
-                token = instanceID.getToken(Constants.GCM_SENDER_ID,
-                        GoogleCloudMessaging.INSTANCE_ID_SCOPE, null);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            mPrefs.setGcmToken(token);
-        }
-        return mWebRequestManager
-                .launchStartupTasks(token)
+        return Observable.just(Boolean.TRUE)
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
+                .map(aBoolean -> {
+                    // prepare parameters
+                    String token = mPrefs.getGcmToken();
+                    if (TextUtils.isEmpty(token)) {
+                        InstanceID instanceID = InstanceID.getInstance(
+                                MyApplication.getInstance().getApplicationContext());
+                        try {
+                            token = instanceID.getToken(Constants.GCM_SENDER_ID,
+                                    GoogleCloudMessaging.INSTANCE_ID_SCOPE, null);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        mPrefs.setGcmToken(token);
+                    }
+                    return token;
+                })
+                .flatMap(mWebRequestManager::launchStartupTasks)
                 .doOnNext(mPersistingManager::manage)
                 .doOnNext(startupResponse -> mBus.post(new MyUserUpdatedEvent()))
                 ;
+
     }
 
     @Override
@@ -117,7 +126,14 @@ public class DataManagerImpl implements DataManager {
             long chatId) {
         return mWebRequestManager
                 .getChatHistory(offset, count, userId, chatId)
-                .doOnNext(mPersistingManager::manage)
-                .doOnNext(listOfMessages -> mBus.post(new ConversationsUpdatedEvent()));
+                .doOnNext(listOfMessages -> {
+                    Log.d(TAG, "fetched messages: \n" + "count: " + count + " offset: " + offset
+                            + " userId: " + userId + " chatId: " + chatId);
+                    mPersistingManager.manage(listOfMessages, offset == 0);
+                    ConversationUpdatedEvent conversationUpdatedEvent
+                            = new ConversationUpdatedEvent(listOfMessages, userId, chatId);
+                    mBus.post(conversationUpdatedEvent);
+                })
+                ;
     }
 }
