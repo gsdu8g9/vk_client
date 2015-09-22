@@ -47,8 +47,8 @@ public class ChatFragment extends AbstractFragment
         PaginationManager.OnRecyclerViewScrolledToPageListener {
 
     public static final String EXTRA_CONVERSATION_ID = Constants.PACKAGE_NAME + ".CONV_ID";
-    public static final int PAGE_SIZE = 5;
-    public static final int PAGE_OFFSET_PRELOAD = 0;
+    public static final int PAGE_SIZE = 20;
+    public static final int PAGE_OFFSET_PRELOAD = 10;
     @Inject
     WebIntentHandler mWebIntentHandler;
     @Inject
@@ -179,8 +179,7 @@ public class ChatFragment extends AbstractFragment
     private void initList(Context context) {
         mChatAdapter = new ChatAdapter(mConversationId, mIsGroupChat);
         mRecyclerView.setAdapter(mChatAdapter);
-        LinearLayoutManager llm = new LinearLayoutManager(context, RecyclerView.VERTICAL, false);
-        llm.setStackFromEnd(true);
+        LinearLayoutManager llm = new LinearLayoutManager(context, RecyclerView.VERTICAL, true);
         mRecyclerView.addOnScrollListener(
                 new PaginationManager(PAGE_SIZE, this, PAGE_OFFSET_PRELOAD, true));
         mRecyclerView.setLayoutManager(llm);

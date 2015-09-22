@@ -48,11 +48,11 @@ public class ChatAdapter extends UltimateAdapter implements UltimateAdapter.Head
         if (isAGroupChat) {
             mMessages = realm.where(Message.class)
                     .equalTo("chat_id", conversationId)
-                    .findAllSorted("date");
+                    .findAllSorted("date", false);
         } else {
             mMessages = realm.where(Message.class)
                     .equalTo("user_id", conversationId)
-                    .findAllSorted("date");
+                    .findAllSorted("date", false);
         }
     }
 
