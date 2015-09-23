@@ -44,14 +44,13 @@ public class PaginationManager extends RecyclerView.OnScrollListener {
 
     public PaginationManager(int defaultPageSize,
             OnRecyclerViewScrolledToPageListener callback,
-            int offset, boolean stackFromBottom) {
+            boolean stackFromBottom) {
         this.mCallback = callback;
         if (mCallback == null) {
             throw new IllegalStateException("OnRecyclerViewScrolledToPageListener is NULL");
         }
         this.mStackFromBottom = stackFromBottom;
         this.mDefaultPageSize = defaultPageSize;
-        this.mOffset = offset;
 
         if (mOffset < 0) {
             mOffset *= -1;

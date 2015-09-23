@@ -47,8 +47,7 @@ public class ChatFragment extends AbstractFragment
         PaginationManager.OnRecyclerViewScrolledToPageListener {
 
     public static final String EXTRA_CONVERSATION_ID = Constants.PACKAGE_NAME + ".CONV_ID";
-    public static final int PAGE_SIZE = 20;
-    public static final int PAGE_OFFSET_PRELOAD = 10;
+    public static final int PAGE_SIZE = 50;
     @Inject
     WebIntentHandler mWebIntentHandler;
     @Inject
@@ -160,7 +159,6 @@ public class ChatFragment extends AbstractFragment
         if (mChatAdapter.getDataSize() != mDataCount) {
             mChatAdapter.setHeaderVisibility(View.VISIBLE);
             int offset = pageNumber * PAGE_SIZE;
-            Log.e("TAG", "loading data, offset: " + offset);
             mWebIntentHandler.fetchMessagesHistory(PAGE_SIZE, offset, getUserId(), getChatId());
         }
     }
@@ -181,7 +179,7 @@ public class ChatFragment extends AbstractFragment
         mRecyclerView.setAdapter(mChatAdapter);
         LinearLayoutManager llm = new LinearLayoutManager(context, RecyclerView.VERTICAL, true);
         mRecyclerView.addOnScrollListener(
-                new PaginationManager(PAGE_SIZE, this, PAGE_OFFSET_PRELOAD, true));
+                new PaginationManager(PAGE_SIZE, this, true));
         mRecyclerView.setLayoutManager(llm);
     }
 
