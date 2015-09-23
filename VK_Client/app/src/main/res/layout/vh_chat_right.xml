@@ -44,7 +44,7 @@
             android:layout_height="wrap_content"
             android:maxWidth="220dp"
             android:textColor="@color/primary_text"
-            app:typeface="roboto_medium"
+            app:typeface="roboto_regular"
             tools:text="Text here" />
 
 

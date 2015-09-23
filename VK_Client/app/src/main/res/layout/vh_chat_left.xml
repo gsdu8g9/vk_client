@@ -41,7 +41,7 @@
             android:layout_height="wrap_content"
             android:maxWidth="220dp"
             android:textColor="@android:color/white"
-            app:typeface="roboto_medium"
+            app:typeface="roboto_regular"
             tools:text="f asdf asd fsad f asfas fa sdf s" />
 
 
