@@ -3,14 +3,19 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:paddingBottom="8dp"
-    android:paddingTop="8dp">
+    android:layout_height="wrap_content">
+
+    <Space
+        android:id="@+id/top"
+        android:layout_width="match_parent"
+        android:layout_height="16dp"
+        android:layout_alignParentTop="true" />
 
     <com.nethergrim.vk.views.imageViews.UserImageView
         android:id="@+id/avatar"
         android:layout_width="@dimen/chat.row.avatar.size"
         android:layout_height="@dimen/chat.row.avatar.size"
+        android:layout_below="@+id/top"
         android:layout_marginLeft="@dimen/chat.row.margins"
         android:layout_marginStart="@dimen/chat.row.margins"
         android:layout_marginTop="@dimen/chat.row.margin_vertical"
@@ -34,10 +39,9 @@
             android:id="@+id/textBody"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-
             android:maxWidth="220dp"
             android:textColor="@android:color/white"
-            app:typeface="roboto_regular"
+            app:typeface="roboto_medium"
             tools:text="f asdf asd fsad f asfas fa sdf s" />
 
 
@@ -50,6 +54,7 @@
         android:layout_alignBottom="@+id/content_layout"
         android:layout_alignTop="@+id/content_layout"
         android:layout_toRightOf="@+id/content_layout"
+        android:gravity="center|left"
         android:padding="4dp"
         android:textColor="@color/secondary_text"
         android:textSize="14sp"

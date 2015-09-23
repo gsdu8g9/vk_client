@@ -30,12 +30,12 @@ public class ChatAdapter extends UltimateAdapter implements UltimateAdapter.Head
 
     public static final int TYPE_MY = 1;
     public static final int TYPE_NOT_MINE = 0;
+    public static final long MAX_DELAY_TO_GROUP_MESSAGES_S = 90;
     @Inject
     UserProvider mUserProvider;
     @Inject
     Prefs mPrefs;
     private RealmResults<Message> mMessages;
-
     // key - Long, user id, value = user;
     private Map<Long, User> mUsersMap;
 
@@ -56,7 +56,6 @@ public class ChatAdapter extends UltimateAdapter implements UltimateAdapter.Head
         }
     }
 
-
     @Override
     public int getDataSize() {
         return mMessages.size();
@@ -73,7 +72,6 @@ public class ChatAdapter extends UltimateAdapter implements UltimateAdapter.Head
                 return 0;
         }
     }
-
 
     @Override
     public long getDataId(int dataPosition) {
@@ -102,11 +100,20 @@ public class ChatAdapter extends UltimateAdapter implements UltimateAdapter.Head
         ChatViewHolder chatViewHolder = (ChatViewHolder) vh;
         Message message = mMessages.get(dataPosition);
         User user = getUserById(message.getFrom_id());
+        boolean displayAvatarAndDate = shoulDisplayDateAndAvatar(dataPosition, message);
+        if (displayAvatarAndDate) {
+            chatViewHolder.imageAvatar.setVisibility(View.VISIBLE);
+            chatViewHolder.spaceTop.setVisibility(View.VISIBLE);
+            chatViewHolder.imageAvatar.display(user, true);
+        } else {
+            chatViewHolder.spaceTop.setVisibility(View.GONE);
+            chatViewHolder.imageAvatar.setVisibility(View.INVISIBLE);
+        }
 
-        chatViewHolder.textBody.setText(message.getBody());
-        chatViewHolder.imageAvatar.display(user, true);
         chatViewHolder.textDate.setText(
                 DateUtils.getRelativeTimeSpanString(message.getDate() * 1000));
+        chatViewHolder.textBody.setText(message.getBody());
+
     }
 
     @Override
@@ -122,6 +129,23 @@ public class ChatAdapter extends UltimateAdapter implements UltimateAdapter.Head
     @Override
     public void bindHeaderVH(HeaderVH vh) {
         // nothing here, just empty spinner
+    }
+
+    private boolean shoulDisplayDateAndAvatar(int position, Message currentMessage) {
+        // if view before this view is from same user, and was sent in one minute delay, return
+        // false
+
+        if (position == mMessages.size() - 1) {
+            return true;
+        }
+        Message messageBeforeCurrent = mMessages.get(position + 1);
+        if (currentMessage.getFrom_id() == messageBeforeCurrent.getFrom_id()) {
+            long timeDelta = Math.abs(currentMessage.getDate() - messageBeforeCurrent.getDate());
+            if (timeDelta < MAX_DELAY_TO_GROUP_MESSAGES_S) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private User getUserById(long id) {
