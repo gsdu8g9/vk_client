@@ -100,8 +100,9 @@ public class ChatAdapter extends UltimateAdapter implements UltimateAdapter.Head
         ChatViewHolder chatViewHolder = (ChatViewHolder) vh;
         Message message = mMessages.get(dataPosition);
         User user = getUserById(message.getFrom_id());
-        boolean displayAvatarAndDate = shoulDisplayDateAndAvatar(dataPosition, message);
-        if (displayAvatarAndDate) {
+        boolean displayAvatarAndSpace = shouldDisplaySpaceAndAvatar(dataPosition, message);
+        boolean shouldDisplayDate = shouldDisplayDate(dataPosition, message);
+        if (displayAvatarAndSpace) {
             chatViewHolder.imageAvatar.setVisibility(View.VISIBLE);
             chatViewHolder.spaceTop.setVisibility(View.VISIBLE);
             chatViewHolder.imageAvatar.display(user, true);
@@ -109,9 +110,14 @@ public class ChatAdapter extends UltimateAdapter implements UltimateAdapter.Head
             chatViewHolder.spaceTop.setVisibility(View.GONE);
             chatViewHolder.imageAvatar.setVisibility(View.INVISIBLE);
         }
+        if (shouldDisplayDate) {
+            chatViewHolder.textDate.setVisibility(View.VISIBLE);
+            chatViewHolder.textDate.setText(
+                    DateUtils.getRelativeTimeSpanString(message.getDate() * 1000));
+        } else {
+            chatViewHolder.textDate.setVisibility(View.INVISIBLE);
+        }
 
-        chatViewHolder.textDate.setText(
-                DateUtils.getRelativeTimeSpanString(message.getDate() * 1000));
         chatViewHolder.textBody.setText(message.getBody());
 
     }
@@ -131,7 +137,7 @@ public class ChatAdapter extends UltimateAdapter implements UltimateAdapter.Head
         // nothing here, just empty spinner
     }
 
-    private boolean shoulDisplayDateAndAvatar(int position, Message currentMessage) {
+    private boolean shouldDisplaySpaceAndAvatar(int position, Message currentMessage) {
         // if view before this view is from same user, and was sent in one minute delay, return
         // false
 
@@ -144,6 +150,22 @@ public class ChatAdapter extends UltimateAdapter implements UltimateAdapter.Head
             if (timeDelta < MAX_DELAY_TO_GROUP_MESSAGES_S) {
                 return false;
             }
+        }
+        return true;
+    }
+
+    private boolean shouldDisplayDate(int position, Message currentMessage) {
+        if (position == mMessages.size() - 1) {
+            return true;
+        }
+        if (position == 0) {
+            return true;
+        }
+        Message messageAfterCurrent = mMessages.get(position - 1);
+        long timeFutureDelta = Math.abs(currentMessage.getDate() - messageAfterCurrent.getDate());
+        if (messageAfterCurrent.getFrom_id() == currentMessage.getFrom_id()
+                && timeFutureDelta < MAX_DELAY_TO_GROUP_MESSAGES_S) {
+            return false;
         }
         return true;
     }
