@@ -32,8 +32,6 @@ public interface WebRequestManager {
 
     Observable<ListOfMessages> getChatHistory(int offset,
             int count,
-            long userId,
-            long chatId,
-            long startMessageId,
-            boolean reversedSorting);
+            String userId,
+            long chatId);
 }

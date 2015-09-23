@@ -23,12 +23,15 @@ import com.nethergrim.vk.R;
 import com.nethergrim.vk.activity.AbstractActivity;
 import com.nethergrim.vk.adapter.ChatAdapter;
 import com.nethergrim.vk.caching.Prefs;
+import com.nethergrim.vk.event.ConversationUpdatedEvent;
 import com.nethergrim.vk.models.Conversation;
 import com.nethergrim.vk.models.User;
 import com.nethergrim.vk.utils.ConversationUtils;
 import com.nethergrim.vk.utils.UserProvider;
+import com.nethergrim.vk.views.PaginationManager;
 import com.nethergrim.vk.web.WebIntentHandler;
-import com.nethergrim.vk.web.WebRequestManager;
+import com.squareup.otto.Bus;
+import com.squareup.otto.Subscribe;
 
 import javax.inject.Inject;
 
@@ -40,21 +43,21 @@ import io.realm.Realm;
  * @author andrej on 07.08.15.
  */
 public class ChatFragment extends AbstractFragment
-        implements Toolbar.OnMenuItemClickListener {
+        implements Toolbar.OnMenuItemClickListener,
+        PaginationManager.OnRecyclerViewScrolledToPageListener {
 
     public static final String EXTRA_CONVERSATION_ID = Constants.PACKAGE_NAME + ".CONV_ID";
-    @Inject
-    Realm mRealm;
+    public static final int PAGE_SIZE = 50;
     @Inject
     WebIntentHandler mWebIntentHandler;
     @Inject
     UserProvider mUserProvider;
     @Inject
     Prefs mPrefs;
+    @Inject
+    Bus mBus;
     @InjectView(R.id.toolbar)
     Toolbar mToolbar;
-    @Inject
-    WebRequestManager mWebRequestManager;
     @InjectView(R.id.recyclerView)
     RecyclerView mRecyclerView;
     @InjectView(R.id.btn_emoji)
@@ -63,10 +66,13 @@ public class ChatFragment extends AbstractFragment
     ImageButton mBtnSend;
     @InjectView(R.id.inputMessagesController)
     RelativeLayout mInputMessagesController;
+    Realm mRealm;
     private long mConversationId;
-    private Conversation mConversation;
     private boolean mIsGroupChat;
+    private Conversation mConversation;
     private User mAnotherUser;
+    private ChatAdapter mChatAdapter;
+    private long mDataCount;
 
     public static ChatFragment getInstance(long conversationId, boolean isAGroupChat) {
         ChatFragment chatFragment = new ChatFragment();
@@ -84,6 +90,7 @@ public class ChatFragment extends AbstractFragment
         MyApplication.getInstance().getMainComponent().inject(this);
         setHasOptionsMenu(true);
         setRetainInstance(true);
+        mRealm = Realm.getDefaultInstance();
     }
 
     @Nullable
@@ -91,16 +98,16 @@ public class ChatFragment extends AbstractFragment
     public View onCreateView(LayoutInflater inflater,
             ViewGroup container,
             Bundle savedInstanceState) {
+        mBus.register(this);
         View v = inflater.inflate(R.layout.fragment_chat, container, false);
         ButterKnife.inject(this, v);
-        initViews();
         return v;
     }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
+        initList(view.getContext());
         loadConversation();
         initToolbar();
         loadLastMessages();
@@ -108,8 +115,15 @@ public class ChatFragment extends AbstractFragment
 
     @Override
     public void onDestroyView() {
+        mBus.unregister(this);
         super.onDestroyView();
         ButterKnife.reset(this);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mRealm.close();
     }
 
     @Override
@@ -123,12 +137,30 @@ public class ChatFragment extends AbstractFragment
         }
     }
 
-
     @Override
     public boolean onMenuItemClick(MenuItem item) {
         Log.e("TAG", "menu item click " + item.getTitle());
         // TODO handle
         return false;
+    }
+
+    @Subscribe
+    public void onDataUpdated(ConversationUpdatedEvent e) {
+        if (mIsGroupChat && e.getChatId() == getChatId() || !mIsGroupChat && e.getUserId()
+                .equals(getUserId())) {
+            mDataCount = e.getCount();
+            mChatAdapter.notifyDataSetChanged();
+            mChatAdapter.setHeaderVisibility(View.GONE);
+        }
+    }
+
+    @Override
+    public void onRecyclerViewScrolledToPage(int pageNumber) {
+        if (mChatAdapter.getDataSize() != mDataCount) {
+            mChatAdapter.setHeaderVisibility(View.VISIBLE);
+            int offset = pageNumber * PAGE_SIZE;
+            mWebIntentHandler.fetchMessagesHistory(PAGE_SIZE, offset, getUserId(), getChatId());
+        }
     }
 
     private long getConversationIdFromExtras(Bundle extras) {
@@ -143,17 +175,12 @@ public class ChatFragment extends AbstractFragment
     }
 
     private void initList(Context context) {
-        mRecyclerView.setAdapter(new ChatAdapter(mConversationId, mIsGroupChat));
-        mRecyclerView.setLayoutManager(
-                new LinearLayoutManager(context, RecyclerView.VERTICAL, false));
-    }
-
-    private void initViews() {
-        View rootView = getActivity().findViewById(R.id.root);
-        final Context context = rootView.getContext();
-        initList(context);
-
-
+        mChatAdapter = new ChatAdapter(mConversationId, mIsGroupChat);
+        mRecyclerView.setAdapter(mChatAdapter);
+        LinearLayoutManager llm = new LinearLayoutManager(context, RecyclerView.VERTICAL, true);
+        mRecyclerView.addOnScrollListener(
+                new PaginationManager(PAGE_SIZE, this, true));
+        mRecyclerView.setLayoutManager(llm);
     }
 
     private void loadConversation() {
@@ -187,21 +214,21 @@ public class ChatFragment extends AbstractFragment
 
     }
 
-    private void loadLastMessages() {
-        // TODO refactor and make pagination
+    private String getUserId() {
+        if (mIsGroupChat) {
+            return null;
+        }
+        return String.valueOf(mConversationId);
+    }
 
-        // TODO
-//        mWebRequestManager.getChatHistory(0, 18, mIsGroupChat ? 0 : mConversationId,
-//                mIsGroupChat ? mConversationId : 0, 0, false, new WebCallback<ListOfMessages>() {
-//                    @Override
-//                    public void onUserLoaded(ListOfMessages response) {
-//                        Log.e("TAG", "messages received: " + response.getMessages().size());
-//                    }
-//
-//                    @Override
-//                    public void onResponseFailed(VKError e) {
-//                        Log.e("TAG", "error");
-//                    }
-//                });
+    private long getChatId() {
+        if (!mIsGroupChat) {
+            return -1;
+        }
+        return mConversationId;
+    }
+
+    private void loadLastMessages() {
+        mWebIntentHandler.fetchMessagesHistory(PAGE_SIZE, 0, getUserId(), getChatId());
     }
 }

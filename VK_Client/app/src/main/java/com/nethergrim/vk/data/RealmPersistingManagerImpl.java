@@ -14,6 +14,7 @@ import com.nethergrim.vk.models.Conversation;
 import com.nethergrim.vk.models.ConversationsList;
 import com.nethergrim.vk.models.ConversationsUserObject;
 import com.nethergrim.vk.models.ListOfFriends;
+import com.nethergrim.vk.models.ListOfMessages;
 import com.nethergrim.vk.models.ListOfUsers;
 import com.nethergrim.vk.models.StartupResponse;
 import com.nethergrim.vk.models.User;
@@ -110,7 +111,17 @@ public class RealmPersistingManagerImpl implements PersistingManager {
         realm.copyToRealmOrUpdate(users);
 
         realm.commitTransaction();
+        realm.close();
         mBus.post(new ConversationsUpdatedEvent());
         mBus.post(new UsersUpdatedEvent());
+    }
+
+    @Override
+    public void manage(ListOfMessages listOfMessages) {
+        Realm realm = Realm.getDefaultInstance();
+        realm.beginTransaction();
+        realm.copyToRealmOrUpdate(listOfMessages.getMessages());
+        realm.commitTransaction();
+        realm.close();
     }
 }

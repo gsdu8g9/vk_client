@@ -39,4 +39,10 @@ public class WebIntentHandlerImpl implements WebIntentHandler {
         WorkerService.launchStartupTasks(MyApplication.getInstance());
     }
 
+    @Override
+    public void fetchMessagesHistory(int count, int offset, String userId, long chatId) {
+        WorkerService.fetchMessagesHistory(MyApplication.getInstance(), count, offset, userId,
+                chatId);
+    }
+
 }

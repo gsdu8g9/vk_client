@@ -1,10 +1,11 @@
 package com.nethergrim.vk.adapter.viewholders;
 
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.Space;
 import android.widget.TextView;
 
 import com.nethergrim.vk.R;
+import com.nethergrim.vk.adapter.UltimateAdapter;
 import com.nethergrim.vk.views.imageViews.UserImageView;
 
 import butterknife.ButterKnife;
@@ -17,16 +18,17 @@ import butterknife.InjectView;
  * @author Andrey Drobyazko (c2q9450@gmail.com).
  *         All rights reserved.
  */
-public class ChatViewHolder extends RecyclerView.ViewHolder {
+public class ChatViewHolder extends UltimateAdapter.DataVH {
 
 
     @InjectView(R.id.textBody)
     public TextView textBody;
     @InjectView(R.id.avatar)
     public UserImageView imageAvatar;
-
-    View bubbleView; // TODO: 22.08.15 inject these views
-    TextView textDate;// TODO: 22.08.15 inject these views
+    @InjectView(R.id.textDate)
+    public TextView textDate;
+    @InjectView(R.id.top)
+    public Space spaceTop;
 
     public ChatViewHolder(View itemView) {
         super(itemView);

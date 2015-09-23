@@ -1,9 +1,8 @@
 package com.nethergrim.vk.web;
 
-import android.support.annotation.WorkerThread;
-
 import com.nethergrim.vk.models.ConversationsUserObject;
 import com.nethergrim.vk.models.ListOfFriends;
+import com.nethergrim.vk.models.ListOfMessages;
 import com.nethergrim.vk.models.ListOfUsers;
 import com.nethergrim.vk.models.StartupResponse;
 
@@ -24,19 +23,20 @@ import rx.Observable;
  */
 public interface DataManager {
 
-    @WorkerThread
     Observable<StartupResponse> launchStartupTasksAndPersistToDb();
 
-    @WorkerThread
     Observable<ListOfFriends> fetchFriendsAndPersistToDb(int count, int offset);
 
-    @WorkerThread
     Observable<ListOfUsers> fetchUsersAndPersistToDB(List<Long> ids);
 
-    @WorkerThread
     Observable<ConversationsUserObject> fetchConversationsUserAndPersist(int limit,
             int offset,
             boolean unreadOnly);
+
+    Observable<ListOfMessages> fetchMessagesHistory(int count,
+            int offset,
+            String userId,
+            long chatId);
 
 
 }

@@ -31,11 +31,12 @@ public class WorkerService extends Service {
     public static final String EXTRA_COUNT = Constants.PACKAGE_NAME + ".COUNT";
     public static final String EXTRA_OFFSET = Constants.PACKAGE_NAME + ".OFFSET";
     public static final String EXTRA_ONLY_UNREAD = Constants.PACKAGE_NAME + ".UNREAD_ONLY";
-    public static final int MAX_THREADS_COUNT = 3;
-
+    public static final String EXTRA_USER_ID = Constants.PACKAGE_NAME + ".USER_ID";
+    public static final String EXTRA_CHAT_ID = Constants.PACKAGE_NAME + ".CHAT_ID";
+    public static final String ACTION_GET_MESSAGES_HISTORY = Constants.PACKAGE_NAME
+            + ".GET_MESSAGES_HISTORY";
     @Inject
     DataManager mDataManager;
-
 
     public static void fetchConversationsAndUsers(Context context,
             int count,
@@ -70,6 +71,20 @@ public class WorkerService extends Service {
         context.startService(intent);
     }
 
+    public static void fetchMessagesHistory(Context context,
+            int count,
+            int offset,
+            String userId,
+            long chatId) {
+        Intent intent = new Intent(context, WorkerService.class);
+        intent.setAction(ACTION_GET_MESSAGES_HISTORY);
+        intent.putExtra(EXTRA_COUNT, count);
+        intent.putExtra(EXTRA_OFFSET, offset);
+        intent.putExtra(EXTRA_USER_ID, userId);
+        intent.putExtra(EXTRA_CHAT_ID, chatId);
+        context.startService(intent);
+    }
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -86,6 +101,8 @@ public class WorkerService extends Service {
             handleActionFetchMyFriends(intent);
         } else if (ACTION_LAUNCH_STARTUP_TASKS.equals(intent.getAction())) {
             handleActionLaunchStartupTasks();
+        } else if (ACTION_GET_MESSAGES_HISTORY.equals(intent.getAction())) {
+            handleActionFetchMessagesHistory(intent);
         }
         return START_REDELIVER_INTENT;
     }
@@ -94,6 +111,15 @@ public class WorkerService extends Service {
     @Override
     public IBinder onBind(Intent intent) {
         return null;
+    }
+
+    private void handleActionFetchMessagesHistory(Intent intent) {
+        final int count = intent.getIntExtra(EXTRA_COUNT, 10);
+        final int offset = intent.getIntExtra(EXTRA_OFFSET, 0);
+        String userId = intent.getExtras().getString(EXTRA_USER_ID, null);
+        long chatId = intent.getExtras().getLong(EXTRA_CHAT_ID, 0);
+        mDataManager.fetchMessagesHistory(count, offset, userId, chatId)
+                .subscribe(new LoggerObserver());
     }
 
     private void handleActionLaunchStartupTasks() {

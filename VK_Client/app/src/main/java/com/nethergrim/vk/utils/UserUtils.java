@@ -1,5 +1,6 @@
 package com.nethergrim.vk.utils;
 
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
 import com.nethergrim.vk.MyApplication;
@@ -33,7 +34,7 @@ public class UserUtils {
         return s.substring(0, s.length() - 2);
     }
 
-    public static String getStablePhotoUrl(User user) {
+    public static String getStablePhotoUrl(@NonNull User user) {
         String url = user.getPhoto_200();
         if (TextUtils.isEmpty(url)) {
             url = user.getPhoto_200_orig();
@@ -44,7 +45,7 @@ public class UserUtils {
         return url;
     }
 
-    public static boolean isUserACurrentOne(User user) {
+    public static boolean isUserACurrentOne(@NonNull User user) {
         return user != null && user.getId() == MyApplication.getInstance()
                 .getPrefs()
                 .getCurrentUserId();

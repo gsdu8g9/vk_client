@@ -4,6 +4,7 @@ import android.support.annotation.WorkerThread;
 
 import com.nethergrim.vk.models.ConversationsUserObject;
 import com.nethergrim.vk.models.ListOfFriends;
+import com.nethergrim.vk.models.ListOfMessages;
 import com.nethergrim.vk.models.ListOfUsers;
 import com.nethergrim.vk.models.StartupResponse;
 
@@ -30,4 +31,7 @@ public interface PersistingManager {
     @WorkerThread
     void manage(ConversationsUserObject conversationsUserObject, boolean clearDataBeforePersist);
 
+
+    @WorkerThread
+    void manage(ListOfMessages listOfMessages);
 }

@@ -11,6 +11,7 @@
 
 
     <dimen name="divider_size">1dp</dimen>
+    <dimen name="rounded_corners_size">3dp</dimen>
 
     <!--            Conversations         -->
     <dimen name="conversation_item_padding_horizontal">16dp</dimen>
@@ -28,8 +29,9 @@
     <dimen name="chat.row.avatar.size">40dp</dimen>
     <dimen name="chat.row.margins">8dp</dimen>
     <dimen name="chat.row.margin_vertical">3dp</dimen>
-    <dimen name="chat.row.margin_another_size">56dp</dimen>
+    <dimen name="chat.row.date_text_width">64dp</dimen>
     <dimen name="chat.row.body_padding">4dp</dimen>
+
 
     <!--                New Chat Screen           -->
     <dimen name="new.chat.avatar_size">40dp</dimen>

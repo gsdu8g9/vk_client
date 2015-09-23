@@ -42,4 +42,12 @@ public class ListOfMessages extends WebResponse {
         this.count = count;
     }
 
+    @Override
+    public String toString() {
+        return "ListOfMessages{" +
+                "count=" + count +
+                ", unread=" + unread +
+                ", messages=" + messages +
+                '}';
+    }
 }

@@ -63,7 +63,6 @@ public class ConversationsAdapter extends UltimateAdapter
         textColorSecondary = ctx.getResources().getColor(R.color.secondary_text);
     }
 
-
     @Override
     public void onChange() {
         notifyDataSetChanged();
@@ -84,7 +83,7 @@ public class ConversationsAdapter extends UltimateAdapter
     }
 
     @Override
-    public int getDataViewResId() {
+    public int getDataViewResId(int viewType) {
         return R.layout.vh_conversation;
     }
 
@@ -111,6 +110,9 @@ public class ConversationsAdapter extends UltimateAdapter
         String details = "";
         User user;
         Context ctx = conversationViewHolder.itemView.getContext();
+        if (message == null) {
+            return;
+        }
 
         if (MessageUtils.isMessageWithPhoto(message)) {
             details = "[ " + ctx.getString(R.string.photo) + " ] " + details;

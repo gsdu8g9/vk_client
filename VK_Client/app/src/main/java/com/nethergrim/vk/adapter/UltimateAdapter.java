@@ -58,7 +58,7 @@ public abstract class UltimateAdapter
             return footerInterface.getFooterVH(
                     getViewById(footerInterface.getFooterViewResId(), parent));
         } else {
-            View v = getViewById(getDataViewResId(), parent);
+            View v = getViewById(getDataViewResId(viewType), parent);
             return getDataViewHolder(v, viewType);
         }
     }
@@ -75,12 +75,15 @@ public abstract class UltimateAdapter
             ((FooterVH) holder).itemView.setVisibility(mFooterVisibility);
         } else {
             // bind data
+            if (withHeader()) {
+                position -= 1;
+            }
             bindDataVH(holder, position);
         }
     }
 
     @Override
-    public int getItemViewType(int absolutePosition) {
+    public final int getItemViewType(int absolutePosition) {
         if (absolutePosition == 0 && withHeader()) {
             return HEADER_TYPE_ID;
         } else if (withFooter() && absolutePosition == getFooterPosition()) {
@@ -124,7 +127,7 @@ public abstract class UltimateAdapter
 
     public abstract int getDataSize();
 
-    public abstract int getDataViewResId();
+    public abstract int getDataViewResId(int viewType);
 
     public abstract long getDataId(int dataPosition);
 

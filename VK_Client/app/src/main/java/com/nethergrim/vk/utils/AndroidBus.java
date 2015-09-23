@@ -19,20 +19,13 @@ public class AndroidBus extends Bus {
         mMainThreadHandler = new Handler(Looper.getMainLooper());
     }
 
-
     @Override
     public void post(final Object event) {
         if (isInMainThread()) {
             super.post(event);
         } else {
-            mMainThreadHandler.post(new Runnable() {
-                @Override
-                public void run() {
-                    post(event);
-                }
-            });
+            mMainThreadHandler.post(() -> post(event));
         }
-
     }
 
     private boolean isInMainThread() {
