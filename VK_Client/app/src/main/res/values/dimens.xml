@@ -29,7 +29,7 @@
     <dimen name="chat.row.avatar.size">40dp</dimen>
     <dimen name="chat.row.margins">8dp</dimen>
     <dimen name="chat.row.margin_vertical">3dp</dimen>
-    <dimen name="chat.row.margin_another_size">56dp</dimen>
+    <dimen name="chat.row.date_text_width">64dp</dimen>
     <dimen name="chat.row.body_padding">4dp</dimen>
 
 

@@ -129,7 +129,7 @@ public class DataManagerImpl implements DataManager {
                 .doOnNext(listOfMessages -> {
                     Log.d(TAG, "fetched messages: \n" + "count: " + count + " offset: " + offset
                             + " userId: " + userId + " chatId: " + chatId);
-                    mPersistingManager.manage(listOfMessages, offset == 0);
+                    mPersistingManager.manage(listOfMessages);
                     ConversationUpdatedEvent conversationUpdatedEvent
                             = new ConversationUpdatedEvent(listOfMessages, userId, chatId);
                     mBus.post(conversationUpdatedEvent);

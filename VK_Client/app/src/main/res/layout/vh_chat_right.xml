@@ -46,7 +46,7 @@
 
     <com.devspark.robototextview.widget.RobotoTextView
         android:id="@+id/textDate"
-        android:layout_width="@dimen/chat.row.margin_another_size"
+        android:layout_width="@dimen/chat.row.date_text_width"
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/content_layout"
         android:layout_alignTop="@id/content_layout"
