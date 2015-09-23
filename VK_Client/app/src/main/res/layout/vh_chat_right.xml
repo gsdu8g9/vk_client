@@ -20,40 +20,41 @@
         tools:background="@drawable/green_dot" />
 
     <LinearLayout
+        android:id="@+id/content_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/avatar"
-        android:layout_marginLeft="@dimen/chat.row.margin_another_size"
         android:layout_marginRight="4dp"
         android:layout_toLeftOf="@+id/avatar"
-        android:background="@drawable/right_triangle"
+        android:background="@drawable/rounded_background_white"
         android:minHeight="@dimen/chat.row.avatar.size"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:padding="8dp">
 
 
         <com.devspark.robototextview.widget.RobotoTextView
             android:id="@+id/textBody"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="12dp"
-            android:layout_marginRight="4dp"
-            android:layout_marginTop="4dp"
+            android:maxWidth="220dp"
             android:textColor="@color/primary_text"
             app:typeface="roboto_regular"
-            tools:text="n anf kjfnkj nfakjs kfj snkjadfn asd fsad fas f asdf sadf sdaf das  " />
+            tools:text="Text here" />
 
-        <com.devspark.robototextview.widget.RobotoTextView
-            android:id="@+id/textDate"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="right"
-            android:paddingBottom="4dp"
-            android:paddingRight="4dp"
-            android:paddingTop="4dp"
-            android:textColor="@color/secondary_text"
-            android:textSize="14sp"
-            app:typeface="roboto_light"
-            tools:text="Hi" />
 
     </LinearLayout>
+
+    <com.devspark.robototextview.widget.RobotoTextView
+        android:id="@+id/textDate"
+        android:layout_width="@dimen/chat.row.margin_another_size"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/content_layout"
+        android:layout_alignTop="@id/content_layout"
+        android:layout_toLeftOf="@+id/content_layout"
+        android:gravity="right|center_vertical"
+        android:padding="4dp"
+        android:textColor="@color/secondary_text"
+        android:textSize="14sp"
+        app:typeface="roboto_light"
+        tools:text="Hi " />
 </RelativeLayout>
