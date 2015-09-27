@@ -32,7 +32,7 @@ import io.realm.RealmResults;
  *         All rights reserved.
  */
 public class ConversationsAdapter extends UltimateAdapter
-        implements RealmChangeListener,  UltimateAdapter.FooterInterface {
+        implements RealmChangeListener, UltimateAdapter.FooterInterface {
 
     @Inject
     UserProvider mUserProvider;
@@ -52,6 +52,7 @@ public class ConversationsAdapter extends UltimateAdapter
         MyApplication.getInstance().getMainComponent().inject(this);
         mRealm.setAutoRefresh(true);
         this.mData = mRealm.where(Conversation.class)
+                .equalTo("message.deleted", 0)
                 .findAllSorted("date", false);
         Context ctx = MyApplication.getInstance();
         textColorPrimary = ctx.getResources().getColor(R.color.primary_text);
@@ -64,7 +65,7 @@ public class ConversationsAdapter extends UltimateAdapter
     }
 
 
-    public Conversation getData(int position){
+    public Conversation getData(int position) {
         return mData.get(position);
     }
 
