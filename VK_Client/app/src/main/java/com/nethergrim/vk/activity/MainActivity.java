@@ -19,8 +19,8 @@ import com.nethergrim.vk.callbacks.ToolbarScrollable;
 import com.nethergrim.vk.enums.MainActivityState;
 import com.nethergrim.vk.event.ConversationsUpdatedEvent;
 import com.nethergrim.vk.event.MyUserUpdatedEvent;
+import com.nethergrim.vk.fragment.ConversationsFragment;
 import com.nethergrim.vk.fragment.FriendsFragment;
-import com.nethergrim.vk.fragment.MessagesFragment;
 import com.nethergrim.vk.models.User;
 import com.nethergrim.vk.utils.UserProvider;
 import com.nethergrim.vk.utils.Utils;
@@ -212,7 +212,7 @@ public class MainActivity extends AbstractActivity implements
                 case Conversations:
                     mMessagesImageButton.setImageDrawable(
                             Utils.tintIcon(R.drawable.ic_action_question_answer, R.color.primary));
-                    showFragment(new MessagesFragment(), false, false, R.id.fragment_container);
+                    showFragment(new ConversationsFragment(), false, false, R.id.fragment_container);
                     break;
                 case Friends:
                     mFriendsImageButton.setImageDrawable(

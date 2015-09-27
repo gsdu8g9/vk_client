@@ -85,6 +85,10 @@ public class WorkerService extends Service {
         context.startService(intent);
     }
 
+    public static void deleteConversation(Context context, long userId, long chatId) {
+
+    }
+
     @Override
     public void onCreate() {
         super.onCreate();

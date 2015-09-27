@@ -22,6 +22,7 @@ import com.nethergrim.vk.event.ConversationsUpdatedEvent;
 import com.nethergrim.vk.models.Conversation;
 import com.nethergrim.vk.utils.BasicRecyclerViewScroller;
 import com.nethergrim.vk.utils.FabAnimationManager;
+import com.nethergrim.vk.utils.RecyclerItemClickListener;
 import com.nethergrim.vk.views.PaginationManager;
 import com.nethergrim.vk.web.WebIntentHandler;
 import com.rey.material.widget.ProgressView;
@@ -37,9 +38,9 @@ import butterknife.OnClick;
 /**
  * @author andreydrobyazko on 3/20/15.
  */
-public class MessagesFragment extends AbstractFragment implements
+public class ConversationsFragment extends AbstractFragment implements
         PaginationManager.OnRecyclerViewScrolledToPageListener, ToolbarScrollable,
-        ConversationsAdapter.OnConversationClickListener {
+        RecyclerItemClickListener.OnItemClickListener {
 
     public static final int DEFAULT_PAGE_SIZE = 20;
     @InjectView(R.id.list)
@@ -92,11 +93,13 @@ public class MessagesFragment extends AbstractFragment implements
         mFabAnimationManager = new FabAnimationManager(mFabNormal);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
         mRecyclerView.setHasFixedSize(true);
-        mAdapter = new ConversationsAdapter(this);
+        mAdapter = new ConversationsAdapter();
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.addOnScrollListener(
                 new PaginationManager(DEFAULT_PAGE_SIZE, this, DEFAULT_PAGE_SIZE / 2));
         mRecyclerView.addOnScrollListener(new BasicRecyclerViewScroller(this));
+        mRecyclerView.addOnItemTouchListener(
+                new RecyclerItemClickListener(view.getContext(), this));
         if (mAdapter.getItemCount() == 0) {
             mProgressBar.setVisibility(View.VISIBLE);
             mNothingHereTextView.setVisibility(View.GONE);
@@ -164,15 +167,23 @@ public class MessagesFragment extends AbstractFragment implements
         NewChatActivity.start(v.getContext());
     }
 
+
     @Override
-    public void onConversationClicked(Conversation conversation, View v) {
+    public void onItemClick(View childView, int position) {
+        Conversation conversation = mAdapter.getData(position);
         ChatActivity.start(getActivity(), conversation);
+    }
+
+    @Override
+    public void onItemLongPress(View childView, int position) {
+        Conversation conversation = mAdapter.getData(position);
+        showToast("item long press: " + position);
+        // TODO: 27.09.15 show dialog to delete conversation
     }
 
     private void loadPage(int pageNumber) {
         if (pageNumber == 0) {
             mProgressBottom.start();
-//            mProgressBottom.setVisibility(View.VISIBLE);
         }
         mAdapter.setFooterVisibility(View.VISIBLE);
         mWebIntentHandler.fetchConversationsAndUsers(DEFAULT_PAGE_SIZE,

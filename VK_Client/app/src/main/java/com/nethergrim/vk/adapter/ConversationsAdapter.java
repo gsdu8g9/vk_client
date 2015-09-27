@@ -10,6 +10,7 @@ import com.nethergrim.vk.MyApplication;
 import com.nethergrim.vk.R;
 import com.nethergrim.vk.adapter.viewholders.ConversationViewHolder;
 import com.nethergrim.vk.caching.Prefs;
+import com.nethergrim.vk.fragment.ConversationsFragment;
 import com.nethergrim.vk.models.Conversation;
 import com.nethergrim.vk.models.Message;
 import com.nethergrim.vk.models.User;
@@ -25,13 +26,13 @@ import io.realm.RealmResults;
 
 /**
  * {@link android.support.v7.widget.RecyclerView.Adapter} that should be used to display list of
- * conversations in {@link com.nethergrim.vk.fragment.MessagesFragment}
+ * conversations in {@link ConversationsFragment}
  *
  * @author Andrey Drobyazko (c2q9450@gmail.com).
  *         All rights reserved.
  */
 public class ConversationsAdapter extends UltimateAdapter
-        implements RealmChangeListener, View.OnClickListener, UltimateAdapter.FooterInterface {
+        implements RealmChangeListener,  UltimateAdapter.FooterInterface {
 
     @Inject
     UserProvider mUserProvider;
@@ -41,19 +42,13 @@ public class ConversationsAdapter extends UltimateAdapter
     Realm mRealm;
 
     private RealmResults<Conversation> mData;
-    private OnConversationClickListener mCallback;
 
     private int textColorPrimary;
     private int textColorSecondary;
 
-    public interface OnConversationClickListener {
 
-        void onConversationClicked(Conversation conversation, View v);
-    }
-
-    public ConversationsAdapter(OnConversationClickListener callback) {
+    public ConversationsAdapter() {
         super();
-        this.mCallback = callback;
         MyApplication.getInstance().getMainComponent().inject(this);
         mRealm.setAutoRefresh(true);
         this.mData = mRealm.where(Conversation.class)
@@ -68,13 +63,9 @@ public class ConversationsAdapter extends UltimateAdapter
         notifyDataSetChanged();
     }
 
-    @Override
-    public void onClick(View v) {
-        int position = (int) v.getTag();
-        Conversation conversation = mData.get(position);
-        if (mCallback != null) {
-            mCallback.onConversationClicked(conversation, v);
-        }
+
+    public Conversation getData(int position){
+        return mData.get(position);
     }
 
     @Override
@@ -195,8 +186,6 @@ public class ConversationsAdapter extends UltimateAdapter
             conversationViewHolder.textName.setTextColor(textColorSecondary);
             conversationViewHolder.textDetails.setTextColor(textColorSecondary);
         }
-        conversationViewHolder.itemView.setOnClickListener(this);
-        conversationViewHolder.itemView.setTag(i);
     }
 
     @Override

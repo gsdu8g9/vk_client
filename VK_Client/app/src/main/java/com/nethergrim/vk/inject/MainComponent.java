@@ -10,8 +10,8 @@ import com.nethergrim.vk.adapter.ConversationsAdapter;
 import com.nethergrim.vk.adapter.FriendsAdapter;
 import com.nethergrim.vk.data.RealmPersistingManagerImpl;
 import com.nethergrim.vk.fragment.ChatFragment;
+import com.nethergrim.vk.fragment.ConversationsFragment;
 import com.nethergrim.vk.fragment.FriendsFragment;
-import com.nethergrim.vk.fragment.MessagesFragment;
 import com.nethergrim.vk.gcm.MyGcmListenerService;
 import com.nethergrim.vk.gcm.MyInstanceIDListenerService;
 import com.nethergrim.vk.images.PaletteProviderImpl;
@@ -40,7 +40,7 @@ import dagger.Component;
 
 public interface MainComponent {
 
-    void inject(MessagesFragment mf);
+    void inject(ConversationsFragment mf);
 
     void inject(ConversationsAdapter o);
 
