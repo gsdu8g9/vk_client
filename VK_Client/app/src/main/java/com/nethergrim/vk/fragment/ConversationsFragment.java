@@ -179,6 +179,7 @@ public class ConversationsFragment extends AbstractFragment implements
         Conversation conversation = mAdapter.getData(position);
         showToast("item long press: " + position);
         // TODO: 27.09.15 show dialog to delete conversation
+        mWebIntentHandler.deleteConversation(conversation);
     }
 
     private void loadPage(int pageNumber) {

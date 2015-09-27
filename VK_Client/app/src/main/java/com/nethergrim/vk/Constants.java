@@ -42,6 +42,7 @@ public class Constants {
         String EXECUTE_GET_CONVERSATIONS_AND_USERS = "/execute.getConversationsAndUsers";
         String EXECUTE_GET_FRIENDS = "/execute.getFriends";
         String EXECUTE_POST_STARTUP = "/execute.startup";
+        String EXECUTE_DELETE_CONVERSATION = "/execute.deleteConversation";
     }
 
     public static float getDensity() {

@@ -8,6 +8,7 @@ import com.nethergrim.vk.Constants;
 import com.nethergrim.vk.MyApplication;
 import com.nethergrim.vk.caching.Prefs;
 import com.nethergrim.vk.models.ConversationsUserObject;
+import com.nethergrim.vk.models.IntegerResponse;
 import com.nethergrim.vk.models.ListOfFriends;
 import com.nethergrim.vk.models.ListOfMessages;
 import com.nethergrim.vk.models.ListOfUsers;
@@ -195,6 +196,23 @@ public class WebRequestManagerImpl implements WebRequestManager {
                 .map(listOfMessagesResponse -> listOfMessagesResponse.getListOfMessages())
                 .observeOn(getDefaultScheduler())
                 .subscribeOn(getDefaultScheduler());
+    }
+
+    @Override
+    public Observable<IntegerResponse> deleteConversation(long userId, long chatId) {
+        Map<String, String> params = getDefaultParamsMap();
+
+        if (userId > 0) {
+            params.put("userId", String.valueOf(userId));
+        }
+        if (chatId > 0) {
+            params.put("chatId", String.valueOf(chatId));
+        }
+        return mRetrofitInterface.deleteConversation(params)
+                .observeOn(getDefaultScheduler())
+                .subscribeOn(getDefaultScheduler())
+                .doOnNext(mDefaultResponseChecker)
+                .retryWhen(mRetryCall);
     }
 
     private Map<String, String> getDefaultParamsMap() {

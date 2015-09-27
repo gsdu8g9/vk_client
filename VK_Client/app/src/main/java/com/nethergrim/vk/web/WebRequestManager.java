@@ -1,6 +1,7 @@
 package com.nethergrim.vk.web;
 
 import com.nethergrim.vk.models.ConversationsUserObject;
+import com.nethergrim.vk.models.IntegerResponse;
 import com.nethergrim.vk.models.ListOfFriends;
 import com.nethergrim.vk.models.ListOfMessages;
 import com.nethergrim.vk.models.ListOfUsers;
@@ -34,4 +35,8 @@ public interface WebRequestManager {
             int count,
             String userId,
             long chatId);
+
+    Observable<IntegerResponse> deleteConversation(long userId, long chatId);
+
+
 }
