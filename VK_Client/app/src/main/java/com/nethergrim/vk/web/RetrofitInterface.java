@@ -2,6 +2,7 @@ package com.nethergrim.vk.web;
 
 import com.nethergrim.vk.Constants;
 import com.nethergrim.vk.models.ConversationsUserObject;
+import com.nethergrim.vk.models.IntegerResponse;
 import com.nethergrim.vk.models.ListOfFriends;
 import com.nethergrim.vk.models.ListOfMessagesResponse;
 import com.nethergrim.vk.models.ListOfUsers;
@@ -41,4 +42,7 @@ public interface RetrofitInterface {
     @GET(Constants.Requests.EXECUTE_GET_CONVERSATIONS_AND_USERS)
     Observable<ConversationsUserObject> getConversationsAndUsers(
             @QueryMap Map<String, String> options);
+
+    @POST(Constants.Requests.EXECUTE_DELETE_CONVERSATION)
+    Observable<IntegerResponse> deleteConversation(@QueryMap Map<String, String> options);
 }

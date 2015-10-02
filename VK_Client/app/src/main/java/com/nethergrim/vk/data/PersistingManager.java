@@ -34,4 +34,7 @@ public interface PersistingManager {
 
     @WorkerThread
     void manage(ListOfMessages listOfMessages);
+
+    @WorkerThread
+    void deleteConversation(long userId, long chatId);
 }

@@ -3,7 +3,9 @@ package com.nethergrim.vk.web;
 import android.support.annotation.NonNull;
 
 import com.nethergrim.vk.MyApplication;
+import com.nethergrim.vk.models.Conversation;
 import com.nethergrim.vk.services.WorkerService;
+import com.nethergrim.vk.utils.ConversationUtils;
 
 import java.util.ArrayList;
 
@@ -43,6 +45,19 @@ public class WebIntentHandlerImpl implements WebIntentHandler {
     public void fetchMessagesHistory(int count, int offset, String userId, long chatId) {
         WorkerService.fetchMessagesHistory(MyApplication.getInstance(), count, offset, userId,
                 chatId);
+    }
+
+    @Override
+    public void deleteConversation(Conversation conversation) {
+        boolean groupChat = ConversationUtils.isConversationAGroupChat(conversation);
+        long userId = 0;
+        long chatId = 0;
+        if (groupChat) {
+            chatId = conversation.getId();
+        } else {
+            userId = conversation.getId();
+        }
+        WorkerService.deleteConversation(MyApplication.getInstance(), userId, chatId);
     }
 
 }

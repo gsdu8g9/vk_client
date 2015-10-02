@@ -3,6 +3,8 @@ package com.nethergrim.vk.web;
 import android.support.annotation.NonNull;
 import android.support.annotation.UiThread;
 
+import com.nethergrim.vk.models.Conversation;
+
 import java.util.ArrayList;
 
 /**
@@ -33,5 +35,7 @@ public interface WebIntentHandler {
     void launchStartupTasks();
 
     void fetchMessagesHistory(int count, int offset, String userId, long chatId);
+
+    void deleteConversation(Conversation conversation);
 
 }

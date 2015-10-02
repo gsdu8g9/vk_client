@@ -27,6 +27,8 @@ public class WorkerService extends Service {
     public static final String ACTION_FETCH_MY_FRIENDS = Constants.PACKAGE_NAME
             + ".FETCH_MY_FRIENDS";
     public static final String ACTION_LAUNCH_STARTUP_TASKS = Constants.PACKAGE_NAME + ".STARTUP";
+    public static final String ACTION_DELETE_CONVERSATION = Constants.PACKAGE_NAME
+            + ".DELETE_CONVERSATION";
     public static final String EXTRA_IDS = Constants.PACKAGE_NAME + ".IDS";
     public static final String EXTRA_COUNT = Constants.PACKAGE_NAME + ".COUNT";
     public static final String EXTRA_OFFSET = Constants.PACKAGE_NAME + ".OFFSET";
@@ -85,6 +87,14 @@ public class WorkerService extends Service {
         context.startService(intent);
     }
 
+    public static void deleteConversation(Context context, final long userId, final long chatId) {
+        Intent intent = new Intent(context, WorkerService.class);
+        intent.setAction(ACTION_DELETE_CONVERSATION);
+        intent.putExtra(EXTRA_USER_ID, userId);
+        intent.putExtra(EXTRA_CHAT_ID, chatId);
+        context.startService(intent);
+    }
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -103,6 +113,8 @@ public class WorkerService extends Service {
             handleActionLaunchStartupTasks();
         } else if (ACTION_GET_MESSAGES_HISTORY.equals(intent.getAction())) {
             handleActionFetchMessagesHistory(intent);
+        } else if (ACTION_DELETE_CONVERSATION.equals(intent.getAction())) {
+            handleActionDeleteConversation(intent);
         }
         return START_REDELIVER_INTENT;
     }
@@ -111,6 +123,12 @@ public class WorkerService extends Service {
     @Override
     public IBinder onBind(Intent intent) {
         return null;
+    }
+
+    private void handleActionDeleteConversation(Intent intent) {
+        final long userUd = intent.getLongExtra(EXTRA_USER_ID, 0);
+        final long chatId = intent.getLongExtra(EXTRA_CHAT_ID, 0);
+        mDataManager.deleteConversation(userUd, chatId).subscribe(new LoggerObserver());
     }
 
     private void handleActionFetchMessagesHistory(Intent intent) {

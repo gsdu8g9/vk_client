@@ -1,6 +1,8 @@
 package com.nethergrim.vk.fragment;
 
+import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
@@ -11,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.github.clans.fab.FloatingActionButton;
 import com.nethergrim.vk.MyApplication;
 import com.nethergrim.vk.R;
@@ -22,6 +25,7 @@ import com.nethergrim.vk.event.ConversationsUpdatedEvent;
 import com.nethergrim.vk.models.Conversation;
 import com.nethergrim.vk.utils.BasicRecyclerViewScroller;
 import com.nethergrim.vk.utils.FabAnimationManager;
+import com.nethergrim.vk.utils.RecyclerItemClickListener;
 import com.nethergrim.vk.views.PaginationManager;
 import com.nethergrim.vk.web.WebIntentHandler;
 import com.rey.material.widget.ProgressView;
@@ -34,12 +38,13 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
 
+
 /**
  * @author andreydrobyazko on 3/20/15.
  */
-public class MessagesFragment extends AbstractFragment implements
-        PaginationManager.OnRecyclerViewScrolledToPageListener, ToolbarScrollable,
-        ConversationsAdapter.OnConversationClickListener {
+public class ConversationsFragment extends AbstractFragment
+        implements PaginationManager.OnRecyclerViewScrolledToPageListener, ToolbarScrollable,
+        RecyclerItemClickListener.OnItemClickListener {
 
     public static final int DEFAULT_PAGE_SIZE = 20;
     @InjectView(R.id.list)
@@ -62,7 +67,7 @@ public class MessagesFragment extends AbstractFragment implements
     private FabAnimationManager mFabAnimationManager;
 
     @Override
-    public void onAttach(Context activity) {
+    public void onAttach(Activity activity) {
         super.onAttach(activity);
         if (activity instanceof ToolbarScrollable) {
             mToolbarScrollable = (ToolbarScrollable) activity;
@@ -78,8 +83,8 @@ public class MessagesFragment extends AbstractFragment implements
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater,
-            ViewGroup container,
-            Bundle savedInstanceState) {
+                             ViewGroup container,
+                             Bundle savedInstanceState) {
         mBus.register(this);
         View v = inflater.inflate(R.layout.fragment_messages, container, false);
         ButterKnife.inject(this, v);
@@ -92,11 +97,13 @@ public class MessagesFragment extends AbstractFragment implements
         mFabAnimationManager = new FabAnimationManager(mFabNormal);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
         mRecyclerView.setHasFixedSize(true);
-        mAdapter = new ConversationsAdapter(this);
+        mAdapter = new ConversationsAdapter();
         mRecyclerView.setAdapter(mAdapter);
-        mRecyclerView.addOnScrollListener(
-                new PaginationManager(DEFAULT_PAGE_SIZE, this, DEFAULT_PAGE_SIZE / 2));
+        mRecyclerView.addOnScrollListener(new PaginationManager(DEFAULT_PAGE_SIZE, this,
+                DEFAULT_PAGE_SIZE / 2));
         mRecyclerView.addOnScrollListener(new BasicRecyclerViewScroller(this));
+        mRecyclerView.addOnItemTouchListener(new RecyclerItemClickListener(view.getContext(),
+                this));
         if (mAdapter.getItemCount() == 0) {
             mProgressBar.setVisibility(View.VISIBLE);
             mNothingHereTextView.setVisibility(View.GONE);
@@ -119,7 +126,7 @@ public class MessagesFragment extends AbstractFragment implements
 
     @Override
     public void onRecyclerViewScrolledToPage(int pageNumber) {
-        loadPage(pageNumber + 1);
+        loadPage(pageNumber - 1);
     }
 
     @Subscribe
@@ -164,20 +171,43 @@ public class MessagesFragment extends AbstractFragment implements
         NewChatActivity.start(v.getContext());
     }
 
+
     @Override
-    public void onConversationClicked(Conversation conversation, View v) {
+    public void onItemClick(View childView, int position) {
+        Conversation conversation = mAdapter.getData(position);
         ChatActivity.start(getActivity(), conversation);
+    }
+
+    @Override
+    public void onItemLongPress(View childView, int position) {
+        Conversation conversation = mAdapter.getData(position);
+        Context ctx = childView.getContext();
+        MaterialDialog materialDialog = new MaterialDialog.Builder(ctx)
+                .title(R.string.delete_chat_with)
+                .content(R.string.are_you_sure)
+                .positiveText(R.string.yes)
+                .negativeText(R.string.no)
+                .negativeColor(Color.BLACK)
+                .callback(new MaterialDialog.ButtonCallback() {
+                    @Override
+                    public void onPositive(MaterialDialog dialog) {
+                        mWebIntentHandler.deleteConversation(conversation);
+                        dialog.dismiss();
+                        super.onPositive(dialog);
+                    }
+                })
+                .positiveColor(ctx.getResources().getColor(R.color.primary))
+                .build();
+        materialDialog.show();
     }
 
     private void loadPage(int pageNumber) {
         if (pageNumber == 0) {
             mProgressBottom.start();
-//            mProgressBottom.setVisibility(View.VISIBLE);
         }
         mAdapter.setFooterVisibility(View.VISIBLE);
         mWebIntentHandler.fetchConversationsAndUsers(DEFAULT_PAGE_SIZE,
-                pageNumber * DEFAULT_PAGE_SIZE,
-                false);
+                pageNumber * DEFAULT_PAGE_SIZE, false);
     }
 
 }

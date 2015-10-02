@@ -15,6 +15,7 @@ import com.nethergrim.vk.event.FriendsUpdatedEvent;
 import com.nethergrim.vk.event.MyUserUpdatedEvent;
 import com.nethergrim.vk.event.UsersUpdatedEvent;
 import com.nethergrim.vk.models.ConversationsUserObject;
+import com.nethergrim.vk.models.IntegerResponse;
 import com.nethergrim.vk.models.ListOfFriends;
 import com.nethergrim.vk.models.ListOfMessages;
 import com.nethergrim.vk.models.ListOfUsers;
@@ -43,7 +44,7 @@ import rx.schedulers.Schedulers;
 public class DataManagerImpl implements DataManager {
 
 
-    public static final String TAG = DataManager.class.getSimpleName();
+    private static final String TAG = DataManager.class.getSimpleName();
 
     @Inject
     Prefs mPrefs;
@@ -133,6 +134,17 @@ public class DataManagerImpl implements DataManager {
                     ConversationUpdatedEvent conversationUpdatedEvent
                             = new ConversationUpdatedEvent(listOfMessages, userId, chatId);
                     mBus.post(conversationUpdatedEvent);
+                })
+                ;
+    }
+
+    @Override
+    public Observable<IntegerResponse> deleteConversation(long userId, long chatId) {
+        return mWebRequestManager.deleteConversation(userId, chatId)
+                .doOnNext(integerResponse -> {
+                    // delete conversation from local database
+                    mPersistingManager.deleteConversation(userId, chatId);
+                    mBus.post(new ConversationsUpdatedEvent());
                 })
                 ;
     }
