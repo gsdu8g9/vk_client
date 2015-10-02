@@ -44,7 +44,7 @@ import rx.schedulers.Schedulers;
 public class DataManagerImpl implements DataManager {
 
 
-    public static final String TAG = DataManager.class.getSimpleName();
+    private static final String TAG = DataManager.class.getSimpleName();
 
     @Inject
     Prefs mPrefs;

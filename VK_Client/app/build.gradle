@@ -49,6 +49,10 @@ apt {
     }
 }
 
+repositories {
+    maven { url "https://jitpack.io" }
+}
+
 dependencies {
     compile fileTree(dir: 'lib', include: ['*.jar'])
     compile project(':vksdk_library')
@@ -91,6 +95,13 @@ dependencies {
     compile 'com.github.dmytrodanylyk.shadow-layout:library:1.0.3'
     compile 'com.github.clans:fab:1.5.5'
     compile 'com.github.rey5137:material:1.2.1'
+
+    compile('com.afollestad.material-dialogs:core:0.8.1.0@aar') {
+        transitive = true
+    }
+    compile('com.afollestad.material-dialogs:commons:0.8.1.0@aar') {
+        transitive = true
+    }
 
     compile 'io.realm:realm-android:0.82.1'
     compile "org.parceler:parceler-api:1.0.3"
