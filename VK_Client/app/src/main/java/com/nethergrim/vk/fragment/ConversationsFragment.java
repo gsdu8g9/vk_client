@@ -126,7 +126,7 @@ public class ConversationsFragment extends AbstractFragment
 
     @Override
     public void onRecyclerViewScrolledToPage(int pageNumber) {
-        loadPage(pageNumber + 1);
+        loadPage(pageNumber - 1);
     }
 
     @Subscribe
