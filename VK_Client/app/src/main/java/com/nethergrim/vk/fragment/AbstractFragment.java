@@ -18,6 +18,11 @@ public abstract class AbstractFragment extends Fragment {
         Toast.makeText(context, s, Toast.LENGTH_SHORT).show();
     }
 
+    @Override
+    public final void onAttach(Context context) {
+        super.onAttach(context);
+    }
+
     protected void showToast(@StringRes int s) {
         Context context = getActivity();
         if (context == null) {

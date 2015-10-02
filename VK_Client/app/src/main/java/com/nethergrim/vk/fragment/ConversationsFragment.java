@@ -1,5 +1,6 @@
 package com.nethergrim.vk.fragment;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -66,7 +67,7 @@ public class ConversationsFragment extends AbstractFragment
     private FabAnimationManager mFabAnimationManager;
 
     @Override
-    public void onAttach(Context activity) {
+    public void onAttach(Activity activity) {
         super.onAttach(activity);
         if (activity instanceof ToolbarScrollable) {
             mToolbarScrollable = (ToolbarScrollable) activity;
