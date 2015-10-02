@@ -102,7 +102,7 @@ dependencies {
     compile('com.afollestad.material-dialogs:commons:0.8.1.0@aar') {
         transitive = true
     }
-
+    compile 'com.balysv:material-ripple:1.0.2'
     compile 'io.realm:realm-android:0.82.1'
     compile "org.parceler:parceler-api:1.0.3"
     apt "org.parceler:parceler:1.0.3"

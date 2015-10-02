@@ -21,29 +21,6 @@ public class RecyclerItemClickListener implements RecyclerView.OnItemTouchListen
 
     private int childViewPosition;
 
-    /**
-     * A click listener for items.
-     */
-    public interface OnItemClickListener {
-
-        /**
-         * Called when an item is clicked.
-         *
-         * @param childView View of the item that was clicked.
-         * @param position Position of the item that was clicked.
-         */
-        void onItemClick(View childView, int position);
-
-        /**
-         * Called when an item is long pressed.
-         *
-         * @param childView View of the item that was long pressed.
-         * @param position Position of the item that was long pressed.
-         */
-        void onItemLongPress(View childView, int position);
-
-    }
-
     public RecyclerItemClickListener(Context context, OnItemClickListener listener) {
         this.gestureDetector = new GestureDetector(context, new GestureListener());
         this.listener = listener;
@@ -53,8 +30,8 @@ public class RecyclerItemClickListener implements RecyclerView.OnItemTouchListen
     public boolean onInterceptTouchEvent(RecyclerView view, MotionEvent event) {
         childView = view.findChildViewUnder(event.getX(), event.getY());
         childViewPosition = view.getChildPosition(childView);
-
-        return childView != null && gestureDetector.onTouchEvent(event);
+        gestureDetector.onTouchEvent(event);
+        return false;
     }
 
     @Override
@@ -64,6 +41,29 @@ public class RecyclerItemClickListener implements RecyclerView.OnItemTouchListen
 
     @Override
     public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
+
+    }
+
+    /**
+     * A click listener for items.
+     */
+    public interface OnItemClickListener {
+
+        /**
+         * Called when an item is clicked.
+         *
+         * @param childView View of the item that was clicked.
+         * @param position  Position of the item that was clicked.
+         */
+        void onItemClick(View childView, int position);
+
+        /**
+         * Called when an item is long pressed.
+         *
+         * @param childView View of the item that was long pressed.
+         * @param position  Position of the item that was long pressed.
+         */
+        void onItemLongPress(View childView, int position);
 
     }
 
