@@ -204,6 +204,8 @@ public class WebRequestManagerImpl implements WebRequestManager {
 
         if (userId > 0) {
             params.put("userId", String.valueOf(userId));
+        } else {
+            params.put("userId", String.valueOf(0));
         }
         if (chatId > 0) {
             params.put("chatId", String.valueOf(chatId));
