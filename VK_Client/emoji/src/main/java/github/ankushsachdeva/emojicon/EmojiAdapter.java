@@ -33,7 +33,7 @@ import github.ankushsachdeva.emojicon.emoji.Emojicon;
  */
 class EmojiAdapter extends ArrayAdapter<Emojicon> {
 
-    OnEmojiconClickedListener emojiClickListener;
+    OnEmojiconClickedListener mClickedListener;
 
     public EmojiAdapter(Context context, List<Emojicon> data) {
         super(context, R.layout.emojicon_item, data);
@@ -43,33 +43,34 @@ class EmojiAdapter extends ArrayAdapter<Emojicon> {
         super(context, R.layout.emojicon_item, data);
     }
 
-    public void setEmojiClickListener(OnEmojiconClickedListener listener) {
-        this.emojiClickListener = listener;
+    public void setClickedListener(OnEmojiconClickedListener listener) {
+        this.mClickedListener = listener;
     }
 
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
         View v = convertView;
+        ViewHolder vh;
         if (v == null) {
             v = View.inflate(getContext(), R.layout.emojicon_item, null);
-            ViewHolder holder = new ViewHolder();
-            holder.icon = (TextView) v.findViewById(R.id.emojicon_icon);
-            v.setTag(holder);
+            vh = new ViewHolder();
+            vh.icon = (TextView) v.findViewById(R.id.emojicon_icon);
+            v.setTag(vh);
+        } else {
+            vh = (ViewHolder) v.getTag();
         }
         Emojicon emoji = getItem(position);
-        ViewHolder holder = (ViewHolder) v.getTag();
-        holder.icon.setText(emoji.getEmoji());
-        holder.icon.setOnClickListener(new OnClickListener() {
+        vh.icon.setText(emoji.getEmoji());
+        vh.icon.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                emojiClickListener.onEmojiconClicked(getItem(position));
+                mClickedListener.onEmojiconClicked(getItem(position));
             }
         });
         return v;
     }
 
-    class ViewHolder {
-
+    private static class ViewHolder {
         TextView icon;
     }
 }

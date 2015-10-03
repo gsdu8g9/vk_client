@@ -36,7 +36,7 @@ public class EmojiconRecentsGridView extends EmojiconGridView implements Emojico
         super(context, emojicons, recents, emojiconsPopup);
         EmojiconRecentsManager recents1 = EmojiconRecentsManager.getInstance(rootView.getContext());
         mAdapter = new EmojiAdapter(rootView.getContext(), recents1);
-        mAdapter.setEmojiClickListener(new OnEmojiconClickedListener() {
+        mAdapter.setClickedListener(new OnEmojiconClickedListener() {
 
             @Override
             public void onEmojiconClicked(Emojicon emojicon) {

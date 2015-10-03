@@ -42,7 +42,9 @@ class EmojiconSpan extends DynamicDrawableSpan {
             try {
                 mDrawable = mContext.getResources().getDrawable(mResourceId);
                 int size = mSize;
-                mDrawable.setBounds(0, 0, size, size);
+                if (mDrawable != null) {
+                    mDrawable.setBounds(0, 0, size, size);
+                }
             } catch (Exception e) {
                 // swallow
             }

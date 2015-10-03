@@ -25,5 +25,5 @@ import github.ankushsachdeva.emojicon.emoji.Emojicon;
  */
 public interface EmojiconRecents {
 
-    public void addRecentEmoji(Context context, Emojicon emojicon);
+    void addRecentEmoji(Context context, Emojicon emojicon);
 }

@@ -53,13 +53,12 @@ public class EmojiconsPopup extends PopupWindow
         implements ViewPager.OnPageChangeListener, EmojiconRecents {
 
     OnEmojiconClickedListener onEmojiconClickedListener;
-    OnEmojiconBackspaceClickedListener onEmojiconBackspaceClickedListener;
-    OnSoftKeyboardOpenCloseListener onSoftKeyboardOpenCloseListener;
-    View rootView;
-    Context mContext;
+    private OnEmojiconBackspaceClickedListener onEmojiconBackspaceClickedListener;
+    private OnSoftKeyboardOpenCloseListener onSoftKeyboardOpenCloseListener;
+    private View rootView;
+    private Context mContext;
     private int mEmojiTabLastSelectedIndex = - 1;
     private View[] mEmojiTabs;
-    private PagerAdapter mEmojisAdapter;
     private EmojiconRecentsManager mRecentsManager;
     private int keyBoardHeight = 0;
     private Boolean pendingOpen = false;
@@ -249,26 +248,17 @@ public class EmojiconsPopup extends PopupWindow
         emojisPager = (ViewPager) view.findViewById(R.id.emojis_pager);
         emojisPager.setOnPageChangeListener(this);
         EmojiconRecents recents = this;
-        mEmojisAdapter = new EmojisPagerAdapter(Arrays.asList(new EmojiconRecentsGridView(mContext,
-                                                                                          null,
-                                                                                          null,
-                                                                                          this),
-                                                              new EmojiconGridView(mContext,
-                                                                                   People.DATA,
-                                                                                   recents, this),
-                                                              new EmojiconGridView(mContext,
-                                                                                   Nature.DATA,
-                                                                                   recents, this),
-                                                              new EmojiconGridView(mContext,
-                                                                                   Objects.DATA,
-                                                                                   recents, this),
-                                                              new EmojiconGridView(mContext,
-                                                                                   Places.DATA,
-                                                                                   recents, this),
-                                                              new EmojiconGridView(mContext,
-                                                                                   Symbols.DATA,
-                                                                                   recents, this)));
-        emojisPager.setAdapter(mEmojisAdapter);
+        PagerAdapter emojisAdapter = new EmojisPagerAdapter(Arrays.asList(
+                new EmojiconRecentsGridView(mContext, null, null, this), new EmojiconGridView(
+                        mContext, People.DATA, recents, this), new EmojiconGridView(mContext,
+                                                                                    Nature.DATA,
+                                                                                    recents, this),
+                new EmojiconGridView(mContext, Objects.DATA, recents, this), new EmojiconGridView(
+                        mContext, Places.DATA, recents, this), new EmojiconGridView(mContext,
+                                                                                    Symbols.DATA,
+                                                                                    recents,
+                                                                                    this)));
+        emojisPager.setAdapter(emojisAdapter);
         mEmojiTabs = new View[6];
         mEmojiTabs[0] = view.findViewById(R.id.emojis_tab_0_recents);
         mEmojiTabs[1] = view.findViewById(R.id.emojis_tab_1_people);

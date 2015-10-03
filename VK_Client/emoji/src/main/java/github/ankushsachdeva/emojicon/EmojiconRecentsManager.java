@@ -100,7 +100,7 @@ public class EmojiconRecentsManager extends ArrayList<Emojicon> {
             }
         }
         SharedPreferences prefs = getPreferences();
-        prefs.edit().putString(PREF_RECENTS, str.toString()).commit();
+        prefs.edit().putString(PREF_RECENTS, str.toString()).apply();
     }
 
     private SharedPreferences getPreferences() {
