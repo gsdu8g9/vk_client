@@ -15,9 +15,11 @@ import android.widget.LinearLayout;
 import com.devspark.robototextview.widget.RobotoEditText;
 import com.nethergrim.vk.R;
 import com.nethergrim.vk.activity.AbstractActivity;
+import com.nethergrim.vk.views.KeyboardDetectorRelativeLayout;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import butterknife.OnClick;
 
 /**
  * @author Andrew Drobyazko (andrey.drobyazko@applikeysolutions.com) on 03.10.15.
@@ -39,6 +41,9 @@ public abstract class BaseKeyboardFragment extends AbstractFragment {
     RecyclerView mRecycler;
     @InjectView(R.id.toolbar)
     Toolbar mToolbar;
+    @InjectView(R.id.keyboardDetector)
+    KeyboardDetectorRelativeLayout mKeyboardDetector;
+    private boolean mShowingEmojiKeyboard = false;
 
     @Nullable
     @Override
@@ -72,6 +77,18 @@ public abstract class BaseKeyboardFragment extends AbstractFragment {
         abstractActivity.setSupportActionBar(toolbar);
         abstractActivity.setTitle(getTitle());
         abstractActivity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    }
+
+    @OnClick(R.id.btnLeft)
+    public void onLeftBtnClick(View v) {
+        ImageButton imageButton = (ImageButton) v;
+        if (mShowingEmojiKeyboard) {
+            // hide emoji keyboard and show default keyboard
+            imageButton.setImageResource(R.drawable.ic_action_social_mood);
+        } else {
+            // show emoji keyboard, and hide default keyboard (if it's opened)
+            imageButton.setImageResource(R.drawable.ic_hardware_keyboard);
+        }
     }
 
     public abstract void initRecyclerView(RecyclerView recycler);
