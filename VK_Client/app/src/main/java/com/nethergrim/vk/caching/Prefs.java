@@ -28,4 +28,8 @@ public interface Prefs {
     int getFriendsCount();
 
     void setFriendsCount(int count);
+
+    void setKeyboardHeight(int heightPx, boolean portrait);
+
+    int getKeyboardHeight(boolean portrait);
 }

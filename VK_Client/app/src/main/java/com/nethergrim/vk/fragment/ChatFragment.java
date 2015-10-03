@@ -1,26 +1,18 @@
 package com.nethergrim.vk.fragment;
 
-import android.content.Context;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageButton;
-import android.widget.RelativeLayout;
 
 import com.nethergrim.vk.Constants;
 import com.nethergrim.vk.MyApplication;
 import com.nethergrim.vk.R;
-import com.nethergrim.vk.activity.AbstractActivity;
 import com.nethergrim.vk.adapter.ChatAdapter;
 import com.nethergrim.vk.caching.Prefs;
 import com.nethergrim.vk.event.ConversationUpdatedEvent;
@@ -35,16 +27,14 @@ import com.squareup.otto.Subscribe;
 
 import javax.inject.Inject;
 
-import butterknife.ButterKnife;
-import butterknife.InjectView;
 import io.realm.Realm;
 
 /**
  * @author andrej on 07.08.15.
  */
-public class ChatFragment extends AbstractFragment
-        implements Toolbar.OnMenuItemClickListener,
-        PaginationManager.OnRecyclerViewScrolledToPageListener {
+public class ChatFragment extends BaseKeyboardFragment implements Toolbar.OnMenuItemClickListener,
+                                                                  PaginationManager
+                                                                          .OnRecyclerViewScrolledToPageListener {
 
     public static final String EXTRA_CONVERSATION_ID = Constants.PACKAGE_NAME + ".CONV_ID";
     public static final int PAGE_SIZE = 50;
@@ -56,16 +46,7 @@ public class ChatFragment extends AbstractFragment
     Prefs mPrefs;
     @Inject
     Bus mBus;
-    @InjectView(R.id.toolbar)
-    Toolbar mToolbar;
-    @InjectView(R.id.recyclerView)
-    RecyclerView mRecyclerView;
-    @InjectView(R.id.btn_emoji)
-    ImageButton mBtnEmoji;
-    @InjectView(R.id.btn_send)
-    ImageButton mBtnSend;
-    @InjectView(R.id.inputMessagesController)
-    RelativeLayout mInputMessagesController;
+
     Realm mRealm;
     private long mConversationId;
     private boolean mIsGroupChat;
@@ -93,33 +74,6 @@ public class ChatFragment extends AbstractFragment
         mRealm = Realm.getDefaultInstance();
     }
 
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater,
-            ViewGroup container,
-            Bundle savedInstanceState) {
-        mBus.register(this);
-        View v = inflater.inflate(R.layout.fragment_chat, container, false);
-        ButterKnife.inject(this, v);
-        return v;
-    }
-
-    @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        initList(view.getContext());
-        loadConversation();
-        initToolbar();
-        loadLastMessages();
-    }
-
-    @Override
-    public void onDestroyView() {
-        mBus.unregister(this);
-        super.onDestroyView();
-        ButterKnife.reset(this);
-    }
-
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -138,6 +92,56 @@ public class ChatFragment extends AbstractFragment
     }
 
     @Override
+    public void onDestroyView() {
+        mBus.unregister(this);
+        super.onDestroyView();
+    }
+
+    @Override
+    public void initRecyclerView(RecyclerView recycler) {
+        mConversation = mRealm.where(Conversation.class).equalTo("id", mConversationId).findFirst();
+        if (mConversation == null) {
+            return;
+        }
+        mIsGroupChat = ConversationUtils.isConversationAGroupChat(mConversation);
+        if (! mIsGroupChat) {
+            mAnotherUser = mUserProvider.getUser(mConversation.getId());
+        }
+
+        mChatAdapter = new ChatAdapter(mConversationId, mIsGroupChat);
+        recycler.setAdapter(mChatAdapter);
+        LinearLayoutManager llm = new LinearLayoutManager(recycler.getContext(),
+                                                          RecyclerView.VERTICAL, true);
+        recycler.addOnScrollListener(new PaginationManager(PAGE_SIZE, this, true));
+        recycler.setLayoutManager(llm);
+
+        loadLastMessages();
+        mBus.register(this);
+    }
+
+    @Override
+    public void postText(String text) {
+        // TODO: 03.10.15 implement
+    }
+
+    @Override
+    public String getTitle() {
+        if (mConversation == null) {
+            return null;
+        }
+        if (ConversationUtils.isConversationAGroupChat(mConversation)) {
+            return mConversation.getMessage().getTitle();
+        } else {
+            return mAnotherUser.getFirstName() + " " + mAnotherUser.getLastName();
+        }
+    }
+
+    @Override
+    public void initToolbar(Toolbar toolbar) {
+        toolbar.setOnMenuItemClickListener(this);
+    }
+
+    @Override
     public boolean onMenuItemClick(MenuItem item) {
         Log.e("TAG", "menu item click " + item.getTitle());
         // TODO handle
@@ -146,8 +150,8 @@ public class ChatFragment extends AbstractFragment
 
     @Subscribe
     public void onDataUpdated(ConversationUpdatedEvent e) {
-        if (mIsGroupChat && e.getChatId() == getChatId() || !mIsGroupChat && e.getUserId()
-                .equals(getUserId())) {
+        if (mIsGroupChat && e.getChatId() == getChatId() || ! mIsGroupChat && e.getUserId().equals(
+                getUserId())) {
             mDataCount = e.getCount();
             mChatAdapter.notifyDataSetChanged();
             mChatAdapter.setHeaderVisibility(View.GONE);
@@ -170,49 +174,9 @@ public class ChatFragment extends AbstractFragment
             return args.getLong(EXTRA_CONVERSATION_ID);
         } else if (extras != null && extras.containsKey(EXTRA_CONVERSATION_ID)) {
             return extras.getLong(EXTRA_CONVERSATION_ID);
-        } else
-            return 0;
+        } else return 0;
     }
 
-    private void initList(Context context) {
-        mChatAdapter = new ChatAdapter(mConversationId, mIsGroupChat);
-        mRecyclerView.setAdapter(mChatAdapter);
-        LinearLayoutManager llm = new LinearLayoutManager(context, RecyclerView.VERTICAL, true);
-        mRecyclerView.addOnScrollListener(
-                new PaginationManager(PAGE_SIZE, this, true));
-        mRecyclerView.setLayoutManager(llm);
-    }
-
-    private void loadConversation() {
-        mConversation = mRealm.where(Conversation.class).equalTo("id", mConversationId).findFirst();
-        if (mConversation == null) {
-            return;
-        }
-        mIsGroupChat = ConversationUtils.isConversationAGroupChat(mConversation);
-        if (!mIsGroupChat) {
-            mAnotherUser = mUserProvider.getUser(mConversation.getId());
-        }
-    }
-
-    private String getToolbarTitle() {
-        if (mConversation == null) {
-            return null;
-        }
-        if (ConversationUtils.isConversationAGroupChat(mConversation)) {
-            return mConversation.getMessage().getTitle();
-        } else {
-            return mAnotherUser.getFirstName() + " " + mAnotherUser.getLastName();
-        }
-    }
-
-    private void initToolbar() {
-        ((AbstractActivity) getActivity()).setSupportActionBar(mToolbar);
-        mToolbar.setTitleTextColor(Color.WHITE);
-        mToolbar.setOnMenuItemClickListener(this);
-        ((AbstractActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        (getActivity()).setTitle(getToolbarTitle());
-
-    }
 
     private String getUserId() {
         if (mIsGroupChat) {
@@ -222,8 +186,8 @@ public class ChatFragment extends AbstractFragment
     }
 
     private long getChatId() {
-        if (!mIsGroupChat) {
-            return -1;
+        if (! mIsGroupChat) {
+            return - 1;
         }
         return mConversationId;
     }

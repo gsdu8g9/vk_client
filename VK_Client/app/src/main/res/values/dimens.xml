@@ -25,7 +25,7 @@
 
 
     <!--                    Chat Screen              -->
-    <dimen name="input.messages.controller.height">48dp</dimen>
+    <dimen name="chat.screen.input.messages.controller.height">48dp</dimen>
     <dimen name="chat.row.avatar.size">40dp</dimen>
     <dimen name="chat.row.margins">8dp</dimen>
     <dimen name="chat.row.margin_vertical">3dp</dimen>
