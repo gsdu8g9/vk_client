@@ -31,6 +31,7 @@ import butterknife.OnClick;
 public abstract class BaseKeyboardFragment extends AbstractFragment {
 
 
+    private static final long DELAY_MS = 30;
     @InjectView(R.id.btnLeft)
     ImageButton mBtnLeft;
     @InjectView(R.id.editText)
@@ -100,7 +101,7 @@ public abstract class BaseKeyboardFragment extends AbstractFragment {
             // show emoji keyboard, and hide default keyboard (if it's opened)
             imageButton.setImageResource(R.drawable.ic_hardware_keyboard);
             showEmojiKeyboard();
-            new Handler().postDelayed(() -> hideSoftKeyboard(), 20);
+            new Handler().postDelayed(() -> hideSoftKeyboard(), DELAY_MS);
 
         }
         mShowingEmojiKeyboard = ! mShowingEmojiKeyboard;
