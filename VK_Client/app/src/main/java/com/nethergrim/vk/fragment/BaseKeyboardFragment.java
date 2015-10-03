@@ -3,14 +3,18 @@ package com.nethergrim.vk.fragment;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
 import com.devspark.robototextview.widget.RobotoEditText;
 import com.nethergrim.vk.R;
@@ -43,7 +47,10 @@ public abstract class BaseKeyboardFragment extends AbstractFragment {
     Toolbar mToolbar;
     @InjectView(R.id.keyboardDetector)
     KeyboardDetectorRelativeLayout mKeyboardDetector;
+    @InjectView(R.id.emojiLayout)
+    RelativeLayout mEmojiLayout;
     private boolean mShowingEmojiKeyboard = false;
+    private InputMethodManager mInputMethodManager;
 
     @Nullable
     @Override
@@ -59,7 +66,8 @@ public abstract class BaseKeyboardFragment extends AbstractFragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         Context ctx = view.getContext();
-
+        mInputMethodManager = (InputMethodManager) ctx.getSystemService(
+                Context.INPUT_METHOD_SERVICE);
         initRecyclerView(mRecycler);
         preInitToolbar(mToolbar);
         initToolbar(mToolbar);
@@ -68,6 +76,7 @@ public abstract class BaseKeyboardFragment extends AbstractFragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        mInputMethodManager = null;
         ButterKnife.reset(this);
     }
 
@@ -81,14 +90,20 @@ public abstract class BaseKeyboardFragment extends AbstractFragment {
 
     @OnClick(R.id.btnLeft)
     public void onLeftBtnClick(View v) {
-        ImageButton imageButton = (ImageButton) v;
+        ImageButton imageButton = mBtnLeft;
         if (mShowingEmojiKeyboard) {
             // hide emoji keyboard and show default keyboard
             imageButton.setImageResource(R.drawable.ic_action_social_mood);
+            showSoftKeyboard(mEditText);
+            hideEmojiKeyboard();
         } else {
             // show emoji keyboard, and hide default keyboard (if it's opened)
             imageButton.setImageResource(R.drawable.ic_hardware_keyboard);
+            showEmojiKeyboard();
+            new Handler().postDelayed(() -> hideSoftKeyboard(), 20);
+
         }
+        mShowingEmojiKeyboard = ! mShowingEmojiKeyboard;
     }
 
     public abstract void initRecyclerView(RecyclerView recycler);
@@ -98,4 +113,41 @@ public abstract class BaseKeyboardFragment extends AbstractFragment {
     public abstract String getTitle();
 
     protected abstract void initToolbar(Toolbar toolbar);
+
+    private void showSoftKeyboard(EditText editText) {
+        if (editText == null) {
+            return;
+        }
+        if (mInputMethodManager == null) {
+            return;
+        }
+        mInputMethodManager.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT);
+    }
+
+    private void hideEmojiKeyboard() {
+        if (mEmojiLayout == null) {
+            return;
+        }
+        mEmojiLayout.getLayoutParams().height = 0;
+        mEmojiLayout.requestLayout();
+    }
+
+    private void showEmojiKeyboard() {
+        if (mKeyboardDetector == null) {
+            return;
+        }
+        mEmojiLayout.getLayoutParams().height = mKeyboardDetector.getKeyboardHeight();
+        mEmojiLayout.invalidate();
+    }
+
+    private void hideSoftKeyboard() {
+        if (mEditText == null) {
+            return;
+        }
+
+        if (mInputMethodManager == null) {
+            return;
+        }
+        mInputMethodManager.hideSoftInputFromWindow(mEditText.getWindowToken(), 0);
+    }
 }

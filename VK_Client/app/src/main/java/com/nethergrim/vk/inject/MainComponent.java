@@ -19,6 +19,7 @@ import com.nethergrim.vk.services.WorkerService;
 import com.nethergrim.vk.utils.DataHelper;
 import com.nethergrim.vk.utils.PushParserImpl;
 import com.nethergrim.vk.utils.RealmUserProviderImplementation;
+import com.nethergrim.vk.views.KeyboardDetectorRelativeLayout;
 import com.nethergrim.vk.web.DataManagerImpl;
 import com.nethergrim.vk.web.WebIntentHandlerImpl;
 import com.nethergrim.vk.web.WebRequestManagerImpl;
@@ -83,4 +84,7 @@ public interface MainComponent {
     void inject(RealmPersistingManagerImpl r);
 
     void inject(NewChatActivity newChatActivity);
+
+    void inject(KeyboardDetectorRelativeLayout keyboardDetectorRelativeLayout);
+
 }

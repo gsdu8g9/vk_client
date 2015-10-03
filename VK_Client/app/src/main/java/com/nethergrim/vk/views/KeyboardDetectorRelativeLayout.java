@@ -6,8 +6,12 @@ import android.util.Log;
 import android.widget.RelativeLayout;
 
 import com.nethergrim.vk.Constants;
+import com.nethergrim.vk.MyApplication;
+import com.nethergrim.vk.caching.Prefs;
 
 import java.util.ArrayList;
+
+import javax.inject.Inject;
 
 /**
  * @author Andrew Drobyazko (andrey.drobyazko@applikeysolutions.com) on 03.10.15.
@@ -15,8 +19,10 @@ import java.util.ArrayList;
 public class KeyboardDetectorRelativeLayout extends RelativeLayout {
 
     public static final String TAG = KeyboardDetectorRelativeLayout.class.getSimpleName();
+    @Inject
+    Prefs mPrefs;
     private ArrayList<IKeyboardChanged> mKeyboardListenersArray = new ArrayList<>();
-    private int mKeyboardHeight = (int) (200 * Constants.mDensity);
+    private int mKeyboardHeight = 0;
 
     public interface IKeyboardChanged {
 
@@ -27,14 +33,17 @@ public class KeyboardDetectorRelativeLayout extends RelativeLayout {
 
     public KeyboardDetectorRelativeLayout(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
+        MyApplication.getInstance().getMainComponent().inject(this);
     }
 
     public KeyboardDetectorRelativeLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
+        MyApplication.getInstance().getMainComponent().inject(this);
     }
 
     public KeyboardDetectorRelativeLayout(Context context) {
         super(context);
+        MyApplication.getInstance().getMainComponent().inject(this);
     }
 
     public void addKeyboardStateChangedListener(IKeyboardChanged listener) {
@@ -46,7 +55,14 @@ public class KeyboardDetectorRelativeLayout extends RelativeLayout {
     }
 
     public int getKeyboardHeight() {
-        return mKeyboardHeight;
+        if (mKeyboardHeight > 0) {
+            return mKeyboardHeight;
+        }
+        int height = mPrefs.getKeyboardHeight(true);
+        if (height > 0) {
+            return height;
+        }
+        return (int) (220 * Constants.mDensity);
     }
 
     @Override
@@ -58,6 +74,7 @@ public class KeyboardDetectorRelativeLayout extends RelativeLayout {
 
         if (proposedheight > 0 && actualHeight > 0 && proposedheight < actualHeight) {
             mKeyboardHeight = actualHeight - proposedheight;
+            mPrefs.setKeyboardHeight(mKeyboardHeight, true);
             Log.d("TAG", "keyboard height: " + mKeyboardHeight + " px or " + (mKeyboardHeight
                     / Constants.mDensity) + " dp");
         }

@@ -16,6 +16,7 @@ public class DefaultPrefsImpl implements Prefs {
     public static final String KEY_GCM_TOKEN = "gcm_token";
     public static final String KEY_UNREAD_MESSAGES_COUNT = "unread_messages_count";
     public static final String KEY_FRIENDS_COUNT = "fr_c";
+    public static final String KEY_KEYBOARD_HEIGHT = "keyboard_height";
     private static final String KEY_TOKEN = "token";
     private SharedPreferences mPrefs;
 
@@ -82,6 +83,16 @@ public class DefaultPrefsImpl implements Prefs {
     @Override
     public void setFriendsCount(int count) {
         mPrefs.edit().putInt(KEY_FRIENDS_COUNT, count).apply();
+    }
+
+    @Override
+    public void setKeyboardHeight(int heightPx, boolean portrait) {
+        mPrefs.edit().putInt(KEY_KEYBOARD_HEIGHT + portrait, heightPx).apply();
+    }
+
+    @Override
+    public int getKeyboardHeight(boolean portrait) {
+        return mPrefs.getInt(KEY_KEYBOARD_HEIGHT + portrait, 0);
     }
 
 }
