@@ -92,8 +92,13 @@ public class EmojiconsPopup extends PopupWindow
         setContentView(customView);
         setSoftInputMode(LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
         //default size
-        setSize((int) mContext.getResources().getDimension(R.dimen.keyboard_height),
+        setSize(LayoutParams.MATCH_PARENT,
                 LayoutParams.MATCH_PARENT);
+    }
+
+    public void setKeyBoardHeight(int keyBoardHeight) {
+        this.keyBoardHeight = keyBoardHeight;
+        setSize(LayoutParams.MATCH_PARENT, keyBoardHeight);
     }
 
     /**
@@ -124,7 +129,7 @@ public class EmojiconsPopup extends PopupWindow
      * If that is not possible see showAtBottomPending() function.
      */
     public void showAtBottom() {
-        showAtLocation(rootView, Gravity.BOTTOM, 0, 0);
+        showAtLocation(rootView, Gravity.BOTTOM | Gravity.LEFT, 0, 0);
     }
 
     /**
@@ -157,6 +162,7 @@ public class EmojiconsPopup extends PopupWindow
     /**
      * Call this function to resize the emoji popup according to your soft keyboard size
      */
+    @Deprecated
     public void setSizeForSoftKeyboard() {
         rootView.getViewTreeObserver().addOnGlobalLayoutListener(new OnGlobalLayoutListener() {
             @Override

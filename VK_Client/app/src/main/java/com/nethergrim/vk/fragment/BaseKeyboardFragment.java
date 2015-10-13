@@ -3,7 +3,6 @@ package com.nethergrim.vk.fragment;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -14,7 +13,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 
 import com.devspark.robototextview.widget.RobotoEditText;
 import com.nethergrim.vk.R;
@@ -24,6 +22,7 @@ import com.nethergrim.vk.views.KeyboardDetectorRelativeLayout;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
+import github.ankushsachdeva.emojicon.EmojiconsPopup;
 
 /**
  * @author Andrew Drobyazko (andrey.drobyazko@applikeysolutions.com) on 03.10.15.
@@ -48,10 +47,9 @@ public abstract class BaseKeyboardFragment extends AbstractFragment {
     Toolbar mToolbar;
     @InjectView(R.id.keyboardDetector)
     KeyboardDetectorRelativeLayout mKeyboardDetector;
-    @InjectView(R.id.emojiLayout)
-    RelativeLayout mEmojiLayout;
     private boolean mShowingEmojiKeyboard = false;
     private InputMethodManager mInputMethodManager;
+    private EmojiconsPopup mEmojiconsPopup;
 
     @Nullable
     @Override
@@ -101,8 +99,6 @@ public abstract class BaseKeyboardFragment extends AbstractFragment {
             // show emoji keyboard, and hide default keyboard (if it's opened)
             imageButton.setImageResource(R.drawable.ic_hardware_keyboard);
             showEmojiKeyboard();
-            new Handler().postDelayed(() -> hideSoftKeyboard(), DELAY_MS);
-
         }
         mShowingEmojiKeyboard = ! mShowingEmojiKeyboard;
     }
@@ -126,19 +122,15 @@ public abstract class BaseKeyboardFragment extends AbstractFragment {
     }
 
     private void hideEmojiKeyboard() {
-        if (mEmojiLayout == null) {
-            return;
+        if (mEmojiconsPopup != null) {
+            mEmojiconsPopup.dismiss();
         }
-        mEmojiLayout.getLayoutParams().height = 0;
-        mEmojiLayout.requestLayout();
     }
 
     private void showEmojiKeyboard() {
-        if (mKeyboardDetector == null) {
-            return;
-        }
-        mEmojiLayout.getLayoutParams().height = mKeyboardDetector.getKeyboardHeight();
-        mEmojiLayout.invalidate();
+        mEmojiconsPopup = new EmojiconsPopup(mKeyboardDetector, getActivity());
+        mEmojiconsPopup.setKeyBoardHeight(mKeyboardDetector.getKeyboardHeight());
+        mEmojiconsPopup.showAtBottom();
     }
 
     private void hideSoftKeyboard() {
