@@ -29,7 +29,7 @@ public interface Prefs {
 
     void setFriendsCount(int count);
 
-    void setKeyboardHeight(int heightPx, boolean portrait);
+    int getKeyboardHeight();
 
-    int getKeyboardHeight(boolean portrait);
+    void setKeyboardHeight(int heightPx);
 }

@@ -58,7 +58,7 @@ public class KeyboardDetectorRelativeLayout extends RelativeLayout {
         if (mKeyboardHeight > 0) {
             return mKeyboardHeight;
         }
-        int height = mPrefs.getKeyboardHeight(true);
+        int height = mPrefs.getKeyboardHeight();
         if (height > 0) {
             return height;
         }
@@ -74,7 +74,7 @@ public class KeyboardDetectorRelativeLayout extends RelativeLayout {
 
         if (proposedheight > 0 && actualHeight > 0 && proposedheight < actualHeight) {
             mKeyboardHeight = actualHeight - proposedheight;
-            mPrefs.setKeyboardHeight(mKeyboardHeight, true);
+            mPrefs.setKeyboardHeight(mKeyboardHeight);
             Log.d("TAG", "keyboard height: " + mKeyboardHeight + " px or " + (mKeyboardHeight
                     / Constants.mDensity) + " dp");
         }

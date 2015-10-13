@@ -19,12 +19,13 @@ package github.ankushsachdeva.emojicon;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
-import android.widget.EditText;
+
+import com.devspark.robototextview.widget.RobotoEditText;
 
 /**
  * @author Hieu Rocker (rockerhieu@gmail.com).
  */
-public class EmojiconEditText extends EditText {
+public class EmojiconEditText extends RobotoEditText {
 
     private int mEmojiconSize;
 

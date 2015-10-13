@@ -59,8 +59,8 @@ public abstract class BaseKeyboardFragment extends AbstractFragment
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater,
-                             ViewGroup container,
-                             Bundle savedInstanceState) {
+            ViewGroup container,
+            Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_base_emoji_keyboard, container, false);
         ButterKnife.inject(this, v);
         return v;
@@ -108,7 +108,7 @@ public abstract class BaseKeyboardFragment extends AbstractFragment
             imageButton.setImageResource(R.drawable.ic_hardware_keyboard);
             showEmojiKeyboard();
         }
-        mShowingEmojiKeyboard = ! mShowingEmojiKeyboard;
+        mShowingEmojiKeyboard = !mShowingEmojiKeyboard;
     }
 
     public abstract void initRecyclerView(RecyclerView recycler);
@@ -149,6 +149,7 @@ public abstract class BaseKeyboardFragment extends AbstractFragment
     @Override
     public void onKeyboardHidden() {
         hideEmojiKeyboard();
+        mBtnLeft.setImageResource(R.drawable.ic_action_social_mood);
     }
 
     protected abstract void initToolbar(Toolbar toolbar);
