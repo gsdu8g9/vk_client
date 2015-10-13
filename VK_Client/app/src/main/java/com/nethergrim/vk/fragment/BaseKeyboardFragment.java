@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,12 +23,16 @@ import com.nethergrim.vk.views.KeyboardDetectorRelativeLayout;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
+import github.ankushsachdeva.emojicon.EmojiconGridView;
 import github.ankushsachdeva.emojicon.EmojiconsPopup;
+import github.ankushsachdeva.emojicon.emoji.Emojicon;
 
 /**
  * @author Andrew Drobyazko (andrey.drobyazko@applikeysolutions.com) on 03.10.15.
  */
-public abstract class BaseKeyboardFragment extends AbstractFragment {
+public abstract class BaseKeyboardFragment extends AbstractFragment
+        implements EmojiconGridView.OnEmojiconClickedListener,
+        EmojiconsPopup.OnEmojiconBackspaceClickedListener {
 
 
     private static final long DELAY_MS = 30;
@@ -93,7 +98,7 @@ public abstract class BaseKeyboardFragment extends AbstractFragment {
         if (mShowingEmojiKeyboard) {
             // hide emoji keyboard and show default keyboard
             imageButton.setImageResource(R.drawable.ic_action_social_mood);
-            showSoftKeyboard(mEditText);
+
             hideEmojiKeyboard();
         } else {
             // show emoji keyboard, and hide default keyboard (if it's opened)
@@ -108,6 +113,30 @@ public abstract class BaseKeyboardFragment extends AbstractFragment {
     public abstract void postText(String text);
 
     public abstract String getTitle();
+
+    @Override
+    public void onEmojiconClicked(Emojicon emojicon) {
+        if (mEditText == null || emojicon == null) {
+            return;
+        }
+
+        int start = mEditText.getSelectionStart();
+        int end = mEditText.getSelectionEnd();
+        if (start < 0) {
+            mEditText.append(emojicon.getEmoji());
+        } else {
+            mEditText.getText().replace(Math.min(start, end),
+                    Math.max(start, end), emojicon.getEmoji(), 0,
+                    emojicon.getEmoji().length());
+        }
+    }
+
+    @Override
+    public void onEmojiconBackspaceClicked(View v) {
+        KeyEvent event = new KeyEvent(
+                0, 0, 0, KeyEvent.KEYCODE_DEL, 0, 0, 0, 0, KeyEvent.KEYCODE_ENDCALL);
+        mEditText.dispatchKeyEvent(event);
+    }
 
     protected abstract void initToolbar(Toolbar toolbar);
 
@@ -125,12 +154,16 @@ public abstract class BaseKeyboardFragment extends AbstractFragment {
         if (mEmojiconsPopup != null) {
             mEmojiconsPopup.dismiss();
         }
+        showSoftKeyboard(mEditText);
     }
 
     private void showEmojiKeyboard() {
+        showSoftKeyboard(mEditText);
         mEmojiconsPopup = new EmojiconsPopup(mKeyboardDetector, getActivity());
         mEmojiconsPopup.setKeyBoardHeight(mKeyboardDetector.getKeyboardHeight());
         mEmojiconsPopup.showAtBottom();
+        mEmojiconsPopup.setOnEmojiconClickedListener(this);
+        mEmojiconsPopup.setOnEmojiconBackspaceClickedListener(this);
     }
 
     private void hideSoftKeyboard() {
