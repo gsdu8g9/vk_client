@@ -19,19 +19,20 @@
 
         <ImageButton
             android:id="@+id/btnLeft"
-            android:layout_width="48dp"
+            android:layout_width="40dp"
             android:layout_height="match_parent"
             android:background="?attr/selectableItemBackground"
             android:src="@drawable/ic_action_social_mood" />
 
 
-        <com.devspark.robototextview.widget.RobotoEditText
+        <github.ankushsachdeva.emojicon.EmojiconEditText
             android:id="@+id/editText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center|left"
             android:hint="@string/write_a_message"
+            android:imeOptions="flagNoFullscreen"
             android:minHeight="@dimen/chat.screen.input.messages.controller.height"
             android:padding="8dp"
             android:textSize="16sp"
@@ -39,7 +40,7 @@
 
         <ImageButton
             android:id="@+id/btnRight"
-            android:layout_width="48dp"
+            android:layout_width="40dp"
             android:layout_height="match_parent"
             android:background="?attr/selectableItemBackground"
             android:src="@drawable/ic_action_content_send" />
