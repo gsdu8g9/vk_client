@@ -13,7 +13,7 @@
         android:id="@+id/inputLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/emojiLayout"
+        android:layout_alignParentBottom="true"
         android:minHeight="@dimen/chat.screen.input.messages.controller.height"
         android:orientation="horizontal">
 
@@ -47,12 +47,6 @@
 
     </LinearLayout>
 
-    <RelativeLayout
-        android:id="@+id/emojiLayout"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_alignParentBottom="true"
-        android:background="@android:color/holo_orange_light"></RelativeLayout>
 
     <View
         android:id="@+id/divider"

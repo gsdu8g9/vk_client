@@ -2,6 +2,7 @@ package com.nethergrim.vk.caching;
 
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
 import com.nethergrim.vk.MyApplication;
 import com.nethergrim.vk.enums.MainActivityState;
@@ -86,13 +87,19 @@ public class DefaultPrefsImpl implements Prefs {
     }
 
     @Override
-    public void setKeyboardHeight(int heightPx, boolean portrait) {
-        mPrefs.edit().putInt(KEY_KEYBOARD_HEIGHT + portrait, heightPx).apply();
+    public int getKeyboardHeight() {
+        Log.e("TAG", "orientation: " + getOrientation());
+        return mPrefs.getInt(KEY_KEYBOARD_HEIGHT + "_" + getOrientation(), 0);
     }
 
     @Override
-    public int getKeyboardHeight(boolean portrait) {
-        return mPrefs.getInt(KEY_KEYBOARD_HEIGHT + portrait, 0);
+    public void setKeyboardHeight(int heightPx) {
+        mPrefs.edit().putInt(KEY_KEYBOARD_HEIGHT + "_" + getOrientation(), heightPx).apply();
+    }
+
+    @Override
+    public int getOrientation() {
+        return MyApplication.getInstance().getResources().getConfiguration().orientation;
     }
 
 }

@@ -20,12 +20,13 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.text.SpannableStringBuilder;
 import android.util.AttributeSet;
-import android.widget.TextView;
+
+import com.devspark.robototextview.widget.RobotoTextView;
 
 /**
  * @author Hieu Rocker (rockerhieu@gmail.com).
  */
-public class EmojiconTextView extends TextView {
+public class EmojiconTextView extends RobotoTextView {
 
     private int mEmojiconSize;
     private int mTextStart = 0;
