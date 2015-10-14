@@ -32,4 +32,6 @@ public interface Prefs {
     int getKeyboardHeight();
 
     void setKeyboardHeight(int heightPx);
+
+    int getOrientation();
 }
