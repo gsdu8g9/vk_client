@@ -62,5 +62,6 @@ public class EmojiconEditText extends RobotoEditText {
         mEmojiconSize = (int) a.getDimension(R.styleable.Emojicon_emojiconSize, getTextSize());
         a.recycle();
         setText(getText());
+        setEmojiconSize((int) (getContext().getResources().getDisplayMetrics().density * 24));
     }
 }

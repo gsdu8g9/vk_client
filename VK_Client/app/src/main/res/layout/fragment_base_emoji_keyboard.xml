@@ -25,7 +25,7 @@
             android:src="@drawable/ic_action_social_mood" />
 
 
-        <com.devspark.robototextview.widget.RobotoEditText
+        <github.ankushsachdeva.emojicon.EmojiconEditText
             android:id="@+id/editText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
