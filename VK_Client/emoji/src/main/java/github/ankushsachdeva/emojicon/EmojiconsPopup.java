@@ -55,7 +55,7 @@ public class EmojiconsPopup extends PopupWindow
     private OnEmojiconBackspaceClickedListener onEmojiconBackspaceClickedListener;
     private View rootView;
     private Context mContext;
-    private int mEmojiTabLastSelectedIndex = - 1;
+    private int mEmojiTabLastSelectedIndex = -1;
     private View[] mEmojiTabs;
     private EmojiconRecentsManager mRecentsManager;
     private ViewPager emojisPager;
@@ -64,7 +64,6 @@ public class EmojiconsPopup extends PopupWindow
 
         void onEmojiconBackspaceClicked(View v);
     }
-
 
 
     /**
@@ -183,16 +182,13 @@ public class EmojiconsPopup extends PopupWindow
         emojisPager = (ViewPager) view.findViewById(R.id.emojis_pager);
         emojisPager.setOnPageChangeListener(this);
         EmojiconRecents recents = this;
-        PagerAdapter emojisAdapter = new EmojisPagerAdapter(Arrays.asList(
-                new EmojiconRecentsGridView(mContext, null, null, this), new EmojiconGridView(
-                        mContext, People.DATA, recents, this), new EmojiconGridView(mContext,
-                                                                                    Nature.DATA,
-                                                                                    recents, this),
-                new EmojiconGridView(mContext, Objects.DATA, recents, this), new EmojiconGridView(
-                        mContext, Places.DATA, recents, this), new EmojiconGridView(mContext,
-                                                                                    Symbols.DATA,
-                                                                                    recents,
-                                                                                    this)));
+        PagerAdapter emojisAdapter = new EmojisPagerAdapter(
+                Arrays.asList(new EmojiconRecentsGridView(mContext, null, null, this),
+                        new EmojiconGridView(mContext, People.DATA, recents, this),
+                        new EmojiconGridView(mContext, Nature.DATA, recents, this),
+                        new EmojiconGridView(mContext, Objects.DATA, recents, this),
+                        new EmojiconGridView(mContext, Places.DATA, recents, this),
+                        new EmojiconGridView(mContext, Symbols.DATA, recents, this)));
         emojisPager.setAdapter(emojisAdapter);
         mEmojiTabs = new View[6];
         mEmojiTabs[0] = view.findViewById(R.id.emojis_tab_0_recents);
@@ -210,21 +206,18 @@ public class EmojiconsPopup extends PopupWindow
                 }
             });
         }
-        view.findViewById(R.id.emojis_backspace).setOnTouchListener(new RepeatListener(1000, 50,
-                                                                                       new OnClickListener() {
+        view.findViewById(R.id.emojis_backspace)
+                .setOnTouchListener(new RepeatListener(1000, 50, new OnClickListener() {
 
-                                                                                           @Override
-                                                                                           public
-                                                                                           void
-                                                                                           onClick(
-                                                                                                   View v) {
-                                                                                               if (onEmojiconBackspaceClickedListener
-                                                                                                       != null)
-                                                                                                   onEmojiconBackspaceClickedListener
-                                                                                                           .onEmojiconBackspaceClicked(
-                                                                                                                   v);
-                                                                                           }
-                                                                                       }));
+                    @Override
+                    public void
+                    onClick(
+                            View v) {
+                        if (onEmojiconBackspaceClickedListener != null)
+                            onEmojiconBackspaceClickedListener.onEmojiconBackspaceClicked(
+                                    v);
+                    }
+                }));
 
         // get last selected page
         mRecentsManager = EmojiconRecentsManager.getInstance(view.getContext());
@@ -279,11 +272,13 @@ public class EmojiconsPopup extends PopupWindow
          * periodically
          */
         public RepeatListener(int initialInterval,
-                              int normalInterval,
-                              View.OnClickListener clickListener) {
-            if (clickListener == null) throw new IllegalArgumentException("null runnable");
-            if (initialInterval < 0 || normalInterval < 0) throw new IllegalArgumentException(
-                    "negative interval");
+                int normalInterval,
+                View.OnClickListener clickListener) {
+            if (clickListener == null)
+                throw new IllegalArgumentException("null runnable");
+            if (initialInterval < 0 || normalInterval < 0)
+                throw new IllegalArgumentException(
+                        "negative interval");
 
             this.initialInterval = initialInterval;
             this.normalInterval = normalInterval;
@@ -296,7 +291,7 @@ public class EmojiconsPopup extends PopupWindow
                     downView = view;
                     handler.removeCallbacks(handlerRunnable);
                     handler.postAtTime(handlerRunnable, downView,
-                                       SystemClock.uptimeMillis() + initialInterval);
+                            SystemClock.uptimeMillis() + initialInterval);
                     clickListener.onClick(view);
                     return true;
                 case MotionEvent.ACTION_UP:
@@ -321,7 +316,8 @@ public class EmojiconsPopup extends PopupWindow
 
         public EmojiconRecentsGridView getRecentFragment() {
             for (EmojiconGridView it : views) {
-                if (it instanceof EmojiconRecentsGridView) return (EmojiconRecentsGridView) it;
+                if (it instanceof EmojiconRecentsGridView)
+                    return (EmojiconRecentsGridView) it;
             }
             return null;
         }
