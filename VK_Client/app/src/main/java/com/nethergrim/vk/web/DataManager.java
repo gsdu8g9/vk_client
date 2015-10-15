@@ -6,6 +6,7 @@ import com.nethergrim.vk.models.ListOfFriends;
 import com.nethergrim.vk.models.ListOfMessages;
 import com.nethergrim.vk.models.ListOfUsers;
 import com.nethergrim.vk.models.StartupResponse;
+import com.nethergrim.vk.models.StickerDbItem;
 
 import java.util.List;
 
@@ -40,6 +41,8 @@ public interface DataManager {
             long chatId);
 
     Observable<IntegerResponse> deleteConversation(long userId, long chatId);
+
+    Observable<List<StickerDbItem>> getStickerItems();
 
 
 }

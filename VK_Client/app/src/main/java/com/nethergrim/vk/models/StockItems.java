@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
 
 /**
- * @author Andrew Drobyazko (andrey.drobyazko@applikeysolutions.com) on 15.10.15.
+ * @author Andrew Drobyazko (andrey.drobyazko@agmail.com) on 15.10.15.
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class StockItems extends WebResponse {

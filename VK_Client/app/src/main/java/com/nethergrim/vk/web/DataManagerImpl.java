@@ -20,9 +20,11 @@ import com.nethergrim.vk.models.ListOfFriends;
 import com.nethergrim.vk.models.ListOfMessages;
 import com.nethergrim.vk.models.ListOfUsers;
 import com.nethergrim.vk.models.StartupResponse;
+import com.nethergrim.vk.models.StickerDbItem;
 import com.squareup.otto.Bus;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -145,6 +147,23 @@ public class DataManagerImpl implements DataManager {
                     // delete conversation from local database
                     mPersistingManager.deleteConversation(userId, chatId);
                     mBus.post(new ConversationsUpdatedEvent());
+                })
+                ;
+    }
+
+    @Override
+    public Observable<List<StickerDbItem>> getStickerItems() {
+        return mWebRequestManager.getStickerStockItems()
+                .map(stockItems -> {
+                    if (stockItems == null || stockItems.getItems() == null) {
+                        return null;
+                    }
+                    List<StickerDbItem> result = new ArrayList<StickerDbItem>(
+                            stockItems.getItems().size());
+                    for (int i = 0, size = stockItems.getItems().size(); i < size; i++) {
+                        result.add(StickerDbItem.MAPPER.call(stockItems.getItems().get(i)));
+                    }
+                    return result;
                 })
                 ;
     }
