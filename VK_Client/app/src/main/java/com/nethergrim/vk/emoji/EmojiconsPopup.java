@@ -21,7 +21,6 @@ import android.content.Context;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Handler;
 import android.os.SystemClock;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -31,25 +30,22 @@ import android.view.WindowManager.LayoutParams;
 import android.widget.PopupWindow;
 
 import github.ankushsachdeva.emojicon.EmojiconGridView.OnEmojiconClickedListener;
-import github.ankushsachdeva.emojicon.EmojiconRecentsManager;
 
 
 /**
  * @author Ankush Sachdeva (sankush@yahoo.co.in).
  */
 
-public class EmojiconsPopup extends PopupWindow
-        implements ViewPager.OnPageChangeListener {
+public class EmojiconsPopup extends PopupWindow {
 
     OnEmojiconClickedListener onEmojiconClickedListener;
     private OnEmojiconBackspaceClickedListener onEmojiconBackspaceClickedListener;
     private View rootView;
     private Context mContext;
-    private int mEmojiTabLastSelectedIndex = -1;
-    private View[] mEmojiTabs;
-    private EmojiconRecentsManager mRecentsManager;
+
+
     private ViewPager emojisPager;
-    private FragmentManager mFragmentManager;
+
 
     public interface OnEmojiconBackspaceClickedListener {
 
@@ -64,11 +60,10 @@ public class EmojiconsPopup extends PopupWindow
      * the screen height will be used to calculate the keyboard height.
      * @param mContext The context of current activity.
      */
-    public EmojiconsPopup(View rootView, Context mContext, FragmentManager manager) {
+    public EmojiconsPopup(View rootView, Context mContext) {
         super(mContext);
         this.mContext = mContext;
         this.rootView = rootView;
-        this.mFragmentManager = manager;
 
         setBackgroundDrawable(new ColorDrawable(0)); // no shadow for a popup view
         setContentView(createCustomView());
@@ -117,36 +112,6 @@ public class EmojiconsPopup extends PopupWindow
         setHeight(height);
     }
 
-    @Override
-    public void onPageScrolled(int i, float v, int i2) {
-    }
-
-    @Override
-    public void onPageSelected(int i) {
-        if (mEmojiTabLastSelectedIndex == i) {
-            return;
-        }
-        switch (i) {
-            case 0:
-            case 1:
-            case 2:
-            case 3:
-            case 4:
-            case 5:
-                if (mEmojiTabLastSelectedIndex >= 0
-                        && mEmojiTabLastSelectedIndex < mEmojiTabs.length) {
-                    mEmojiTabs[mEmojiTabLastSelectedIndex].setSelected(false);
-                }
-                mEmojiTabs[i].setSelected(true);
-                mEmojiTabLastSelectedIndex = i;
-                mRecentsManager.setRecentPage(i);
-                break;
-        }
-    }
-
-    @Override
-    public void onPageScrollStateChanged(int i) {
-    }
 
     private View createCustomView() {
         LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(
@@ -157,7 +122,6 @@ public class EmojiconsPopup extends PopupWindow
         // pager init
         emojisPager = (ViewPager) view.findViewById(
                 github.ankushsachdeva.emojicon.R.id.emojis_pager);
-        emojisPager.setOnPageChangeListener(this);
         EmojiPagerAdapter adapter = new EmojiPagerAdapter(onEmojiconClickedListener);
         emojisPager.setAdapter(adapter);
 

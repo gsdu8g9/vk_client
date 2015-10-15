@@ -172,9 +172,7 @@ public abstract class BaseKeyboardFragment extends AbstractFragment
     }
 
     private void showEmojiKeyboard() {
-        AbstractActivity abstractActivity = (AbstractActivity) getActivity();
-        mEmojiconsPopup = new EmojiconsPopup(mKeyboardDetector, getActivity(),
-                abstractActivity.getSupportFragmentManager());
+        mEmojiconsPopup = new EmojiconsPopup(mKeyboardDetector, getActivity());
         mEmojiconsPopup.setKeyBoardHeight(mKeyboardDetector.getKeyboardHeight());
         mEmojiconsPopup.showAtBottom();
         mEmojiconsPopup.setOnEmojiconClickedListener(this);
