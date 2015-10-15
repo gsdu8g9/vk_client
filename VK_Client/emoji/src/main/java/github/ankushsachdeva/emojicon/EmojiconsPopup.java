@@ -18,7 +18,7 @@ package github.ankushsachdeva.emojicon;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Rect;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.support.v4.view.PagerAdapter;
@@ -29,7 +29,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.view.WindowManager.LayoutParams;
 import android.widget.PopupWindow;
 
@@ -88,6 +87,8 @@ public class EmojiconsPopup extends PopupWindow
         super(mContext);
         this.mContext = mContext;
         this.rootView = rootView;
+
+        setBackgroundDrawable(new ColorDrawable(0));
         View customView = createCustomView();
         setContentView(customView);
         setSoftInputMode(LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
@@ -157,45 +158,6 @@ public class EmojiconsPopup extends PopupWindow
     public void dismiss() {
         super.dismiss();
         EmojiconRecentsManager.getInstance(mContext).saveRecents();
-    }
-
-    /**
-     * Call this function to resize the emoji popup according to your soft keyboard size
-     */
-    @Deprecated
-    public void setSizeForSoftKeyboard() {
-        rootView.getViewTreeObserver().addOnGlobalLayoutListener(new OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                Rect r = new Rect();
-                rootView.getWindowVisibleDisplayFrame(r);
-
-                int screenHeight = rootView.getRootView().getHeight();
-                int heightDifference = screenHeight - (r.bottom - r.top);
-                int resourceId = mContext.getResources().getIdentifier("status_bar_height", "dimen",
-                                                                       "android");
-                if (resourceId > 0) {
-                    heightDifference -= mContext.getResources().getDimensionPixelSize(resourceId);
-                }
-                if (heightDifference > 100) {
-                    keyBoardHeight = heightDifference;
-                    setSize(LayoutParams.MATCH_PARENT, keyBoardHeight);
-                    if (isOpened == false) {
-                        if (onSoftKeyboardOpenCloseListener != null)
-                            onSoftKeyboardOpenCloseListener.onKeyboardOpen(keyBoardHeight);
-                    }
-                    isOpened = true;
-                    if (pendingOpen) {
-                        showAtBottom();
-                        pendingOpen = false;
-                    }
-                } else {
-                    isOpened = false;
-                    if (onSoftKeyboardOpenCloseListener != null)
-                        onSoftKeyboardOpenCloseListener.onKeyboardClose();
-                }
-            }
-        });
     }
 
     /**

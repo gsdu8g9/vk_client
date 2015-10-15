@@ -108,7 +108,6 @@ public abstract class BaseKeyboardFragment extends AbstractFragment
             imageButton.setImageResource(R.drawable.ic_hardware_keyboard);
             showEmojiKeyboard();
         }
-        mShowingEmojiKeyboard = !mShowingEmojiKeyboard;
     }
 
     public abstract void initRecyclerView(RecyclerView recycler);
@@ -168,6 +167,7 @@ public abstract class BaseKeyboardFragment extends AbstractFragment
         if (mEmojiconsPopup != null) {
             mEmojiconsPopup.dismiss();
         }
+        mShowingEmojiKeyboard = false;
 
     }
 
@@ -177,6 +177,7 @@ public abstract class BaseKeyboardFragment extends AbstractFragment
         mEmojiconsPopup.showAtBottom();
         mEmojiconsPopup.setOnEmojiconClickedListener(this);
         mEmojiconsPopup.setOnEmojiconBackspaceClickedListener(this);
+        mShowingEmojiKeyboard = true;
     }
 
     private void hideSoftKeyboard() {
