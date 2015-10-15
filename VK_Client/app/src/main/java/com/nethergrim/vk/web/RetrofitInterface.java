@@ -7,6 +7,7 @@ import com.nethergrim.vk.models.ListOfFriends;
 import com.nethergrim.vk.models.ListOfMessagesResponse;
 import com.nethergrim.vk.models.ListOfUsers;
 import com.nethergrim.vk.models.StartupResponse;
+import com.nethergrim.vk.models.StockItems;
 
 import java.util.Map;
 
@@ -45,4 +46,7 @@ public interface RetrofitInterface {
 
     @POST(Constants.Requests.EXECUTE_DELETE_CONVERSATION)
     Observable<IntegerResponse> deleteConversation(@QueryMap Map<String, String> options);
+
+    @GET(Constants.Requests.GET_STICKER_PURCHASES)
+    Observable<StockItems> getStickers(@QueryMap Map<String, String> options);
 }

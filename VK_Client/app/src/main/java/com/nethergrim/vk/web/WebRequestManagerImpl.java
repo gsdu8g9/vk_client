@@ -13,6 +13,7 @@ import com.nethergrim.vk.models.ListOfFriends;
 import com.nethergrim.vk.models.ListOfMessages;
 import com.nethergrim.vk.models.ListOfUsers;
 import com.nethergrim.vk.models.StartupResponse;
+import com.nethergrim.vk.models.StockItems;
 import com.nethergrim.vk.models.WebResponse;
 import com.nethergrim.vk.utils.RetryWithDelay;
 import com.nethergrim.vk.utils.UserUtils;
@@ -211,6 +212,20 @@ public class WebRequestManagerImpl implements WebRequestManager {
             params.put("chatId", String.valueOf(chatId));
         }
         return mRetrofitInterface.deleteConversation(params)
+                .observeOn(getDefaultScheduler())
+                .subscribeOn(getDefaultScheduler())
+                .doOnNext(mDefaultResponseChecker)
+                .retryWhen(mRetryCall);
+    }
+
+    @Override
+    public Observable<StockItems> getStickerStockItems() {
+
+        Map<String, String> params = getDefaultParamsMap();
+
+        params.put("merchant", "google");
+        params.put("type", "stickers");
+        return mRetrofitInterface.getStickers(params)
                 .observeOn(getDefaultScheduler())
                 .subscribeOn(getDefaultScheduler())
                 .doOnNext(mDefaultResponseChecker)

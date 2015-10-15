@@ -39,6 +39,7 @@ public class Constants {
         String ACCOUNT_UNREGISTER_DEVICE = "/account.unregisterDevice";
         String FRIENDS_GET = "/friends.get";
         String ACCOUNT_SETONLINE = "/account.setOnline";
+        String GET_STICKER_PURCHASES = "/store.getStockItems";
         String EXECUTE_GET_CONVERSATIONS_AND_USERS = "/execute.getConversationsAndUsers";
         String EXECUTE_GET_FRIENDS = "/execute.getFriends";
         String EXECUTE_POST_STARTUP = "/execute.startup";
