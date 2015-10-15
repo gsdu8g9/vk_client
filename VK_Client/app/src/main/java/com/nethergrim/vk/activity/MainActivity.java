@@ -172,6 +172,7 @@ public class MainActivity extends AbstractActivity implements
         loadCurrentUser(new MyUserUpdatedEvent());
         onConversationsUpdated(new ConversationsUpdatedEvent());
         mWebIntentHandler.launchStartupTasks();
+        mWebIntentHandler.fetchStickers();
     }
 
     @Override

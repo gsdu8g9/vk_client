@@ -18,9 +18,13 @@ package com.nethergrim.vk.emoji;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.Resources;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.os.SystemClock;
+import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -28,6 +32,15 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager.LayoutParams;
 import android.widget.PopupWindow;
+
+import com.nethergrim.vk.MyApplication;
+import com.nethergrim.vk.R;
+import com.nethergrim.vk.images.ImageLoader;
+import com.nethergrim.vk.models.StickerDbItem;
+
+import java.util.List;
+
+import javax.inject.Inject;
 
 import github.ankushsachdeva.emojicon.EmojiconGridView.OnEmojiconClickedListener;
 
@@ -39,11 +52,11 @@ import github.ankushsachdeva.emojicon.EmojiconGridView.OnEmojiconClickedListener
 public class EmojiconsPopup extends PopupWindow {
 
     OnEmojiconClickedListener onEmojiconClickedListener;
+    @Inject
+    ImageLoader mImageLoader;
     private OnEmojiconBackspaceClickedListener onEmojiconBackspaceClickedListener;
     private View rootView;
     private Context mContext;
-
-
     private ViewPager emojisPager;
 
 
@@ -61,6 +74,7 @@ public class EmojiconsPopup extends PopupWindow {
      */
     public EmojiconsPopup(View rootView, Context mContext, OnEmojiconClickedListener callback) {
         super(mContext);
+        MyApplication.getInstance().getMainComponent().inject(this);
         this.mContext = mContext;
         this.rootView = rootView;
         this.onEmojiconClickedListener = callback;
@@ -119,7 +133,17 @@ public class EmojiconsPopup extends PopupWindow {
         emojisPager.setAdapter(adapter);
 
         // tabs init
+        TabLayout tabLayout = (TabLayout) view.findViewById(R.id.tabs);
+        tabLayout.setupWithViewPager(emojisPager);
+        Resources res = mContext.getResources();
 
+        List<StickerDbItem> stickers = adapter.getStickerDbItems();
+
+        for (int i = 0; i < tabLayout.getTabCount(); i++) {
+            Drawable d = new BitmapDrawable(res,
+                    mImageLoader.getBitmapSync(stickers.get(i).getPhoto()));
+            tabLayout.getTabAt(i).setIcon(d);
+        }
         return view;
     }
 

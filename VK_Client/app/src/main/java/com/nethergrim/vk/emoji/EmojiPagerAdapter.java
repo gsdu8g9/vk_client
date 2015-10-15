@@ -4,9 +4,13 @@ import android.support.v4.view.PagerAdapter;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.nethergrim.vk.MyApplication;
+import com.nethergrim.vk.images.ImageLoader;
 import com.nethergrim.vk.models.StickerDbItem;
 
 import java.util.List;
+
+import javax.inject.Inject;
 
 import github.ankushsachdeva.emojicon.EmojiconGridView;
 import io.realm.Realm;
@@ -16,11 +20,13 @@ import io.realm.Realm;
  */
 public class EmojiPagerAdapter extends PagerAdapter {
 
+    @Inject
+    ImageLoader mImageLoader;
     private EmojiconGridView.OnEmojiconClickedListener mCallback;
     private List<StickerDbItem> stickerDbItems;
 
     public EmojiPagerAdapter(EmojiconGridView.OnEmojiconClickedListener callback) {
-
+        MyApplication.getInstance().getMainComponent().inject(this);
         this.mCallback = callback;
         Realm realm = Realm.getDefaultInstance();
 
@@ -28,6 +34,21 @@ public class EmojiPagerAdapter extends PagerAdapter {
         realm.close();
     }
 
+    public List<StickerDbItem> getStickerDbItems() {
+        return stickerDbItems;
+    }
+
+    //    @Override
+//    public CharSequence getPageTitle(int position) {
+//
+//        Bitmap bitmap = mImageLoader.getBitmapSync(stickerDbItems.get(position).getPhoto());
+//
+//        SpannableString sb = new SpannableString("G");
+//        ImageSpan imageSpan = new ImageSpan(MyApplication.getInstance(), bitmap, ImageSpan
+// .ALIGN_BOTTOM);
+//        sb.setSpan(imageSpan, 0, 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+//        return sb.toString();
+//    }
 
     @Override
     public int getCount() {

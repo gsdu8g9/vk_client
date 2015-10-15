@@ -71,12 +71,8 @@ public class WebIntentHandlerImpl implements WebIntentHandler {
 
     @Override
     public void fetchStickers() {
-        long previousTimeStamp = mPrefs.getLastFetchStickersTime();
-        long minDelay = 1000 * 60 * 60;
-        if (previousTimeStamp + minDelay <= System.currentTimeMillis()) {
-            WorkerService.fetchStickers(MyApplication.getInstance());
-            mPrefs.setLastFetchStickersTime(System.currentTimeMillis());
-        }
+        WorkerService.fetchStickers(MyApplication.getInstance());
+        mPrefs.setLastFetchStickersTime(System.currentTimeMillis());
 
     }
 

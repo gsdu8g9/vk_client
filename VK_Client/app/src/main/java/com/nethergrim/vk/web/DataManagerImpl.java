@@ -14,6 +14,7 @@ import com.nethergrim.vk.event.ConversationsUpdatedEvent;
 import com.nethergrim.vk.event.FriendsUpdatedEvent;
 import com.nethergrim.vk.event.MyUserUpdatedEvent;
 import com.nethergrim.vk.event.UsersUpdatedEvent;
+import com.nethergrim.vk.images.ImageLoader;
 import com.nethergrim.vk.models.ConversationsUserObject;
 import com.nethergrim.vk.models.IntegerResponse;
 import com.nethergrim.vk.models.ListOfFriends;
@@ -62,6 +63,9 @@ public class DataManagerImpl implements DataManager {
 
     @Inject
     Bus mBus;
+
+    @Inject
+    ImageLoader mImageLoader;
 
     public DataManagerImpl() {
         MyApplication.getInstance().getMainComponent().inject(this);
@@ -165,6 +169,8 @@ public class DataManagerImpl implements DataManager {
                             stockItems.getItems().size());
                     for (int i = 0, size = stockItems.getItems().size(); i < size; i++) {
                         result.add(StickerDbItem.MAPPER.call(stockItems.getItems().get(i)));
+                        String url = result.get(i).getPhoto();
+                        mImageLoader.cacheToMemory(url);
                     }
                     return result;
                 })
@@ -174,6 +180,7 @@ public class DataManagerImpl implements DataManager {
                     realm.copyToRealmOrUpdate(stickerDbItems);
                     realm.commitTransaction();
                     realm.close();
+
                 });
     }
 }

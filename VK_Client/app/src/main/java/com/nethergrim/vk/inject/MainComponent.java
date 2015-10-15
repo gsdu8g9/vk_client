@@ -10,6 +10,8 @@ import com.nethergrim.vk.adapter.ChatAdapter;
 import com.nethergrim.vk.adapter.ConversationsAdapter;
 import com.nethergrim.vk.adapter.FriendsAdapter;
 import com.nethergrim.vk.data.RealmPersistingManagerImpl;
+import com.nethergrim.vk.emoji.EmojiPagerAdapter;
+import com.nethergrim.vk.emoji.EmojiconsPopup;
 import com.nethergrim.vk.fragment.ChatFragment;
 import com.nethergrim.vk.fragment.ConversationsFragment;
 import com.nethergrim.vk.fragment.FriendsFragment;
@@ -90,4 +92,7 @@ public interface MainComponent {
 
     void inject(AbstractActivity abstractActivity);
 
+    void inject(EmojiPagerAdapter emojiPagerAdapter);
+
+    void inject(EmojiconsPopup emojiconsPopup);
 }

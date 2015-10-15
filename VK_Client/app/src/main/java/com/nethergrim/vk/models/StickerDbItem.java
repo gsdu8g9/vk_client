@@ -29,8 +29,9 @@ public class StickerDbItem extends RealmObject {
         stickerDbItem.setActive(stockItem.getProduct().getActive() == 1);
         stickerDbItem.setPurchased(stockItem.getProduct().getPurchased() == 1);
         stickerDbItem.setTitle(stockItem.getProduct().getTitle());
-        stickerDbItem.setPhoto(stockItem.getPhoto592());
+
         stickerDbItem.setId(stockItem.getProduct().getId());
+        stickerDbItem.setPhoto(stockItem.getProduct().getBaseUrl() + "/thumb_102.png");
         stickerDbItem.setBackground(stockItem.getBackground());
         List<Long> ids = stockItem.getProduct().getStickers().getStickerIds();
         RealmList<RealmLong> stickerIds = new RealmList<>();
