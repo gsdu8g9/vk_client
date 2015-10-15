@@ -15,6 +15,7 @@
         android:layout_height="match_parent"
         android:clipToPadding="false"
         android:columnWidth="@dimen/chat.sticker.width"
-        android:padding="@dimen/chat.sticker.spacing" />
+        android:padding="@dimen/chat.sticker.spacing"
+        android:stretchMode="columnWidth" />
 
 </FrameLayout>
