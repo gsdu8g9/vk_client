@@ -32,16 +32,10 @@ import android.view.ViewGroup;
 import android.view.WindowManager.LayoutParams;
 import android.widget.PopupWindow;
 
-import java.util.Arrays;
 import java.util.List;
 
 import github.ankushsachdeva.emojicon.EmojiconGridView.OnEmojiconClickedListener;
 import github.ankushsachdeva.emojicon.emoji.Emojicon;
-import github.ankushsachdeva.emojicon.emoji.Nature;
-import github.ankushsachdeva.emojicon.emoji.Objects;
-import github.ankushsachdeva.emojicon.emoji.People;
-import github.ankushsachdeva.emojicon.emoji.Places;
-import github.ankushsachdeva.emojicon.emoji.Symbols;
 
 
 /**
@@ -182,14 +176,15 @@ public class EmojiconsPopup extends PopupWindow
         emojisPager = (ViewPager) view.findViewById(R.id.emojis_pager);
         emojisPager.setOnPageChangeListener(this);
         EmojiconRecents recents = this;
-        PagerAdapter emojisAdapter = new EmojisPagerAdapter(
-                Arrays.asList(new EmojiconRecentsGridView(mContext, null, null, this),
-                        new EmojiconGridView(mContext, People.DATA, recents, this),
-                        new EmojiconGridView(mContext, Nature.DATA, recents, this),
-                        new EmojiconGridView(mContext, Objects.DATA, recents, this),
-                        new EmojiconGridView(mContext, Places.DATA, recents, this),
-                        new EmojiconGridView(mContext, Symbols.DATA, recents, this)));
-        emojisPager.setAdapter(emojisAdapter);
+//        PagerAdapter emojisAdapter = new EmojisPagerAdapter(
+//                Arrays.asList(new EmojiconRecentsGridView(mContext, null, null, this),
+//                        new EmojiconGridView(mContext, People.DATA, recents, this),
+//                        new EmojiconGridView(mContext, Nature.DATA, recents, this),
+//                        new EmojiconGridView(mContext, Objects.DATA, recents, this),
+//                        new EmojiconGridView(mContext, Places.DATA, recents, this),
+//                        new EmojiconGridView(mContext, Symbols.DATA, recents, this)));
+//        EmojiPagerAdapter adapter = new EmojisPagerAdapter(onEmojiconClickedListener);
+//        emojisPager.setAdapter(emojisAdapter);
         mEmojiTabs = new View[6];
         mEmojiTabs[0] = view.findViewById(R.id.emojis_tab_0_recents);
         mEmojiTabs[1] = view.findViewById(R.id.emojis_tab_1_people);
@@ -214,8 +209,7 @@ public class EmojiconsPopup extends PopupWindow
                     onClick(
                             View v) {
                         if (onEmojiconBackspaceClickedListener != null)
-                            onEmojiconBackspaceClickedListener.onEmojiconBackspaceClicked(
-                                    v);
+                            onEmojiconBackspaceClickedListener.onEmojiconBackspaceClicked(v);
                     }
                 }));
 
@@ -274,11 +268,13 @@ public class EmojiconsPopup extends PopupWindow
         public RepeatListener(int initialInterval,
                 int normalInterval,
                 View.OnClickListener clickListener) {
-            if (clickListener == null)
+            if (clickListener == null) {
                 throw new IllegalArgumentException("null runnable");
-            if (initialInterval < 0 || normalInterval < 0)
-                throw new IllegalArgumentException(
-                        "negative interval");
+            }
+
+            if (initialInterval < 0 || normalInterval < 0) {
+                throw new IllegalArgumentException("negative interval");
+            }
 
             this.initialInterval = initialInterval;
             this.normalInterval = normalInterval;
@@ -331,13 +327,13 @@ public class EmojiconsPopup extends PopupWindow
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
             View v = views.get(position).rootView;
-            ((ViewPager) container).addView(v, 0);
+            (container).addView(v, 0);
             return v;
         }
 
         @Override
         public void destroyItem(ViewGroup container, int position, Object view) {
-            ((ViewPager) container).removeView((View) view);
+            container.removeView((View) view);
         }
 
         @Override
