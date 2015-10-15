@@ -25,6 +25,7 @@ public class EmojiPagerAdapter extends PagerAdapter {
         Realm realm = Realm.getDefaultInstance();
 
         stickerDbItems = realm.where(StickerDbItem.class).findAll();
+        realm.close();
     }
 
 
@@ -36,7 +37,7 @@ public class EmojiPagerAdapter extends PagerAdapter {
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
         View v = new StickersLayoutView(container.getContext(),
-                stickerDbItems.get(position));
+                stickerDbItems.get(position), mCallback);
         container.addView(v);
         return v;
     }

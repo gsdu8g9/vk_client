@@ -59,11 +59,11 @@ public class EmojiconsPopup extends PopupWindow {
      * the screen height will be used to calculate the keyboard height.
      * @param mContext The context of current activity.
      */
-    public EmojiconsPopup(View rootView, Context mContext) {
+    public EmojiconsPopup(View rootView, Context mContext, OnEmojiconClickedListener callback) {
         super(mContext);
         this.mContext = mContext;
         this.rootView = rootView;
-
+        this.onEmojiconClickedListener = callback;
         setBackgroundDrawable(new ColorDrawable(0)); // no shadow for a popup view
         setContentView(createCustomView());
         setSoftInputMode(LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
@@ -75,12 +75,6 @@ public class EmojiconsPopup extends PopupWindow {
     }
 
 
-    /**
-     * Set the listener for the event when any of the emojicon is clicked
-     */
-    public void setOnEmojiconClickedListener(OnEmojiconClickedListener listener) {
-        this.onEmojiconClickedListener = listener;
-    }
 
     /**
      * Set the listener for the event when backspace on emojicon popup is clicked

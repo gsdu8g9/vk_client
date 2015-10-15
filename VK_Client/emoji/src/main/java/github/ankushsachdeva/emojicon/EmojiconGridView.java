@@ -38,8 +38,9 @@ public class EmojiconGridView {
     Emojicon[] mData;
 
     public interface OnEmojiconClickedListener {
-
         void onEmojiconClicked(Emojicon emojicon);
+
+        void onStickerClicked(long stickerId);
     }
 
     public EmojiconGridView(Context context,

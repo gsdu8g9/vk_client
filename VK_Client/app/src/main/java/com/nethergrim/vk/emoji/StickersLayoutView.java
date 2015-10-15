@@ -5,6 +5,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.FrameLayout;
 import android.widget.GridView;
 
@@ -15,12 +16,13 @@ import com.nethergrim.vk.models.StickerDbItem;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import github.ankushsachdeva.emojicon.EmojiconGridView;
 
 /**
  * @author Andrew Drobyazko (andrey.drobyazko@applikeysolutions.com) on 15.10.15.
  */
 @SuppressLint("ViewConstructor")
-public class StickersLayoutView extends FrameLayout {
+public class StickersLayoutView extends FrameLayout implements AdapterView.OnItemClickListener {
 
     @InjectView(R.id.backgroundDraweeView)
     SimpleDraweeView mBackgroundDraweeView;
@@ -28,12 +30,23 @@ public class StickersLayoutView extends FrameLayout {
     GridView mGrid;
 
     private StickerDbItem mSticker;
+    private EmojiconGridView.OnEmojiconClickedListener mCallback;
 
-    public StickersLayoutView(Context context, StickerDbItem stickerId) {
+    public StickersLayoutView(Context context,
+            StickerDbItem stickerId,
+            EmojiconGridView.OnEmojiconClickedListener callback) {
         super(context);
+        this.mCallback = callback;
         this.mSticker = stickerId;
         if (!isInEditMode()) {
             init(context);
+        }
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        if (mCallback != null) {
+            mCallback.onStickerClicked(mSticker.getStickerIds().get(position).getData());
         }
     }
 
@@ -48,5 +61,6 @@ public class StickersLayoutView extends FrameLayout {
         mGrid.setVerticalSpacing(spacing);
         mGrid.setHorizontalSpacing(spacing);
         mGrid.setAdapter(stickerAdapter);
+        mGrid.setOnItemClickListener(this);
     }
 }

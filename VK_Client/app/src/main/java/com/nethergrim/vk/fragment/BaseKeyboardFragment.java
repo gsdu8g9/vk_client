@@ -134,6 +134,11 @@ public abstract class BaseKeyboardFragment extends AbstractFragment
     }
 
     @Override
+    public void onStickerClicked(long id) {
+        showToast("Clicked on sticker: " + id);
+    }
+
+    @Override
     public void onEmojiconBackspaceClicked(View v) {
         KeyEvent event = new KeyEvent(
                 0, 0, 0, KeyEvent.KEYCODE_DEL, 0, 0, 0, 0, KeyEvent.KEYCODE_ENDCALL);
@@ -172,10 +177,9 @@ public abstract class BaseKeyboardFragment extends AbstractFragment
     }
 
     private void showEmojiKeyboard() {
-        mEmojiconsPopup = new EmojiconsPopup(mKeyboardDetector, getActivity());
+        mEmojiconsPopup = new EmojiconsPopup(mKeyboardDetector, getActivity(), this);
         mEmojiconsPopup.setKeyBoardHeight(mKeyboardDetector.getKeyboardHeight());
         mEmojiconsPopup.showAtBottom();
-        mEmojiconsPopup.setOnEmojiconClickedListener(this);
         mEmojiconsPopup.setOnEmojiconBackspaceClickedListener(this);
         mShowingEmojiKeyboard = true;
     }

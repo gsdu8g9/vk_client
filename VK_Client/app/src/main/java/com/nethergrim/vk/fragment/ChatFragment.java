@@ -33,8 +33,7 @@ import io.realm.Realm;
  * @author andrej on 07.08.15.
  */
 public class ChatFragment extends BaseKeyboardFragment implements Toolbar.OnMenuItemClickListener,
-                                                                  PaginationManager
-                                                                          .OnRecyclerViewScrolledToPageListener {
+        PaginationManager.OnRecyclerViewScrolledToPageListener {
 
     public static final String EXTRA_CONVERSATION_ID = Constants.PACKAGE_NAME + ".CONV_ID";
     public static final int PAGE_SIZE = 50;
