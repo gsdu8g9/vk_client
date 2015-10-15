@@ -53,15 +53,11 @@ public class EmojiconsPopup extends PopupWindow
 
     OnEmojiconClickedListener onEmojiconClickedListener;
     private OnEmojiconBackspaceClickedListener onEmojiconBackspaceClickedListener;
-    private OnSoftKeyboardOpenCloseListener onSoftKeyboardOpenCloseListener;
     private View rootView;
     private Context mContext;
     private int mEmojiTabLastSelectedIndex = - 1;
     private View[] mEmojiTabs;
     private EmojiconRecentsManager mRecentsManager;
-    private int keyBoardHeight = 0;
-    private Boolean pendingOpen = false;
-    private Boolean isOpened = false;
     private ViewPager emojisPager;
 
     public interface OnEmojiconBackspaceClickedListener {
@@ -69,12 +65,7 @@ public class EmojiconsPopup extends PopupWindow
         void onEmojiconBackspaceClicked(View v);
     }
 
-    public interface OnSoftKeyboardOpenCloseListener {
 
-        void onKeyboardOpen(int keyBoardHeight);
-
-        void onKeyboardClose();
-    }
 
     /**
      * Constructor
@@ -98,16 +89,9 @@ public class EmojiconsPopup extends PopupWindow
     }
 
     public void setKeyBoardHeight(int keyBoardHeight) {
-        this.keyBoardHeight = keyBoardHeight;
         setSize(LayoutParams.MATCH_PARENT, keyBoardHeight);
     }
 
-    /**
-     * Set the listener for the event of keyboard opening or closing.
-     */
-    public void setOnSoftKeyboardOpenCloseListener(OnSoftKeyboardOpenCloseListener listener) {
-        this.onSoftKeyboardOpenCloseListener = listener;
-    }
 
     /**
      * Set the listener for the event when any of the emojicon is clicked
@@ -133,23 +117,6 @@ public class EmojiconsPopup extends PopupWindow
         showAtLocation(rootView, Gravity.BOTTOM | Gravity.LEFT, 0, 0);
     }
 
-    /**
-     * Use this function when the soft keyboard has not been opened yet. This
-     * will show the emoji popup after the keyboard is up next time.
-     * Generally, you will be calling InputMethodManager.showSoftInput function after
-     * calling this function.
-     */
-    public void showAtBottomPending() {
-        if (isKeyBoardOpen()) showAtBottom();
-        else pendingOpen = true;
-    }
-
-    /**
-     * @return Returns true if the soft keyboard is open, false otherwise.
-     */
-    public Boolean isKeyBoardOpen() {
-        return isOpened;
-    }
 
     /**
      * Dismiss the popup
