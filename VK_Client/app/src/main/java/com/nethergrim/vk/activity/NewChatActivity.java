@@ -17,7 +17,6 @@ import com.nethergrim.vk.models.User;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
-import io.realm.Realm;
 import io.realm.RealmResults;
 
 /**
@@ -32,7 +31,6 @@ public class NewChatActivity extends AbstractActivity {
     @InjectView(R.id.recyclerView)
     RecyclerView mRecyclerView;
 
-    Realm mRealm;
     private MultiUserAdapter mAdapter;
 
     public static void start(Context context) {
