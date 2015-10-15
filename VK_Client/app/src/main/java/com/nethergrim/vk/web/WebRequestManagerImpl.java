@@ -13,7 +13,7 @@ import com.nethergrim.vk.models.ListOfFriends;
 import com.nethergrim.vk.models.ListOfMessages;
 import com.nethergrim.vk.models.ListOfUsers;
 import com.nethergrim.vk.models.StartupResponse;
-import com.nethergrim.vk.models.StockItems;
+import com.nethergrim.vk.models.StockItemsResponse;
 import com.nethergrim.vk.models.WebResponse;
 import com.nethergrim.vk.utils.RetryWithDelay;
 import com.nethergrim.vk.utils.UserUtils;
@@ -219,7 +219,7 @@ public class WebRequestManagerImpl implements WebRequestManager {
     }
 
     @Override
-    public Observable<StockItems> getStickerStockItems() {
+    public Observable<StockItemsResponse> getStickerStockItems() {
 
         Map<String, String> params = getDefaultParamsMap();
 

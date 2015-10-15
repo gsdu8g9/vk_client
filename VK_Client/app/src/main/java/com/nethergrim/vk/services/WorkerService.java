@@ -5,12 +5,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import com.nethergrim.vk.Constants;
 import com.nethergrim.vk.MyApplication;
 import com.nethergrim.vk.utils.LoggerObserver;
 import com.nethergrim.vk.web.DataManager;
 
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 
 import javax.inject.Inject;
@@ -27,6 +29,7 @@ public class WorkerService extends Service {
     public static final String ACTION_FETCH_MY_FRIENDS = Constants.PACKAGE_NAME
             + ".FETCH_MY_FRIENDS";
     public static final String ACTION_LAUNCH_STARTUP_TASKS = Constants.PACKAGE_NAME + ".STARTUP";
+    public static final String ACTION_FETCH_STICKERS = Constants.PACKAGE_NAME + ".FETCH_STICKERS";
     public static final String ACTION_DELETE_CONVERSATION = Constants.PACKAGE_NAME
             + ".DELETE_CONVERSATION";
     public static final String EXTRA_IDS = Constants.PACKAGE_NAME + ".IDS";
@@ -95,6 +98,12 @@ public class WorkerService extends Service {
         context.startService(intent);
     }
 
+    public static void fetchStickers(Context context) {
+        Intent intent = new Intent(context, WorkerService.class);
+        intent.setAction(ACTION_FETCH_STICKERS);
+        context.startService(intent);
+    }
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -115,6 +124,8 @@ public class WorkerService extends Service {
             handleActionFetchMessagesHistory(intent);
         } else if (ACTION_DELETE_CONVERSATION.equals(intent.getAction())) {
             handleActionDeleteConversation(intent);
+        } else if (ACTION_FETCH_STICKERS.equals(intent.getAction())) {
+            handleActionFetchStickers(intent);
         }
         return START_REDELIVER_INTENT;
     }
@@ -123,6 +134,19 @@ public class WorkerService extends Service {
     @Override
     public IBinder onBind(Intent intent) {
         return null;
+    }
+
+    private void handleActionFetchStickers(Intent intent) {
+        mDataManager.getStickerItems()
+                .subscribe(
+                        stickerDbItems -> Log.e("TAG", "on next list")
+                        , e -> {
+                            if (!(e instanceof UnknownHostException)) {
+                                Log.e("WebError", e.toString() + " " + e.getMessage());
+                                // TODO: 05.09.15 add analytics handling here
+                            }
+                        }, () -> {
+                        });
     }
 
     private void handleActionDeleteConversation(Intent intent) {

@@ -6,7 +6,7 @@ import com.nethergrim.vk.models.ListOfFriends;
 import com.nethergrim.vk.models.ListOfMessages;
 import com.nethergrim.vk.models.ListOfUsers;
 import com.nethergrim.vk.models.StartupResponse;
-import com.nethergrim.vk.models.StockItems;
+import com.nethergrim.vk.models.StockItemsResponse;
 
 import java.util.List;
 
@@ -39,7 +39,7 @@ public interface WebRequestManager {
 
     Observable<IntegerResponse> deleteConversation(long userId, long chatId);
 
-    Observable<StockItems> getStickerStockItems();
+    Observable<StockItemsResponse> getStickerStockItems();
 
 
 }

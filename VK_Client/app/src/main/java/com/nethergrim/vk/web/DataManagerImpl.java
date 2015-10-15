@@ -21,6 +21,7 @@ import com.nethergrim.vk.models.ListOfMessages;
 import com.nethergrim.vk.models.ListOfUsers;
 import com.nethergrim.vk.models.StartupResponse;
 import com.nethergrim.vk.models.StickerDbItem;
+import com.nethergrim.vk.models.StockItemsResponse;
 import com.squareup.otto.Bus;
 
 import java.io.IOException;
@@ -29,6 +30,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import io.realm.Realm;
 import rx.Observable;
 import rx.schedulers.Schedulers;
 
@@ -154,6 +156,7 @@ public class DataManagerImpl implements DataManager {
     @Override
     public Observable<List<StickerDbItem>> getStickerItems() {
         return mWebRequestManager.getStickerStockItems()
+                .map(StockItemsResponse::getStockItems)
                 .map(stockItems -> {
                     if (stockItems == null || stockItems.getItems() == null) {
                         return null;
@@ -165,6 +168,12 @@ public class DataManagerImpl implements DataManager {
                     }
                     return result;
                 })
-                ;
+                .doOnNext(stickerDbItems -> {
+                    Realm realm = Realm.getDefaultInstance();
+                    realm.beginTransaction();
+                    realm.copyToRealmOrUpdate(stickerDbItems);
+                    realm.commitTransaction();
+                    realm.close();
+                });
     }
 }

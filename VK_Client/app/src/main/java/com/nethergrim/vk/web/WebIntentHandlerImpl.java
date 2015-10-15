@@ -60,4 +60,9 @@ public class WebIntentHandlerImpl implements WebIntentHandler {
         WorkerService.deleteConversation(MyApplication.getInstance(), userId, chatId);
     }
 
+    @Override
+    public void fetchStickers() {
+        WorkerService.fetchStickers(MyApplication.getInstance());
+    }
+
 }

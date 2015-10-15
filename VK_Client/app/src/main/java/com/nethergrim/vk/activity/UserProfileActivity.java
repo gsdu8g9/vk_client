@@ -46,7 +46,6 @@ public class UserProfileActivity extends AbstractActivity {
     @InjectView(R.id.imageView2)
     UserImageView mAvatarImageView;
 
-    @Inject
     Realm mRealm;
     @InjectView(R.id.shadow_layout)
     ShadowLayout mShadowLayout;

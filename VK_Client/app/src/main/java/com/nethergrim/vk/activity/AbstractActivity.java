@@ -3,9 +3,16 @@ package com.nethergrim.vk.activity;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
+import com.nethergrim.vk.MyApplication;
+import com.nethergrim.vk.web.WebIntentHandler;
 import com.vk.sdk.VKUIHelper;
+
+import javax.inject.Inject;
+
+import io.realm.Realm;
 
 /**
  * Activity that should be superclass in every activity in the app.
@@ -16,9 +23,24 @@ import com.vk.sdk.VKUIHelper;
  */
 public abstract class AbstractActivity extends AppCompatActivity {
 
+    protected Realm mRealm;
+    @Inject
+    WebIntentHandler mWebIntentHandler;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        MyApplication.getInstance().getMainComponent().inject(this);
+        mRealm = Realm.getDefaultInstance();
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        if (mRealm != null) {
+            mRealm.close();
+            mRealm = null;
+        }
         VKUIHelper.onDestroy(this); // FIXME: 22.08.15 remove
     }
 

@@ -38,7 +38,7 @@ public class ConversationsAdapter extends UltimateAdapter
     UserProvider mUserProvider;
     @Inject
     Prefs mPrefs;
-    @Inject
+
     Realm mRealm;
 
     private RealmResults<Conversation> mData;
@@ -50,6 +50,7 @@ public class ConversationsAdapter extends UltimateAdapter
     public ConversationsAdapter() {
         super();
         MyApplication.getInstance().getMainComponent().inject(this);
+        mRealm = Realm.getDefaultInstance();// FIXME: 15.10.15 remove realm from here
         mRealm.setAutoRefresh(true);
         this.mData = mRealm.where(Conversation.class)
                 .equalTo("message.deleted", 0)

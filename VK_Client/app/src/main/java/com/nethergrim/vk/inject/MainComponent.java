@@ -1,6 +1,7 @@
 package com.nethergrim.vk.inject;
 
 import com.nethergrim.vk.MyApplication;
+import com.nethergrim.vk.activity.AbstractActivity;
 import com.nethergrim.vk.activity.ChatActivity;
 import com.nethergrim.vk.activity.MainActivity;
 import com.nethergrim.vk.activity.NewChatActivity;
@@ -86,5 +87,7 @@ public interface MainComponent {
     void inject(NewChatActivity newChatActivity);
 
     void inject(KeyboardDetectorRelativeLayout keyboardDetectorRelativeLayout);
+
+    void inject(AbstractActivity abstractActivity);
 
 }
