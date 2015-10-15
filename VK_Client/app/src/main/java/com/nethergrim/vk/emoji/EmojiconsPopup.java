@@ -48,7 +48,6 @@ public class EmojiconsPopup extends PopupWindow {
 
 
     public interface OnEmojiconBackspaceClickedListener {
-
         void onEmojiconBackspaceClicked(View v);
     }
 

@@ -10,6 +10,7 @@ import android.widget.GridView;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.nethergrim.vk.R;
+import com.nethergrim.vk.adapter.StickerAdapter;
 import com.nethergrim.vk.models.StickerDbItem;
 
 import butterknife.ButterKnife;
@@ -41,5 +42,11 @@ public class StickersLayoutView extends FrameLayout {
         View v = LayoutInflater.from(context).inflate(R.layout.fragment_stickers, this, true);
         ButterKnife.inject(this, v);
         mBackgroundDraweeView.setImageURI(Uri.parse(mSticker.getBackground()));
+        StickerAdapter stickerAdapter = new StickerAdapter(context, mSticker);
+        mGrid.setNumColumns(GridView.AUTO_FIT);
+        int spacing = context.getResources().getDimensionPixelSize(R.dimen.chat_sticker_spacing);
+        mGrid.setVerticalSpacing(spacing);
+        mGrid.setHorizontalSpacing(spacing);
+        mGrid.setAdapter(stickerAdapter);
     }
 }

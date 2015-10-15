@@ -19,27 +19,43 @@ public class StickerDbItem extends RealmObject {
     private String photo;
     private String background;
     private RealmList<RealmLong> stickerIds;
+    private RealmList<RealmString> urls;
     @PrimaryKey
     private long id;
     public static final Func1<StockItem, StickerDbItem> MAPPER
             = stockItem -> {
         StickerDbItem stickerDbItem = new StickerDbItem();
-        stickerDbItem.setBaseUrl(stockItem.getProduct().getBaseUrl());
+        stickerDbItem.setBaseUrl(stockItem.getProduct().getStickers().getBaseUrl());
         stickerDbItem.setActive(stockItem.getProduct().getActive() == 1);
         stickerDbItem.setPurchased(stockItem.getProduct().getPurchased() == 1);
         stickerDbItem.setTitle(stockItem.getProduct().getTitle());
         stickerDbItem.setPhoto(stockItem.getPhoto592());
-
+        stickerDbItem.setId(stockItem.getProduct().getId());
+        stickerDbItem.setBackground(stockItem.getBackground());
         List<Long> ids = stockItem.getProduct().getStickers().getStickerIds();
         RealmList<RealmLong> stickerIds = new RealmList<>();
-        for (Long id : ids) {
+        RealmList<RealmString> urls = new RealmList<>();
+
+        for (int i = 0, size = ids.size(); i < size; i++) {
+            Long id = ids.get(i);
             stickerIds.add(new RealmLong(id));
+            urls.add(new RealmString(stickerDbItem.getBaseUrl() + id + "/352b.png"));
         }
-        stickerDbItem.setId(stockItem.getProduct().getId());
+
         stickerDbItem.setStickerIds(stickerIds);
-        stickerDbItem.setBackground(stockItem.getBackground());
+        stickerDbItem.setUrls(urls);
+
+
         return stickerDbItem;
     };
+
+    public RealmList<RealmString> getUrls() {
+        return urls;
+    }
+
+    public void setUrls(RealmList<RealmString> urls) {
+        this.urls = urls;
+    }
 
     public String getBackground() {
         return background;

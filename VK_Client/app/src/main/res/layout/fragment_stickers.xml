@@ -13,7 +13,8 @@
         android:id="@+id/grid"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:columnWidth="80dp"
-        android:stretchMode="columnWidth" />
+        android:clipToPadding="false"
+        android:columnWidth="@dimen/chat.sticker.width"
+        android:padding="@dimen/chat.sticker.spacing" />
 
 </FrameLayout>

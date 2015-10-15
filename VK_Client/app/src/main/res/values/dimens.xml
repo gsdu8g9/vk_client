@@ -31,6 +31,9 @@
     <dimen name="chat.row.margin_vertical">3dp</dimen>
     <dimen name="chat.row.date_text_width">64dp</dimen>
     <dimen name="chat.row.body_padding">4dp</dimen>
+    <dimen name="chat.sticker.height">90dp</dimen>
+    <dimen name="chat.sticker.width">85dp</dimen>
+    <dimen name="chat.sticker.spacing">5dp</dimen>
 
 
     <!--                New Chat Screen           -->
