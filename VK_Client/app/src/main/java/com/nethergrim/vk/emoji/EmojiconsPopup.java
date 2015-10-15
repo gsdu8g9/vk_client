@@ -14,28 +14,24 @@
  * limitations under the License.
  */
 
-package github.ankushsachdeva.emojicon;
+package com.nethergrim.vk.emoji;
 
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Handler;
 import android.os.SystemClock;
-import android.support.v4.view.PagerAdapter;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.ViewGroup;
 import android.view.WindowManager.LayoutParams;
 import android.widget.PopupWindow;
 
-import java.util.List;
-
 import github.ankushsachdeva.emojicon.EmojiconGridView.OnEmojiconClickedListener;
-import github.ankushsachdeva.emojicon.emoji.Emojicon;
+import github.ankushsachdeva.emojicon.EmojiconRecentsManager;
 
 
 /**
@@ -43,7 +39,7 @@ import github.ankushsachdeva.emojicon.emoji.Emojicon;
  */
 
 public class EmojiconsPopup extends PopupWindow
-        implements ViewPager.OnPageChangeListener, EmojiconRecents {
+        implements ViewPager.OnPageChangeListener {
 
     OnEmojiconClickedListener onEmojiconClickedListener;
     private OnEmojiconBackspaceClickedListener onEmojiconBackspaceClickedListener;
@@ -53,6 +49,7 @@ public class EmojiconsPopup extends PopupWindow
     private View[] mEmojiTabs;
     private EmojiconRecentsManager mRecentsManager;
     private ViewPager emojisPager;
+    private FragmentManager mFragmentManager;
 
     public interface OnEmojiconBackspaceClickedListener {
 
@@ -67,18 +64,16 @@ public class EmojiconsPopup extends PopupWindow
      * the screen height will be used to calculate the keyboard height.
      * @param mContext The context of current activity.
      */
-    public EmojiconsPopup(View rootView, Context mContext) {
+    public EmojiconsPopup(View rootView, Context mContext, FragmentManager manager) {
         super(mContext);
         this.mContext = mContext;
         this.rootView = rootView;
+        this.mFragmentManager = manager;
 
-        setBackgroundDrawable(new ColorDrawable(0));
-        View customView = createCustomView();
-        setContentView(customView);
+        setBackgroundDrawable(new ColorDrawable(0)); // no shadow for a popup view
+        setContentView(createCustomView());
         setSoftInputMode(LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
-        //default size
-        setSize(LayoutParams.MATCH_PARENT,
-                LayoutParams.MATCH_PARENT);
+        setSize(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
     }
 
     public void setKeyBoardHeight(int keyBoardHeight) {
@@ -107,18 +102,9 @@ public class EmojiconsPopup extends PopupWindow
      * If that is not possible see showAtBottomPending() function.
      */
     public void showAtBottom() {
-        showAtLocation(rootView, Gravity.BOTTOM | Gravity.LEFT, 0, 0);
+        showAtLocation(rootView, Gravity.BOTTOM, 0, 0);
     }
 
-
-    /**
-     * Dismiss the popup
-     */
-    @Override
-    public void dismiss() {
-        super.dismiss();
-        EmojiconRecentsManager.getInstance(mContext).saveRecents();
-    }
 
     /**
      * Manually set the popup window size
@@ -129,13 +115,6 @@ public class EmojiconsPopup extends PopupWindow
     public void setSize(int width, int height) {
         setWidth(width);
         setHeight(height);
-    }
-
-    @Override
-    public void addRecentEmoji(Context context, Emojicon emojicon) {
-        EmojiconRecentsGridView fragment
-                = ((EmojisPagerAdapter) emojisPager.getAdapter()).getRecentFragment();
-        fragment.addRecentEmoji(context, emojicon);
     }
 
     @Override
@@ -172,61 +151,18 @@ public class EmojiconsPopup extends PopupWindow
     private View createCustomView() {
         LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(
                 Activity.LAYOUT_INFLATER_SERVICE);
-        View view = inflater.inflate(R.layout.emojicons, null, false);
-        emojisPager = (ViewPager) view.findViewById(R.id.emojis_pager);
+        View view = inflater.inflate(github.ankushsachdeva.emojicon.R.layout.emojicons, null,
+                false);
+
+        // pager init
+        emojisPager = (ViewPager) view.findViewById(
+                github.ankushsachdeva.emojicon.R.id.emojis_pager);
         emojisPager.setOnPageChangeListener(this);
-        EmojiconRecents recents = this;
-//        PagerAdapter emojisAdapter = new EmojisPagerAdapter(
-//                Arrays.asList(new EmojiconRecentsGridView(mContext, null, null, this),
-//                        new EmojiconGridView(mContext, People.DATA, recents, this),
-//                        new EmojiconGridView(mContext, Nature.DATA, recents, this),
-//                        new EmojiconGridView(mContext, Objects.DATA, recents, this),
-//                        new EmojiconGridView(mContext, Places.DATA, recents, this),
-//                        new EmojiconGridView(mContext, Symbols.DATA, recents, this)));
-//        EmojiPagerAdapter adapter = new EmojisPagerAdapter(onEmojiconClickedListener);
-//        emojisPager.setAdapter(emojisAdapter);
-        mEmojiTabs = new View[6];
-        mEmojiTabs[0] = view.findViewById(R.id.emojis_tab_0_recents);
-        mEmojiTabs[1] = view.findViewById(R.id.emojis_tab_1_people);
-        mEmojiTabs[2] = view.findViewById(R.id.emojis_tab_2_nature);
-        mEmojiTabs[3] = view.findViewById(R.id.emojis_tab_3_objects);
-        mEmojiTabs[4] = view.findViewById(R.id.emojis_tab_4_cars);
-        mEmojiTabs[5] = view.findViewById(R.id.emojis_tab_5_punctuation);
-        for (int i = 0; i < mEmojiTabs.length; i++) {
-            final int position = i;
-            mEmojiTabs[i].setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    emojisPager.setCurrentItem(position);
-                }
-            });
-        }
-        view.findViewById(R.id.emojis_backspace)
-                .setOnTouchListener(new RepeatListener(1000, 50, new OnClickListener() {
+        EmojiPagerAdapter adapter = new EmojiPagerAdapter(onEmojiconClickedListener);
+        emojisPager.setAdapter(adapter);
 
-                    @Override
-                    public void
-                    onClick(
-                            View v) {
-                        if (onEmojiconBackspaceClickedListener != null)
-                            onEmojiconBackspaceClickedListener.onEmojiconBackspaceClicked(v);
-                    }
-                }));
+        // tabs init
 
-        // get last selected page
-        mRecentsManager = EmojiconRecentsManager.getInstance(view.getContext());
-        int page = mRecentsManager.getRecentPage();
-        // last page was recents, check if there are recents to use
-        // if none was found, go to page 1
-        if (page == 0 && mRecentsManager.size() == 0) {
-            page = 1;
-        }
-
-        if (page == 0) {
-            onPageSelected(page);
-        } else {
-            emojisPager.setCurrentItem(page, false);
-        }
         return view;
     }
 
@@ -301,44 +237,4 @@ public class EmojiconsPopup extends PopupWindow
         }
     }
 
-    private static class EmojisPagerAdapter extends PagerAdapter {
-
-        private List<EmojiconGridView> views;
-
-        public EmojisPagerAdapter(List<EmojiconGridView> views) {
-            super();
-            this.views = views;
-        }
-
-        public EmojiconRecentsGridView getRecentFragment() {
-            for (EmojiconGridView it : views) {
-                if (it instanceof EmojiconRecentsGridView)
-                    return (EmojiconRecentsGridView) it;
-            }
-            return null;
-        }
-
-        @Override
-        public int getCount() {
-            return views.size();
-        }
-
-
-        @Override
-        public Object instantiateItem(ViewGroup container, int position) {
-            View v = views.get(position).rootView;
-            (container).addView(v, 0);
-            return v;
-        }
-
-        @Override
-        public void destroyItem(ViewGroup container, int position, Object view) {
-            container.removeView((View) view);
-        }
-
-        @Override
-        public boolean isViewFromObject(View view, Object key) {
-            return key == view;
-        }
-    }
 }

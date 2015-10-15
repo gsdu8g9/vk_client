@@ -17,13 +17,13 @@ import android.widget.LinearLayout;
 import com.devspark.robototextview.widget.RobotoEditText;
 import com.nethergrim.vk.R;
 import com.nethergrim.vk.activity.AbstractActivity;
+import com.nethergrim.vk.emoji.EmojiconsPopup;
 import com.nethergrim.vk.views.KeyboardDetectorRelativeLayout;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
 import github.ankushsachdeva.emojicon.EmojiconGridView;
-import github.ankushsachdeva.emojicon.EmojiconsPopup;
 import github.ankushsachdeva.emojicon.emoji.Emojicon;
 
 /**
@@ -172,7 +172,9 @@ public abstract class BaseKeyboardFragment extends AbstractFragment
     }
 
     private void showEmojiKeyboard() {
-        mEmojiconsPopup = new EmojiconsPopup(mKeyboardDetector, getActivity());
+        AbstractActivity abstractActivity = (AbstractActivity) getActivity();
+        mEmojiconsPopup = new EmojiconsPopup(mKeyboardDetector, getActivity(),
+                abstractActivity.getSupportFragmentManager());
         mEmojiconsPopup.setKeyBoardHeight(mKeyboardDetector.getKeyboardHeight());
         mEmojiconsPopup.showAtBottom();
         mEmojiconsPopup.setOnEmojiconClickedListener(this);

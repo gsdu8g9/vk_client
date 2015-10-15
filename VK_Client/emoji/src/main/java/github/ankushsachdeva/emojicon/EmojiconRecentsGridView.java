@@ -16,18 +16,13 @@
 
 package github.ankushsachdeva.emojicon;
 
-import android.content.Context;
-import android.widget.GridView;
-
-import github.ankushsachdeva.emojicon.emoji.Emojicon;
-
 /**
  * @author Daniele Ricci
  * @author Ankush Sachdeva (sankush@yahoo.co.in)
  */
-public class EmojiconRecentsGridView extends EmojiconGridView implements EmojiconRecents {
+public class EmojiconRecentsGridView/* extends EmojiconGridView implements EmojiconRecents */ {
 
-    EmojiAdapter mAdapter;
+    /*EmojiAdapter mAdapter;
 
     public EmojiconRecentsGridView(Context context,
                                    Emojicon[] emojicons,
@@ -57,5 +52,5 @@ public class EmojiconRecentsGridView extends EmojiconGridView implements Emojico
         // notify dataset changed
         if (mAdapter != null) mAdapter.notifyDataSetChanged();
     }
-
+*/
 }
