@@ -13,7 +13,6 @@ import java.util.List;
 import javax.inject.Inject;
 
 import github.ankushsachdeva.emojicon.EmojiconGridView;
-import github.ankushsachdeva.emojicon.emoji.People;
 import io.realm.Realm;
 
 /**
@@ -49,7 +48,7 @@ public class EmojiPagerAdapter extends PagerAdapter {
         View v;
         if (position == 0) {
             EmojiconGridView emojiconGridView = new EmojiconGridView(container.getContext(),
-                    People.DATA, mCallback);
+                    mCallback);
             v = emojiconGridView.getRootView();
         } else {
             v = new StickersLayoutView(container.getContext(), stickerDbItems.get(position - 1),

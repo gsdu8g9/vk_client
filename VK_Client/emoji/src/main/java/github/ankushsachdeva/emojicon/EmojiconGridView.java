@@ -48,13 +48,13 @@ public class EmojiconGridView {
     }
 
     public EmojiconGridView(Context context,
-            Emojicon[] emojicons,
             final OnEmojiconClickedListener callback) {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(
                 Activity.LAYOUT_INFLATER_SERVICE);
         rootView = inflater.inflate(R.layout.emojicon_grid, null);
 
         GridView gridView = (GridView) rootView.findViewById(R.id.Emoji_GridView);
+        Object[] emojicons = Emojicon.DATA;
         if (emojicons == null) {
             mData = People.DATA;
         } else {
