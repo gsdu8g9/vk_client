@@ -1,24 +1,26 @@
 package com.nethergrim.vk.adapter;
 
-import android.util.SparseBooleanArray;
-
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 /**
- * @author Andrew Drobyazko (andrey.drobyazko@applikeysolutions.com) on 16.10.15.
+ * @author Andrew Drobyazko (c2q9450@gmail.com) on 16.10.15.
+ *         All rights reserved.
  */
 public abstract class SelectableUltimateAdapter extends UltimateAdapter {
 
-    private SparseBooleanArray mSelectedPositionsArray;
+    private Map<Long, Boolean> mSelectedPositionsArray;
+
 
     public SelectableUltimateAdapter() {
-        mSelectedPositionsArray = new SparseBooleanArray(50);
+        mSelectedPositionsArray = new HashMap<>(50);
     }
 
     public void toggle(int position) {
         boolean isSelected = isSelected(position);
-        mSelectedPositionsArray.put(position, !isSelected);
+        mSelectedPositionsArray.put(getDataId(position), !isSelected);
         notifyDataSetChanged();
     }
 
@@ -28,15 +30,14 @@ public abstract class SelectableUltimateAdapter extends UltimateAdapter {
     }
 
     public boolean isSelected(int position) {
-        return mSelectedPositionsArray.get(position);
+        return mSelectedPositionsArray.get(getDataId(position));
     }
 
     public Set<Long> getSelectedIds() {
         Set<Long> result = new HashSet<>(mSelectedPositionsArray.size());
-        for (int i = 0, size = mSelectedPositionsArray.size(); i < size; i++) {
-            int position = mSelectedPositionsArray.keyAt(i);
-            if (mSelectedPositionsArray.get(position)) {
-                result.add(getDataId(position));
+        for (Long id : mSelectedPositionsArray.keySet()) {
+            if (mSelectedPositionsArray.get(id)) {
+                result.add(id);
             }
         }
         return result;
