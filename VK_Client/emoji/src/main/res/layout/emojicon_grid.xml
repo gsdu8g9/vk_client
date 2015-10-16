@@ -13,17 +13,35 @@
   ~ ITS DERIVATIVES.
   -->
 
-<GridView
-    android:id="@+id/Emoji_GridView"
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@android:color/transparent"
-    android:cacheColorHint="@android:color/transparent"
-    android:clipToPadding="false"
-    android:columnWidth="40dip"
-    android:horizontalSpacing="0dip"
-    android:numColumns="auto_fit"
-    android:paddingBottom="@dimen/emoji.bottom.layout.height"
-    android:scrollbars="vertical"
-    android:verticalSpacing="0dip" />
+    android:layout_height="match_parent">
+
+    <GridView
+        android:id="@+id/Emoji_GridView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginRight="@dimen/emoji.right_margin"
+        android:background="@android:color/transparent"
+        android:cacheColorHint="@android:color/transparent"
+        android:clipToPadding="false"
+        android:columnWidth="48dip"
+        android:horizontalSpacing="2dip"
+        android:numColumns="auto_fit"
+        android:paddingBottom="@dimen/emoji.bottom.layout.height"
+        android:paddingLeft="4dp"
+        android:paddingTop="4dp"
+        android:scrollbars="vertical"
+        android:verticalSpacing="2dip" />
+
+    <ImageButton
+        android:id="@+id/btn_delete"
+        android:layout_width="@dimen/emoji.right_margin"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right|top"
+        android:background="?android:attr/selectableItemBackground"
+        android:padding="12dp"
+        android:src="@drawable/ic_content_backspace" />
+
+
+</FrameLayout>

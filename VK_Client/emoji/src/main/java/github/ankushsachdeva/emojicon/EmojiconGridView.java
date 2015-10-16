@@ -21,6 +21,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.GridView;
+import android.widget.ImageButton;
 
 import java.util.Arrays;
 
@@ -48,7 +49,7 @@ public class EmojiconGridView {
 
     public EmojiconGridView(Context context,
             Emojicon[] emojicons,
-            OnEmojiconClickedListener callback) {
+            final OnEmojiconClickedListener callback) {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(
                 Activity.LAYOUT_INFLATER_SERVICE);
         rootView = inflater.inflate(R.layout.emojicon_grid, null);
@@ -62,6 +63,16 @@ public class EmojiconGridView {
         EmojiAdapter mAdapter = new EmojiAdapter(rootView.getContext(), mData);
         mAdapter.setClickedListener(callback);
         gridView.setAdapter(mAdapter);
+
+        ImageButton deleteButton = (ImageButton) rootView.findViewById(R.id.btn_delete);
+        deleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (callback != null) {
+                    callback.onEmojiconBackPressClicked();
+                }
+            }
+        });
     }
 
     public View getRootView() {
