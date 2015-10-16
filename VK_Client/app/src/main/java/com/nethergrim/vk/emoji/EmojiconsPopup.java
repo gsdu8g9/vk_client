@@ -21,12 +21,10 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -145,25 +143,19 @@ public class EmojiconsPopup extends PopupWindow {
         List<StickerDbItem> stickers = adapter.getStickerDbItems();
 
         for (int i = 0; i < tabLayout.getTabCount(); i++) {
-            final int finalI = i;
-            final String url = stickers.get(finalI).getPhoto();
-            Observable.just(finalI)
-                    .flatMap(integer -> mImageLoader.getBitmap(url))
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribeOn(Schedulers.io())
-                    .subscribe(bitmap -> {
-                        Drawable d = new BitmapDrawable(res, bitmap);
-                        tabLayout.getTabAt(finalI).setIcon(d);
-                    }, throwable -> {
-                        if (throwable instanceof IllegalStateException) {
-                            IllegalStateException exception = (IllegalStateException) throwable;
-                            Log.e(TAG, exception.getMessage());
-                        } else {
-                            Log.e(TAG, throwable.getMessage());
-                        }
-                    })
-            ;
-
+            if (i == 0) {
+                tabLayout.getTabAt(0).setIcon(R.drawable.ic_emoji_people_light_activated);
+            } else {
+                final int finalI = i - 1;
+                Observable.just(stickers.get(finalI).getPhoto())
+                        .flatMap(mImageLoader::getBitmap)
+                        .map(bitmap -> new BitmapDrawable(res, bitmap))
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeOn(Schedulers.io())
+                        .subscribe(drawable -> {
+                            tabLayout.getTabAt(finalI + 1).setIcon(drawable);
+                        });
+            }
         }
         return view;
     }

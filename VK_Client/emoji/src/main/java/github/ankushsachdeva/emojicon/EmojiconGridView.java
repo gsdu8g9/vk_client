@@ -34,10 +34,11 @@ import github.ankushsachdeva.emojicon.emoji.People;
 public class EmojiconGridView {
 
     public View rootView;
-    EmojiconRecents mRecents;
+
     Emojicon[] mData;
 
     public interface OnEmojiconClickedListener {
+
         void onEmojiconClicked(Emojicon emojicon);
 
         void onStickerClicked(long stickerId);
@@ -45,18 +46,16 @@ public class EmojiconGridView {
 
     public EmojiconGridView(Context context,
             Emojicon[] emojicons,
-            EmojiconRecents recents,
             OnEmojiconClickedListener callback) {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(
                 Activity.LAYOUT_INFLATER_SERVICE);
         rootView = inflater.inflate(R.layout.emojicon_grid, null);
-        setRecents(recents);
+
         GridView gridView = (GridView) rootView.findViewById(R.id.Emoji_GridView);
         if (emojicons == null) {
             mData = People.DATA;
         } else {
-            Object[] o = emojicons;
-            mData = Arrays.asList(o).toArray(new Emojicon[o.length]);
+            mData = Arrays.asList(emojicons).toArray(new Emojicon[emojicons.length]);
         }
         EmojiAdapter mAdapter = new EmojiAdapter(rootView.getContext(), mData);
         mAdapter.setClickedListener(callback);
@@ -65,14 +64,6 @@ public class EmojiconGridView {
 
     public View getRootView() {
         return rootView;
-    }
-
-    public void setRootView(View rootView) {
-        this.rootView = rootView;
-    }
-
-    private void setRecents(EmojiconRecents recents) {
-        mRecents = recents;
     }
 
 }

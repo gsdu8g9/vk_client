@@ -20,8 +20,10 @@
     android:layout_height="match_parent"
     android:background="@android:color/transparent"
     android:cacheColorHint="@android:color/transparent"
+    android:clipToPadding="false"
     android:columnWidth="40dip"
     android:horizontalSpacing="0dip"
     android:numColumns="auto_fit"
+    android:paddingBottom="@dimen/emoji.bottom.layout.height"
     android:scrollbars="vertical"
     android:verticalSpacing="0dip" />

@@ -2,6 +2,7 @@ package com.nethergrim.vk.images;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.os.Looper;
@@ -15,6 +16,9 @@ import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 import rx.Observable;
 import rx.Subscriber;
@@ -110,7 +114,7 @@ public class PicassoImageLoaderImpl implements ImageLoader {
         }
     }
 
-    private Observable<Bitmap> getBitmapObservable(String url) {
+    private Observable<Bitmap> getBitmapObservable(String src) {
         Observable<Bitmap> bitmapObservable = Observable.create(
                 new Observable.OnSubscribe<Bitmap>() {
                     @Override
@@ -120,17 +124,29 @@ public class PicassoImageLoaderImpl implements ImageLoader {
                             return;
                         }
 
-                        try {
-                            Bitmap bitmap = Picasso.with(context).load(url)
-                                    .config(Bitmap.Config.RGB_565)
-                                    .get();
-                            subscriber.onNext(bitmap);
-                            subscriber.onCompleted();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                            subscriber.onError(e);
+                        if (mBitmapLruCache != null) {
+                            Bitmap result = mBitmapLruCache.get(src);
+                            if (result != null) {
+                                subscriber.onNext(result);
+                                subscriber.onCompleted();
+                            }
                         }
 
+                        try {
+                            URL url = new URL(src);
+                            HttpURLConnection connection
+                                    = (HttpURLConnection) url.openConnection();
+                            connection.setDoInput(true);
+                            connection.connect();
+                            InputStream input = connection.getInputStream();
+                            Bitmap myBitmap = BitmapFactory.decodeStream(input);
+
+                            addToCache(src, myBitmap);
+                            subscriber.onNext(myBitmap);
+                            subscriber.onCompleted();
+                        } catch (IOException e) {
+                            subscriber.onError(e);
+                        }
                     }
                 });
         bitmapObservable.subscribeOn(AndroidSchedulers.mainThread());
