@@ -7,7 +7,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.util.LruCache;
 
 import com.nethergrim.vk.models.User;
@@ -120,32 +119,18 @@ public class PicassoImageLoaderImpl implements ImageLoader {
                             subscriber.onCompleted();
                             return;
                         }
-                        if (Looper.myLooper() == Looper.getMainLooper()) {
-                            Log.i("ISSUE5", " call - main thread ");
+
+                        try {
+                            Bitmap bitmap = Picasso.with(context).load(url)
+                                    .config(Bitmap.Config.RGB_565)
+                                    .get();
+                            subscriber.onNext(bitmap);
+                            subscriber.onCompleted();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                            subscriber.onError(e);
                         }
-                        Target target = new Target() {
-                            @Override
-                            public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                                Log.i("picasso", " onBitmapLoaded ");
-                                if (Looper.myLooper() == Looper.getMainLooper()) {
-                                    Log.i("ISSUE5", " Target - onBitmapLoaded - main thread ");
-                                }
-                                subscriber.onNext(bitmap);
-                                subscriber.onCompleted();
-                            }
 
-                            @Override
-                            public void onBitmapFailed(Drawable errorDrawable) {
-                                subscriber.onError(new Exception(" Failed to load bitmap"));
-                            }
-
-                            @Override
-                            public void onPrepareLoad(Drawable placeHolderDrawable) {
-                            }
-                        };
-                        Picasso.with(context).load(url)
-                                .config(Bitmap.Config.RGB_565)
-                                .into(target);
                     }
                 });
         bitmapObservable.subscribeOn(AndroidSchedulers.mainThread());

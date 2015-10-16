@@ -26,6 +26,7 @@ import android.os.Handler;
 import android.os.SystemClock;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -43,6 +44,9 @@ import java.util.List;
 import javax.inject.Inject;
 
 import github.ankushsachdeva.emojicon.EmojiconGridView.OnEmojiconClickedListener;
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 
 /**
@@ -51,6 +55,7 @@ import github.ankushsachdeva.emojicon.EmojiconGridView.OnEmojiconClickedListener
 
 public class EmojiconsPopup extends PopupWindow {
 
+    public static final String TAG = EmojiconsPopup.class.getSimpleName();
     OnEmojiconClickedListener onEmojiconClickedListener;
     @Inject
     ImageLoader mImageLoader;
@@ -61,6 +66,7 @@ public class EmojiconsPopup extends PopupWindow {
 
 
     public interface OnEmojiconBackspaceClickedListener {
+
         void onEmojiconBackspaceClicked(View v);
     }
 
@@ -87,7 +93,6 @@ public class EmojiconsPopup extends PopupWindow {
     public void setKeyBoardHeight(int keyBoardHeight) {
         setSize(LayoutParams.MATCH_PARENT, keyBoardHeight);
     }
-
 
 
     /**
@@ -140,9 +145,25 @@ public class EmojiconsPopup extends PopupWindow {
         List<StickerDbItem> stickers = adapter.getStickerDbItems();
 
         for (int i = 0; i < tabLayout.getTabCount(); i++) {
-            Drawable d = new BitmapDrawable(res,
-                    mImageLoader.getBitmapSync(stickers.get(i).getPhoto()));
-            tabLayout.getTabAt(i).setIcon(d);
+            final int finalI = i;
+            final String url = stickers.get(finalI).getPhoto();
+            Observable.just(finalI)
+                    .flatMap(integer -> mImageLoader.getBitmap(url))
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribeOn(Schedulers.io())
+                    .subscribe(bitmap -> {
+                        Drawable d = new BitmapDrawable(res, bitmap);
+                        tabLayout.getTabAt(finalI).setIcon(d);
+                    }, throwable -> {
+                        if (throwable instanceof IllegalStateException) {
+                            IllegalStateException exception = (IllegalStateException) throwable;
+                            Log.e(TAG, exception.getMessage());
+                        } else {
+                            Log.e(TAG, throwable.getMessage());
+                        }
+                    })
+            ;
+
         }
         return view;
     }

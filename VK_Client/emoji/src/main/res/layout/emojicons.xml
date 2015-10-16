@@ -31,7 +31,7 @@
         android:id="@+id/tabs"
         style="@style/MyCustomTabLayout"
         android:layout_width="match_parent"
-        android:layout_height="36dp"
+        android:layout_height="@dimen/emoji.bottom.layout.height"
         android:layout_gravity="bottom"
         app:tabMode="scrollable" />
 

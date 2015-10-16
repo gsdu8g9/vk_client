@@ -38,18 +38,6 @@ public class EmojiPagerAdapter extends PagerAdapter {
         return stickerDbItems;
     }
 
-    //    @Override
-//    public CharSequence getPageTitle(int position) {
-//
-//        Bitmap bitmap = mImageLoader.getBitmapSync(stickerDbItems.get(position).getPhoto());
-//
-//        SpannableString sb = new SpannableString("G");
-//        ImageSpan imageSpan = new ImageSpan(MyApplication.getInstance(), bitmap, ImageSpan
-// .ALIGN_BOTTOM);
-//        sb.setSpan(imageSpan, 0, 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-//        return sb.toString();
-//    }
-
     @Override
     public int getCount() {
         return stickerDbItems.size();
