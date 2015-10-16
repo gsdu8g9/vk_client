@@ -19,6 +19,7 @@ import com.nethergrim.vk.event.ConversationUpdatedEvent;
 import com.nethergrim.vk.models.Conversation;
 import com.nethergrim.vk.models.User;
 import com.nethergrim.vk.utils.ConversationUtils;
+import com.nethergrim.vk.utils.RecyclerItemClickListener;
 import com.nethergrim.vk.utils.UserProvider;
 import com.nethergrim.vk.views.PaginationManager;
 import com.nethergrim.vk.web.WebIntentHandler;
@@ -33,7 +34,8 @@ import io.realm.Realm;
  * @author andrej on 07.08.15.
  */
 public class ChatFragment extends BaseKeyboardFragment implements Toolbar.OnMenuItemClickListener,
-        PaginationManager.OnRecyclerViewScrolledToPageListener {
+        PaginationManager.OnRecyclerViewScrolledToPageListener,
+        RecyclerItemClickListener.OnItemClickListener {
 
     public static final String EXTRA_CONVERSATION_ID = Constants.PACKAGE_NAME + ".CONV_ID";
     public static final int PAGE_SIZE = 50;
@@ -103,19 +105,20 @@ public class ChatFragment extends BaseKeyboardFragment implements Toolbar.OnMenu
             return;
         }
         mIsGroupChat = ConversationUtils.isConversationAGroupChat(mConversation);
-        if (! mIsGroupChat) {
+        if (!mIsGroupChat) {
             mAnotherUser = mUserProvider.getUser(mConversation.getId());
         }
 
         mChatAdapter = new ChatAdapter(mConversationId, mIsGroupChat);
         recycler.setAdapter(mChatAdapter);
         LinearLayoutManager llm = new LinearLayoutManager(recycler.getContext(),
-                                                          RecyclerView.VERTICAL, true);
+                RecyclerView.VERTICAL, true);
         recycler.addOnScrollListener(new PaginationManager(PAGE_SIZE, this, true));
         recycler.setLayoutManager(llm);
 
         loadLastMessages();
         mBus.register(this);
+        recycler.addOnItemTouchListener(new RecyclerItemClickListener(recycler.getContext(), this));
     }
 
     @Override
@@ -149,7 +152,7 @@ public class ChatFragment extends BaseKeyboardFragment implements Toolbar.OnMenu
 
     @Subscribe
     public void onDataUpdated(ConversationUpdatedEvent e) {
-        if (mIsGroupChat && e.getChatId() == getChatId() || ! mIsGroupChat && e.getUserId().equals(
+        if (mIsGroupChat && e.getChatId() == getChatId() || !mIsGroupChat && e.getUserId().equals(
                 getUserId())) {
             mDataCount = e.getCount();
             mChatAdapter.notifyDataSetChanged();
@@ -166,6 +169,16 @@ public class ChatFragment extends BaseKeyboardFragment implements Toolbar.OnMenu
         }
     }
 
+    @Override
+    public void onItemClick(View childView, int position) {
+        // if is in selection state then toggle selection for item
+    }
+
+    @Override
+    public void onItemLongPress(View childView, int position) {
+        // move to selection state and select one item
+    }
+
     private long getConversationIdFromExtras(Bundle extras) {
         Bundle args = getArguments();
         if (args != null && args.containsKey(EXTRA_CONVERSATION_ID)) {
@@ -173,7 +186,8 @@ public class ChatFragment extends BaseKeyboardFragment implements Toolbar.OnMenu
             return args.getLong(EXTRA_CONVERSATION_ID);
         } else if (extras != null && extras.containsKey(EXTRA_CONVERSATION_ID)) {
             return extras.getLong(EXTRA_CONVERSATION_ID);
-        } else return 0;
+        } else
+            return 0;
     }
 
 
@@ -185,8 +199,8 @@ public class ChatFragment extends BaseKeyboardFragment implements Toolbar.OnMenu
     }
 
     private long getChatId() {
-        if (! mIsGroupChat) {
-            return - 1;
+        if (!mIsGroupChat) {
+            return -1;
         }
         return mConversationId;
     }

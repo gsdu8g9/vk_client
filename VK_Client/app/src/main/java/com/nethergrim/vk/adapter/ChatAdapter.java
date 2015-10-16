@@ -26,7 +26,8 @@ import io.realm.RealmResults;
  * @author Andrey Drobyazko (c2q9450@gmail.com).
  *         All rights reserved.
  */
-public class ChatAdapter extends UltimateAdapter implements UltimateAdapter.HeaderInterface {
+public class ChatAdapter extends SelectableUltimateAdapter
+        implements UltimateAdapter.HeaderInterface {
 
     public static final int TYPE_MY = 1;
     public static final int TYPE_NOT_MINE = 0;
@@ -117,9 +118,7 @@ public class ChatAdapter extends UltimateAdapter implements UltimateAdapter.Head
         } else {
             chatViewHolder.textDate.setVisibility(View.INVISIBLE);
         }
-
         chatViewHolder.textBody.setText(message.getBody());
-
     }
 
     @Override
