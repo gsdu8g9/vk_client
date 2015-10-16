@@ -9,7 +9,7 @@
     <Space
         android:id="@+id/top"
         android:layout_width="match_parent"
-        android:layout_height="8dp"
+        android:layout_height="2dp"
         android:layout_alignParentTop="true" />
 
     <app.mosn.zdepthshadowlayout.ZDepthShadowLayout
@@ -28,14 +28,7 @@
         <com.nethergrim.vk.views.imageViews.UserImageView
             android:id="@+id/avatar"
             android:layout_width="@dimen/chat.row.avatar.size"
-            android:layout_height="@dimen/chat.row.avatar.size"
-            tools:background="@drawable/green_dot" />
-
-        <ImageView
-            android:id="@+id/avatar_overlay"
-            android:layout_width="@dimen/chat.row.avatar.size"
-            android:layout_height="@dimen/chat.row.avatar.size"
-            android:src="@drawable/ic_navigation_check" />
+            android:layout_height="@dimen/chat.row.avatar.size" />
 
 
     </app.mosn.zdepthshadowlayout.ZDepthShadowLayout>
@@ -95,8 +88,20 @@
     <Space
         android:id="@+id/bottomLayout"
         android:layout_width="match_parent"
-        android:layout_height="8dp"
+        android:layout_height="2dp"
         android:layout_below="@+id/content_container" />
+
+    <ImageView
+        android:id="@+id/avatar_overlay"
+        android:layout_width="@dimen/chat.row.avatar.size"
+        android:layout_height="@dimen/chat.row.avatar.size"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignTop="@+id/avatar_layout"
+        android:layout_marginLeft="@dimen/chat.row.margins"
+        android:layout_marginStart="@dimen/chat.row.margins"
+        android:layout_marginTop="4dp"
+        android:src="@drawable/ic_navigation_check" />
 
 
 </RelativeLayout>

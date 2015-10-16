@@ -8,7 +8,7 @@
     <Space
         android:id="@+id/top"
         android:layout_width="match_parent"
-        android:layout_height="8dp"
+        android:layout_height="2dp"
         android:layout_alignParentTop="true" />
 
 
@@ -28,12 +28,6 @@
             android:layout_width="@dimen/chat.row.avatar.size"
             android:layout_height="@dimen/chat.row.avatar.size"
             tools:background="@drawable/green_dot" />
-
-        <ImageView
-            android:id="@+id/avatar_overlay"
-            android:layout_width="@dimen/chat.row.avatar.size"
-            android:layout_height="@dimen/chat.row.avatar.size"
-            android:src="@drawable/ic_navigation_check" />
 
 
     </app.mosn.zdepthshadowlayout.ZDepthShadowLayout>
@@ -91,8 +85,18 @@
 
     <Space
         android:layout_width="match_parent"
-        android:layout_height="8dp"
+        android:layout_height="2dp"
         android:layout_below="@+id/content_container" />
+
+    <ImageView
+        android:id="@+id/avatar_overlay"
+        android:layout_width="@dimen/chat.row.avatar.size"
+        android:layout_height="@dimen/chat.row.avatar.size"
+        android:layout_alignParentRight="true"
+        android:layout_alignTop="@+id/avatar_layout"
+        android:layout_marginRight="@dimen/chat.row.margins"
+        android:layout_marginTop="4dp"
+        android:src="@drawable/ic_navigation_check" />
 
 
 </RelativeLayout>

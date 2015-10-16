@@ -134,19 +134,25 @@ public class ChatAdapter extends SelectableUltimateAdapter
         chatViewHolder.textBody.setText(message.getBody());
         if (isSelected(dataPosition)) {
             chatViewHolder.avatarOverlay.setVisibility(View.VISIBLE);
+            chatViewHolder.textDate.setVisibility(View.GONE);
             try {
-                chatViewHolder.card.changeZDepth(ZDepth.Depth2);
+                chatViewHolder.card.postDelayed(
+                        () -> chatViewHolder.card.changeZDepth(ZDepth.Depth2), 100);
+
                 if (chatViewHolder.imageAvatar.getVisibility() == View.VISIBLE) {
-                    chatViewHolder.avatarShadow.changeZDepth(ZDepth.Depth2);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
             }
         } else {
             chatViewHolder.avatarOverlay.setVisibility(View.GONE);
+            if (shouldDisplayDate) {
+                chatViewHolder.textDate.setVisibility(View.VISIBLE);
+            }
             try {
-                chatViewHolder.card.changeZDepth(ZDepth.Depth0);
-                chatViewHolder.avatarShadow.changeZDepth(ZDepth.Depth0);
+                chatViewHolder.card.postDelayed(
+                        () -> chatViewHolder.card.changeZDepth(ZDepth.Depth0), 100);
+
             } catch (Exception e) {
             }
         }
