@@ -9,7 +9,7 @@
     <Space
         android:id="@+id/top"
         android:layout_width="match_parent"
-        android:layout_height="16dp"
+        android:layout_height="8dp"
         android:layout_alignParentTop="true" />
 
 
@@ -22,47 +22,67 @@
         android:layout_below="@+id/top"
         android:layout_marginEnd="@dimen/chat.row.margins"
         android:layout_marginRight="@dimen/chat.row.margins"
-        android:layout_marginTop="@dimen/chat.row.margin_vertical"
         tools:background="@drawable/green_dot" />
 
-    <LinearLayout
-        android:id="@+id/content_layout"
+
+    <android.support.v7.widget.CardView
+        android:id="@+id/content_container"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/avatar"
-        android:layout_marginRight="4dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="-2dp"
         android:layout_toLeftOf="@+id/avatar"
-        android:background="@drawable/rounded_background_white"
         android:minHeight="@dimen/chat.row.avatar.size"
-        android:orientation="vertical"
-        android:padding="8dp">
+        app:cardBackgroundColor="@android:color/white"
+        app:cardCornerRadius="@dimen/rounded_corners_size"
+        app:cardUseCompatPadding="true"
+        app:contentPadding="0dp">
 
-
-        <com.devspark.robototextview.widget.RobotoTextView
-            android:id="@+id/textBody"
+        <LinearLayout
+            android:id="@+id/content_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:maxWidth="220dp"
-            android:textColor="@color/primary_text"
-            app:typeface="roboto_regular"
-            tools:text="Text here" />
+            android:minHeight="@dimen/chat.row.avatar.size"
+            android:orientation="vertical"
+            android:padding="8dp">
 
 
-    </LinearLayout>
+            <com.devspark.robototextview.widget.RobotoTextView
+                android:id="@+id/textBody"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:maxWidth="220dp"
+                android:textColor="@color/primary_text"
+                app:typeface="roboto_regular"
+                tools:text="Text here" />
+
+
+        </LinearLayout>
+
+
+    </android.support.v7.widget.CardView>
+
 
     <com.devspark.robototextview.widget.RobotoTextView
         android:id="@+id/textDate"
         android:layout_width="@dimen/chat.row.date_text_width"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/content_layout"
-        android:layout_alignTop="@id/content_layout"
-        android:layout_toLeftOf="@+id/content_layout"
-        android:gravity="center|right"
+        android:layout_alignBottom="@+id/content_container"
+        android:layout_alignTop="@id/content_container"
+        android:layout_toLeftOf="@+id/content_container"
+        android:gravity="bottom|right"
         android:padding="4dp"
         android:textColor="@color/secondary_text"
         android:textSize="14sp"
-        app:typeface="roboto_light"
+        app:typeface="roboto_thin"
         tools:text="Hi " />
+
+    <Space
+        android:id="@+id/bottomLayout"
+        android:layout_width="match_parent"
+        android:layout_height="8dp"
+        android:layout_below="@+id/content_container" />
 
 
 </RelativeLayout>

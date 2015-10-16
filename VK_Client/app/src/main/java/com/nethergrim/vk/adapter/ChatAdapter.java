@@ -4,6 +4,7 @@ import android.content.Context;
 import android.text.format.DateUtils;
 import android.view.View;
 
+import com.nethergrim.vk.Constants;
 import com.nethergrim.vk.MyApplication;
 import com.nethergrim.vk.R;
 import com.nethergrim.vk.adapter.viewholders.ChatViewHolder;
@@ -43,6 +44,7 @@ public class ChatAdapter extends SelectableUltimateAdapter
 
 
     private int mSelectedColor = -1;
+    private float mSelectedCardElevation;
 
 
     public ChatAdapter(long conversationId, boolean isAGroupChat) {
@@ -59,7 +61,9 @@ public class ChatAdapter extends SelectableUltimateAdapter
                     .equalTo("user_id", conversationId)
                     .findAllSorted("date", false);
         }
+        mSelectedCardElevation = Constants.mDensity * 12;
     }
+
 
     @Override
     public int getDataSize() {
@@ -128,9 +132,9 @@ public class ChatAdapter extends SelectableUltimateAdapter
         }
         chatViewHolder.textBody.setText(message.getBody());
         if (isSelected(dataPosition)) {
-            chatViewHolder.itemView.setBackgroundColor(mSelectedColor);
+            chatViewHolder.card.setCardElevation(mSelectedCardElevation);
         } else {
-            chatViewHolder.itemView.setBackgroundColor(0);
+            chatViewHolder.card.setCardElevation(0);
         }
     }
 
