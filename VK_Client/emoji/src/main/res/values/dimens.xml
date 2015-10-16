@@ -2,5 +2,7 @@
 <resources>
 
     <dimen name="emoji.top.layout.height">42dp</dimen>
+    <dimen name="emoji.bottom.layout.height">36dp</dimen>
+    <dimen name="emoji.right_margin">56dp</dimen>
 
 </resources>

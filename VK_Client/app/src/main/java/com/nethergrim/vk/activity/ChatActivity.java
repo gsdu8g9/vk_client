@@ -57,6 +57,7 @@ public class ChatActivity extends AbstractActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
         Bundle extras = getIntent().getExtras();
+        mWebIntentHandler.fetchStickers();
         if (extras != null) {
             if (extras.containsKey(Constants.EXTRA_CONVERSATION_ID)) {
                 long mConversationId = extras.getLong(Constants.EXTRA_CONVERSATION_ID);

@@ -2,7 +2,6 @@ package com.nethergrim.vk.views;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.widget.RelativeLayout;
 
 import com.nethergrim.vk.Constants;
@@ -74,9 +73,10 @@ public class KeyboardDetectorRelativeLayout extends RelativeLayout {
 
         if (proposedheight > 0 && actualHeight > 0 && proposedheight < actualHeight) {
             mKeyboardHeight = actualHeight - proposedheight;
-            mPrefs.setKeyboardHeight(mKeyboardHeight);
-            Log.d("TAG", "keyboard height: " + mKeyboardHeight + " px or " + (mKeyboardHeight
-                    / Constants.mDensity) + " dp");
+            if (mKeyboardHeight > 100 * Constants.mDensity) {
+                mPrefs.setKeyboardHeight(mKeyboardHeight);
+            }
+
         }
 
         if (actualHeight > proposedheight) {

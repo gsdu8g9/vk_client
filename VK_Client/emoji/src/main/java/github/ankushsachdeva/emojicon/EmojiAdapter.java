@@ -17,30 +17,27 @@
 package github.ankushsachdeva.emojicon;
 
 import android.content.Context;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-import java.util.List;
-
 import github.ankushsachdeva.emojicon.EmojiconGridView.OnEmojiconClickedListener;
 import github.ankushsachdeva.emojicon.emoji.Emojicon;
+
 
 /**
  * @author Ankush Sachdeva (sankush@yahoo.co.in)
  */
-class EmojiAdapter extends ArrayAdapter<Emojicon> {
+class EmojiAdapter extends ArrayAdapter<Emojicon> implements View.OnClickListener {
 
-    OnEmojiconClickedListener mClickedListener;
-
-    public EmojiAdapter(Context context, List<Emojicon> data) {
-        super(context, R.layout.emojicon_item, data);
-    }
+    private OnEmojiconClickedListener mClickedListener;
+    private LayoutInflater mLayoutInflater;
 
     public EmojiAdapter(Context context, Emojicon[] data) {
         super(context, R.layout.emojicon_item, data);
+        mLayoutInflater = LayoutInflater.from(context);
     }
 
     public void setClickedListener(OnEmojiconClickedListener listener) {
@@ -52,25 +49,33 @@ class EmojiAdapter extends ArrayAdapter<Emojicon> {
         View v = convertView;
         ViewHolder vh;
         if (v == null) {
-            v = View.inflate(getContext(), R.layout.emojicon_item, null);
-            vh = new ViewHolder();
-            vh.icon = (TextView) v.findViewById(R.id.emojicon_icon);
+            v = mLayoutInflater.inflate(R.layout.emojicon_item, parent, false);
+            vh = new ViewHolder(v, position);
             v.setTag(vh);
         } else {
             vh = (ViewHolder) v.getTag();
         }
         Emojicon emoji = getItem(position);
         vh.icon.setText(emoji.getEmoji());
-        vh.icon.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mClickedListener.onEmojiconClicked(getItem(position));
-            }
-        });
+        vh.icon.setOnClickListener(this);
+        vh.position = position;
         return v;
     }
 
+    @Override
+    public void onClick(View v) {
+        ViewHolder vh = (ViewHolder) v.getTag();
+        mClickedListener.onEmojiconClicked(getItem(vh.position));
+    }
+
     private static class ViewHolder {
+
         TextView icon;
+        int position;
+
+        public ViewHolder(View v, int position) {
+            icon = (TextView) v.findViewById(R.id.emojicon_icon);
+            this.position = position;
+        }
     }
 }

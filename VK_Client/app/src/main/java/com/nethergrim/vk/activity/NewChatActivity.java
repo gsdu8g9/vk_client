@@ -15,11 +15,8 @@ import com.nethergrim.vk.R;
 import com.nethergrim.vk.adapter.MultiUserAdapter;
 import com.nethergrim.vk.models.User;
 
-import javax.inject.Inject;
-
 import butterknife.ButterKnife;
 import butterknife.InjectView;
-import io.realm.Realm;
 import io.realm.RealmResults;
 
 /**
@@ -33,8 +30,7 @@ public class NewChatActivity extends AbstractActivity {
     RobotoEditText mEtSearch;
     @InjectView(R.id.recyclerView)
     RecyclerView mRecyclerView;
-    @Inject
-    Realm mRealm;
+
     private MultiUserAdapter mAdapter;
 
     public static void start(Context context) {

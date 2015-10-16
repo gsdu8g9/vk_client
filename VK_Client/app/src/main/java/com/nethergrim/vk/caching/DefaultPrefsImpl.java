@@ -17,6 +17,8 @@ public class DefaultPrefsImpl implements Prefs {
     public static final String KEY_UNREAD_MESSAGES_COUNT = "unread_messages_count";
     public static final String KEY_FRIENDS_COUNT = "fr_c";
     public static final String KEY_KEYBOARD_HEIGHT = "keyboard_height";
+    public static final String KEY_FETCH_STICKERS_TIMESTAMP = "fetch_stickers_timestamp";
+    public static final String KEY_EMOJI_TAB = "emoji_tab";
     private static final String KEY_TOKEN = "token";
     private SharedPreferences mPrefs;
 
@@ -98,6 +100,26 @@ public class DefaultPrefsImpl implements Prefs {
     @Override
     public int getOrientation() {
         return MyApplication.getInstance().getResources().getConfiguration().orientation;
+    }
+
+    @Override
+    public long getLastFetchStickersTime() {
+        return mPrefs.getLong(KEY_FETCH_STICKERS_TIMESTAMP, 0);
+    }
+
+    @Override
+    public void setLastFetchStickersTime(long timestamp) {
+        mPrefs.edit().putLong(KEY_FETCH_STICKERS_TIMESTAMP, timestamp).apply();
+    }
+
+    @Override
+    public int getCurrentEmojiTab() {
+        return mPrefs.getInt(KEY_EMOJI_TAB, 0);
+    }
+
+    @Override
+    public void setCurrentEmojiTab(int tabNum) {
+        mPrefs.edit().putInt(KEY_EMOJI_TAB, tabNum).apply();
     }
 
 }

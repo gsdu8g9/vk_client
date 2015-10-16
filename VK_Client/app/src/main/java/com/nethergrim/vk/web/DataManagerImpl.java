@@ -14,19 +14,24 @@ import com.nethergrim.vk.event.ConversationsUpdatedEvent;
 import com.nethergrim.vk.event.FriendsUpdatedEvent;
 import com.nethergrim.vk.event.MyUserUpdatedEvent;
 import com.nethergrim.vk.event.UsersUpdatedEvent;
+import com.nethergrim.vk.images.ImageLoader;
 import com.nethergrim.vk.models.ConversationsUserObject;
 import com.nethergrim.vk.models.IntegerResponse;
 import com.nethergrim.vk.models.ListOfFriends;
 import com.nethergrim.vk.models.ListOfMessages;
 import com.nethergrim.vk.models.ListOfUsers;
 import com.nethergrim.vk.models.StartupResponse;
+import com.nethergrim.vk.models.StickerDbItem;
+import com.nethergrim.vk.models.StockItemsResponse;
 import com.squareup.otto.Bus;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
 
+import io.realm.Realm;
 import rx.Observable;
 import rx.schedulers.Schedulers;
 
@@ -58,6 +63,9 @@ public class DataManagerImpl implements DataManager {
 
     @Inject
     Bus mBus;
+
+    @Inject
+    ImageLoader mImageLoader;
 
     public DataManagerImpl() {
         MyApplication.getInstance().getMainComponent().inject(this);
@@ -147,5 +155,32 @@ public class DataManagerImpl implements DataManager {
                     mBus.post(new ConversationsUpdatedEvent());
                 })
                 ;
+    }
+
+    @Override
+    public Observable<List<StickerDbItem>> getStickerItems() {
+        return mWebRequestManager.getStickerStockItems()
+                .map(StockItemsResponse::getStockItems)
+                .map(stockItems -> {
+                    if (stockItems == null || stockItems.getItems() == null) {
+                        return null;
+                    }
+                    List<StickerDbItem> result = new ArrayList<StickerDbItem>(
+                            stockItems.getItems().size());
+                    for (int i = 0, size = stockItems.getItems().size(); i < size; i++) {
+                        result.add(StickerDbItem.MAPPER.call(stockItems.getItems().get(i)));
+                        String url = result.get(i).getPhoto();
+                        mImageLoader.cacheToMemory(url);
+                    }
+                    return result;
+                })
+                .doOnNext(stickerDbItems -> {
+                    Realm realm = Realm.getDefaultInstance();
+                    realm.beginTransaction();
+                    realm.copyToRealmOrUpdate(stickerDbItems);
+                    realm.commitTransaction();
+                    realm.close();
+
+                });
     }
 }

@@ -38,4 +38,6 @@ public interface WebIntentHandler {
 
     void deleteConversation(Conversation conversation);
 
+    void fetchStickers();
+
 }

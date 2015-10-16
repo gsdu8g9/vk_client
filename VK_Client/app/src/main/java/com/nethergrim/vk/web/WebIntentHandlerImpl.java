@@ -3,11 +3,14 @@ package com.nethergrim.vk.web;
 import android.support.annotation.NonNull;
 
 import com.nethergrim.vk.MyApplication;
+import com.nethergrim.vk.caching.Prefs;
 import com.nethergrim.vk.models.Conversation;
 import com.nethergrim.vk.services.WorkerService;
 import com.nethergrim.vk.utils.ConversationUtils;
 
 import java.util.ArrayList;
+
+import javax.inject.Inject;
 
 /**
  * Should be used from Ui Thread, to launch Service which will make web request and persist data..
@@ -19,6 +22,12 @@ import java.util.ArrayList;
  */
 public class WebIntentHandlerImpl implements WebIntentHandler {
 
+    @Inject
+    Prefs mPrefs;
+
+    public WebIntentHandlerImpl() {
+        MyApplication.getInstance().getMainComponent().inject(this);
+    }
 
     @Override
     public void fetchConversationsAndUsers(int count, int offset, boolean onlyUnread) {
@@ -58,6 +67,13 @@ public class WebIntentHandlerImpl implements WebIntentHandler {
             userId = conversation.getId();
         }
         WorkerService.deleteConversation(MyApplication.getInstance(), userId, chatId);
+    }
+
+    @Override
+    public void fetchStickers() {
+        WorkerService.fetchStickers(MyApplication.getInstance());
+        mPrefs.setLastFetchStickersTime(System.currentTimeMillis());
+
     }
 
 }

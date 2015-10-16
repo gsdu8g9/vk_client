@@ -34,4 +34,12 @@ public interface Prefs {
     void setKeyboardHeight(int heightPx);
 
     int getOrientation();
+
+    long getLastFetchStickersTime();
+
+    void setLastFetchStickersTime(long timestamp);
+
+    int getCurrentEmojiTab();
+
+    void setCurrentEmojiTab(int tabNum);
 }

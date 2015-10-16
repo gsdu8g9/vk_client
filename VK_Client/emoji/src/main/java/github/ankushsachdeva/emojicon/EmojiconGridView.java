@@ -21,6 +21,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.GridView;
+import android.widget.ImageButton;
 
 import java.util.Arrays;
 
@@ -34,49 +35,48 @@ import github.ankushsachdeva.emojicon.emoji.People;
 public class EmojiconGridView {
 
     public View rootView;
-    EmojiconsPopup mEmojiconPopup;
-    EmojiconRecents mRecents;
+
     Emojicon[] mData;
 
     public interface OnEmojiconClickedListener {
 
         void onEmojiconClicked(Emojicon emojicon);
+
+        void onEmojiconBackPressClicked();
+
+        void onStickerClicked(long stickerId);
     }
 
     public EmojiconGridView(Context context,
-                            Emojicon[] emojicons,
-                            EmojiconRecents recents,
-                            EmojiconsPopup emojiconPopup) {
+            final OnEmojiconClickedListener callback) {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(
                 Activity.LAYOUT_INFLATER_SERVICE);
-        mEmojiconPopup = emojiconPopup;
         rootView = inflater.inflate(R.layout.emojicon_grid, null);
-        setRecents(recents);
+
         GridView gridView = (GridView) rootView.findViewById(R.id.Emoji_GridView);
+        Object[] emojicons = Emojicon.DATA;
         if (emojicons == null) {
             mData = People.DATA;
         } else {
-            Object[] o = emojicons;
-            mData = Arrays.asList(o).toArray(new Emojicon[o.length]);
+            mData = Arrays.asList(emojicons).toArray(new Emojicon[emojicons.length]);
         }
         EmojiAdapter mAdapter = new EmojiAdapter(rootView.getContext(), mData);
-        mAdapter.setClickedListener(new OnEmojiconClickedListener() {
+        mAdapter.setClickedListener(callback);
+        gridView.setAdapter(mAdapter);
 
+        ImageButton deleteButton = (ImageButton) rootView.findViewById(R.id.btn_delete);
+        deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onEmojiconClicked(Emojicon emojicon) {
-                if (mEmojiconPopup.onEmojiconClickedListener != null) {
-                    mEmojiconPopup.onEmojiconClickedListener.onEmojiconClicked(emojicon);
-                }
-                if (mRecents != null) {
-                    mRecents.addRecentEmoji(rootView.getContext(), emojicon);
+            public void onClick(View v) {
+                if (callback != null) {
+                    callback.onEmojiconBackPressClicked();
                 }
             }
         });
-        gridView.setAdapter(mAdapter);
     }
 
-    private void setRecents(EmojiconRecents recents) {
-        mRecents = recents;
+    public View getRootView() {
+        return rootView;
     }
 
 }

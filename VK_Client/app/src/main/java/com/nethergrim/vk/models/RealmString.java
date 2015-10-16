@@ -9,6 +9,14 @@ public class RealmString extends RealmObject {
 
     private String s;
 
+    public RealmString() {
+    }
+
+    public RealmString(String s) {
+
+        this.s = s;
+    }
+
     public String getS() {
         return s;
     }

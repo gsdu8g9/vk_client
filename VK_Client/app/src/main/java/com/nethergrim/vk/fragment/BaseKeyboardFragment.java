@@ -17,13 +17,13 @@ import android.widget.LinearLayout;
 import com.devspark.robototextview.widget.RobotoEditText;
 import com.nethergrim.vk.R;
 import com.nethergrim.vk.activity.AbstractActivity;
+import com.nethergrim.vk.emoji.EmojiconsPopup;
 import com.nethergrim.vk.views.KeyboardDetectorRelativeLayout;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
 import github.ankushsachdeva.emojicon.EmojiconGridView;
-import github.ankushsachdeva.emojicon.EmojiconsPopup;
 import github.ankushsachdeva.emojicon.emoji.Emojicon;
 
 /**
@@ -31,7 +31,6 @@ import github.ankushsachdeva.emojicon.emoji.Emojicon;
  */
 public abstract class BaseKeyboardFragment extends AbstractFragment
         implements EmojiconGridView.OnEmojiconClickedListener,
-        EmojiconsPopup.OnEmojiconBackspaceClickedListener,
         KeyboardDetectorRelativeLayout.IKeyboardChanged {
 
 
@@ -108,7 +107,6 @@ public abstract class BaseKeyboardFragment extends AbstractFragment
             imageButton.setImageResource(R.drawable.ic_hardware_keyboard);
             showEmojiKeyboard();
         }
-        mShowingEmojiKeyboard = !mShowingEmojiKeyboard;
     }
 
     public abstract void initRecyclerView(RecyclerView recycler);
@@ -135,10 +133,15 @@ public abstract class BaseKeyboardFragment extends AbstractFragment
     }
 
     @Override
-    public void onEmojiconBackspaceClicked(View v) {
+    public void onEmojiconBackPressClicked() {
         KeyEvent event = new KeyEvent(
                 0, 0, 0, KeyEvent.KEYCODE_DEL, 0, 0, 0, 0, KeyEvent.KEYCODE_ENDCALL);
         mEditText.dispatchKeyEvent(event);
+    }
+
+    @Override
+    public void onStickerClicked(long id) {
+        showToast("Clicked on sticker: " + id);
     }
 
     @Override
@@ -168,15 +171,15 @@ public abstract class BaseKeyboardFragment extends AbstractFragment
         if (mEmojiconsPopup != null) {
             mEmojiconsPopup.dismiss();
         }
+        mShowingEmojiKeyboard = false;
 
     }
 
     private void showEmojiKeyboard() {
-        mEmojiconsPopup = new EmojiconsPopup(mKeyboardDetector, getActivity());
+        mEmojiconsPopup = new EmojiconsPopup(mKeyboardDetector, getActivity(), this);
         mEmojiconsPopup.setKeyBoardHeight(mKeyboardDetector.getKeyboardHeight());
         mEmojiconsPopup.showAtBottom();
-        mEmojiconsPopup.setOnEmojiconClickedListener(this);
-        mEmojiconsPopup.setOnEmojiconBackspaceClickedListener(this);
+        mShowingEmojiKeyboard = true;
     }
 
     private void hideSoftKeyboard() {
