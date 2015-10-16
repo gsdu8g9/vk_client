@@ -28,7 +28,7 @@ import io.realm.RealmResults;
  *         All rights reserved.
  */
 public class ChatAdapter extends SelectableUltimateAdapter
-        implements UltimateAdapter.HeaderInterface {
+        implements UltimateAdapter.FooterInterface {
 
     public static final int TYPE_MY = 1;
     public static final int TYPE_NOT_MINE = 0;
@@ -135,17 +135,17 @@ public class ChatAdapter extends SelectableUltimateAdapter
     }
 
     @Override
-    public HeaderVH getHeaderVH(View v) {
-        return new MyHeaderVH(v);
+    public FooterVH getFooterVH(View v) {
+        return new MyFooterVH(v);
     }
 
     @Override
-    public int getHeaderViewResId() {
+    public int getFooterViewResId() {
         return R.layout.spinner;
     }
 
     @Override
-    public void bindHeaderVH(HeaderVH vh) {
+    public void bindFooterVH(FooterVH vh) {
         // nothing here, just empty spinner
     }
 
@@ -191,9 +191,9 @@ public class ChatAdapter extends SelectableUltimateAdapter
         return user;
     }
 
-    public static class MyHeaderVH extends HeaderVH {
+    public static class MyFooterVH extends FooterVH {
 
-        public MyHeaderVH(View itemView) {
+        public MyFooterVH(View itemView) {
             super(itemView);
         }
     }
