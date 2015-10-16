@@ -38,4 +38,8 @@ public interface Prefs {
     long getLastFetchStickersTime();
 
     void setLastFetchStickersTime(long timestamp);
+
+    int getCurrentEmojiTab();
+
+    void setCurrentEmojiTab(int tabNum);
 }

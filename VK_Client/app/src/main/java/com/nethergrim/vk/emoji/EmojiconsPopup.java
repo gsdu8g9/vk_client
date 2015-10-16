@@ -31,6 +31,7 @@ import android.widget.PopupWindow;
 
 import com.nethergrim.vk.MyApplication;
 import com.nethergrim.vk.R;
+import com.nethergrim.vk.caching.Prefs;
 import com.nethergrim.vk.images.ImageLoader;
 import com.nethergrim.vk.models.StickerDbItem;
 
@@ -48,12 +49,15 @@ import rx.schedulers.Schedulers;
  * @author Ankush Sachdeva (sankush@yahoo.co.in).
  */
 
-public class EmojiconsPopup extends PopupWindow {
+public class EmojiconsPopup extends PopupWindow implements ViewPager.OnPageChangeListener {
 
     public static final String TAG = EmojiconsPopup.class.getSimpleName();
     OnEmojiconClickedListener onEmojiconClickedListener;
     @Inject
     ImageLoader mImageLoader;
+
+    @Inject
+    Prefs mPrefs;
     private View rootView;
     private Context mContext;
 
@@ -104,6 +108,21 @@ public class EmojiconsPopup extends PopupWindow {
         setHeight(height);
     }
 
+    @Override
+    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+    }
+
+    @Override
+    public void onPageSelected(int position) {
+        mPrefs.setCurrentEmojiTab(position);
+    }
+
+    @Override
+    public void onPageScrollStateChanged(int state) {
+
+    }
+
 
     private View createCustomView() {
         LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(
@@ -116,6 +135,7 @@ public class EmojiconsPopup extends PopupWindow {
                 github.ankushsachdeva.emojicon.R.id.emojis_pager);
         EmojiPagerAdapter adapter = new EmojiPagerAdapter(onEmojiconClickedListener);
         emojisPager.setAdapter(adapter);
+        emojisPager.addOnPageChangeListener(this);
 
         // tabs init
         TabLayout tabLayout = (TabLayout) view.findViewById(R.id.tabs);
@@ -137,6 +157,8 @@ public class EmojiconsPopup extends PopupWindow {
                         });
             }
         }
+
+        emojisPager.setCurrentItem(mPrefs.getCurrentEmojiTab());
         return view;
     }
 
