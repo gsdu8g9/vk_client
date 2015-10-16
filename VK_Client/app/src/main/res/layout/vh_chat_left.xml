@@ -39,25 +39,23 @@
     </app.mosn.zdepthshadowlayout.ZDepthShadowLayout>
 
 
-    <android.support.v7.widget.CardView
+    <app.mosn.zdepthshadowlayout.ZDepthShadowLayout
         android:id="@+id/content_container"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/avatar_layout"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="-2dp"
         android:layout_toEndOf="@+id/avatar_layout"
         android:layout_toRightOf="@+id/avatar_layout"
         android:minHeight="@dimen/chat.row.avatar.size"
-        app:cardBackgroundColor="@color/primary"
-        app:cardCornerRadius="@dimen/rounded_corners_size"
-        app:cardUseCompatPadding="true"
-        app:contentPadding="0dp">
+        app:z_depth="z_depth0"
+        app:z_depth_padding="z_depth2"
+        app:z_depth_shape="rect">
 
         <LinearLayout
             android:id="@+id/content_layout"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
+            android:background="@drawable/rounded_background_primary"
             android:orientation="vertical"
             android:padding="8dp">
 
@@ -75,7 +73,7 @@
         </LinearLayout>
 
 
-    </android.support.v7.widget.CardView>
+    </app.mosn.zdepthshadowlayout.ZDepthShadowLayout>
 
 
     <com.devspark.robototextview.widget.RobotoTextView

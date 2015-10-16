@@ -133,16 +133,21 @@ public class ChatAdapter extends SelectableUltimateAdapter
         }
         chatViewHolder.textBody.setText(message.getBody());
         if (isSelected(dataPosition)) {
-            chatViewHolder.card.setCardElevation(mSelectedCardElevation);
             chatViewHolder.avatarOverlay.setVisibility(View.VISIBLE);
-            chatViewHolder.avatarShadow.changeZDepth(ZDepth.Depth2);
+            try {
+                chatViewHolder.card.changeZDepth(ZDepth.Depth2);
+                if (chatViewHolder.imageAvatar.getVisibility() == View.VISIBLE) {
+                    chatViewHolder.avatarShadow.changeZDepth(ZDepth.Depth2);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         } else {
-            chatViewHolder.card.setCardElevation(0);
             chatViewHolder.avatarOverlay.setVisibility(View.GONE);
             try {
+                chatViewHolder.card.changeZDepth(ZDepth.Depth0);
                 chatViewHolder.avatarShadow.changeZDepth(ZDepth.Depth0);
             } catch (Exception e) {
-//                e.printStackTrace();
             }
         }
     }
