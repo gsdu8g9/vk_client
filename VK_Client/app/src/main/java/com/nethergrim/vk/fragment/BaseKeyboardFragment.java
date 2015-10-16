@@ -17,7 +17,9 @@ import android.widget.LinearLayout;
 import com.devspark.robototextview.widget.RobotoEditText;
 import com.nethergrim.vk.R;
 import com.nethergrim.vk.activity.AbstractActivity;
+import com.nethergrim.vk.adapter.SelectableUltimateAdapter;
 import com.nethergrim.vk.emoji.EmojiconsPopup;
+import com.nethergrim.vk.utils.RecyclerItemClickListener;
 import com.nethergrim.vk.views.KeyboardDetectorRelativeLayout;
 
 import butterknife.ButterKnife;
@@ -31,10 +33,12 @@ import github.ankushsachdeva.emojicon.emoji.Emojicon;
  */
 public abstract class BaseKeyboardFragment extends AbstractFragment
         implements EmojiconGridView.OnEmojiconClickedListener,
-        KeyboardDetectorRelativeLayout.IKeyboardChanged {
+        KeyboardDetectorRelativeLayout.IKeyboardChanged,
+        RecyclerItemClickListener.OnItemClickListener {
 
 
     private static final long DELAY_MS = 30;
+    protected boolean mInSelectedStateNow;
     @InjectView(R.id.btnLeft)
     ImageButton mBtnLeft;
     @InjectView(R.id.editText)
@@ -54,6 +58,7 @@ public abstract class BaseKeyboardFragment extends AbstractFragment
     private boolean mShowingEmojiKeyboard = false;
     private InputMethodManager mInputMethodManager;
     private EmojiconsPopup mEmojiconsPopup;
+    private SelectableUltimateAdapter mAdapter;
 
     @Nullable
     @Override
@@ -72,10 +77,13 @@ public abstract class BaseKeyboardFragment extends AbstractFragment
         Context ctx = view.getContext();
         mInputMethodManager = (InputMethodManager) ctx.getSystemService(
                 Context.INPUT_METHOD_SERVICE);
+        mAdapter = getAdapter(ctx);
+        mRecycler.setAdapter(mAdapter);
         initRecyclerView(mRecycler);
         preInitToolbar(mToolbar);
         initToolbar(mToolbar);
         mKeyboardDetector.addKeyboardStateChangedListener(this);
+        mRecycler.addOnItemTouchListener(new RecyclerItemClickListener(ctx, this));
     }
 
     @Override
@@ -156,7 +164,38 @@ public abstract class BaseKeyboardFragment extends AbstractFragment
         mBtnLeft.setImageResource(R.drawable.ic_action_social_mood);
     }
 
+    @Override
+    public void onItemClick(View childView, int position) {
+        // if is in selection state then toggle selection for item
+        if (mAdapter == null) {
+            return;
+        }
+        if (mInSelectedStateNow) {
+            mAdapter.toggle(position);
+        }
+    }
+
+    @Override
+    public void onItemLongPress(View childView, int position) {
+        // move to selection state and select one item
+        if (mAdapter == null) {
+            return;
+        }
+
+        if (!mInSelectedStateNow) {
+            mInSelectedStateNow = true;
+            showSelectionToolbar();
+            mAdapter.toggle(position);
+        }
+    }
+
+    protected abstract SelectableUltimateAdapter getAdapter(Context context);
+
     protected abstract void initToolbar(Toolbar toolbar);
+
+    private void showSelectionToolbar() {
+
+    }
 
     private void showSoftKeyboard() {
         if (mEditText == null) {

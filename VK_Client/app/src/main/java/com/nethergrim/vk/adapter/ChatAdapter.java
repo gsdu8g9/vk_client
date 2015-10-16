@@ -1,5 +1,6 @@
 package com.nethergrim.vk.adapter;
 
+import android.content.Context;
 import android.text.format.DateUtils;
 import android.view.View;
 
@@ -39,6 +40,9 @@ public class ChatAdapter extends SelectableUltimateAdapter
     private RealmResults<Message> mMessages;
     // key - Long, user id, value = user;
     private Map<Long, User> mUsersMap;
+
+
+    private int mSelectedColor = -1;
 
 
     public ChatAdapter(long conversationId, boolean isAGroupChat) {
@@ -93,12 +97,16 @@ public class ChatAdapter extends SelectableUltimateAdapter
 
     @Override
     public DataVH getDataViewHolder(View v, int dataViewType) {
+        if (mSelectedColor == -1) {
+            mSelectedColor = v.getContext().getResources().getColor(R.color.primary_light);
+        }
         return new ChatViewHolder(v);
     }
 
     @Override
     public void bindDataVH(DataVH vh, int dataPosition) {
         ChatViewHolder chatViewHolder = (ChatViewHolder) vh;
+        Context ctx = ((ChatViewHolder) vh).itemView.getContext();
         Message message = mMessages.get(dataPosition);
         User user = getUserById(message.getFrom_id());
         boolean displayAvatarAndSpace = shouldDisplaySpaceAndAvatar(dataPosition, message);
@@ -119,6 +127,11 @@ public class ChatAdapter extends SelectableUltimateAdapter
             chatViewHolder.textDate.setVisibility(View.INVISIBLE);
         }
         chatViewHolder.textBody.setText(message.getBody());
+        if (isSelected(dataPosition)) {
+            chatViewHolder.itemView.setBackgroundColor(mSelectedColor);
+        } else {
+            chatViewHolder.itemView.setBackgroundColor(0);
+        }
     }
 
     @Override

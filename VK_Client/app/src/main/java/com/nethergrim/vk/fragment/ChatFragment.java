@@ -1,5 +1,6 @@
 package com.nethergrim.vk.fragment;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -14,12 +15,12 @@ import com.nethergrim.vk.Constants;
 import com.nethergrim.vk.MyApplication;
 import com.nethergrim.vk.R;
 import com.nethergrim.vk.adapter.ChatAdapter;
+import com.nethergrim.vk.adapter.SelectableUltimateAdapter;
 import com.nethergrim.vk.caching.Prefs;
 import com.nethergrim.vk.event.ConversationUpdatedEvent;
 import com.nethergrim.vk.models.Conversation;
 import com.nethergrim.vk.models.User;
 import com.nethergrim.vk.utils.ConversationUtils;
-import com.nethergrim.vk.utils.RecyclerItemClickListener;
 import com.nethergrim.vk.utils.UserProvider;
 import com.nethergrim.vk.views.PaginationManager;
 import com.nethergrim.vk.web.WebIntentHandler;
@@ -34,8 +35,7 @@ import io.realm.Realm;
  * @author andrej on 07.08.15.
  */
 public class ChatFragment extends BaseKeyboardFragment implements Toolbar.OnMenuItemClickListener,
-        PaginationManager.OnRecyclerViewScrolledToPageListener,
-        RecyclerItemClickListener.OnItemClickListener {
+        PaginationManager.OnRecyclerViewScrolledToPageListener {
 
     public static final String EXTRA_CONVERSATION_ID = Constants.PACKAGE_NAME + ".CONV_ID";
     public static final int PAGE_SIZE = 50;
@@ -100,25 +100,12 @@ public class ChatFragment extends BaseKeyboardFragment implements Toolbar.OnMenu
 
     @Override
     public void initRecyclerView(RecyclerView recycler) {
-        mConversation = mRealm.where(Conversation.class).equalTo("id", mConversationId).findFirst();
-        if (mConversation == null) {
-            return;
-        }
-        mIsGroupChat = ConversationUtils.isConversationAGroupChat(mConversation);
-        if (!mIsGroupChat) {
-            mAnotherUser = mUserProvider.getUser(mConversation.getId());
-        }
-
-        mChatAdapter = new ChatAdapter(mConversationId, mIsGroupChat);
-        recycler.setAdapter(mChatAdapter);
         LinearLayoutManager llm = new LinearLayoutManager(recycler.getContext(),
                 RecyclerView.VERTICAL, true);
         recycler.addOnScrollListener(new PaginationManager(PAGE_SIZE, this, true));
         recycler.setLayoutManager(llm);
-
         loadLastMessages();
         mBus.register(this);
-        recycler.addOnItemTouchListener(new RecyclerItemClickListener(recycler.getContext(), this));
     }
 
     @Override
@@ -136,6 +123,21 @@ public class ChatFragment extends BaseKeyboardFragment implements Toolbar.OnMenu
         } else {
             return mAnotherUser.getFirstName() + " " + mAnotherUser.getLastName();
         }
+    }
+
+    @Override
+    protected SelectableUltimateAdapter getAdapter(Context context) {
+        mConversation = mRealm.where(Conversation.class).equalTo("id", mConversationId).findFirst();
+        if (mConversation == null) {
+            return null;
+        }
+        mIsGroupChat = ConversationUtils.isConversationAGroupChat(mConversation);
+        if (!mIsGroupChat) {
+            mAnotherUser = mUserProvider.getUser(mConversation.getId());
+        }
+
+        mChatAdapter = new ChatAdapter(mConversationId, mIsGroupChat);
+        return mChatAdapter;
     }
 
     @Override
@@ -167,16 +169,6 @@ public class ChatFragment extends BaseKeyboardFragment implements Toolbar.OnMenu
             int offset = pageNumber * PAGE_SIZE;
             mWebIntentHandler.fetchMessagesHistory(PAGE_SIZE, offset, getUserId(), getChatId());
         }
-    }
-
-    @Override
-    public void onItemClick(View childView, int position) {
-        // if is in selection state then toggle selection for item
-    }
-
-    @Override
-    public void onItemLongPress(View childView, int position) {
-        // move to selection state and select one item
     }
 
     private long getConversationIdFromExtras(Bundle extras) {

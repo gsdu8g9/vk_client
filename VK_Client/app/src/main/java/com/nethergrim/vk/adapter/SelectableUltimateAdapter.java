@@ -18,9 +18,9 @@ public abstract class SelectableUltimateAdapter extends UltimateAdapter {
         mSelectedPositionsArray = new HashMap<>(50);
     }
 
-    public void toggle(int position) {
-        boolean isSelected = isSelected(position);
-        mSelectedPositionsArray.put(getDataId(position), !isSelected);
+    public void toggle(int dataPosition) {
+        boolean isSelected = isSelected(dataPosition);
+        mSelectedPositionsArray.put(getDataId(dataPosition), !isSelected);
         notifyDataSetChanged();
     }
 
@@ -29,8 +29,12 @@ public abstract class SelectableUltimateAdapter extends UltimateAdapter {
         notifyDataSetChanged();
     }
 
-    public boolean isSelected(int position) {
-        return mSelectedPositionsArray.get(getDataId(position));
+    public boolean isSelected(int dataPosition) {
+        Boolean result = mSelectedPositionsArray.get(getDataId(dataPosition));
+        if (result == null) {
+            return false;
+        }
+        return result;
     }
 
     public Set<Long> getSelectedIds() {
