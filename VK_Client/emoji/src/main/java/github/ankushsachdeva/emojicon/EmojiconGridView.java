@@ -41,6 +41,8 @@ public class EmojiconGridView {
 
         void onEmojiconClicked(Emojicon emojicon);
 
+        void onEmojiconBackPressClicked();
+
         void onStickerClicked(long stickerId);
     }
 

@@ -21,13 +21,10 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
-import android.os.Handler;
-import android.os.SystemClock;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager.LayoutParams;
 import android.widget.PopupWindow;
@@ -57,16 +54,8 @@ public class EmojiconsPopup extends PopupWindow {
     OnEmojiconClickedListener onEmojiconClickedListener;
     @Inject
     ImageLoader mImageLoader;
-    private OnEmojiconBackspaceClickedListener onEmojiconBackspaceClickedListener;
     private View rootView;
     private Context mContext;
-    private ViewPager emojisPager;
-
-
-    public interface OnEmojiconBackspaceClickedListener {
-
-        void onEmojiconBackspaceClicked(View v);
-    }
 
 
     /**
@@ -92,13 +81,6 @@ public class EmojiconsPopup extends PopupWindow {
         setSize(LayoutParams.MATCH_PARENT, keyBoardHeight);
     }
 
-
-    /**
-     * Set the listener for the event when backspace on emojicon popup is clicked
-     */
-    public void setOnEmojiconBackspaceClickedListener(OnEmojiconBackspaceClickedListener listener) {
-        this.onEmojiconBackspaceClickedListener = listener;
-    }
 
     /**
      * Use this function to show the emoji popup.
@@ -130,7 +112,7 @@ public class EmojiconsPopup extends PopupWindow {
                 false);
 
         // pager init
-        emojisPager = (ViewPager) view.findViewById(
+        ViewPager emojisPager = (ViewPager) view.findViewById(
                 github.ankushsachdeva.emojicon.R.id.emojis_pager);
         EmojiPagerAdapter adapter = new EmojiPagerAdapter(onEmojiconClickedListener);
         emojisPager.setAdapter(adapter);
@@ -139,9 +121,7 @@ public class EmojiconsPopup extends PopupWindow {
         TabLayout tabLayout = (TabLayout) view.findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(emojisPager);
         Resources res = mContext.getResources();
-
         List<StickerDbItem> stickers = adapter.getStickerDbItems();
-
         for (int i = 0; i < tabLayout.getTabCount(); i++) {
             if (i == 0) {
                 tabLayout.getTabAt(0).setIcon(R.drawable.ic_emoji_people_light_activated);
@@ -158,77 +138,6 @@ public class EmojiconsPopup extends PopupWindow {
             }
         }
         return view;
-    }
-
-    /**
-     * A class, that can be used as a TouchListener on any view (e.g. a Button).
-     * It cyclically runs a clickListener, emulating keyboard-like behaviour. First
-     * click is fired immediately, next before initialInterval, and subsequent before
-     * normalInterval.
-     * <p>
-     * <p>Interval is scheduled before the onClick completes, so it has to run fast.
-     * If it runs slow, it does not generate skipped onClicks.
-     */
-    public static class RepeatListener implements View.OnTouchListener {
-
-        private final int normalInterval;
-        private final View.OnClickListener clickListener;
-        private Handler handler = new Handler();
-        private int initialInterval;
-        private View downView;
-        private Runnable handlerRunnable = new Runnable() {
-            @Override
-            public void run() {
-                if (downView == null) {
-                    return;
-                }
-                handler.removeCallbacksAndMessages(downView);
-                handler.postAtTime(this, downView, SystemClock.uptimeMillis() + normalInterval);
-                clickListener.onClick(downView);
-            }
-        };
-
-        /**
-         * @param initialInterval The interval before first click event
-         * @param normalInterval The interval before second and subsequent click
-         * events
-         * @param clickListener The OnClickListener, that will be called
-         * periodically
-         */
-        public RepeatListener(int initialInterval,
-                int normalInterval,
-                View.OnClickListener clickListener) {
-            if (clickListener == null) {
-                throw new IllegalArgumentException("null runnable");
-            }
-
-            if (initialInterval < 0 || normalInterval < 0) {
-                throw new IllegalArgumentException("negative interval");
-            }
-
-            this.initialInterval = initialInterval;
-            this.normalInterval = normalInterval;
-            this.clickListener = clickListener;
-        }
-
-        public boolean onTouch(View view, MotionEvent motionEvent) {
-            switch (motionEvent.getAction()) {
-                case MotionEvent.ACTION_DOWN:
-                    downView = view;
-                    handler.removeCallbacks(handlerRunnable);
-                    handler.postAtTime(handlerRunnable, downView,
-                            SystemClock.uptimeMillis() + initialInterval);
-                    clickListener.onClick(view);
-                    return true;
-                case MotionEvent.ACTION_UP:
-                case MotionEvent.ACTION_CANCEL:
-                case MotionEvent.ACTION_OUTSIDE:
-                    handler.removeCallbacksAndMessages(downView);
-                    downView = null;
-                    return true;
-            }
-            return false;
-        }
     }
 
 }
