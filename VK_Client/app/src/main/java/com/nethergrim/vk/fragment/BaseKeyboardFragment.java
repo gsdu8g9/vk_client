@@ -170,6 +170,7 @@ public abstract class BaseKeyboardFragment extends AbstractFragment
         if (mAdapter == null) {
             return;
         }
+        position = mAdapter.getDataPosition(position);
         if (mInSelectedStateNow) {
             mAdapter.toggle(position);
         }
@@ -181,6 +182,7 @@ public abstract class BaseKeyboardFragment extends AbstractFragment
         if (mAdapter == null) {
             return;
         }
+        position = mAdapter.getDataPosition(position);
 
         if (!mInSelectedStateNow) {
             mInSelectedStateNow = true;

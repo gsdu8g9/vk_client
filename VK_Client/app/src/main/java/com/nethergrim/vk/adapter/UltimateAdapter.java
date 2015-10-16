@@ -137,6 +137,13 @@ public abstract class UltimateAdapter
 
     public abstract void bindDataVH(DataVH vh, int dataPosition);
 
+    public int getDataPosition(int generalPosition) {
+        if (withHeader()) {
+            return generalPosition - 1;
+        }
+        return generalPosition;
+    }
+
     public void setFooterVisibility(int visibility) {
         mFooterVisibility = visibility;
         notifyDataSetChanged();
