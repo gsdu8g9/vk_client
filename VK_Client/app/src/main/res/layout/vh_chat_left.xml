@@ -11,24 +11,43 @@
         android:layout_height="8dp"
         android:layout_alignParentTop="true" />
 
-    <com.nethergrim.vk.views.imageViews.UserImageView
-        android:id="@+id/avatar"
-        android:layout_width="@dimen/chat.row.avatar.size"
-        android:layout_height="@dimen/chat.row.avatar.size"
+
+    <app.mosn.zdepthshadowlayout.ZDepthShadowLayout
+        android:id="@+id/avatar_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_below="@+id/top"
         android:layout_marginLeft="@dimen/chat.row.margins"
         android:layout_marginStart="@dimen/chat.row.margins"
-        tools:background="@drawable/green_dot" />
+        app:z_depth="z_depth0"
+        app:z_depth_padding="z_depth2"
+        app:z_depth_shape="oval">
+
+        <com.nethergrim.vk.views.imageViews.UserImageView
+            android:id="@+id/avatar"
+            android:layout_width="@dimen/chat.row.avatar.size"
+            android:layout_height="@dimen/chat.row.avatar.size"
+            tools:background="@drawable/green_dot" />
+
+        <ImageView
+            android:id="@+id/avatar_overlay"
+            android:layout_width="@dimen/chat.row.avatar.size"
+            android:layout_height="@dimen/chat.row.avatar.size"
+            android:src="@drawable/ic_navigation_check" />
+
+
+    </app.mosn.zdepthshadowlayout.ZDepthShadowLayout>
+
 
     <android.support.v7.widget.CardView
         android:id="@+id/content_container"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/avatar"
+        android:layout_alignTop="@+id/avatar_layout"
         android:layout_marginLeft="8dp"
         android:layout_marginTop="-2dp"
-        android:layout_toEndOf="@+id/avatar"
-        android:layout_toRightOf="@+id/avatar"
+        android:layout_toEndOf="@+id/avatar_layout"
+        android:layout_toRightOf="@+id/avatar_layout"
         android:minHeight="@dimen/chat.row.avatar.size"
         app:cardBackgroundColor="@color/primary"
         app:cardCornerRadius="@dimen/rounded_corners_size"

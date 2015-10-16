@@ -2,6 +2,7 @@ package com.nethergrim.vk.adapter.viewholders;
 
 import android.support.v7.widget.CardView;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.Space;
 import android.widget.TextView;
 
@@ -9,6 +10,7 @@ import com.nethergrim.vk.R;
 import com.nethergrim.vk.adapter.UltimateAdapter;
 import com.nethergrim.vk.views.imageViews.UserImageView;
 
+import app.mosn.zdepthshadowlayout.ZDepthShadowLayout;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 
@@ -32,6 +34,10 @@ public class ChatViewHolder extends UltimateAdapter.DataVH {
     public Space spaceTop;
     @InjectView(R.id.content_container)
     public CardView card;
+    @InjectView(R.id.avatar_overlay)
+    public ImageView avatarOverlay;
+    @InjectView(R.id.avatar_layout)
+    public ZDepthShadowLayout avatarShadow;
 
     public ChatViewHolder(View itemView) {
         super(itemView);
