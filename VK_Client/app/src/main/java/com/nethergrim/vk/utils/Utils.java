@@ -56,7 +56,7 @@ public class Utils {
         for (String key : keys) {
             try {
                 // json.put(key, bundle.get(key)); see edit below
-                json.put(key, wrap(bundle.get(key)));
+                json.put(key, wrap(bundle.get(key)));// FIXME: 18.10.15 remove this crap out
             } catch (JSONException e) {
                 //Handle exception here
             }
