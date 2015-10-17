@@ -18,7 +18,6 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-import app.mosn.zdepthshadowlayout.ZDepth;
 import io.realm.RealmResults;
 
 /**
@@ -125,25 +124,10 @@ public class ChatAdapter extends SelectableUltimateAdapter
         if (isSelected(dataPosition)) {
             chatViewHolder.avatarOverlay.setVisibility(View.VISIBLE);
             chatViewHolder.textDate.setVisibility(View.GONE);
-            try {
-                chatViewHolder.card.postDelayed(
-                        () -> chatViewHolder.card.changeZDepth(ZDepth.Depth2), 100);
-
-                if (chatViewHolder.imageAvatar.getVisibility() == View.VISIBLE) {
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
         } else {
             chatViewHolder.avatarOverlay.setVisibility(View.GONE);
             if (shouldDisplayDate) {
                 chatViewHolder.textDate.setVisibility(View.VISIBLE);
-            }
-            try {
-                chatViewHolder.card.postDelayed(
-                        () -> chatViewHolder.card.changeZDepth(ZDepth.Depth0), 100);
-
-            } catch (Exception e) {
             }
         }
     }

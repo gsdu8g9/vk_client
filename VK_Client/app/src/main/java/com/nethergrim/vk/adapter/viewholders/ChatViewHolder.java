@@ -9,7 +9,6 @@ import com.nethergrim.vk.R;
 import com.nethergrim.vk.adapter.UltimateAdapter;
 import com.nethergrim.vk.views.imageViews.UserImageView;
 
-import app.mosn.zdepthshadowlayout.ZDepthShadowLayout;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 
@@ -31,12 +30,8 @@ public class ChatViewHolder extends UltimateAdapter.DataVH {
     public TextView textDate;
     @InjectView(R.id.top)
     public Space spaceTop;
-    @InjectView(R.id.content_container)
-    public ZDepthShadowLayout card;
     @InjectView(R.id.avatar_overlay)
     public ImageView avatarOverlay;
-    @InjectView(R.id.avatar_layout)
-    public ZDepthShadowLayout avatarShadow;
 
     public ChatViewHolder(View itemView) {
         super(itemView);
