@@ -16,6 +16,7 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
 import com.devspark.robototextview.widget.RobotoEditText;
+import com.devspark.robototextview.widget.RobotoTextView;
 import com.nethergrim.vk.R;
 import com.nethergrim.vk.activity.AbstractActivity;
 import com.nethergrim.vk.adapter.SelectableUltimateAdapter;
@@ -58,6 +59,20 @@ public abstract class BaseKeyboardFragment extends AbstractFragment
     KeyboardDetectorRelativeLayout mKeyboardDetector;
     @InjectView(R.id.selection_layout)
     FrameLayout mSelectionLayout;
+    @InjectView(R.id.textCount)
+    RobotoTextView mTextCount;
+    @InjectView(R.id.buttons_layout)
+    LinearLayout mButtonsLayout;
+    @InjectView(R.id.btn_close)
+    ImageButton mBtnClose;
+    @InjectView(R.id.btn_copy)
+    ImageButton mBtnCopy;
+    @InjectView(R.id.btn_reply)
+    ImageButton mBtnReply;
+    @InjectView(R.id.btn_forward)
+    ImageButton mBtnForward;
+    @InjectView(R.id.btn_delete)
+    ImageButton mBtnDelete;
     private boolean mShowingEmojiKeyboard = false;
     private InputMethodManager mInputMethodManager;
     private EmojiconsPopup mEmojiconsPopup;
@@ -181,6 +196,8 @@ public abstract class BaseKeyboardFragment extends AbstractFragment
         if (selectedCount == 0) {
             mInSelectedStateNow = false;
             hideSelectionToolbar();
+        } else {
+            mTextCount.setText(String.valueOf(selectedCount));
         }
     }
 
@@ -196,6 +213,7 @@ public abstract class BaseKeyboardFragment extends AbstractFragment
             mInSelectedStateNow = true;
             showSelectionToolbar();
             mAdapter.toggle(position);
+            mTextCount.setText("1");
         }
     }
 
