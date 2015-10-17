@@ -30,7 +30,6 @@ import javax.inject.Inject;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
-import io.realm.Realm;
 
 /**
  * {@link AbstractActivity} that should display user profile.
@@ -46,7 +45,6 @@ public class UserProfileActivity extends AbstractActivity {
     @InjectView(R.id.imageView2)
     UserImageView mAvatarImageView;
 
-    Realm mRealm;
     @InjectView(R.id.shadow_layout)
     ShadowLayout mShadowLayout;
     @InjectView(R.id.backgroundLayout)

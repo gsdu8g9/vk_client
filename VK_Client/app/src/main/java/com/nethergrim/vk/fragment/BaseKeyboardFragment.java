@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
@@ -55,6 +56,8 @@ public abstract class BaseKeyboardFragment extends AbstractFragment
     Toolbar mToolbar;
     @InjectView(R.id.keyboardDetector)
     KeyboardDetectorRelativeLayout mKeyboardDetector;
+    @InjectView(R.id.selection_layout)
+    FrameLayout mSelectionLayout;
     private boolean mShowingEmojiKeyboard = false;
     private InputMethodManager mInputMethodManager;
     private EmojiconsPopup mEmojiconsPopup;
@@ -82,6 +85,7 @@ public abstract class BaseKeyboardFragment extends AbstractFragment
         preInitToolbar(mToolbar);
         initToolbar(mToolbar);
         mKeyboardDetector.addKeyboardStateChangedListener(this);
+        mSelectionLayout.setVisibility(View.GONE);
         mRecycler.addOnItemTouchListener(new RecyclerItemClickListener(ctx, this));
     }
 
@@ -173,6 +177,11 @@ public abstract class BaseKeyboardFragment extends AbstractFragment
         if (mInSelectedStateNow) {
             mAdapter.toggle(position);
         }
+        int selectedCount = mAdapter.getSelectedIds().size();
+        if (selectedCount == 0) {
+            mInSelectedStateNow = false;
+            hideSelectionToolbar();
+        }
     }
 
     @Override
@@ -195,7 +204,11 @@ public abstract class BaseKeyboardFragment extends AbstractFragment
     protected abstract void initToolbar(Toolbar toolbar);
 
     private void showSelectionToolbar() {
+        mSelectionLayout.setVisibility(View.VISIBLE);
+    }
 
+    private void hideSelectionToolbar() {
+        mSelectionLayout.setVisibility(View.GONE);
     }
 
     private void showSoftKeyboard() {
