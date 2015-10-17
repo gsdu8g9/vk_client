@@ -1,5 +1,7 @@
 package com.nethergrim.vk.fragment;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -216,6 +218,33 @@ public abstract class BaseKeyboardFragment extends AbstractFragment
             mTextCount.setText("1");
         }
     }
+
+    @OnClick(R.id.btn_close)
+    public void onRemoveSelectionClicked() {
+        if (mAdapter == null) {
+            return;
+        }
+        mAdapter.clearSelection();
+        hideSelectionToolbar();
+        mInSelectedStateNow = false;
+    }
+
+
+    @OnClick(R.id.btn_copy)
+    public void onCopyClicked() {
+        String copiedText = getSelectedText();
+        if (copiedText == null) {
+            return;
+        }
+        ClipboardManager clipboard = (ClipboardManager) getActivity().getSystemService(
+                Context.CLIPBOARD_SERVICE);
+        ClipData clip = ClipData.newPlainText("vk", copiedText);
+        clipboard.setPrimaryClip(clip);
+        showToast(R.string.text_copied_to_clipboard);
+        onRemoveSelectionClicked();
+    }
+
+    public abstract String getSelectedText();
 
     protected abstract SelectableUltimateAdapter getAdapter(Context context);
 

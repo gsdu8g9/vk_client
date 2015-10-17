@@ -128,6 +128,11 @@ public class ChatFragment extends BaseKeyboardFragment implements Toolbar.OnMenu
     }
 
     @Override
+    public String getSelectedText() {
+        return "TODO"; // TODO: 17.10.15 fixme
+    }
+
+    @Override
     protected SelectableUltimateAdapter getAdapter(Context context) {
         mConversation = mRealm.where(Conversation.class).equalTo("id", mConversationId).findFirst();
         if (mConversation == null) {
