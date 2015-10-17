@@ -73,7 +73,6 @@ public abstract class BaseKeyboardFragment extends AbstractFragment
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        view.setLayerType(View.LAYER_TYPE_HARDWARE, null);
         Context ctx = view.getContext();
         mInputMethodManager = (InputMethodManager) ctx.getSystemService(
                 Context.INPUT_METHOD_SERVICE);

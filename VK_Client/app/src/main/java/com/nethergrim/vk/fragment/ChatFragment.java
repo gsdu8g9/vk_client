@@ -19,6 +19,7 @@ import com.nethergrim.vk.adapter.SelectableUltimateAdapter;
 import com.nethergrim.vk.caching.Prefs;
 import com.nethergrim.vk.event.ConversationUpdatedEvent;
 import com.nethergrim.vk.models.Conversation;
+import com.nethergrim.vk.models.Message;
 import com.nethergrim.vk.models.User;
 import com.nethergrim.vk.utils.ConversationUtils;
 import com.nethergrim.vk.utils.UserProvider;
@@ -30,6 +31,7 @@ import com.squareup.otto.Subscribe;
 import javax.inject.Inject;
 
 import io.realm.Realm;
+import io.realm.RealmResults;
 
 /**
  * @author andrej on 07.08.15.
@@ -136,7 +138,18 @@ public class ChatFragment extends BaseKeyboardFragment implements Toolbar.OnMenu
             mAnotherUser = mUserProvider.getUser(mConversation.getId());
         }
 
-        mChatAdapter = new ChatAdapter(mConversationId, mIsGroupChat);
+        RealmResults<Message> mMessages;
+        if (mIsGroupChat) {
+            mMessages = mRealm.where(Message.class)
+                    .equalTo("chat_id", mConversationId)
+                    .findAllSorted("date", false)
+            ;
+        } else {
+            mMessages = mRealm.where(Message.class)
+                    .equalTo("user_id", mConversationId)
+                    .findAllSorted("date", false);
+        }
+        mChatAdapter = new ChatAdapter(mMessages);
         return mChatAdapter;
     }
 

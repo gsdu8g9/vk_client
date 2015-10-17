@@ -19,7 +19,6 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import app.mosn.zdepthshadowlayout.ZDepth;
-import io.realm.Realm;
 import io.realm.RealmResults;
 
 /**
@@ -48,20 +47,11 @@ public class ChatAdapter extends SelectableUltimateAdapter
     private float mSelectedCardElevation;
 
 
-    public ChatAdapter(long conversationId, boolean isAGroupChat) {
+    public ChatAdapter(RealmResults<Message> messages) {
         MyApplication.getInstance().getMainComponent().inject(this);
-        Realm realm = Realm.getDefaultInstance();
+        this.mMessages = messages;
         setHasStableIds(true);
         mUsersMap = new HashMap<>();
-        if (isAGroupChat) {
-            mMessages = realm.where(Message.class)
-                    .equalTo("chat_id", conversationId)
-                    .findAllSorted("date", false);
-        } else {
-            mMessages = realm.where(Message.class)
-                    .equalTo("user_id", conversationId)
-                    .findAllSorted("date", false);
-        }
         mSelectedCardElevation = Constants.mDensity * 12;
     }
 
