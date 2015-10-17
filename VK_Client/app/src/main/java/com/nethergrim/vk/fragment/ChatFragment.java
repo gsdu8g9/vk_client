@@ -21,6 +21,7 @@ import com.nethergrim.vk.event.ConversationUpdatedEvent;
 import com.nethergrim.vk.models.Conversation;
 import com.nethergrim.vk.models.Message;
 import com.nethergrim.vk.models.User;
+import com.nethergrim.vk.models.outcoming_attachments.MessageAttachment;
 import com.nethergrim.vk.utils.ConversationUtils;
 import com.nethergrim.vk.utils.UserProvider;
 import com.nethergrim.vk.views.PaginationManager;
@@ -28,6 +29,7 @@ import com.nethergrim.vk.web.WebIntentHandler;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 
+import java.util.List;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -130,6 +132,17 @@ public class ChatFragment extends BaseKeyboardFragment implements Toolbar.OnMenu
     }
 
     @Override
+    public void deleteSelectedMessages(Set<Long> dataIds) {
+        // TODO: 17.10.15 implement
+    }
+
+    @Override
+    public List<MessageAttachment> getSelectedMessages() {
+        // TODO: 17.10.15 implement
+        return null;
+    }
+
+    @Override
     public String getSelectedText() {
         return "TODO"; // TODO: 17.10.15 fixme
     }
@@ -163,11 +176,6 @@ public class ChatFragment extends BaseKeyboardFragment implements Toolbar.OnMenu
     @Override
     public void initToolbar(Toolbar toolbar) {
         toolbar.setOnMenuItemClickListener(this);
-    }
-
-    @Override
-    public void replyToSelectedMessages(Set<Long> selectedMessageIds) {
-        // TODO: 17.10.15 implement
     }
 
     @Override
