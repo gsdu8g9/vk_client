@@ -1,8 +1,10 @@
 package com.nethergrim.vk.adapter;
 
+import android.content.Context;
 import android.text.format.DateUtils;
 import android.view.View;
 
+import com.nethergrim.vk.Constants;
 import com.nethergrim.vk.MyApplication;
 import com.nethergrim.vk.R;
 import com.nethergrim.vk.adapter.viewholders.ChatViewHolder;
@@ -16,7 +18,6 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-import io.realm.Realm;
 import io.realm.RealmResults;
 
 /**
@@ -26,7 +27,8 @@ import io.realm.RealmResults;
  * @author Andrey Drobyazko (c2q9450@gmail.com).
  *         All rights reserved.
  */
-public class ChatAdapter extends UltimateAdapter implements UltimateAdapter.HeaderInterface {
+public class ChatAdapter extends SelectableUltimateAdapter
+        implements UltimateAdapter.FooterInterface {
 
     public static final int TYPE_MY = 1;
     public static final int TYPE_NOT_MINE = 0;
@@ -40,21 +42,18 @@ public class ChatAdapter extends UltimateAdapter implements UltimateAdapter.Head
     private Map<Long, User> mUsersMap;
 
 
-    public ChatAdapter(long conversationId, boolean isAGroupChat) {
+    private int mSelectedColor = -1;
+    private float mSelectedCardElevation;
+
+
+    public ChatAdapter(RealmResults<Message> messages) {
         MyApplication.getInstance().getMainComponent().inject(this);
-        Realm realm = Realm.getDefaultInstance();
+        this.mMessages = messages;
         setHasStableIds(true);
         mUsersMap = new HashMap<>();
-        if (isAGroupChat) {
-            mMessages = realm.where(Message.class)
-                    .equalTo("chat_id", conversationId)
-                    .findAllSorted("date", false);
-        } else {
-            mMessages = realm.where(Message.class)
-                    .equalTo("user_id", conversationId)
-                    .findAllSorted("date", false);
-        }
+        mSelectedCardElevation = Constants.mDensity * 12;
     }
+
 
     @Override
     public int getDataSize() {
@@ -92,12 +91,16 @@ public class ChatAdapter extends UltimateAdapter implements UltimateAdapter.Head
 
     @Override
     public DataVH getDataViewHolder(View v, int dataViewType) {
+        if (mSelectedColor == -1) {
+            mSelectedColor = v.getContext().getResources().getColor(R.color.primary_light);
+        }
         return new ChatViewHolder(v);
     }
 
     @Override
     public void bindDataVH(DataVH vh, int dataPosition) {
         ChatViewHolder chatViewHolder = (ChatViewHolder) vh;
+        Context ctx = ((ChatViewHolder) vh).itemView.getContext();
         Message message = mMessages.get(dataPosition);
         User user = getUserById(message.getFrom_id());
         boolean displayAvatarAndSpace = shouldDisplaySpaceAndAvatar(dataPosition, message);
@@ -117,23 +120,30 @@ public class ChatAdapter extends UltimateAdapter implements UltimateAdapter.Head
         } else {
             chatViewHolder.textDate.setVisibility(View.INVISIBLE);
         }
-
         chatViewHolder.textBody.setText(message.getBody());
-
+        if (isSelected(dataPosition)) {
+            chatViewHolder.avatarOverlay.setVisibility(View.VISIBLE);
+            chatViewHolder.textDate.setVisibility(View.GONE);
+        } else {
+            chatViewHolder.avatarOverlay.setVisibility(View.GONE);
+            if (shouldDisplayDate) {
+                chatViewHolder.textDate.setVisibility(View.VISIBLE);
+            }
+        }
     }
 
     @Override
-    public HeaderVH getHeaderVH(View v) {
-        return new MyHeaderVH(v);
+    public FooterVH getFooterVH(View v) {
+        return new MyFooterVH(v);
     }
 
     @Override
-    public int getHeaderViewResId() {
+    public int getFooterViewResId() {
         return R.layout.spinner;
     }
 
     @Override
-    public void bindHeaderVH(HeaderVH vh) {
+    public void bindFooterVH(FooterVH vh) {
         // nothing here, just empty spinner
     }
 
@@ -179,9 +189,9 @@ public class ChatAdapter extends UltimateAdapter implements UltimateAdapter.Head
         return user;
     }
 
-    public static class MyHeaderVH extends HeaderVH {
+    public static class MyFooterVH extends FooterVH {
 
-        public MyHeaderVH(View itemView) {
+        public MyFooterVH(View itemView) {
             super(itemView);
         }
     }

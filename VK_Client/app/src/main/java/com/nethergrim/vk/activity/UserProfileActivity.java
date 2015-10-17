@@ -30,7 +30,6 @@ import javax.inject.Inject;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
-import io.realm.Realm;
 
 /**
  * {@link AbstractActivity} that should display user profile.
@@ -46,7 +45,6 @@ public class UserProfileActivity extends AbstractActivity {
     @InjectView(R.id.imageView2)
     UserImageView mAvatarImageView;
 
-    Realm mRealm;
     @InjectView(R.id.shadow_layout)
     ShadowLayout mShadowLayout;
     @InjectView(R.id.backgroundLayout)
@@ -125,12 +123,8 @@ public class UserProfileActivity extends AbstractActivity {
                     .to(mAvatarImageView)
                     .duration(ANIMATION_DURATION)
                     .start(savedInstanceState);
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    runBackgroundRippleAnimation(true, null);
-                }
-            }, ANIMATION_DURATION);
+            new Handler().postDelayed(() -> runBackgroundRippleAnimation(true, null),
+                    ANIMATION_DURATION / 2);
         }
     }
 
@@ -154,8 +148,7 @@ public class UserProfileActivity extends AbstractActivity {
                     .translationY(0f)
                     .alpha(1f)
                     .setInterpolator(new AccelerateInterpolator())
-                    .setDuration(
-                            ANIMATION_DURATION)
+                    .setDuration(ANIMATION_DURATION)
                     .start();
         } else {
             mRevealContainer.startOut();

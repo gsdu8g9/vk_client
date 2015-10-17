@@ -1,5 +1,7 @@
 package com.nethergrim.vk.fragment;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -11,14 +13,23 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
 import com.devspark.robototextview.widget.RobotoEditText;
+import com.devspark.robototextview.widget.RobotoTextView;
 import com.nethergrim.vk.R;
 import com.nethergrim.vk.activity.AbstractActivity;
+import com.nethergrim.vk.adapter.SelectableUltimateAdapter;
 import com.nethergrim.vk.emoji.EmojiconsPopup;
+import com.nethergrim.vk.models.outcoming_attachments.BaseAttachment;
+import com.nethergrim.vk.models.outcoming_attachments.MessageAttachment;
+import com.nethergrim.vk.utils.RecyclerItemClickListener;
 import com.nethergrim.vk.views.KeyboardDetectorRelativeLayout;
+
+import java.util.List;
+import java.util.Set;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -31,10 +42,12 @@ import github.ankushsachdeva.emojicon.emoji.Emojicon;
  */
 public abstract class BaseKeyboardFragment extends AbstractFragment
         implements EmojiconGridView.OnEmojiconClickedListener,
-        KeyboardDetectorRelativeLayout.IKeyboardChanged {
+        KeyboardDetectorRelativeLayout.IKeyboardChanged,
+        RecyclerItemClickListener.OnItemClickListener {
 
 
     private static final long DELAY_MS = 30;
+    protected boolean mInSelectedStateNow;
     @InjectView(R.id.btnLeft)
     ImageButton mBtnLeft;
     @InjectView(R.id.editText)
@@ -51,9 +64,26 @@ public abstract class BaseKeyboardFragment extends AbstractFragment
     Toolbar mToolbar;
     @InjectView(R.id.keyboardDetector)
     KeyboardDetectorRelativeLayout mKeyboardDetector;
+    @InjectView(R.id.selection_layout)
+    FrameLayout mSelectionLayout;
+    @InjectView(R.id.textCount)
+    RobotoTextView mTextCount;
+    @InjectView(R.id.buttons_layout)
+    LinearLayout mButtonsLayout;
+    @InjectView(R.id.btn_close)
+    ImageButton mBtnClose;
+    @InjectView(R.id.btn_copy)
+    ImageButton mBtnCopy;
+    @InjectView(R.id.btn_reply)
+    ImageButton mBtnReply;
+    @InjectView(R.id.btn_forward)
+    ImageButton mBtnForward;
+    @InjectView(R.id.btn_delete)
+    ImageButton mBtnDelete;
     private boolean mShowingEmojiKeyboard = false;
     private InputMethodManager mInputMethodManager;
     private EmojiconsPopup mEmojiconsPopup;
+    private SelectableUltimateAdapter mAdapter;
 
     @Nullable
     @Override
@@ -71,10 +101,14 @@ public abstract class BaseKeyboardFragment extends AbstractFragment
         Context ctx = view.getContext();
         mInputMethodManager = (InputMethodManager) ctx.getSystemService(
                 Context.INPUT_METHOD_SERVICE);
+        mAdapter = getAdapter(ctx);
+        mRecycler.setAdapter(mAdapter);
         initRecyclerView(mRecycler);
         preInitToolbar(mToolbar);
         initToolbar(mToolbar);
         mKeyboardDetector.addKeyboardStateChangedListener(this);
+        mSelectionLayout.setVisibility(View.GONE);
+        mRecycler.addOnItemTouchListener(new RecyclerItemClickListener(ctx, this));
     }
 
     @Override
@@ -155,7 +189,122 @@ public abstract class BaseKeyboardFragment extends AbstractFragment
         mBtnLeft.setImageResource(R.drawable.ic_action_social_mood);
     }
 
+    @Override
+    public void onItemClick(View childView, int position) {
+        // if is in selection state then toggle selection for item
+        if (mAdapter == null) {
+            return;
+        }
+        position = mAdapter.getDataPosition(position);
+        if (mInSelectedStateNow) {
+            mAdapter.toggle(position);
+        }
+        int selectedCount = mAdapter.getSelectedIds().size();
+        if (selectedCount == 0) {
+            mInSelectedStateNow = false;
+            hideSelectionToolbar();
+        } else {
+            mTextCount.setText(String.valueOf(selectedCount));
+        }
+    }
+
+    @Override
+    public void onItemLongPress(View childView, int position) {
+        // move to selection state and select one item
+        if (mAdapter == null) {
+            return;
+        }
+        position = mAdapter.getDataPosition(position);
+
+        if (!mInSelectedStateNow) {
+            mInSelectedStateNow = true;
+            showSelectionToolbar();
+            mAdapter.toggle(position);
+            mTextCount.setText("1");
+        }
+    }
+
+    @OnClick(R.id.btn_close)
+    public void onRemoveSelectionClicked() {
+        if (mAdapter == null) {
+            return;
+        }
+        mAdapter.clearSelection();
+        hideSelectionToolbar();
+        mInSelectedStateNow = false;
+    }
+
+
+    @OnClick(R.id.btn_copy)
+    public void onCopyClicked() {
+        if (mAdapter == null) {
+            return;
+        }
+        String copiedText = getSelectedText();
+        if (copiedText == null) {
+            return;
+        }
+        ClipboardManager clipboard = (ClipboardManager) getActivity().getSystemService(
+                Context.CLIPBOARD_SERVICE);
+        ClipData clip = ClipData.newPlainText("vk", copiedText);
+        clipboard.setPrimaryClip(clip);
+        showToast(R.string.text_copied_to_clipboard);
+        onRemoveSelectionClicked();
+    }
+
+    @OnClick(R.id.btn_reply)
+    public void onReplyClicked() {
+        if (mAdapter == null) {
+            return;
+        }
+        addAttachment(getSelectedMessages());
+        onRemoveSelectionClicked();
+    }
+
+    @OnClick(R.id.btn_forward)
+    public void onForwardClicked() {
+        if (mAdapter == null) {
+            return;
+        }
+        List<MessageAttachment> messages = getSelectedMessages();
+        // TODO: 17.10.15 implement - go back to conversations screen, to select a person, than
+        // just attach messages
+
+        onRemoveSelectionClicked();
+    }
+
+    @OnClick(R.id.btn_delete)
+    public void onDeleteClicked() {
+        if (mAdapter == null) {
+            return;
+        }
+        // TODO: 17.10.15 add asking dialog here
+        Set<Long> ids = mAdapter.getSelectedIds();
+        deleteSelectedMessages(ids);
+        onRemoveSelectionClicked();
+    }
+
+    public abstract void deleteSelectedMessages(Set<Long> dataIds);
+
+    public abstract List<MessageAttachment> getSelectedMessages();
+
+    public abstract String getSelectedText();
+
+    protected abstract SelectableUltimateAdapter getAdapter(Context context);
+
     protected abstract void initToolbar(Toolbar toolbar);
+
+    private void addAttachment(List<? extends BaseAttachment> attachments) {
+        // TODO: 17.10.15 implement
+    }
+
+    private void showSelectionToolbar() {
+        mSelectionLayout.setVisibility(View.VISIBLE);
+    }
+
+    private void hideSelectionToolbar() {
+        mSelectionLayout.setVisibility(View.GONE);
+    }
 
     private void showSoftKeyboard() {
         if (mEditText == null) {
