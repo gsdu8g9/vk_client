@@ -139,8 +139,8 @@ public class WorkerService extends Service {
     private void handleActionFetchStickers(Intent intent) {
         mDataManager.getStickerItems()
                 .subscribe(
-                        stickerDbItems -> Log.e("TAG", "on next list")
-                        , e -> {
+                        stickerDbItems -> {
+                        }, e -> {
                             if (!(e instanceof UnknownHostException)) {
                                 Log.e("WebError", e.toString() + " " + e.getMessage());
                                 // TODO: 05.09.15 add analytics handling here

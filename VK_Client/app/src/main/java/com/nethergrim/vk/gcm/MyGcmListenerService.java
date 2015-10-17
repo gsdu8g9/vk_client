@@ -70,7 +70,10 @@ public class MyGcmListenerService extends GcmListenerService {
     }
 
     private void handleNotificationForPush(final PushObject pushObject) {
-
+        if (pushObject == null) {
+            Log.e(TAG, "fuck, for some reason push object is null");
+            return;
+        }
         switch (pushObject.getPushType()) {
             case Message:
                 PushMessage pushMessage = (PushMessage) pushObject;
