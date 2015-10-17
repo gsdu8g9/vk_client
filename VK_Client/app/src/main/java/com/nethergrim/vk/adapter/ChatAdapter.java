@@ -1,10 +1,8 @@
 package com.nethergrim.vk.adapter;
 
-import android.content.Context;
 import android.text.format.DateUtils;
 import android.view.View;
 
-import com.nethergrim.vk.Constants;
 import com.nethergrim.vk.MyApplication;
 import com.nethergrim.vk.R;
 import com.nethergrim.vk.adapter.viewholders.ChatViewHolder;
@@ -38,20 +36,20 @@ public class ChatAdapter extends SelectableUltimateAdapter
     @Inject
     Prefs mPrefs;
     private RealmResults<Message> mMessages;
-    // key - Long, user id, value = user;
-    private Map<Long, User> mUsersMap;
 
+
+    private Map<Long, User> mUsersMap; // key - Long, user id, value = user;
 
     private int mSelectedColor = -1;
-    private float mSelectedCardElevation;
+    private int mUnreadColor;
 
 
     public ChatAdapter(RealmResults<Message> messages) {
         MyApplication.getInstance().getMainComponent().inject(this);
         this.mMessages = messages;
         setHasStableIds(true);
-        mUsersMap = new HashMap<>();
-        mSelectedCardElevation = Constants.mDensity * 12;
+        mUsersMap = new HashMap<>(20);
+        mUnreadColor = MyApplication.getInstance().getResources().getColor(R.color.primary_light);
     }
 
 
@@ -100,7 +98,6 @@ public class ChatAdapter extends SelectableUltimateAdapter
     @Override
     public void bindDataVH(DataVH vh, int dataPosition) {
         ChatViewHolder chatViewHolder = (ChatViewHolder) vh;
-        Context ctx = ((ChatViewHolder) vh).itemView.getContext();
         Message message = mMessages.get(dataPosition);
         User user = getUserById(message.getFrom_id());
         boolean displayAvatarAndSpace = shouldDisplaySpaceAndAvatar(dataPosition, message);
@@ -130,6 +127,7 @@ public class ChatAdapter extends SelectableUltimateAdapter
                 chatViewHolder.textDate.setVisibility(View.VISIBLE);
             }
         }
+        chatViewHolder.itemView.setBackgroundColor(message.isRead_state() == 0 ? mUnreadColor : 0);
     }
 
     @Override
