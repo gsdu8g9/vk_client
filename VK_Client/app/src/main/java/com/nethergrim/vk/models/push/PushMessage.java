@@ -1,5 +1,6 @@
 package com.nethergrim.vk.models.push;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import org.parceler.Parcel;
@@ -8,6 +9,7 @@ import org.parceler.Parcel;
  * @author andrej on 23.07.15.
  */
 @Parcel
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class PushMessage extends PushObject {
 
 //        Bundle[{msg_id=8345, uid=69621580, text=lol, type=msg, badge=1, collapse_key=msg}]

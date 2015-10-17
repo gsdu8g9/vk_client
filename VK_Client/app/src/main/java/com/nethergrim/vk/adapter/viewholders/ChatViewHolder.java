@@ -2,6 +2,7 @@ package com.nethergrim.vk.adapter.viewholders;
 
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.Space;
 import android.widget.TextView;
 
@@ -32,6 +33,8 @@ public class ChatViewHolder extends UltimateAdapter.DataVH {
     public Space spaceTop;
     @InjectView(R.id.avatar_overlay)
     public ImageView avatarOverlay;
+    @InjectView(R.id.root)
+    public RelativeLayout root;
 
     public ChatViewHolder(View itemView) {
         super(itemView);

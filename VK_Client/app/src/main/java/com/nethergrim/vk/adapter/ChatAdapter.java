@@ -127,7 +127,8 @@ public class ChatAdapter extends SelectableUltimateAdapter
                 chatViewHolder.textDate.setVisibility(View.VISIBLE);
             }
         }
-        chatViewHolder.itemView.setBackgroundColor(message.isRead_state() == 0 ? mUnreadColor : 0);
+        chatViewHolder.root.setBackgroundColor(
+                message.getOut() == 0 && message.isRead_state() == 0 ? mUnreadColor : 0);
     }
 
     @Override
