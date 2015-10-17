@@ -123,12 +123,8 @@ public class UserProfileActivity extends AbstractActivity {
                     .to(mAvatarImageView)
                     .duration(ANIMATION_DURATION)
                     .start(savedInstanceState);
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    runBackgroundRippleAnimation(true, null);
-                }
-            }, ANIMATION_DURATION);
+            new Handler().postDelayed(() -> runBackgroundRippleAnimation(true, null),
+                    ANIMATION_DURATION / 2);
         }
     }
 
@@ -152,8 +148,7 @@ public class UserProfileActivity extends AbstractActivity {
                     .translationY(0f)
                     .alpha(1f)
                     .setInterpolator(new AccelerateInterpolator())
-                    .setDuration(
-                            ANIMATION_DURATION)
+                    .setDuration(ANIMATION_DURATION)
                     .start();
         } else {
             mRevealContainer.startOut();
