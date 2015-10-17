@@ -28,6 +28,8 @@ import com.nethergrim.vk.web.WebIntentHandler;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 
+import java.util.Set;
+
 import javax.inject.Inject;
 
 import io.realm.Realm;
@@ -161,6 +163,11 @@ public class ChatFragment extends BaseKeyboardFragment implements Toolbar.OnMenu
     @Override
     public void initToolbar(Toolbar toolbar) {
         toolbar.setOnMenuItemClickListener(this);
+    }
+
+    @Override
+    public void replyToSelectedMessages(Set<Long> selectedMessageIds) {
+        // TODO: 17.10.15 implement
     }
 
     @Override

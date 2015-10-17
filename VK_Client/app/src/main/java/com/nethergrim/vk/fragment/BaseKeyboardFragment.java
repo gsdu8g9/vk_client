@@ -23,8 +23,12 @@ import com.nethergrim.vk.R;
 import com.nethergrim.vk.activity.AbstractActivity;
 import com.nethergrim.vk.adapter.SelectableUltimateAdapter;
 import com.nethergrim.vk.emoji.EmojiconsPopup;
+import com.nethergrim.vk.models.outcoming_attachments.BaseAttachment;
+import com.nethergrim.vk.models.outcoming_attachments.MessageAttachment;
 import com.nethergrim.vk.utils.RecyclerItemClickListener;
 import com.nethergrim.vk.views.KeyboardDetectorRelativeLayout;
+
+import java.util.List;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -232,6 +236,9 @@ public abstract class BaseKeyboardFragment extends AbstractFragment
 
     @OnClick(R.id.btn_copy)
     public void onCopyClicked() {
+        if (mAdapter == null) {
+            return;
+        }
         String copiedText = getSelectedText();
         if (copiedText == null) {
             return;
@@ -244,11 +251,38 @@ public abstract class BaseKeyboardFragment extends AbstractFragment
         onRemoveSelectionClicked();
     }
 
+    @OnClick(R.id.btn_reply)
+    public void onReplyClicked() {
+        if (mAdapter == null) {
+            return;
+        }
+        addAttachment(getSelectedMessages());
+        onRemoveSelectionClicked();
+    }
+
+    @OnClick(R.id.btn_forward)
+    public void onForwardClicked() {
+        if (mAdapter == null) {
+            return;
+        }
+        List<MessageAttachment> messages = getSelectedMessages();
+        // TODO: 17.10.15 implement - go back to conversations screen, to select a person, than
+        // just attach messages
+
+        onRemoveSelectionClicked();
+    }
+
+    public abstract List<MessageAttachment> getSelectedMessages();
+
     public abstract String getSelectedText();
 
     protected abstract SelectableUltimateAdapter getAdapter(Context context);
 
     protected abstract void initToolbar(Toolbar toolbar);
+
+    private void addAttachment(List<? extends BaseAttachment> attachments) {
+        // TODO: 17.10.15 implement
+    }
 
     private void showSelectionToolbar() {
         mSelectionLayout.setVisibility(View.VISIBLE);
