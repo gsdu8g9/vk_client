@@ -29,6 +29,7 @@ import com.nethergrim.vk.utils.RecyclerItemClickListener;
 import com.nethergrim.vk.views.KeyboardDetectorRelativeLayout;
 
 import java.util.List;
+import java.util.Set;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -271,6 +272,19 @@ public abstract class BaseKeyboardFragment extends AbstractFragment
 
         onRemoveSelectionClicked();
     }
+
+    @OnClick(R.id.btn_delete)
+    public void onDeleteClicked() {
+        if (mAdapter == null) {
+            return;
+        }
+        // TODO: 17.10.15 add asking dialog here
+        Set<Long> ids = mAdapter.getSelectedIds();
+        deleteSelectedMessages(ids);
+        onRemoveSelectionClicked();
+    }
+
+    public abstract void deleteSelectedMessages(Set<Long> dataIds);
 
     public abstract List<MessageAttachment> getSelectedMessages();
 
