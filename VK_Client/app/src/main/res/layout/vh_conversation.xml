@@ -5,6 +5,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/ripple"
     android:layout_width="match_parent"
+    app:mrl_rippleDuration="150"
+    app:mrl_rippleColor="@color/secondary_text"
     android:layout_height="wrap_content">
 
     <RelativeLayout
