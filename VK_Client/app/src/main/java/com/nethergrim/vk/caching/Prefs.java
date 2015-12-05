@@ -46,4 +46,16 @@ public interface Prefs {
     void setMarkMessagesAsRead(boolean markMessagesAsRead);
 
     boolean markMessagesAsRead();
+
+    /**
+     * Should set, if user wants to display unread messages as unread.
+     * Or just display them like regular messages. This flag is only for incoming messages
+     */
+    void setDispalyUnreadMessagesAsUnread(boolean accessible);
+
+    /**
+     * Should return true or false, depending on if user wants to display unread messages as unread.
+     * Or just display them like regular messages. This flag is only for incoming messages
+     */
+    boolean isDisplayingUnreadMessagesAsUnread();
 }

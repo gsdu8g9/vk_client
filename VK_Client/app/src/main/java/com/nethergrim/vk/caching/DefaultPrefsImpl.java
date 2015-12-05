@@ -20,6 +20,7 @@ public class DefaultPrefsImpl implements Prefs {
     public static final String KEY_FETCH_STICKERS_TIMESTAMP = "fetch_stickers_timestamp";
     public static final String KEY_EMOJI_TAB = "emoji_tab";
     public static final String KEY_MARK_MESSAGES_AS_READ = "mark_as_read";
+    public static final String KEY_DISPLAY_UNREAD_AS_UNREAD = "display_unread_as_unread";
     private static final String KEY_TOKEN = "token";
     private SharedPreferences mPrefs;
 
@@ -131,6 +132,16 @@ public class DefaultPrefsImpl implements Prefs {
     @Override
     public boolean markMessagesAsRead() {
         return mPrefs.getBoolean(KEY_MARK_MESSAGES_AS_READ, true);
+    }
+
+    @Override
+    public void setDispalyUnreadMessagesAsUnread(boolean accessible) {
+        mPrefs.edit().putBoolean(KEY_DISPLAY_UNREAD_AS_UNREAD, accessible).apply();
+    }
+
+    @Override
+    public boolean isDisplayingUnreadMessagesAsUnread() {
+        return mPrefs.getBoolean(KEY_DISPLAY_UNREAD_AS_UNREAD, true);
     }
 
 }
