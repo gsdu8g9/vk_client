@@ -23,6 +23,7 @@ import javax.inject.Inject;
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
 import io.realm.RealmResults;
+import io.realm.Sort;
 
 /**
  * {@link android.support.v7.widget.RecyclerView.Adapter} that should be used to display list of
@@ -54,7 +55,7 @@ public class ConversationsAdapter extends UltimateAdapter
         mRealm.setAutoRefresh(true);
         this.mData = mRealm.where(Conversation.class)
                 .equalTo("message.deleted", 0)
-                .findAllSorted("date", false);
+                .findAllSorted("date", Sort.DESCENDING);
         Context ctx = MyApplication.getInstance();
         textColorPrimary = ctx.getResources().getColor(R.color.primary_text);
         textColorSecondary = ctx.getResources().getColor(R.color.secondary_text);

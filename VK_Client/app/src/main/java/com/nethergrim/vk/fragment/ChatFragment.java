@@ -36,6 +36,7 @@ import javax.inject.Inject;
 
 import io.realm.Realm;
 import io.realm.RealmResults;
+import io.realm.Sort;
 
 /**
  * @author andrej on 07.08.15.
@@ -162,12 +163,11 @@ public class ChatFragment extends BaseKeyboardFragment implements Toolbar.OnMenu
         if (mIsGroupChat) {
             mMessages = mRealm.where(Message.class)
                     .equalTo("chat_id", mConversationId)
-                    .findAllSorted("date", false)
-            ;
+                    .findAllSorted("date", Sort.DESCENDING);
         } else {
             mMessages = mRealm.where(Message.class)
                     .equalTo("user_id", mConversationId)
-                    .findAllSorted("date", false);
+                    .findAllSorted("date", Sort.DESCENDING);
         }
         mChatAdapter = new ChatAdapter(mMessages);
         return mChatAdapter;

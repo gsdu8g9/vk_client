@@ -88,7 +88,7 @@ public class MyApplication extends Application {
             }
         };
         VKSdk.initialize(vkSdkListener, Constants.VK_APP_ID);
-//        printFingerPrints();
+//        logFingerPrints();
         initDagger2();
         initRealm();
         initFresco();
@@ -106,7 +106,7 @@ public class MyApplication extends Application {
         Fresco.initialize(this);
     }
 
-    private void printFingerPrints() {
+    private void logFingerPrints() {
         String[] fingerprints = VKUtil.getCertificateFingerprint(this,
                 this.getPackageName());
         if (fingerprints != null && BuildConfig.DEBUG) {
@@ -124,11 +124,8 @@ public class MyApplication extends Application {
     private void initRealm() {
         RealmConfiguration config = new RealmConfiguration.Builder(this)
                 .name("vk_main_realm")
-                .schemaVersion(2)
-                .migration((realm, version) -> {
-                    Log.e("TAG","migrating to " + version);
-                    return 0;
-                })
+                .schemaVersion(1)
+                .deleteRealmIfMigrationNeeded()
                 .build();
         Realm.setDefaultConfiguration(config);
     }
