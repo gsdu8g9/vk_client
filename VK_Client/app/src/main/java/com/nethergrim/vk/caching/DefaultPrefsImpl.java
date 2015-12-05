@@ -19,6 +19,7 @@ public class DefaultPrefsImpl implements Prefs {
     public static final String KEY_KEYBOARD_HEIGHT = "keyboard_height";
     public static final String KEY_FETCH_STICKERS_TIMESTAMP = "fetch_stickers_timestamp";
     public static final String KEY_EMOJI_TAB = "emoji_tab";
+    public static final String KEY_MARK_MESSAGES_AS_READ = "mark_as_read";
     private static final String KEY_TOKEN = "token";
     private SharedPreferences mPrefs;
 
@@ -120,6 +121,16 @@ public class DefaultPrefsImpl implements Prefs {
     @Override
     public void setCurrentEmojiTab(int tabNum) {
         mPrefs.edit().putInt(KEY_EMOJI_TAB, tabNum).apply();
+    }
+
+    @Override
+    public void setMarkMessagesAsRead(boolean markMessagesAsRead) {
+        mPrefs.edit().putBoolean(KEY_MARK_MESSAGES_AS_READ, markMessagesAsRead).apply();
+    }
+
+    @Override
+    public boolean markMessagesAsRead() {
+        return mPrefs.getBoolean(KEY_MARK_MESSAGES_AS_READ, true);
     }
 
 }

@@ -42,4 +42,8 @@ public interface Prefs {
     int getCurrentEmojiTab();
 
     void setCurrentEmojiTab(int tabNum);
+
+    void setMarkMessagesAsRead(boolean markMessagesAsRead);
+
+    boolean markMessagesAsRead();
 }
