@@ -77,6 +77,7 @@ public class ConversationsFragment extends AbstractFragment
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setRetainInstance(true);
         MyApplication.getInstance().getMainComponent().inject(this);
     }
 

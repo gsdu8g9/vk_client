@@ -14,6 +14,7 @@ import rx.functions.Action1;
  */
 public class LoggerObserver implements Observer<WebResponse> {
 
+    private static LoggerObserver obs = new LoggerObserver();
     private Action1<WebResponse> mOnNextObserver;
 
     public LoggerObserver(Action1<WebResponse> onNextObserver) {
@@ -21,6 +22,10 @@ public class LoggerObserver implements Observer<WebResponse> {
     }
 
     public LoggerObserver() {
+    }
+
+    public static LoggerObserver getInstance() {
+        return obs;
     }
 
     @Override
@@ -31,7 +36,7 @@ public class LoggerObserver implements Observer<WebResponse> {
     @Override
     public void onError(Throwable e) {
         if (e instanceof UnknownHostException) {
-            // ignore, just no internet connection
+            e.printStackTrace();
         } else {
             Log.e("WebError", e.toString() + " " + e.getMessage());
             // TODO: 05.09.15 add analytics handling here

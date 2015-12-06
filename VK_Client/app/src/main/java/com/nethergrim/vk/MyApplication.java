@@ -124,7 +124,7 @@ public class MyApplication extends Application {
     private void initRealm() {
         RealmConfiguration config = new RealmConfiguration.Builder(this)
                 .name("vk_main_realm")
-                .schemaVersion(1)
+                .schemaVersion(2)
                 .deleteRealmIfMigrationNeeded()
                 .build();
         Realm.setDefaultConfiguration(config);

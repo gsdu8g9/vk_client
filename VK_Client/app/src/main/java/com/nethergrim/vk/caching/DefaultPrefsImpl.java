@@ -2,9 +2,19 @@ package com.nethergrim.vk.caching;
 
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 
 import com.nethergrim.vk.MyApplication;
 import com.nethergrim.vk.enums.MainActivityState;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import hugo.weaving.DebugLog;
+import rx.Observable;
+import rx.functions.Func1;
+import rx.schedulers.Schedulers;
 
 /**
  * @author andreydrobyazko on 3/20/15.
@@ -21,6 +31,7 @@ public class DefaultPrefsImpl implements Prefs {
     public static final String KEY_EMOJI_TAB = "emoji_tab";
     public static final String KEY_MARK_MESSAGES_AS_READ = "mark_as_read";
     public static final String KEY_DISPLAY_UNREAD_AS_UNREAD = "display_unread_as_unread";
+    public static final String KEY_SYNC_MARK_MESSAGES_TO_READ = "sync_mark_read";
     private static final String KEY_TOKEN = "token";
     private SharedPreferences mPrefs;
 
@@ -135,13 +146,60 @@ public class DefaultPrefsImpl implements Prefs {
     }
 
     @Override
-    public void setDispalyUnreadMessagesAsUnread(boolean accessible) {
+    public void setDisplayUnreadMessagesAsUnread(boolean accessible) {
         mPrefs.edit().putBoolean(KEY_DISPLAY_UNREAD_AS_UNREAD, accessible).apply();
     }
 
     @Override
     public boolean isDisplayingUnreadMessagesAsUnread() {
         return mPrefs.getBoolean(KEY_DISPLAY_UNREAD_AS_UNREAD, true);
+    }
+
+    @Override
+    @DebugLog
+    public void addConversationToSyncUnreadMessages(long conversationId, long toTime) {
+        Set<LongToLongModel> data = getConversationsToSyncUnreadMessages();
+        data.add(new LongToLongModel(conversationId, toTime));
+        setLongToLongSet(data, KEY_SYNC_MARK_MESSAGES_TO_READ);
+    }
+
+    @Override
+    @DebugLog
+    public void removeConversationToSyncUnreadMessages(long conversationId, long toTime) {
+        LongToLongModel m = new LongToLongModel(conversationId, toTime);
+        Set<LongToLongModel> data = getConversationsToSyncUnreadMessages();
+        if (data.contains(m)) {
+            data.remove(m);
+        }
+        setLongToLongSet(data, KEY_SYNC_MARK_MESSAGES_TO_READ);
+    }
+
+    @Override
+    @DebugLog
+    public Set<LongToLongModel> getConversationsToSyncUnreadMessages() {
+        return getLongToLong(KEY_SYNC_MARK_MESSAGES_TO_READ)
+                .toList()
+                .map((Func1<List<LongToLongModel>, HashSet<LongToLongModel>>) HashSet::new)
+                .toBlocking()
+                .first();
+    }
+
+    @DebugLog
+    private Observable<LongToLongModel> getLongToLong(@NonNull String key) {
+        return Observable.from(mPrefs.getStringSet(key, new HashSet<>(0)))
+                .subscribeOn(Schedulers.io())
+                .map(LongToLongModel::fromString);
+    }
+
+    @DebugLog
+    private void setLongToLongSet(@NonNull Set<LongToLongModel> data, @NonNull String key) {
+        Observable.from(data)
+                .subscribeOn(Schedulers.io())
+                .map(LongToLongModel::toString)
+                .toList()
+                .map((Func1<List<String>, HashSet<String>>) HashSet::new)
+                .doOnNext(strings -> mPrefs.edit().putStringSet(key, strings))
+                .subscribe();
     }
 
 }

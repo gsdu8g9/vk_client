@@ -49,7 +49,7 @@ public class ChatAdapter extends SelectableUltimateAdapter
         this.mMessages = messages;
         setHasStableIds(true);
         mUsersMap = new HashMap<>(20);
-        mUnreadColor = MyApplication.getInstance().getResources().getColor(R.color.primary_light);
+        mUnreadColor = MyApplication.getInstance().getResources().getColor(R.color.primary_light_opacity);
     }
 
 

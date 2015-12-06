@@ -32,12 +32,17 @@ public class WorkerService extends Service {
     public static final String ACTION_FETCH_STICKERS = Constants.PACKAGE_NAME + ".FETCH_STICKERS";
     public static final String ACTION_DELETE_CONVERSATION = Constants.PACKAGE_NAME
             + ".DELETE_CONVERSATION";
+    public static final String ACTION_MARK_MESSAGES_AS_READ = Constants.PACKAGE_NAME
+            + ".MARK_MESSAGES_AS_READ";
+    public static final String ACTION_SYNC_MESSAGES_READ_STATE = Constants.PACKAGE_NAME
+            + ".SYNC_READ_STATE";
     public static final String EXTRA_IDS = Constants.PACKAGE_NAME + ".IDS";
     public static final String EXTRA_COUNT = Constants.PACKAGE_NAME + ".COUNT";
     public static final String EXTRA_OFFSET = Constants.PACKAGE_NAME + ".OFFSET";
     public static final String EXTRA_ONLY_UNREAD = Constants.PACKAGE_NAME + ".UNREAD_ONLY";
     public static final String EXTRA_USER_ID = Constants.PACKAGE_NAME + ".USER_ID";
     public static final String EXTRA_CHAT_ID = Constants.PACKAGE_NAME + ".CHAT_ID";
+    public static final String EXTRA_TO_TIME = Constants.PACKAGE_NAME + ".TO_TIME";
     public static final String ACTION_GET_MESSAGES_HISTORY = Constants.PACKAGE_NAME
             + ".GET_MESSAGES_HISTORY";
     @Inject
@@ -104,6 +109,20 @@ public class WorkerService extends Service {
         context.startService(intent);
     }
 
+    public static void markMessagesAsRead(Context c, long conversationId, long toTime) {
+        Intent intent = new Intent(c, WorkerService.class);
+        intent.setAction(ACTION_MARK_MESSAGES_AS_READ);
+        intent.putExtra(EXTRA_CHAT_ID, conversationId);
+        intent.putExtra(EXTRA_TO_TIME, toTime);
+        c.startService(intent);
+    }
+
+    public static void syncMessagesReadState(Context c) {
+        Intent intent = new Intent(c, WorkerService.class);
+        intent.setAction(ACTION_SYNC_MESSAGES_READ_STATE);
+        c.startService(intent);
+    }
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -112,20 +131,25 @@ public class WorkerService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        if (ACTION_FETCH_CONVERSATIONS_AND_USERS.equals(intent.getAction())) {
+        String action = intent.getAction();
+        if (ACTION_FETCH_CONVERSATIONS_AND_USERS.equals(action)) {
             handleActionFetchConversationsAndUsers(intent);
-        } else if (ACTION_FETCH_USERS.equals(intent.getAction())) {
+        } else if (ACTION_FETCH_USERS.equals(action)) {
             handleActionFetchUsers(intent);
-        } else if (ACTION_FETCH_MY_FRIENDS.equals(intent.getAction())) {
+        } else if (ACTION_FETCH_MY_FRIENDS.equals(action)) {
             handleActionFetchMyFriends(intent);
-        } else if (ACTION_LAUNCH_STARTUP_TASKS.equals(intent.getAction())) {
+        } else if (ACTION_LAUNCH_STARTUP_TASKS.equals(action)) {
             handleActionLaunchStartupTasks();
-        } else if (ACTION_GET_MESSAGES_HISTORY.equals(intent.getAction())) {
+        } else if (ACTION_GET_MESSAGES_HISTORY.equals(action)) {
             handleActionFetchMessagesHistory(intent);
-        } else if (ACTION_DELETE_CONVERSATION.equals(intent.getAction())) {
+        } else if (ACTION_DELETE_CONVERSATION.equals(action)) {
             handleActionDeleteConversation(intent);
-        } else if (ACTION_FETCH_STICKERS.equals(intent.getAction())) {
+        } else if (ACTION_FETCH_STICKERS.equals(action)) {
             handleActionFetchStickers(intent);
+        } else if (ACTION_MARK_MESSAGES_AS_READ.equals(action)) {
+            handleActionMarkMessagesAsRead(intent);
+        } else if (ACTION_SYNC_MESSAGES_READ_STATE.equals(action)){
+            handleActionSyncMessagesState();
         }
         return START_REDELIVER_INTENT;
     }
@@ -134,6 +158,14 @@ public class WorkerService extends Service {
     @Override
     public IBinder onBind(Intent intent) {
         return null;
+    }
+
+    private void handleActionMarkMessagesAsRead(Intent intent) {
+        // TODO: 06.12.15
+    }
+
+    private void handleActionSyncMessagesState(){
+
     }
 
     private void handleActionFetchStickers(Intent intent) {
@@ -152,7 +184,7 @@ public class WorkerService extends Service {
     private void handleActionDeleteConversation(Intent intent) {
         final long userUd = intent.getLongExtra(EXTRA_USER_ID, 0);
         final long chatId = intent.getLongExtra(EXTRA_CHAT_ID, 0);
-        mDataManager.deleteConversation(userUd, chatId).subscribe(new LoggerObserver());
+        mDataManager.deleteConversation(userUd, chatId).subscribe(LoggerObserver.getInstance());
     }
 
     private void handleActionFetchMessagesHistory(Intent intent) {
@@ -161,22 +193,23 @@ public class WorkerService extends Service {
         String userId = intent.getExtras().getString(EXTRA_USER_ID, null);
         long chatId = intent.getExtras().getLong(EXTRA_CHAT_ID, 0);
         mDataManager.fetchMessagesHistory(count, offset, userId, chatId)
-                .subscribe(new LoggerObserver());
+                .subscribe(LoggerObserver.getInstance());
     }
 
     private void handleActionLaunchStartupTasks() {
-        mDataManager.launchStartupTasksAndPersistToDb().subscribe(new LoggerObserver());
+        mDataManager.launchStartupTasksAndPersistToDb().subscribe(LoggerObserver.getInstance());
     }
 
     private void handleActionFetchMyFriends(Intent intent) {
         final int count = intent.getIntExtra(EXTRA_COUNT, 10);
         final int offset = intent.getIntExtra(EXTRA_OFFSET, 0);
-        mDataManager.fetchFriendsAndPersistToDb(count, offset).subscribe(new LoggerObserver());
+        mDataManager.fetchFriendsAndPersistToDb(count, offset)
+                .subscribe(LoggerObserver.getInstance());
     }
 
     private void handleActionFetchUsers(Intent intent) {
         final ArrayList<Long> ids = (ArrayList<Long>) intent.getSerializableExtra(EXTRA_IDS);
-        mDataManager.fetchUsersAndPersistToDB(ids).subscribe(new LoggerObserver());
+        mDataManager.fetchUsersAndPersistToDB(ids).subscribe(LoggerObserver.getInstance());
     }
 
     private void handleActionFetchConversationsAndUsers(Intent intent) {
@@ -184,7 +217,7 @@ public class WorkerService extends Service {
         final int offset = intent.getIntExtra(EXTRA_OFFSET, 0);
         final boolean unreadOnly = intent.getBooleanExtra(EXTRA_ONLY_UNREAD, false);
         mDataManager.fetchConversationsUserAndPersist(limit, offset, unreadOnly)
-                .subscribe(new LoggerObserver());
+                .subscribe(LoggerObserver.getInstance());
     }
 
 }

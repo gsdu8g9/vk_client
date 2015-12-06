@@ -40,4 +40,11 @@ public interface WebIntentHandler {
 
     void fetchStickers();
 
+    /**
+     * Will mark incoming messages as read, and guaranteed to sync their state to the backend.
+     */
+    void markMessagesAsRead(long conversationId, long toTime);
+
+    void syncUnreadMessages();
+
 }

@@ -34,7 +34,6 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
-import io.realm.Realm;
 import io.realm.RealmResults;
 import io.realm.Sort;
 
@@ -55,7 +54,7 @@ public class ChatFragment extends BaseKeyboardFragment implements Toolbar.OnMenu
     @Inject
     Bus mBus;
 
-    Realm mRealm;
+
     private long mConversationId;
     private boolean mIsGroupChat;
     private Conversation mConversation;
@@ -79,14 +78,8 @@ public class ChatFragment extends BaseKeyboardFragment implements Toolbar.OnMenu
         MyApplication.getInstance().getMainComponent().inject(this);
         setHasOptionsMenu(true);
         setRetainInstance(true);
-        mRealm = Realm.getDefaultInstance();
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        mRealm.close();
-    }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -170,6 +163,7 @@ public class ChatFragment extends BaseKeyboardFragment implements Toolbar.OnMenu
                     .findAllSorted("date", Sort.DESCENDING);
         }
         mChatAdapter = new ChatAdapter(mMessages);
+        mWebIntentHandler.markMessagesAsRead(getChatId(), System.currentTimeMillis() / 1000);
         return mChatAdapter;
     }
 
@@ -192,6 +186,7 @@ public class ChatFragment extends BaseKeyboardFragment implements Toolbar.OnMenu
             mDataCount = e.getCount();
             mChatAdapter.notifyDataSetChanged();
             mChatAdapter.setHeaderVisibility(View.GONE);
+            mWebIntentHandler.markMessagesAsRead(getChatId(), System.currentTimeMillis() / 1000);
         }
     }
 

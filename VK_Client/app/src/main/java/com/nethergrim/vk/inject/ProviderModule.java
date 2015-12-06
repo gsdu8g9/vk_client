@@ -1,5 +1,7 @@
 package com.nethergrim.vk.inject;
 
+import android.content.Context;
+
 import com.nethergrim.vk.MyApplication;
 import com.nethergrim.vk.caching.DefaultPrefsImpl;
 import com.nethergrim.vk.caching.Prefs;
@@ -49,8 +51,8 @@ public class ProviderModule {
 
     @Provides
     @Singleton
-    ImageLoader provideImageLoader() {
-        return new PicassoImageLoaderImpl(MyApplication.getInstance());
+    ImageLoader provideImageLoader(Context context) {
+        return new PicassoImageLoaderImpl(context);
     }
 
     @Provides
@@ -78,8 +80,14 @@ public class ProviderModule {
 
     @Provides
     @Singleton
-    WebIntentHandler provideWebIntentHandler() {
-        return new WebIntentHandlerImpl();
+    Context provideContext() {
+        return MyApplication.getInstance();
+    }
+
+    @Provides
+    @Singleton
+    WebIntentHandler provideWebIntentHandler(Prefs prefs, Context context) {
+        return new WebIntentHandlerImpl(prefs, context);
     }
 
     @Provides

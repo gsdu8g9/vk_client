@@ -1,3 +1,13 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath 'com.jakewharton.hugo:hugo-plugin:1.2.1'
+    }
+}
+
 plugins {
     id "me.tatarka.retrolambda" version "3.2.2"
 }
@@ -5,7 +15,7 @@ plugins {
 apply plugin: 'com.android.application'
 apply plugin: 'com.neenbedankt.android-apt'
 apply plugin: 'com.google.gms.google-services'
-
+apply plugin: 'com.jakewharton.hugo'
 
 
 android {
@@ -15,7 +25,7 @@ android {
     buildToolsVersion "22.0.1"
     defaultConfig {
         applicationId "com.nethergrim.vk"
-        minSdkVersion 15
+        minSdkVersion 16
         targetSdkVersion 22
         versionCode 1
         versionName "0.1"
@@ -36,9 +46,12 @@ android {
         exclude 'META-INF/NOTICE'
     }
     dexOptions {
-        incremental false
+        incremental true
     }
+
+
 }
+
 
 
 
