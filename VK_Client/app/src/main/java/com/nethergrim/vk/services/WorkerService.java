@@ -3,12 +3,15 @@ package com.nethergrim.vk.services;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.nethergrim.vk.Constants;
 import com.nethergrim.vk.MyApplication;
+import com.nethergrim.vk.caching.Prefs;
+import com.nethergrim.vk.utils.DefaultLoggerObserver;
 import com.nethergrim.vk.utils.LoggerObserver;
 import com.nethergrim.vk.web.DataManager;
 
@@ -47,6 +50,9 @@ public class WorkerService extends Service {
             + ".GET_MESSAGES_HISTORY";
     @Inject
     DataManager mDataManager;
+
+    @Inject
+    Prefs mPrefs;
 
     public static void fetchConversationsAndUsers(Context context,
             int count,
@@ -148,7 +154,7 @@ public class WorkerService extends Service {
             handleActionFetchStickers(intent);
         } else if (ACTION_MARK_MESSAGES_AS_READ.equals(action)) {
             handleActionMarkMessagesAsRead(intent);
-        } else if (ACTION_SYNC_MESSAGES_READ_STATE.equals(action)){
+        } else if (ACTION_SYNC_MESSAGES_READ_STATE.equals(action)) {
             handleActionSyncMessagesState();
         }
         return START_REDELIVER_INTENT;
@@ -161,24 +167,26 @@ public class WorkerService extends Service {
     }
 
     private void handleActionMarkMessagesAsRead(Intent intent) {
-        // TODO: 06.12.15
+        Bundle args = intent.getExtras();
+        long conversationId = args.getLong(EXTRA_CHAT_ID);
+        long toTime = args.getLong(EXTRA_TO_TIME);
+        mDataManager.markMessagesAsRead(conversationId, toTime)
+                .subscribe(DefaultLoggerObserver.getInstance());
     }
 
-    private void handleActionSyncMessagesState(){
-
+    private void handleActionSyncMessagesState() {
+        mDataManager.syncMessagesReadState().subscribe(DefaultLoggerObserver.getInstance());
     }
 
     private void handleActionFetchStickers(Intent intent) {
         mDataManager.getStickerItems()
-                .subscribe(
-                        stickerDbItems -> {
-                        }, e -> {
-                            if (!(e instanceof UnknownHostException)) {
-                                Log.e("WebError", e.toString() + " " + e.getMessage());
-                                // TODO: 05.09.15 add analytics handling here
-                            }
-                        }, () -> {
-                        });
+                .subscribe(stickerDbItems -> {
+                }, e -> {
+                    if (!(e instanceof UnknownHostException)) {
+                        Log.e("WebError", e.toString() + " " + e.getMessage());
+                        // TODO: 05.09.15 add analytics handling here
+                    }
+                });
     }
 
     private void handleActionDeleteConversation(Intent intent) {

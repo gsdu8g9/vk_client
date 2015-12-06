@@ -32,6 +32,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import io.realm.Realm;
+import retrofit.client.Response;
 import rx.Observable;
 import rx.schedulers.Schedulers;
 
@@ -165,7 +166,7 @@ public class DataManagerImpl implements DataManager {
                     if (stockItems == null || stockItems.getItems() == null) {
                         return null;
                     }
-                    List<StickerDbItem> result = new ArrayList<StickerDbItem>(
+                    List<StickerDbItem> result = new ArrayList<>(
                             stockItems.getItems().size());
                     for (int i = 0, size = stockItems.getItems().size(); i < size; i++) {
                         result.add(StickerDbItem.MAPPER.call(stockItems.getItems().get(i)));
@@ -182,5 +183,15 @@ public class DataManagerImpl implements DataManager {
                     realm.close();
 
                 });
+    }
+
+    @Override
+    public Observable<Response> markMessagesAsRead(long conversationsId, long toTime) {
+        return null;
+    }
+
+    @Override
+    public Observable<Response> syncMessagesReadState() {
+        return null;
     }
 }

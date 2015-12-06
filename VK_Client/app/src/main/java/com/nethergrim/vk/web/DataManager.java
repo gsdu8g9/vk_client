@@ -10,6 +10,7 @@ import com.nethergrim.vk.models.StickerDbItem;
 
 import java.util.List;
 
+import retrofit.client.Response;
 import rx.Observable;
 
 /**
@@ -43,6 +44,12 @@ public interface DataManager {
     Observable<IntegerResponse> deleteConversation(long userId, long chatId);
 
     Observable<List<StickerDbItem>> getStickerItems();
+
+    Observable<Response> markMessagesAsRead(long conversationsId, long toTime);
+
+    Observable<Response> syncMessagesReadState();
+
+
 
 
 }
