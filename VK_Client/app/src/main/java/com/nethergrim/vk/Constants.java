@@ -34,6 +34,7 @@ public class Constants {
 
         String MESSAGES_GET_DIALOGS = "/messages.getDialogs";
         String MESSAGES_GET_HISTORY = "/messages.getHistory";
+        String MESSAGES_MARK_AS_READ = "/messages.markAsRead";
         String GET_USERS = "/users.get";
         String ACCOUNT_REGISTER_DEVICE = "/account.registerDevice";
         String ACCOUNT_UNREGISTER_DEVICE = "/account.unregisterDevice";

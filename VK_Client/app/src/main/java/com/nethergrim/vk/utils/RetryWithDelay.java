@@ -1,5 +1,7 @@
 package com.nethergrim.vk.utils;
 
+import com.nethergrim.vk.web.WebRequestManagerImpl;
+
 import java.util.concurrent.TimeUnit;
 
 import rx.Observable;
@@ -14,6 +16,10 @@ public class RetryWithDelay
     private final int _maxRetries;
     private final int _retryDelayMillis;
     private int _retryCount;
+
+    public static RetryWithDelay getInstance(){
+        return new RetryWithDelay(WebRequestManagerImpl.MAX_RETRY_COUNT, WebRequestManagerImpl.MIN_RETRY_DELAY_MS);
+    }
 
     public RetryWithDelay(final int maxRetries, final int retryDelayMillis) {
         _maxRetries = maxRetries;

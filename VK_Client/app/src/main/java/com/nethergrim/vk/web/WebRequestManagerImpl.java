@@ -51,7 +51,7 @@ public class WebRequestManagerImpl implements WebRequestManager {
             throw new VkApiError(webResponse.getError());
         }
     };
-    private RetryWithDelay mRetryCall = new RetryWithDelay(MAX_RETRY_COUNT, MIN_RETRY_DELAY_MS);
+
 
     public WebRequestManagerImpl() {
         MyApplication.getInstance().getMainComponent().inject(this);
@@ -98,7 +98,7 @@ public class WebRequestManagerImpl implements WebRequestManager {
         params.put("fields", idsValues);
         return mRetrofitInterface.getUsers(params)
                 .doOnNext(mDefaultResponseChecker)
-                .retryWhen(mRetryCall)
+                .retryWhen(RetryWithDelay.getInstance())
                 .observeOn(getDefaultScheduler())
                 .subscribeOn(getDefaultScheduler());
     }
@@ -108,7 +108,7 @@ public class WebRequestManagerImpl implements WebRequestManager {
         Map<String, String> params = getDefaultParamsMap();
         params.put("device_id", Utils.generateAndroidId());
         return mRetrofitInterface.unregisterFromPushes(params)
-                .retryWhen(mRetryCall)
+                .retryWhen(RetryWithDelay.getInstance())
                 .observeOn(getDefaultScheduler())
                 .subscribeOn(getDefaultScheduler());
     }
@@ -122,7 +122,7 @@ public class WebRequestManagerImpl implements WebRequestManager {
         params.put("fields", UserUtils.getDefaultUserFieldsAsString());
         return mRetrofitInterface.getFriends(params)
                 .doOnNext(mDefaultResponseChecker)
-                .retryWhen(mRetryCall)
+                .retryWhen(RetryWithDelay.getInstance())
                 .observeOn(getDefaultScheduler())
                 .subscribeOn(getDefaultScheduler());
     }
@@ -140,7 +140,7 @@ public class WebRequestManagerImpl implements WebRequestManager {
 
         return mRetrofitInterface.launchStartupTasks(params)
                 .doOnNext(mDefaultResponseChecker)
-                .retryWhen(mRetryCall)
+                .retryWhen(RetryWithDelay.getInstance())
                 .observeOn(getDefaultScheduler())
                 .subscribeOn(getDefaultScheduler());
     }
@@ -162,7 +162,7 @@ public class WebRequestManagerImpl implements WebRequestManager {
         }
         return mRetrofitInterface.getConversationsAndUsers(params)
                 .doOnNext(mDefaultResponseChecker)
-                .retryWhen(mRetryCall)
+                .retryWhen(RetryWithDelay.getInstance())
                 .observeOn(getDefaultScheduler())
                 .subscribeOn(getDefaultScheduler());
     }
@@ -193,7 +193,7 @@ public class WebRequestManagerImpl implements WebRequestManager {
 
         return mRetrofitInterface.getMessagesHistory(params)
                 .doOnNext(mDefaultResponseChecker)
-                .retryWhen(mRetryCall)
+                .retryWhen(RetryWithDelay.getInstance())
                 .map(listOfMessagesResponse -> listOfMessagesResponse.getListOfMessages())
                 .observeOn(getDefaultScheduler())
                 .subscribeOn(getDefaultScheduler());
@@ -215,7 +215,7 @@ public class WebRequestManagerImpl implements WebRequestManager {
                 .observeOn(getDefaultScheduler())
                 .subscribeOn(getDefaultScheduler())
                 .doOnNext(mDefaultResponseChecker)
-                .retryWhen(mRetryCall);
+                .retryWhen(RetryWithDelay.getInstance());
     }
 
     @Override
@@ -229,7 +229,18 @@ public class WebRequestManagerImpl implements WebRequestManager {
                 .observeOn(getDefaultScheduler())
                 .subscribeOn(getDefaultScheduler())
                 .doOnNext(mDefaultResponseChecker)
-                .retryWhen(mRetryCall);
+                .retryWhen(RetryWithDelay.getInstance());
+    }
+
+    @Override
+    public Observable<WebResponse> markMessagesAsRead(long peerId, long startMessageId) {
+        Map<String, String> params = getDefaultParamsMap();
+        params.put("peer_id", String.valueOf(peerId));
+        params.put("start_message_id", String.valueOf(startMessageId));
+        return mRetrofitInterface.markMessagesAsRead(params)
+                .subscribeOn(getDefaultScheduler())
+                .doOnNext(mDefaultResponseChecker)
+                .retryWhen(RetryWithDelay.getInstance());
     }
 
     private Map<String, String> getDefaultParamsMap() {

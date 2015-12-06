@@ -23,6 +23,7 @@ import com.nethergrim.vk.models.ListOfUsers;
 import com.nethergrim.vk.models.StartupResponse;
 import com.nethergrim.vk.models.StickerDbItem;
 import com.nethergrim.vk.models.StockItemsResponse;
+import com.nethergrim.vk.models.WebResponse;
 import com.squareup.otto.Bus;
 
 import java.io.IOException;
@@ -32,7 +33,6 @@ import java.util.List;
 import javax.inject.Inject;
 
 import io.realm.Realm;
-import retrofit.client.Response;
 import rx.Observable;
 import rx.schedulers.Schedulers;
 
@@ -186,12 +186,17 @@ public class DataManagerImpl implements DataManager {
     }
 
     @Override
-    public Observable<Response> markMessagesAsRead(long conversationsId, long toTime) {
-        return null;
+    public Observable<WebResponse> markMessagesAsRead(long conversationsId, long toTime) {
+        // add messages to sync in preference
+        // then sync messages read state
+
+        // TODO: 06.12.15
+        return syncMessagesReadState();
     }
 
     @Override
-    public Observable<Response> syncMessagesReadState() {
+    public Observable<WebResponse> syncMessagesReadState() {
+        // TODO: 06.12.15
         return null;
     }
 }

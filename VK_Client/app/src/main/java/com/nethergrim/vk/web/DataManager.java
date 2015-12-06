@@ -7,10 +7,10 @@ import com.nethergrim.vk.models.ListOfMessages;
 import com.nethergrim.vk.models.ListOfUsers;
 import com.nethergrim.vk.models.StartupResponse;
 import com.nethergrim.vk.models.StickerDbItem;
+import com.nethergrim.vk.models.WebResponse;
 
 import java.util.List;
 
-import retrofit.client.Response;
 import rx.Observable;
 
 /**
@@ -45,11 +45,7 @@ public interface DataManager {
 
     Observable<List<StickerDbItem>> getStickerItems();
 
-    Observable<Response> markMessagesAsRead(long conversationsId, long toTime);
+    Observable<WebResponse> markMessagesAsRead(long conversationsId, long toTime);
 
-    Observable<Response> syncMessagesReadState();
-
-
-
-
+    Observable<WebResponse> syncMessagesReadState();
 }

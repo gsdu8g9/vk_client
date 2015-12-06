@@ -7,6 +7,7 @@ import com.nethergrim.vk.models.ListOfMessages;
 import com.nethergrim.vk.models.ListOfUsers;
 import com.nethergrim.vk.models.StartupResponse;
 import com.nethergrim.vk.models.StockItemsResponse;
+import com.nethergrim.vk.models.WebResponse;
 
 import java.util.List;
 
@@ -41,5 +42,6 @@ public interface WebRequestManager {
 
     Observable<StockItemsResponse> getStickerStockItems();
 
+    Observable<WebResponse> markMessagesAsRead(long peerId, long startMessageId);
 
 }

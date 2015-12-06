@@ -8,6 +8,7 @@ import com.nethergrim.vk.models.ListOfMessagesResponse;
 import com.nethergrim.vk.models.ListOfUsers;
 import com.nethergrim.vk.models.StartupResponse;
 import com.nethergrim.vk.models.StockItemsResponse;
+import com.nethergrim.vk.models.WebResponse;
 
 import java.util.Map;
 
@@ -49,4 +50,7 @@ public interface RetrofitInterface {
 
     @GET(Constants.Requests.GET_STICKER_PURCHASES)
     Observable<StockItemsResponse> getStickers(@QueryMap Map<String, String> options);
+
+    @GET(Constants.Requests.MESSAGES_MARK_AS_READ)
+    Observable<WebResponse> markMessagesAsRead(@QueryMap Map<String, String> options);
 }
