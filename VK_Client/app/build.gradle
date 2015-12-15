@@ -36,9 +36,10 @@ android {
         exclude 'META-INF/NOTICE'
     }
     dexOptions {
-        incremental false
+        incremental true
     }
 }
+
 
 
 

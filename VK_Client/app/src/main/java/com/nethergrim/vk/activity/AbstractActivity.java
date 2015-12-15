@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
 import com.nethergrim.vk.MyApplication;
+import com.nethergrim.vk.R;
 import com.nethergrim.vk.web.WebIntentHandler;
 import com.vk.sdk.VKUIHelper;
 
@@ -30,8 +31,14 @@ public abstract class AbstractActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         MyApplication.getInstance().getMainComponent().inject(this);
         mRealm = Realm.getDefaultInstance();
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
     }
 
     @Override

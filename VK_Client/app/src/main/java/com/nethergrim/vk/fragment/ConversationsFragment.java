@@ -83,8 +83,8 @@ public class ConversationsFragment extends AbstractFragment
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater,
-                             ViewGroup container,
-                             Bundle savedInstanceState) {
+            ViewGroup container,
+            Bundle savedInstanceState) {
         mBus.register(this);
         View v = inflater.inflate(R.layout.fragment_messages, container, false);
         ButterKnife.inject(this, v);
@@ -174,8 +174,11 @@ public class ConversationsFragment extends AbstractFragment
 
     @Override
     public void onItemClick(View childView, int position) {
-        Conversation conversation = mAdapter.getData(position);
-        ChatActivity.start(getActivity(), conversation);
+        childView.postDelayed(() -> {
+            Conversation conversation = mAdapter.getData(position);
+            ChatActivity.start(getActivity(), conversation);
+        }, 20);
+
     }
 
     @Override
