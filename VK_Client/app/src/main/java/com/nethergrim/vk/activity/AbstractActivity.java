@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
 import com.nethergrim.vk.MyApplication;
-import com.nethergrim.vk.R;
 import com.nethergrim.vk.web.WebIntentHandler;
 import com.vk.sdk.VKUIHelper;
 
