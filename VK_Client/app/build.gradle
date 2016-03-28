@@ -58,7 +58,7 @@ dependencies {
     compile fileTree(include: ['*.jar'], dir: 'lib')
     compile project(':vksdk_library')
     provided 'org.glassfish:javax.annotation:10.0-b28'
-    apt 'com.google.dagger:dagger-compiler:2.1-SNAPSHOT'
+    apt 'com.google.dagger:dagger-compiler:2.0'
     compile('com.afollestad.material-dialogs:core:0.8.1.0@aar') {
         transitive = true
     }
@@ -82,7 +82,7 @@ dependencies {
     compile 'com.squareup.okhttp:okhttp:2.0.0'
     compile 'com.squareup.retrofit:converter-jackson:1.9.0'
     compile 'com.facebook.fresco:fresco:0.7.0'
-    compile 'com.google.dagger:dagger:2.1-SNAPSHOT'
+    compile 'com.google.dagger:dagger:2.0'
     compile 'io.reactivex:rxandroid:1.0.1'
     compile 'io.reactivex:rxjava:1.0.14'
     compile 'com.jakewharton.rxbinding:rxbinding:0.2.0'
