@@ -39,6 +39,7 @@ public class ChatActivity extends AbstractActivity {
         intent.putExtra(Constants.EXTRA_GROUP_CONVERSATION,
                 ConversationUtils.isConversationAGroupChat(conversation));
         context.startActivity(intent);
+
     }
 
     @Override
