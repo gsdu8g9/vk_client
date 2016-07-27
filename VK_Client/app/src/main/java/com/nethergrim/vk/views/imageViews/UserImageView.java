@@ -17,6 +17,7 @@ import com.nethergrim.vk.utils.UserUtils;
 /**
  * @author Andrew Drobyazko (andrey.drobyazko@applikeysolutions.com) on 05.09.15.
  */
+
 public class UserImageView extends SimpleDraweeView {
 
     private boolean mRoundAsCircle = true;

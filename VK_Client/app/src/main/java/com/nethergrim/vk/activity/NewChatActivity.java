@@ -31,8 +31,6 @@ public class NewChatActivity extends AbstractActivity {
     @InjectView(R.id.recyclerView)
     RecyclerView mRecyclerView;
 
-    private MultiUserAdapter mAdapter;
-
     public static void start(Context context) {
         context.startActivity(new Intent(context, NewChatActivity.class));
     }
@@ -65,7 +63,7 @@ public class NewChatActivity extends AbstractActivity {
 
     private void initRecyclerView() {
         RealmResults<User> results = mRealm.where(User.class).findAllSorted("firstName");
-        mAdapter = new MultiUserAdapter(results);
+        MultiUserAdapter mAdapter = new MultiUserAdapter(results);
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mRecyclerView.setHasFixedSize(true);

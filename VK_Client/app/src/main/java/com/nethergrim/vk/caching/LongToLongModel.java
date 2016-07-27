@@ -9,12 +9,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
 
-/**
- * Created by andrej on 05.12.15.
- */
-public class LongToLongModel {
+@SuppressWarnings("unused")
+class LongToLongModel {
 
-    public static final ObjectMapper mapper = new ObjectMapper();
+    private static final ObjectMapper mapper = new ObjectMapper();
     @JsonProperty("l1")
     private long l1;
     @JsonProperty("l2")

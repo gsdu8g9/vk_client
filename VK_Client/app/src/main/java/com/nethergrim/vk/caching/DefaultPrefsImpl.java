@@ -8,12 +8,10 @@ import com.nethergrim.vk.MyApplication;
 import com.nethergrim.vk.enums.MainActivityState;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import hugo.weaving.DebugLog;
 import rx.Observable;
-import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
 /**
@@ -21,17 +19,17 @@ import rx.schedulers.Schedulers;
  */
 public class DefaultPrefsImpl implements Prefs {
 
-    public static final String KEY_USER_ID = "id";
-    public static final String KEY_ACTIVITY_STATE_ID = "activity_state_id";
-    public static final String KEY_GCM_TOKEN = "gcm_token";
-    public static final String KEY_UNREAD_MESSAGES_COUNT = "unread_messages_count";
-    public static final String KEY_FRIENDS_COUNT = "fr_c";
-    public static final String KEY_KEYBOARD_HEIGHT = "keyboard_height";
-    public static final String KEY_FETCH_STICKERS_TIMESTAMP = "fetch_stickers_timestamp";
-    public static final String KEY_EMOJI_TAB = "emoji_tab";
-    public static final String KEY_MARK_MESSAGES_AS_READ = "mark_as_read";
-    public static final String KEY_DISPLAY_UNREAD_AS_UNREAD = "display_unread_as_unread";
-    public static final String KEY_SYNC_MARK_MESSAGES_TO_READ = "sync_mark_read";
+    private static final String KEY_USER_ID = "id";
+    private static final String KEY_ACTIVITY_STATE_ID = "activity_state_id";
+    private static final String KEY_GCM_TOKEN = "gcm_token";
+    private static final String KEY_UNREAD_MESSAGES_COUNT = "unread_messages_count";
+    private static final String KEY_FRIENDS_COUNT = "fr_c";
+    private static final String KEY_KEYBOARD_HEIGHT = "keyboard_height";
+    private static final String KEY_FETCH_STICKERS_TIMESTAMP = "fetch_stickers_timestamp";
+    private static final String KEY_EMOJI_TAB = "emoji_tab";
+    private static final String KEY_MARK_MESSAGES_AS_READ = "mark_as_read";
+    private static final String KEY_DISPLAY_UNREAD_AS_UNREAD = "display_unread_as_unread";
+    private static final String KEY_SYNC_MARK_MESSAGES_TO_READ = "sync_mark_read";
     private static final String KEY_TOKEN = "token";
     private SharedPreferences mPrefs;
 
@@ -179,7 +177,7 @@ public class DefaultPrefsImpl implements Prefs {
     public Set<LongToLongModel> getConversationsToSyncUnreadMessages() {
         return getLongToLong(KEY_SYNC_MARK_MESSAGES_TO_READ)
                 .toList()
-                .map((Func1<List<LongToLongModel>, HashSet<LongToLongModel>>) HashSet::new)
+                .map(HashSet::new)
                 .toBlocking()
                 .first();
     }
@@ -197,8 +195,8 @@ public class DefaultPrefsImpl implements Prefs {
                 .subscribeOn(Schedulers.io())
                 .map(LongToLongModel::toString)
                 .toList()
-                .map((Func1<List<String>, HashSet<String>>) HashSet::new)
-                .doOnNext(strings -> mPrefs.edit().putStringSet(key, strings))
+                .map(HashSet::new)
+                .doOnNext(strings -> mPrefs.edit().putStringSet(key, strings).apply())
                 .subscribe();
     }
 

@@ -1,8 +1,8 @@
 package com.nethergrim.vk.adapter;
 
-import java.util.HashMap;
+import android.util.LongSparseArray;
+
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -11,11 +11,11 @@ import java.util.Set;
  */
 public abstract class SelectableUltimateAdapter extends UltimateAdapter {
 
-    private Map<Long, Boolean> mSelectedPositionsArray;
 
+    private LongSparseArray<Boolean> mSelectedPositionsArray;
 
-    public SelectableUltimateAdapter() {
-        mSelectedPositionsArray = new HashMap<>(50);
+    SelectableUltimateAdapter() {
+        mSelectedPositionsArray = new LongSparseArray<>(50);
     }
 
     public void toggle(int dataPosition) {
@@ -29,7 +29,7 @@ public abstract class SelectableUltimateAdapter extends UltimateAdapter {
         notifyDataSetChanged();
     }
 
-    public boolean isSelected(int dataPosition) {
+    boolean isSelected(int dataPosition) {
         Boolean result = mSelectedPositionsArray.get(getDataId(dataPosition));
         if (result == null) {
             return false;
@@ -38,10 +38,13 @@ public abstract class SelectableUltimateAdapter extends UltimateAdapter {
     }
 
     public Set<Long> getSelectedIds() {
-        Set<Long> result = new HashSet<>(mSelectedPositionsArray.size());
-        for (Long id : mSelectedPositionsArray.keySet()) {
-            if (mSelectedPositionsArray.get(id)) {
-                result.add(id);
+        int keysSize = mSelectedPositionsArray.size();
+        Set<Long> result = new HashSet<>(keysSize);
+        for (int i = 0; i < keysSize; i++) {
+            long key = mSelectedPositionsArray.keyAt(i);
+            boolean value = mSelectedPositionsArray.get(key);
+            if (value) {
+                result.add(key);
             }
         }
         return result;

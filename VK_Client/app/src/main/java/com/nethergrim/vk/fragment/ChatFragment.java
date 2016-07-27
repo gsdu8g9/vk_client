@@ -34,6 +34,7 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
+import io.realm.Realm;
 import io.realm.RealmResults;
 import io.realm.Sort;
 
@@ -43,8 +44,8 @@ import io.realm.Sort;
 public class ChatFragment extends BaseKeyboardFragment implements Toolbar.OnMenuItemClickListener,
         PaginationManager.OnRecyclerViewScrolledToPageListener {
 
-    public static final String EXTRA_CONVERSATION_ID = Constants.PACKAGE_NAME + ".CONV_ID";
-    public static final int PAGE_SIZE = 50;
+    private static final String EXTRA_CONVERSATION_ID = Constants.PACKAGE_NAME + ".CONV_ID";
+    private static final int PAGE_SIZE = 50;
     @Inject
     WebIntentHandler mWebIntentHandler;
     @Inject
@@ -143,6 +144,7 @@ public class ChatFragment extends BaseKeyboardFragment implements Toolbar.OnMenu
 
     @Override
     protected SelectableUltimateAdapter getAdapter(Context context) {
+        mRealm = Realm.getDefaultInstance();
         mConversation = mRealm.where(Conversation.class).equalTo("id", mConversationId).findFirst();
         if (mConversation == null) {
             return null;

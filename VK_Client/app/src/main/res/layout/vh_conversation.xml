@@ -1,14 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
-    android:id="@+id/root"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="?android:attr/selectableItemBackground"
+    android:clickable="true"
     android:padding="@dimen/conversation_item_padding_horizontal">
 
 
+    <!-- TODO replace with normal imageview and Picasso-->
     <com.nethergrim.vk.views.imageViews.UserImageView
         android:id="@+id/image_avatar"
         android:layout_width="@dimen/conversation_avatar_size"
@@ -20,7 +23,7 @@
         android:layout_marginEnd="@dimen/conversation_item_padding_horizontal"
         android:layout_marginRight="@dimen/conversation_item_padding_horizontal"
         android:contentDescription="@string/user_avatar"
-        tools:background="@android:color/holo_blue_light" />
+        tools:background="@android:color/holo_blue_light"/>
 
 
     <View
@@ -34,7 +37,7 @@
         android:layout_marginTop="4dp"
         android:layout_toEndOf="@+id/text_name"
         android:layout_toRightOf="@+id/text_name"
-        android:background="@drawable/green_dot" />
+        android:background="@drawable/green_dot"/>
 
     <com.devspark.robototextview.widget.RobotoTextView
         android:id="@+id/text_name"
@@ -48,7 +51,7 @@
         android:maxLines="1"
         android:textSize="@dimen/text_size_regular"
         app:typeface="roboto_medium"
-        tools:text="Steve Jobs" />
+        tools:text="Steve Jobs"/>
 
     <com.devspark.robototextview.widget.RobotoTextView
         android:id="@+id/text_details"
@@ -64,7 +67,7 @@
         android:textColor="@color/secondary_text"
         android:textSize="@dimen/text_size_small"
         android:visibility="gone"
-        app:typeface="roboto_regular" />
+        app:typeface="roboto_regular"/>
 
     <com.devspark.robototextview.widget.RobotoTextView
         android:id="@+id/text_date"
@@ -80,7 +83,7 @@
         android:textColor="@color/secondary_text"
         android:textSize="@dimen/text_size_small"
         app:typeface="roboto_light"
-        tools:text="Yesterday" />
+        tools:text="Yesterday"/>
 
     <com.facebook.drawee.view.SimpleDraweeView
         android:id="@+id/imageViewDetails"
@@ -88,7 +91,7 @@
         android:layout_height="@dimen/conversation_item_image_size"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true" />
+        android:layout_alignParentTop="true"/>
 
 </RelativeLayout>
 

@@ -3,17 +3,13 @@ package com.nethergrim.vk.images;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.Drawable;
-import android.os.Handler;
-import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.util.LruCache;
 
 import com.nethergrim.vk.models.User;
 import com.nethergrim.vk.utils.UserUtils;
-import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -22,84 +18,65 @@ import java.net.URL;
 
 import rx.Observable;
 import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 /**
  * @author andreydrobyazko on 4/7/15.
  */
-public class PicassoImageLoaderImpl implements ImageLoader {
+public class ImageLoaderImpl implements ImageLoader {
+
+    private static final String TAG = "ImageLoaderImpl";
 
     private Context context;
     private LruCache<String, Bitmap> mBitmapLruCache;
 
 
-    public PicassoImageLoaderImpl(Context context) {
-        this.context = context;
+    public ImageLoaderImpl(Context context) {
+        this.context = context.getApplicationContext();
     }
 
+    @NonNull
     @Override
     public Observable<Bitmap> getUserAvatar(@NonNull User user) {
         final String url = UserUtils.getStablePhotoUrl(user);
         return getBitmapObservable(url);
     }
 
+    @NonNull
     @Override
     public Observable<Bitmap> getBitmap(@NonNull String url) {
         return getBitmapObservable(url);
     }
 
+    @NonNull
     @Override
     public Observable<Bitmap> getBitmap(@NonNull User user) {
         return getBitmap(UserUtils.getStablePhotoUrl(user));
     }
 
     @Override
-    public void cacheToMemory(String url) {
-        new Handler(Looper.getMainLooper()).post(() -> {
-            Picasso.with(context).load(url).config(Bitmap.Config.RGB_565).into(new Target() {
-                @Override
-                public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                    addToCache(url, bitmap);
-                }
-
-                @Override
-                public void onBitmapFailed(Drawable errorDrawable) {
-
-                }
-
-                @Override
-                public void onPrepareLoad(Drawable placeHolderDrawable) {
-
-                }
-            });
-        });
-
+    public void preCache(@NonNull String url) {
+        getBitmapObservable(url)
+                .observeOn(Schedulers.io())
+                .subscribe(bitmap -> {
+                    Log.d(TAG, "preCache: done for " + url);
+                }, throwable -> {
+                    Log.e(TAG, "preCache: ", throwable);
+                });
     }
 
     @Override
     @Nullable
-    public Bitmap getBitmapSync(String url) {
-        if (mBitmapLruCache != null) {
-            Bitmap result = mBitmapLruCache.get(url);
-            if (result != null) {
-                return result;
-            }
-        }
-        try {
-            return Picasso.with(context).load(url).get();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
+    public Bitmap getBitmapImmediately(@NonNull String url) {
+        return getBitmapObservable(url).first().toBlocking().first();
     }
 
-    private void addToCache(String url, Bitmap bitmap) {
+    private synchronized void addToCache(String url, Bitmap bitmap) {
         if (mBitmapLruCache == null) {
             final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
 
             // Use 1/8th of the available memory for this memory cache.
-            final int cacheSize = maxMemory / 8;
+            final int cacheSize = maxMemory / 4;
             mBitmapLruCache = new LruCache<String, Bitmap>(cacheSize) {
                 @Override
                 protected int sizeOf(String key, Bitmap bitmap) {
@@ -134,13 +111,11 @@ public class PicassoImageLoaderImpl implements ImageLoader {
 
                         try {
                             URL url = new URL(src);
-                            HttpURLConnection connection
-                                    = (HttpURLConnection) url.openConnection();
+                            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                             connection.setDoInput(true);
                             connection.connect();
                             InputStream input = connection.getInputStream();
                             Bitmap myBitmap = BitmapFactory.decodeStream(input);
-
                             addToCache(src, myBitmap);
                             subscriber.onNext(myBitmap);
                             subscriber.onCompleted();
@@ -149,8 +124,7 @@ public class PicassoImageLoaderImpl implements ImageLoader {
                         }
                     }
                 });
-        bitmapObservable.observeOn(Schedulers.io());
-        bitmapObservable.subscribeOn(AndroidSchedulers.mainThread());
+        bitmapObservable.subscribeOn(Schedulers.io());
         return bitmapObservable;
     }
 

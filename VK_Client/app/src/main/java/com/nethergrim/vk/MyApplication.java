@@ -5,7 +5,6 @@ import android.util.Log;
 
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.nethergrim.vk.caching.Prefs;
-import com.nethergrim.vk.images.ImageLoader;
 import com.nethergrim.vk.inject.DaggerMainComponent;
 import com.nethergrim.vk.inject.MainComponent;
 import com.nethergrim.vk.inject.ProviderModule;
@@ -30,13 +29,9 @@ public class MyApplication extends Application {
     private static MyApplication _app;
     @Inject
     Prefs mPrefs;
-    @Inject
-    ImageLoader mImageLoader;
+
     private MainComponent mMainComponent;
 
-    public ImageLoader getImageLoader() {
-        return mImageLoader;
-    }
 
     public synchronized static MyApplication getInstance() {
         return _app;
@@ -88,7 +83,7 @@ public class MyApplication extends Application {
             }
         };
         VKSdk.initialize(vkSdkListener, Constants.VK_APP_ID);
-//        logFingerPrints();
+        logFingerPrints();
         initDagger2();
         initRealm();
         initFresco();
@@ -124,7 +119,7 @@ public class MyApplication extends Application {
     private void initRealm() {
         RealmConfiguration config = new RealmConfiguration.Builder(this)
                 .name("vk_main_realm")
-                .schemaVersion(2)
+                .schemaVersion(1)
                 .deleteRealmIfMigrationNeeded()
                 .build();
         Realm.setDefaultConfiguration(config);

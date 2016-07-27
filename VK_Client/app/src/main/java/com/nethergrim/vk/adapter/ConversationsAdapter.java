@@ -33,14 +33,15 @@ import io.realm.Sort;
  *         All rights reserved.
  */
 public class ConversationsAdapter extends UltimateAdapter
-        implements RealmChangeListener, UltimateAdapter.FooterInterface {
+        implements RealmChangeListener, UltimateAdapter.FooterInterface, View.OnClickListener {
 
     @Inject
     UserProvider mUserProvider;
     @Inject
     Prefs mPrefs;
 
-    Realm mRealm;
+    private Realm mRealm;
+    private ClickListener clickListener;
 
     private RealmResults<Conversation> mData;
 
@@ -48,8 +49,9 @@ public class ConversationsAdapter extends UltimateAdapter
     private int textColorSecondary;
 
 
-    public ConversationsAdapter() {
+    public ConversationsAdapter(ClickListener clickListener) {
         super();
+        this.clickListener = clickListener;
         MyApplication.getInstance().getMainComponent().inject(this);
         mRealm = Realm.getDefaultInstance();// FIXME: 15.10.15 remove realm from here
         mRealm.setAutoRefresh(true);
@@ -99,6 +101,8 @@ public class ConversationsAdapter extends UltimateAdapter
     @Override
     public void bindDataVH(DataVH vh, int i) {
         ConversationViewHolder conversationViewHolder = (ConversationViewHolder) vh;
+        conversationViewHolder.itemView.setTag(i);
+        conversationViewHolder.itemView.setOnClickListener(this);
         Conversation conversation = mData.get(i);
         Message message = conversation.getMessage();
         String details = "";
@@ -129,7 +133,7 @@ public class ConversationsAdapter extends UltimateAdapter
 
         if (ConversationUtils.isConversationAGroupChat(conversation)) {
 
-//            group chat
+            //            group chat
             conversationViewHolder.imageAvatar.displayGroupChat();
             conversationViewHolder.textName.setText(message.getTitle());
 
@@ -147,7 +151,7 @@ public class ConversationsAdapter extends UltimateAdapter
 
             conversationViewHolder.mOnlineIndicator.setVisibility(View.GONE);
         } else {
-//              regular chat
+            //              regular chat
             user = mUserProvider.getUser(conversation.getId());
 
             details = details + message.getBody();
@@ -204,6 +208,16 @@ public class ConversationsAdapter extends UltimateAdapter
     @Override
     public void bindFooterVH(FooterVH vh) {
         // nothing to bind
+    }
+
+    @Override
+    public void onClick(View v) {
+        int index = (int) v.getTag();
+        clickListener.onConversationClicked(index, mData.get(index));
+    }
+
+    public interface ClickListener {
+        void onConversationClicked(int index, Conversation conversation);
     }
 
     public static class MyFooterVH extends FooterVH {

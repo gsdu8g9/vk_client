@@ -26,7 +26,6 @@ import com.nethergrim.vk.models.StockItemsResponse;
 import com.nethergrim.vk.models.WebResponse;
 import com.squareup.otto.Bus;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -82,13 +81,13 @@ public class DataManagerImpl implements DataManager {
                     // prepare parameters
                     String token = mPrefs.getGcmToken();
                     if (TextUtils.isEmpty(token)) {
-                        InstanceID instanceID = InstanceID.getInstance(
-                                MyApplication.getInstance().getApplicationContext());
+
                         try {
-                            token = instanceID.getToken(Constants.GCM_SENDER_ID,
-                                    GoogleCloudMessaging.INSTANCE_ID_SCOPE, null);
-                        } catch (IOException e) {
+                            InstanceID instanceID = InstanceID.getInstance(MyApplication.getInstance().getApplicationContext());
+                            token = instanceID.getToken(Constants.GCM_SENDER_ID, GoogleCloudMessaging.INSTANCE_ID_SCOPE, null);
+                        } catch (Throwable e) {
                             e.printStackTrace();
+                            Log.e(TAG, "launchStartupTasksAndPersistToDb: ", e);
                         }
                         mPrefs.setGcmToken(token);
                     }
@@ -171,7 +170,7 @@ public class DataManagerImpl implements DataManager {
                     for (int i = 0, size = stockItems.getItems().size(); i < size; i++) {
                         result.add(StickerDbItem.MAPPER.call(stockItems.getItems().get(i)));
                         String url = result.get(i).getPhoto();
-                        mImageLoader.cacheToMemory(url);
+                        mImageLoader.preCache(url);
                     }
                     return result;
                 })
@@ -197,6 +196,6 @@ public class DataManagerImpl implements DataManager {
     @Override
     public Observable<WebResponse> syncMessagesReadState() {
         // TODO: 06.12.15
-        return null;
+        return Observable.empty();
     }
 }

@@ -10,7 +10,7 @@ import com.nethergrim.vk.data.RealmPersistingManagerImpl;
 import com.nethergrim.vk.images.ImageLoader;
 import com.nethergrim.vk.images.PaletteProvider;
 import com.nethergrim.vk.images.PaletteProviderImpl;
-import com.nethergrim.vk.images.PicassoImageLoaderImpl;
+import com.nethergrim.vk.images.ImageLoaderImpl;
 import com.nethergrim.vk.json.JacksonJsonDeserializerImpl;
 import com.nethergrim.vk.json.JsonDeserializer;
 import com.nethergrim.vk.utils.AndroidBus;
@@ -52,7 +52,7 @@ public class ProviderModule {
     @Provides
     @Singleton
     ImageLoader provideImageLoader(Context context) {
-        return new PicassoImageLoaderImpl(context);
+        return new ImageLoaderImpl(context);
     }
 
     @Provides

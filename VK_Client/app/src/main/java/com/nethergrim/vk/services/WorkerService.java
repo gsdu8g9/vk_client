@@ -26,38 +26,28 @@ import javax.inject.Inject;
 public class WorkerService extends Service {
 
     public static final String TAG = WorkerService.class.getSimpleName();
-    public static final String ACTION_FETCH_CONVERSATIONS_AND_USERS = Constants.PACKAGE_NAME
-            + ".FETCH_CONVERSATIONS_AND_USERS";
-    public static final String ACTION_FETCH_USERS = Constants.PACKAGE_NAME + ".FETCH_USERS";
-    public static final String ACTION_FETCH_MY_FRIENDS = Constants.PACKAGE_NAME
-            + ".FETCH_MY_FRIENDS";
-    public static final String ACTION_LAUNCH_STARTUP_TASKS = Constants.PACKAGE_NAME + ".STARTUP";
-    public static final String ACTION_FETCH_STICKERS = Constants.PACKAGE_NAME + ".FETCH_STICKERS";
-    public static final String ACTION_DELETE_CONVERSATION = Constants.PACKAGE_NAME
-            + ".DELETE_CONVERSATION";
-    public static final String ACTION_MARK_MESSAGES_AS_READ = Constants.PACKAGE_NAME
-            + ".MARK_MESSAGES_AS_READ";
-    public static final String ACTION_SYNC_MESSAGES_READ_STATE = Constants.PACKAGE_NAME
-            + ".SYNC_READ_STATE";
-    public static final String EXTRA_IDS = Constants.PACKAGE_NAME + ".IDS";
-    public static final String EXTRA_COUNT = Constants.PACKAGE_NAME + ".COUNT";
-    public static final String EXTRA_OFFSET = Constants.PACKAGE_NAME + ".OFFSET";
-    public static final String EXTRA_ONLY_UNREAD = Constants.PACKAGE_NAME + ".UNREAD_ONLY";
-    public static final String EXTRA_USER_ID = Constants.PACKAGE_NAME + ".USER_ID";
-    public static final String EXTRA_CHAT_ID = Constants.PACKAGE_NAME + ".CHAT_ID";
-    public static final String EXTRA_TO_TIME = Constants.PACKAGE_NAME + ".TO_TIME";
-    public static final String ACTION_GET_MESSAGES_HISTORY = Constants.PACKAGE_NAME
-            + ".GET_MESSAGES_HISTORY";
-    @Inject
-    DataManager mDataManager;
+    private static final String ACTION_FETCH_CONVERSATIONS_AND_USERS = Constants.PACKAGE_NAME + ".FETCH_CONVERSATIONS_AND_USERS";
+    private static final String ACTION_FETCH_USERS = Constants.PACKAGE_NAME + ".FETCH_USERS";
+    private static final String ACTION_FETCH_MY_FRIENDS = Constants.PACKAGE_NAME + ".FETCH_MY_FRIENDS";
+    private static final String ACTION_LAUNCH_STARTUP_TASKS = Constants.PACKAGE_NAME + ".STARTUP";
+    private static final String ACTION_FETCH_STICKERS = Constants.PACKAGE_NAME + ".FETCH_STICKERS";
+    private static final String ACTION_DELETE_CONVERSATION = Constants.PACKAGE_NAME + ".DELETE_CONVERSATION";
+    private static final String ACTION_MARK_MESSAGES_AS_READ = Constants.PACKAGE_NAME + ".MARK_MESSAGES_AS_READ";
+    private static final String ACTION_SYNC_MESSAGES_READ_STATE = Constants.PACKAGE_NAME + ".SYNC_READ_STATE";
+    private static final String EXTRA_IDS = Constants.PACKAGE_NAME + ".IDS";
+    private static final String EXTRA_COUNT = Constants.PACKAGE_NAME + ".COUNT";
+    private static final String EXTRA_OFFSET = Constants.PACKAGE_NAME + ".OFFSET";
+    private static final String EXTRA_ONLY_UNREAD = Constants.PACKAGE_NAME + ".UNREAD_ONLY";
+    private static final String EXTRA_USER_ID = Constants.PACKAGE_NAME + ".USER_ID";
+    private static final String EXTRA_CHAT_ID = Constants.PACKAGE_NAME + ".CHAT_ID";
+    private static final String EXTRA_TO_TIME = Constants.PACKAGE_NAME + ".TO_TIME";
+    private static final String ACTION_GET_MESSAGES_HISTORY = Constants.PACKAGE_NAME + ".GET_MESSAGES_HISTORY";
 
-    @Inject
-    Prefs mPrefs;
 
     public static void fetchConversationsAndUsers(Context context,
-            int count,
-            int offset,
-            boolean unreadOnly) {
+                                                  int count,
+                                                  int offset,
+                                                  boolean unreadOnly) {
         Intent intent = new Intent(context, WorkerService.class);
         intent.setAction(ACTION_FETCH_CONVERSATIONS_AND_USERS);
         intent.putExtra(EXTRA_COUNT, count);
@@ -88,10 +78,10 @@ public class WorkerService extends Service {
     }
 
     public static void fetchMessagesHistory(Context context,
-            int count,
-            int offset,
-            String userId,
-            long chatId) {
+                                            int count,
+                                            int offset,
+                                            String userId,
+                                            long chatId) {
         Intent intent = new Intent(context, WorkerService.class);
         intent.setAction(ACTION_GET_MESSAGES_HISTORY);
         intent.putExtra(EXTRA_COUNT, count);
@@ -129,6 +119,12 @@ public class WorkerService extends Service {
         c.startService(intent);
     }
 
+    @Inject
+    DataManager mDataManager;
+
+    @Inject
+    Prefs mPrefs;
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -157,7 +153,7 @@ public class WorkerService extends Service {
         } else if (ACTION_SYNC_MESSAGES_READ_STATE.equals(action)) {
             handleActionSyncMessagesState();
         }
-        return START_REDELIVER_INTENT;
+        return START_STICKY;
     }
 
     @Nullable

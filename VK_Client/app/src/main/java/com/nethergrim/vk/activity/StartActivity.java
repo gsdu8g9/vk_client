@@ -33,7 +33,7 @@ public class StartActivity extends AbstractActivity {
     private boolean mIsLoggedIn;
 
     @OnClick(R.id.btn_sign_in)
-    public void signIn(View v) {
+    void signIn(View v) {
         VKSdk.authorize(Constants.PERMISSIONS, false, true);
     }
 
@@ -42,6 +42,7 @@ public class StartActivity extends AbstractActivity {
         super.onCreate(savedInstanceState);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        getWindow().setBackgroundDrawable(null);
         setContentView(R.layout.activity_start);
         ButterKnife.inject(this);
     }
