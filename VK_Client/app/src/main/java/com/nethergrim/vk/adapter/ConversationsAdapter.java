@@ -1,7 +1,6 @@
 package com.nethergrim.vk.adapter;
 
 import android.content.Context;
-import android.net.Uri;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.view.View;
@@ -11,6 +10,7 @@ import com.nethergrim.vk.R;
 import com.nethergrim.vk.adapter.viewholders.ConversationViewHolder;
 import com.nethergrim.vk.caching.Prefs;
 import com.nethergrim.vk.fragment.ConversationsFragment;
+import com.nethergrim.vk.images.ImageLoader;
 import com.nethergrim.vk.models.Conversation;
 import com.nethergrim.vk.models.Message;
 import com.nethergrim.vk.models.User;
@@ -37,6 +37,8 @@ public class ConversationsAdapter extends UltimateAdapter
 
     @Inject
     UserProvider mUserProvider;
+    @Inject
+    ImageLoader imageLoader;
     @Inject
     Prefs mPrefs;
 
@@ -156,8 +158,7 @@ public class ConversationsAdapter extends UltimateAdapter
 
             details = details + message.getBody();
             if (ConversationUtils.isMessageFromMe(message)) {
-                details = conversationViewHolder.itemView.getResources().getString(R.string.me_)
-                        + " " + details;
+                details = conversationViewHolder.itemView.getResources().getString(R.string.me_) + " " + details;
             }
 
             if (user != null) {
@@ -172,7 +173,7 @@ public class ConversationsAdapter extends UltimateAdapter
             details = details + "[ " + ctx.getString(R.string.sticker) + " ]";
             conversationViewHolder.mImageViewDetails.setVisibility(View.VISIBLE);
             String url = MessageUtils.getStickerFromMessage(message).getPhoto256();
-            conversationViewHolder.mImageViewDetails.setImageURI(Uri.parse(url));
+            imageLoader.loadCircleImage(url, conversationViewHolder.mImageViewDetails);
         } else {
             conversationViewHolder.mImageViewDetails.setVisibility(View.GONE);
         }

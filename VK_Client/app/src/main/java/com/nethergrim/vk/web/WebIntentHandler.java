@@ -15,6 +15,7 @@ import java.util.ArrayList;
  *
  * @author andrej on 24.07.15.
  */
+@SuppressWarnings("unused")
 public interface WebIntentHandler {
 
     @UiThread
@@ -43,7 +44,7 @@ public interface WebIntentHandler {
     /**
      * Will mark incoming messages as read, and guaranteed to sync their state to the backend.
      */
-    void markMessagesAsRead(long conversationId, long toTime);
+    void markMessagesAsRead(long conversationId, long lastMessageId);
 
     void syncUnreadMessages();
 

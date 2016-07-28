@@ -40,7 +40,7 @@ public class WorkerService extends Service {
     private static final String EXTRA_ONLY_UNREAD = Constants.PACKAGE_NAME + ".UNREAD_ONLY";
     private static final String EXTRA_USER_ID = Constants.PACKAGE_NAME + ".USER_ID";
     private static final String EXTRA_CHAT_ID = Constants.PACKAGE_NAME + ".CHAT_ID";
-    private static final String EXTRA_TO_TIME = Constants.PACKAGE_NAME + ".TO_TIME";
+    private static final String EXTRA_LAST_MESSAGE = Constants.PACKAGE_NAME + ".LAST_MESSAGE";
     private static final String ACTION_GET_MESSAGES_HISTORY = Constants.PACKAGE_NAME + ".GET_MESSAGES_HISTORY";
 
 
@@ -105,11 +105,11 @@ public class WorkerService extends Service {
         context.startService(intent);
     }
 
-    public static void markMessagesAsRead(Context c, long conversationId, long toTime) {
+    public static void markMessagesAsRead(Context c, long conversationId, long lastMessage) {
         Intent intent = new Intent(c, WorkerService.class);
         intent.setAction(ACTION_MARK_MESSAGES_AS_READ);
         intent.putExtra(EXTRA_CHAT_ID, conversationId);
-        intent.putExtra(EXTRA_TO_TIME, toTime);
+        intent.putExtra(EXTRA_LAST_MESSAGE, lastMessage);
         c.startService(intent);
     }
 
@@ -165,7 +165,7 @@ public class WorkerService extends Service {
     private void handleActionMarkMessagesAsRead(Intent intent) {
         Bundle args = intent.getExtras();
         long conversationId = args.getLong(EXTRA_CHAT_ID);
-        long toTime = args.getLong(EXTRA_TO_TIME);
+        long toTime = args.getLong(EXTRA_LAST_MESSAGE);
         mDataManager.markMessagesAsRead(conversationId, toTime)
                 .subscribe(DefaultLoggerObserver.getInstance());
     }

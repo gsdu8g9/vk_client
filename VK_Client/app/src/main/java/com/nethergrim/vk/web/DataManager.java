@@ -45,7 +45,7 @@ public interface DataManager {
 
     Observable<List<StickerDbItem>> getStickerItems();
 
-    Observable<WebResponse> markMessagesAsRead(long conversationsId, long toTime);
+    Observable<WebResponse> markMessagesAsRead(long conversationsId, long lastMessageId);
 
     Observable<WebResponse> syncMessagesReadState();
 }

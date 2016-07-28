@@ -5,8 +5,8 @@ import android.content.Context;
 import com.nethergrim.vk.MyApplication;
 import com.nethergrim.vk.caching.DefaultPrefsImpl;
 import com.nethergrim.vk.caching.Prefs;
-import com.nethergrim.vk.data.PersistingManager;
-import com.nethergrim.vk.data.RealmPersistingManagerImpl;
+import com.nethergrim.vk.data.RealmStore;
+import com.nethergrim.vk.data.Store;
 import com.nethergrim.vk.images.ImageLoader;
 import com.nethergrim.vk.images.PaletteProvider;
 import com.nethergrim.vk.images.PaletteProviderImpl;
@@ -32,7 +32,7 @@ import dagger.Module;
 import dagger.Provides;
 
 /**
- * @author andreydrobyazko on 4/3/15.
+ * @author Andrew Drobyazko (c2q9450@gmail.com) on 4/3/15.
  */
 @Module
 public class ProviderModule {
@@ -104,8 +104,8 @@ public class ProviderModule {
 
     @Provides
     @Singleton
-    PersistingManager providePersistingManager() {
-        return new RealmPersistingManagerImpl();
+    Store providePersistingManager() {
+        return new RealmStore();
     }
 
 }

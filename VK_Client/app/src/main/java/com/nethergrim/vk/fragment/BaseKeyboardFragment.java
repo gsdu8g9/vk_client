@@ -38,7 +38,7 @@ import github.ankushsachdeva.emojicon.EmojiconGridView;
 import github.ankushsachdeva.emojicon.emoji.Emojicon;
 
 /**
- * @author Andrew Drobyazko (andrey.drobyazko@applikeysolutions.com) on 03.10.15.
+ * @author Andrew Drobyazko (c2q9450@gmail.com) on 03.10.15.
  */
 public abstract class BaseKeyboardFragment extends AbstractFragment
         implements EmojiconGridView.OnEmojiconClickedListener,

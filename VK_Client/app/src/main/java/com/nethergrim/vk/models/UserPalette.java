@@ -11,7 +11,6 @@ public class UserPalette extends RealmObject {
     @PrimaryKey
     private long userId;
 
-
     private int vibrant;
     private int vibrantDark;
     private int vibrantLight;

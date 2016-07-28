@@ -1,10 +1,11 @@
 package com.nethergrim.vk.fragment;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -13,7 +14,6 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.afollestad.materialdialogs.MaterialDialog;
 import com.github.clans.fab.FloatingActionButton;
 import com.nethergrim.vk.MyApplication;
 import com.nethergrim.vk.R;
@@ -40,7 +40,7 @@ import butterknife.OnClick;
 
 
 /**
- * @author andreydrobyazko on 3/20/15.
+ * @author Andrew Drobyazko (c2q9450@gmail.com) on 3/20/15.
  */
 public class ConversationsFragment extends AbstractFragment
         implements PaginationManager.OnRecyclerViewScrolledToPageListener, ToolbarScrollable,
@@ -187,24 +187,17 @@ public class ConversationsFragment extends AbstractFragment
     public void onItemLongPress(View childView, int position) {
         Conversation conversation = mAdapter.getData(position);
         Context ctx = childView.getContext();
-        // TODO replace with normal dialog
-        MaterialDialog materialDialog = new MaterialDialog.Builder(ctx)
-                .title(R.string.delete_chat_with)
-                .content(R.string.are_you_sure)
-                .positiveText(R.string.yes)
-                .negativeText(R.string.no)
-                .negativeColor(Color.BLACK)
-                .callback(new MaterialDialog.ButtonCallback() {
-                    @Override
-                    public void onPositive(MaterialDialog dialog) {
-                        mWebIntentHandler.deleteConversation(conversation);
-                        dialog.dismiss();
-                        super.onPositive(dialog);
-                    }
+
+        Dialog dialog = new AlertDialog.Builder(ctx)
+                .setTitle(R.string.delete_chat_with)
+                .setMessage(R.string.are_you_sure)
+                .setPositiveButton(R.string.yes, (dialogInterface, i) -> {
+                    mWebIntentHandler.deleteConversation(conversation);
+                    dialogInterface.dismiss();
                 })
-                .positiveColor(ctx.getResources().getColor(R.color.primary))
-                .build();
-        materialDialog.show();
+                .setNegativeButton(R.string.no, (dialogInterface, i) -> dialogInterface.dismiss())
+                .create();
+        dialog.show();
     }
 
     private void loadPage(int pageNumber) {

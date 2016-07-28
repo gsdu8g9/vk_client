@@ -29,11 +29,12 @@ import javax.inject.Inject;
 import io.realm.Realm;
 import io.realm.RealmQuery;
 import io.realm.RealmResults;
+import io.realm.Sort;
 
 /**
  * @author andrej on 30.08.15.
  */
-public class RealmPersistingManagerImpl implements PersistingManager {
+public class RealmStore implements Store {
 
     @Inject
     Prefs mPrefs;
@@ -47,7 +48,7 @@ public class RealmPersistingManagerImpl implements PersistingManager {
     @Inject
     ImageLoader mImageLoader;
 
-    public RealmPersistingManagerImpl() {
+    public RealmStore() {
         MyApplication.getInstance().getMainComponent().inject(this);
     }
 
@@ -68,15 +69,16 @@ public class RealmPersistingManagerImpl implements PersistingManager {
         Realm realm = Realm.getDefaultInstance();
         realm.beginTransaction();
         List<User> friends = listOfFriends.getResponse().getFriends();
+        mPaletteProvider.generateAndStorePalette(friends);
         for (int i = 0, size = friends.size(), rating = offset;
-                i < size;
-                i++, rating++) {
+             i < size;
+             i++, rating++) {
             friends.get(i).setFriendRating(rating);
             // TODO: 30.08.15 fix friends rating persistense, to make it consistent.
         }
         realm.copyToRealmOrUpdate(friends);
         realm.commitTransaction();
-        mPaletteProvider.generateAndStorePalette(friends);
+
         mBus.post(new FriendsUpdatedEvent(listOfFriends.getResponse().getCount()));
     }
 
@@ -92,7 +94,7 @@ public class RealmPersistingManagerImpl implements PersistingManager {
 
     @Override
     public void manage(ConversationsUserObject conversationsUserObject,
-            boolean clearDataBeforePersist) {
+                       boolean clearDataBeforePersist) {
         //saving conversations to db
         ConversationsList conversationsList
                 = conversationsUserObject.getResponse().getConversations();
@@ -151,6 +153,30 @@ public class RealmPersistingManagerImpl implements PersistingManager {
         }
         conversation.removeFromRealm();
 
+        realm.commitTransaction();
+        realm.close();
+    }
+
+    @Override
+    public void markMessagesAsRead(long convId, long lastReadMessage) {
+        boolean isGroupChat = false;
+        if (convId > 2000000000L) {
+            convId = convId - 2000000000L;
+            isGroupChat = true;
+        }
+        Realm realm = Realm.getDefaultInstance();
+        realm.beginTransaction();
+        RealmQuery<Message> messageRealmQuery = realm.where(Message.class);
+        if (isGroupChat) {
+            messageRealmQuery = messageRealmQuery.equalTo("chat_id", convId);
+        } else {
+            messageRealmQuery = messageRealmQuery.equalTo("user_id", convId);
+        }
+        RealmResults<Message> messagesToBeMarkedAsRead = messageRealmQuery.lessThanOrEqualTo("id", lastReadMessage).findAllSorted("date", Sort.ASCENDING);
+        for (int i = 0, messagesToBeMarkedAsReadSize = messagesToBeMarkedAsRead.size(); i < messagesToBeMarkedAsReadSize; i++) {
+            Message message = messagesToBeMarkedAsRead.get(i);
+            message.setRead_state(1);
+        }
         realm.commitTransaction();
         realm.close();
     }

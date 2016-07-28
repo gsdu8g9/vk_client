@@ -10,7 +10,7 @@ import rx.Observer;
 import rx.functions.Action1;
 
 /**
- * @author Andrew Drobyazko (andrey.drobyazko@applikeysolutions.com) on 05.09.15.
+ * @author Andrew Drobyazko (c2q9450@gmail.com) on 05.09.15.
  */
 public class LoggerObserver implements Observer<WebResponse> {
 

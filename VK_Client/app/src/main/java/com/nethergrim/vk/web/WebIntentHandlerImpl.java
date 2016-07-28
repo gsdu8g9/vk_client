@@ -74,8 +74,8 @@ public class WebIntentHandlerImpl implements WebIntentHandler {
     }
 
     @Override
-    public void markMessagesAsRead(long conversationId, long toTime) {
-        WorkerService.markMessagesAsRead(mContext, conversationId, toTime);
+    public void markMessagesAsRead(long conversationId, long lastMessageId) {
+        WorkerService.markMessagesAsRead(mContext, conversationId, lastMessageId);
     }
 
     @Override

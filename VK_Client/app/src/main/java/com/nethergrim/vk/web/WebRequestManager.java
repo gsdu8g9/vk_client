@@ -15,9 +15,10 @@ import retrofit.client.Response;
 import rx.Observable;
 
 /**
- * @author andreydrobyazko on 4/3/15.
+ * @author Andrew Drobyazko (c2q9450@gmail.com) on 4/3/15.
  */
 
+@SuppressWarnings("unused")
 public interface WebRequestManager {
 
 
@@ -30,13 +31,13 @@ public interface WebRequestManager {
     Observable<StartupResponse> launchStartupTasks(String gcmToken);
 
     Observable<ConversationsUserObject> getConversationsAndUsers(int limit,
-            int offset,
-            boolean unread);
+                                                                 int offset,
+                                                                 boolean unread);
 
     Observable<ListOfMessages> getChatHistory(int offset,
-            int count,
-            String userId,
-            long chatId);
+                                              int count,
+                                              String userId,
+                                              long chatId);
 
     Observable<IntegerResponse> deleteConversation(long userId, long chatId);
 

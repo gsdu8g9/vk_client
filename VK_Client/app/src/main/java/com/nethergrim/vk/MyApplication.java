@@ -1,9 +1,9 @@
 package com.nethergrim.vk;
 
-import android.app.Application;
+import android.support.multidex.MultiDexApplication;
 import android.util.Log;
 
-import com.facebook.drawee.backends.pipeline.Fresco;
+import com.bumptech.glide.request.target.ViewTarget;
 import com.nethergrim.vk.caching.Prefs;
 import com.nethergrim.vk.inject.DaggerMainComponent;
 import com.nethergrim.vk.inject.MainComponent;
@@ -21,9 +21,9 @@ import io.realm.Realm;
 import io.realm.RealmConfiguration;
 
 /**
- * @author andreydrobyazko on 3/20/15.
+ * @author Andrew Drobyazko (c2q9450@gmail.com) on 3/20/15.
  */
-public class MyApplication extends Application {
+public class MyApplication extends MultiDexApplication {
 
     public static final String TAG = MyApplication.class.getName();
     private static MyApplication _app;
@@ -41,6 +41,7 @@ public class MyApplication extends Application {
     public void onCreate() {
         super.onCreate();
         _app = this;
+        ViewTarget.setTagId(R.id.glide_tag);
         Constants.mDensity = getResources().getDisplayMetrics().density;
 
         Log.e("FIELDS", UserUtils.getDefaultUserFieldsAsString());
@@ -86,7 +87,6 @@ public class MyApplication extends Application {
         logFingerPrints();
         initDagger2();
         initRealm();
-        initFresco();
     }
 
     public MainComponent getMainComponent() {
@@ -95,10 +95,6 @@ public class MyApplication extends Application {
 
     public Prefs getPrefs() {
         return mPrefs;
-    }
-
-    private void initFresco() {
-        Fresco.initialize(this);
     }
 
     private void logFingerPrints() {

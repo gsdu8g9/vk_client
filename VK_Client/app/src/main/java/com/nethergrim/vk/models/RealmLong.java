@@ -3,7 +3,7 @@ package com.nethergrim.vk.models;
 import io.realm.RealmObject;
 
 /**
- * @author Andrew Drobyazko (andrey.drobyazko@applikeysolutions.com) on 15.10.15.
+ * @author Andrew Drobyazko (c2q9450@gmail.com) on 15.10.15.
  */
 public class RealmLong extends RealmObject {
 

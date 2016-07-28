@@ -18,7 +18,7 @@ import io.realm.Realm;
  * Activity that should be superclass in every activity in the app.
  * Contains some basic functionality for all screens.
  *
- * @author andreydrobyazko on 3/20/15. (c2q9450@gmail.com).
+ * @author Andrew Drobyazko (c2q9450@gmail.com) on 3/20/15. (c2q9450@gmail.com).
  *         All rights reserved.
  */
 public abstract class AbstractActivity extends AppCompatActivity {

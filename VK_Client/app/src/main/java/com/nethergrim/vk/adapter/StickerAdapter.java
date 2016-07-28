@@ -1,16 +1,20 @@
 package com.nethergrim.vk.adapter;
 
 import android.content.Context;
-import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 
-import com.facebook.drawee.view.SimpleDraweeView;
+import com.nethergrim.vk.MyApplication;
 import com.nethergrim.vk.R;
+import com.nethergrim.vk.images.ImageLoader;
 import com.nethergrim.vk.models.RealmLong;
 import com.nethergrim.vk.models.StickerDbItem;
+
+import javax.inject.Inject;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -19,18 +23,24 @@ import butterknife.InjectView;
  * @author Andrey Drobyazko (c2q9450@gmail.com).
  *         All rights reserved.
  */
+@SuppressWarnings("WeakerAccess")
 public class StickerAdapter extends ArrayAdapter<RealmLong> {
+
+    @Inject
+    ImageLoader imageLoader;
 
     private StickerDbItem mStickerDbItem;
 
     public StickerAdapter(Context context, StickerDbItem stickerDbItem) {
         super(context, 0, stickerDbItem.getStickerIds());
         this.mStickerDbItem = stickerDbItem;
+        MyApplication.getInstance().getMainComponent().inject(this);
     }
 
 
+    @NonNull
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(int position, View convertView, @NonNull ViewGroup parent) {
         View v = convertView;
         StickerViewHolder vh;
         if (v == null) {
@@ -40,16 +50,21 @@ public class StickerAdapter extends ArrayAdapter<RealmLong> {
         } else {
             vh = (StickerViewHolder) v.getTag();
         }
-        vh.mDraweeView.setImageURI(Uri.parse(mStickerDbItem.getUrls().get(position).getS()));
+        imageLoader.loadImage(mStickerDbItem.getUrls().get(position).getS(), vh.imageView);
+
+        if (getCount() > position + 4) {
+            imageLoader.preCache(mStickerDbItem.getUrls().get(position + 3).getS());
+        }
         return v;
     }
 
-    public static class StickerViewHolder {
+    static class StickerViewHolder {
 
-        @InjectView(R.id.drawee)
-        SimpleDraweeView mDraweeView;
+        @InjectView(R.id.image)
+        ImageView imageView;
 
-        public StickerViewHolder(View v) {
+
+        StickerViewHolder(View v) {
             ButterKnife.inject(this, v);
         }
     }

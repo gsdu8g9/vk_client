@@ -6,11 +6,12 @@ import android.support.annotation.StringRes;
 import android.widget.Toast;
 
 import io.realm.Realm;
+import io.realm.RealmChangeListener;
 
 /**
- * @author andreydrobyazko on 3/20/15.
+ * @author Andrew Drobyazko (c2q9450@gmail.com) on 3/20/15.
  */
-public abstract class AbstractFragment extends Fragment {
+public abstract class AbstractFragment extends Fragment implements RealmChangeListener {
 
 
     protected Realm mRealm;
@@ -19,12 +20,15 @@ public abstract class AbstractFragment extends Fragment {
     public void onStart() {
         super.onStart();
         mRealm = Realm.getDefaultInstance();
+        mRealm.addChangeListener(this);
     }
 
     @Override
     public void onStop() {
         super.onStop();
+        mRealm.removeChangeListener(this);
         mRealm.close();
+        mRealm = null;
     }
 
     protected void showToast(String s) {
@@ -48,4 +52,8 @@ public abstract class AbstractFragment extends Fragment {
         Toast.makeText(context, s, Toast.LENGTH_SHORT).show();
     }
 
+    @Override
+    public void onChange() {
+
+    }
 }

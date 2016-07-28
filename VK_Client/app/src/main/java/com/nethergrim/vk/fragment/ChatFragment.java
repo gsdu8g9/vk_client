@@ -165,7 +165,7 @@ public class ChatFragment extends BaseKeyboardFragment implements Toolbar.OnMenu
                     .findAllSorted("date", Sort.DESCENDING);
         }
         mChatAdapter = new ChatAdapter(mMessages);
-        mWebIntentHandler.markMessagesAsRead(getChatId(), System.currentTimeMillis() / 1000);
+        markMessagesAsRead();
         return mChatAdapter;
     }
 
@@ -181,6 +181,16 @@ public class ChatFragment extends BaseKeyboardFragment implements Toolbar.OnMenu
         return false;
     }
 
+    private void markMessagesAsRead(){
+        long convId;
+        if (mIsGroupChat){
+            convId = getChatId() + 2000000000;
+        } else {
+            convId = mConversationId;
+        }
+        mWebIntentHandler.markMessagesAsRead(convId, mChatAdapter.getLastMessageId());
+    }
+
     @Subscribe
     public void onDataUpdated(ConversationUpdatedEvent e) {
         if (mIsGroupChat && e.getChatId() == getChatId() || !mIsGroupChat && e.getUserId().equals(
@@ -188,8 +198,14 @@ public class ChatFragment extends BaseKeyboardFragment implements Toolbar.OnMenu
             mDataCount = e.getCount();
             mChatAdapter.notifyDataSetChanged();
             mChatAdapter.setHeaderVisibility(View.GONE);
-            mWebIntentHandler.markMessagesAsRead(getChatId(), System.currentTimeMillis() / 1000);
+            markMessagesAsRead();
         }
+    }
+
+    @Override
+    public void onChange() {
+        super.onChange();
+        mChatAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -213,6 +229,9 @@ public class ChatFragment extends BaseKeyboardFragment implements Toolbar.OnMenu
     }
 
 
+    /**
+     * @return id of another user, if current chat is 1-1 conversation.
+     */
     private String getUserId() {
         if (mIsGroupChat) {
             return null;
@@ -220,6 +239,9 @@ public class ChatFragment extends BaseKeyboardFragment implements Toolbar.OnMenu
         return String.valueOf(mConversationId);
     }
 
+    /**
+     * @return id of group conversation if current chat is group conversation.
+     */
     private long getChatId() {
         if (!mIsGroupChat) {
             return -1;

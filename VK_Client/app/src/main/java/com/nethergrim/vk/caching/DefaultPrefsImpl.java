@@ -15,7 +15,7 @@ import rx.Observable;
 import rx.schedulers.Schedulers;
 
 /**
- * @author andreydrobyazko on 3/20/15.
+ * @author Andrew Drobyazko (c2q9450@gmail.com) on 3/20/15.
  */
 public class DefaultPrefsImpl implements Prefs {
 
@@ -155,7 +155,7 @@ public class DefaultPrefsImpl implements Prefs {
 
     @Override
     @DebugLog
-    public void addConversationToSyncUnreadMessages(long conversationId, long toTime) {
+    public synchronized void addConversationToSyncUnreadMessages(long conversationId, long toTime) {
         Set<LongToLongModel> data = getConversationsToSyncUnreadMessages();
         data.add(new LongToLongModel(conversationId, toTime));
         setLongToLongSet(data, KEY_SYNC_MARK_MESSAGES_TO_READ);
@@ -163,18 +163,13 @@ public class DefaultPrefsImpl implements Prefs {
 
     @Override
     @DebugLog
-    public void removeConversationToSyncUnreadMessages(long conversationId, long toTime) {
-        LongToLongModel m = new LongToLongModel(conversationId, toTime);
-        Set<LongToLongModel> data = getConversationsToSyncUnreadMessages();
-        if (data.contains(m)) {
-            data.remove(m);
-        }
-        setLongToLongSet(data, KEY_SYNC_MARK_MESSAGES_TO_READ);
+    public synchronized void removeConversationToSyncUnreadMessages() {
+        setLongToLongSet(null, KEY_SYNC_MARK_MESSAGES_TO_READ);
     }
 
     @Override
     @DebugLog
-    public Set<LongToLongModel> getConversationsToSyncUnreadMessages() {
+    public synchronized Set<LongToLongModel> getConversationsToSyncUnreadMessages() {
         return getLongToLong(KEY_SYNC_MARK_MESSAGES_TO_READ)
                 .toList()
                 .map(HashSet::new)
@@ -190,7 +185,11 @@ public class DefaultPrefsImpl implements Prefs {
     }
 
     @DebugLog
-    private void setLongToLongSet(@NonNull Set<LongToLongModel> data, @NonNull String key) {
+    private void setLongToLongSet(Set<LongToLongModel> data, @NonNull String key) {
+        if (data == null) {
+            mPrefs.edit().putStringSet(key, null).apply();
+            return;
+        }
         Observable.from(data)
                 .subscribeOn(Schedulers.io())
                 .map(LongToLongModel::toString)

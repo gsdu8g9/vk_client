@@ -10,14 +10,14 @@ import com.nethergrim.vk.models.StartupResponse;
 
 /**
  * Class that will handle all data persistense and mapping. Default implementation is {@link
- * RealmPersistingManagerImpl} that is Using {@link io.realm.Realm}.
+ * RealmStore} that is Using {@link io.realm.Realm}.
  *
  * Only this class should be used to map and persist web request results.
  *
  * @author andrej on 30.08.15 (c2q9450@gmail.com).
  * All rights reserved.
  */
-public interface PersistingManager {
+public interface Store {
 
     @WorkerThread
     void manage(StartupResponse startupResponse);
@@ -31,10 +31,12 @@ public interface PersistingManager {
     @WorkerThread
     void manage(ConversationsUserObject conversationsUserObject, boolean clearDataBeforePersist);
 
-
     @WorkerThread
     void manage(ListOfMessages listOfMessages);
 
     @WorkerThread
     void deleteConversation(long userId, long chatId);
+
+    @WorkerThread
+    void markMessagesAsRead(long conversationId, long lastReadMessage);
 }

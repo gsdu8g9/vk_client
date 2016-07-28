@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.util.List;
 
 /**
- * @author andreydrobyazko on 4/6/15.
+ * @author Andrew Drobyazko (c2q9450@gmail.com) on 4/6/15.
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ListOfUsers extends WebResponse {

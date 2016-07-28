@@ -10,7 +10,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 
 @SuppressWarnings("unused")
-class LongToLongModel {
+public class LongToLongModel {
 
     private static final ObjectMapper mapper = new ObjectMapper();
     @JsonProperty("l1")
@@ -44,6 +44,22 @@ class LongToLongModel {
             e.printStackTrace();
         }
         return null;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        LongToLongModel that = (LongToLongModel) o;
+
+        return l1 == that.l1;
+
+    }
+
+    @Override
+    public int hashCode() {
+        return (int) (l1 ^ (l1 >>> 32));
     }
 
     public long getL1() {

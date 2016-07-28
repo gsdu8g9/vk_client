@@ -1,5 +1,6 @@
 package com.nethergrim.vk.images;
 
+import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
 import android.support.v7.graphics.Palette;
 import android.util.Log;
@@ -15,16 +16,18 @@ import java.util.List;
 import javax.inject.Inject;
 
 import io.realm.Realm;
+import rx.Observable;
 import rx.schedulers.Schedulers;
 
 /**
  * @author Andrey Drobyazko (c2q9450@gmail.com).
  *         All rights reserved.
  */
+@SuppressWarnings("unused")
 public class PaletteProviderImpl implements PaletteProvider {
 
     public static final String TAG = PaletteProviderImpl.class.getSimpleName();
-    public static final int MIN_DELAY_TO_UPDATE_PALETTE_MS = 1000 * 60 * 60 * 24 * 2; // 2 days
+    private static final int MIN_DELAY_TO_UPDATE_PALETTE_MS = 1000 * 60 * 60 * 24 * 2; // 2 days
 
     @Inject
     ImageLoader mImageLoader;
@@ -34,47 +37,50 @@ public class PaletteProviderImpl implements PaletteProvider {
     }
 
     @Override
-    public void generateAndStorePalette(@NonNull User user) {
+    public void generateAndStorePaletteImmediately(@NonNull User user) {
         if (doesPaletteNeedToBeUpdated(user.getId())) {
-            mImageLoader
-                    .getBitmap(user)
-                    .doOnNext(bitmap -> {
-                        Palette palette = Palette.from(bitmap).generate();
-                        final UserPalette userPalette = UserPaletteUtils.convert(palette,
-                                user.getId(),
-                                MyApplication.getInstance().getResources().getColor(
-                                        R.color.primary_light));
-                        Realm.getDefaultInstance().executeTransaction(
-                                realm -> realm.copyToRealmOrUpdate(userPalette));
-                    })
-                    .doOnError(throwable -> Log.e(TAG, throwable.toString()))
-                    .observeOn(Schedulers.computation());
-
+            Bitmap bitmap = mImageLoader.getBitmap(user).toBlocking().first();
+            if (bitmap == null) {
+                Log.e(TAG, "generateAndStorePalette: bitmap is null");
+                return;
+            }
+            Palette palette = Palette.from(bitmap).generate();
+            final UserPalette userPalette = UserPaletteUtils.convert(palette, user.getId(), 0);
+            Realm.getDefaultInstance().executeTransaction(realm -> realm.copyToRealmOrUpdate(userPalette));
         }
     }
 
 
     @Override
     public void generateAndStorePalette(@NonNull final List<User> userList) {
-        new Thread(() -> {
-            Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
-            for (int i = 0, size = userList.size(); i < size; i++) {
-                generateAndStorePalette(userList.get(i));
-            }
-        }).start();
+        Observable.from(userList)
+                .subscribeOn(Schedulers.io())
+                .doOnNext(this::generateAndStorePaletteImmediately)
+                .subscribe();
     }
 
     @Override
     public int getPaletteColor(long userId) {
         UserPalette userPalette = getUserPalette(userId);
+        int colorDefault = MyApplication.getInstance().getResources().getColor(R.color.primary_light);
         int color;
-        if (userPalette != null && userPalette.getVibrant() != 0) {
-            color = userPalette.getVibrant();
-        } else if (userPalette != null && userPalette.getMuted() != 0) {
-            color = userPalette.getMuted();
-        } else {
-            color = MyApplication.getInstance().getResources().getColor(R.color.primary_light);
+        if (userPalette == null) {
+            Log.e(TAG, "getPaletteColor: no palette");
+            return colorDefault;
         }
+        color = userPalette.getVibrant();
+        if (color == 0)
+            color = userPalette.getVibrantDark();
+        if (color == 0)
+            color = userPalette.getVibrantLight();
+        if (color == 0)
+            color = userPalette.getMuted();
+        if (color == 0)
+            color = userPalette.getMutedDark();
+        if (color == 0)
+            color = userPalette.getMutedLight();
+        if (color == 0)
+            color = colorDefault;
         return color;
     }
 

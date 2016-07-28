@@ -85,7 +85,7 @@
         app:typeface="roboto_light"
         tools:text="Yesterday"/>
 
-    <com.facebook.drawee.view.SimpleDraweeView
+    <ImageView
         android:id="@+id/imageViewDetails"
         android:layout_width="@dimen/conversation_item_image_size"
         android:layout_height="@dimen/conversation_item_image_size"

@@ -1,12 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-
-<com.facebook.drawee.view.SimpleDraweeView
-    android:id="@+id/drawee"
+<ImageView
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:fresco="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/image"
     android:layout_width="@dimen/chat.sticker.width"
     android:layout_height="@dimen/chat.sticker.height"
     android:scaleType="centerInside"
-    fresco:fadeDuration="20" />
+    />
 

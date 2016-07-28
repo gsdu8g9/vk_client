@@ -9,9 +9,11 @@ import com.nethergrim.vk.activity.UserProfileActivity;
 import com.nethergrim.vk.adapter.ChatAdapter;
 import com.nethergrim.vk.adapter.ConversationsAdapter;
 import com.nethergrim.vk.adapter.FriendsAdapter;
-import com.nethergrim.vk.data.RealmPersistingManagerImpl;
+import com.nethergrim.vk.adapter.StickerAdapter;
+import com.nethergrim.vk.data.RealmStore;
 import com.nethergrim.vk.emoji.EmojiPagerAdapter;
 import com.nethergrim.vk.emoji.EmojiconsPopup;
+import com.nethergrim.vk.emoji.StickersLayoutView;
 import com.nethergrim.vk.fragment.ChatFragment;
 import com.nethergrim.vk.fragment.ConversationsFragment;
 import com.nethergrim.vk.fragment.FriendsFragment;
@@ -23,6 +25,7 @@ import com.nethergrim.vk.utils.DataHelper;
 import com.nethergrim.vk.utils.PushParserImpl;
 import com.nethergrim.vk.utils.RealmUserProviderImplementation;
 import com.nethergrim.vk.views.KeyboardDetectorRelativeLayout;
+import com.nethergrim.vk.views.imageViews.UserImageView;
 import com.nethergrim.vk.web.DataManagerImpl;
 import com.nethergrim.vk.web.WebIntentHandlerImpl;
 import com.nethergrim.vk.web.WebRequestManagerImpl;
@@ -84,7 +87,7 @@ public interface MainComponent {
 
     void inject(DataManagerImpl d);
 
-    void inject(RealmPersistingManagerImpl r);
+    void inject(RealmStore r);
 
     void inject(NewChatActivity newChatActivity);
 
@@ -95,4 +98,10 @@ public interface MainComponent {
     void inject(EmojiPagerAdapter emojiPagerAdapter);
 
     void inject(EmojiconsPopup emojiconsPopup);
+
+    void inject(StickerAdapter stickerAdapter);
+
+    void inject(UserImageView userImageView);
+
+    void inject(StickersLayoutView stickersLayoutView);
 }

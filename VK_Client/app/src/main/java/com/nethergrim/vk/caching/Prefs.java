@@ -1,10 +1,13 @@
 package com.nethergrim.vk.caching;
 
+import android.support.annotation.WorkerThread;
+
 import java.util.Set;
 
 /**
- * @author andreydrobyazko on 3/20/15.
+ * @author Andrew Drobyazko (c2q9450@gmail.com) on 3/20/15.
  */
+@SuppressWarnings("unused")
 public interface Prefs {
 
     long getCurrentUserId();
@@ -63,9 +66,12 @@ public interface Prefs {
     boolean isDisplayingUnreadMessagesAsUnread();
 
 
+    @WorkerThread
     void addConversationToSyncUnreadMessages(long conversationId, long toTime);
 
-    void removeConversationToSyncUnreadMessages(long conversationId, long toTime);
+    @WorkerThread
+    void removeConversationToSyncUnreadMessages();
 
+    @WorkerThread
     Set<LongToLongModel> getConversationsToSyncUnreadMessages();
 }

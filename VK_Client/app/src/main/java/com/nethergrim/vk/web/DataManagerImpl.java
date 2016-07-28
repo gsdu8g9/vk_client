@@ -3,12 +3,14 @@ package com.nethergrim.vk.web;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.github.pwittchen.reactivenetwork.library.ReactiveNetwork;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.android.gms.iid.InstanceID;
 import com.nethergrim.vk.Constants;
 import com.nethergrim.vk.MyApplication;
+import com.nethergrim.vk.caching.LongToLongModel;
 import com.nethergrim.vk.caching.Prefs;
-import com.nethergrim.vk.data.PersistingManager;
+import com.nethergrim.vk.data.Store;
 import com.nethergrim.vk.event.ConversationUpdatedEvent;
 import com.nethergrim.vk.event.ConversationsUpdatedEvent;
 import com.nethergrim.vk.event.FriendsUpdatedEvent;
@@ -33,6 +35,7 @@ import javax.inject.Inject;
 
 import io.realm.Realm;
 import rx.Observable;
+import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
 /**
@@ -54,12 +57,11 @@ public class DataManagerImpl implements DataManager {
     @Inject
     Prefs mPrefs;
 
-
     @Inject
     WebRequestManager mWebRequestManager;
 
     @Inject
-    PersistingManager mPersistingManager;
+    Store mPersistingManager;
 
     @Inject
     Bus mBus;
@@ -95,9 +97,7 @@ public class DataManagerImpl implements DataManager {
                 })
                 .flatMap(mWebRequestManager::launchStartupTasks)
                 .doOnNext(mPersistingManager::manage)
-                .doOnNext(startupResponse -> mBus.post(new MyUserUpdatedEvent()))
-                ;
-
+                .doOnNext(startupResponse -> mBus.post(new MyUserUpdatedEvent()));
     }
 
     @Override
@@ -117,8 +117,8 @@ public class DataManagerImpl implements DataManager {
 
     @Override
     public Observable<ConversationsUserObject> fetchConversationsUserAndPersist(int limit,
-            int offset,
-            boolean unreadOnly) {
+                                                                                int offset,
+                                                                                boolean unreadOnly) {
         return mWebRequestManager.getConversationsAndUsers(limit, offset, unreadOnly)
                 .doOnNext(conversationsUserObject -> mPersistingManager.manage(
                         conversationsUserObject, offset == 0))
@@ -130,9 +130,9 @@ public class DataManagerImpl implements DataManager {
 
     @Override
     public Observable<ListOfMessages> fetchMessagesHistory(int count,
-            int offset,
-            String userId,
-            long chatId) {
+                                                           int offset,
+                                                           String userId,
+                                                           long chatId) {
         return mWebRequestManager
                 .getChatHistory(offset, count, userId, chatId)
                 .doOnNext(listOfMessages -> {
@@ -185,17 +185,42 @@ public class DataManagerImpl implements DataManager {
     }
 
     @Override
-    public Observable<WebResponse> markMessagesAsRead(long conversationsId, long toTime) {
+    public Observable<WebResponse> markMessagesAsRead(long conversationId, long lastMessageId) {
         // add messages to sync in preference
         // then sync messages read state
-
-        // TODO: 06.12.15
-        return syncMessagesReadState();
+        return Observable.fromCallable(() -> {
+            mPrefs.addConversationToSyncUnreadMessages(conversationId, lastMessageId);
+            return Boolean.TRUE;
+        }).flatMap(new Func1<Boolean, Observable<WebResponse>>() {
+            @Override
+            public Observable<WebResponse> call(Boolean aBoolean) {
+                return syncMessagesReadState();
+            }
+        });
     }
 
     @Override
     public Observable<WebResponse> syncMessagesReadState() {
-        // TODO: 06.12.15
-        return Observable.empty();
+        return ReactiveNetwork.observeInternetConnectivity()
+                .subscribeOn(Schedulers.io())
+                .first()
+                .filter(aBoolean -> aBoolean)
+                .map(aBoolean -> mPrefs.getConversationsToSyncUnreadMessages())
+                .filter(a -> !a.isEmpty())
+                .flatMap(Observable::from, 4)
+                .flatMap(new Func1<LongToLongModel, Observable<WebResponse>>() {
+                    @Override
+                    public Observable<WebResponse> call(LongToLongModel longToLongModel) {
+                        long conversationId = longToLongModel.getL1();
+                        long lastMessageId = longToLongModel.getL2();
+                        return Observable.fromCallable(() -> {
+                            WebResponse webResponse = mWebRequestManager.markMessagesAsRead(conversationId, lastMessageId).first().toBlocking().first();
+
+                            return webResponse;
+                        });
+                    }
+                }, 4)
+                .doOnCompleted(() -> mPrefs.removeConversationToSyncUnreadMessages());
+
     }
 }

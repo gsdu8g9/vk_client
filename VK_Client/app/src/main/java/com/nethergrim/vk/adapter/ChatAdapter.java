@@ -188,6 +188,16 @@ public class ChatAdapter extends SelectableUltimateAdapter
         return user;
     }
 
+    /**
+     * @return the ID of last message, or -1 if no messages in adapter.
+     */
+    public long getLastMessageId(){
+        if (mMessages == null || mMessages.isEmpty()){
+            return -1L;
+        }
+        return mMessages.get(0).getId();
+    }
+
     public static class MyFooterVH extends FooterVH {
 
         public MyFooterVH(View itemView) {
