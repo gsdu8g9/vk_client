@@ -1,5 +1,7 @@
 package com.nethergrim.vk.fragment;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
@@ -8,10 +10,14 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.DecelerateInterpolator;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
@@ -19,6 +25,7 @@ import android.widget.LinearLayout;
 
 import com.devspark.robototextview.widget.RobotoEditText;
 import com.devspark.robototextview.widget.RobotoTextView;
+import com.nethergrim.vk.Constants;
 import com.nethergrim.vk.R;
 import com.nethergrim.vk.activity.AbstractActivity;
 import com.nethergrim.vk.adapter.SelectableUltimateAdapter;
@@ -38,7 +45,7 @@ import github.ankushsachdeva.emojicon.EmojiconGridView;
 import github.ankushsachdeva.emojicon.emoji.Emojicon;
 
 /**
- * @author Andrew Drobyazko (andrey.drobyazko@applikeysolutions.com) on 03.10.15.
+ * @author Andrew Drobyazko - c2q9450@gmail.com - https://nethergrim.github.io on 03.10.15.
  */
 public abstract class BaseKeyboardFragment extends AbstractFragment
         implements EmojiconGridView.OnEmojiconClickedListener,
@@ -88,8 +95,8 @@ public abstract class BaseKeyboardFragment extends AbstractFragment
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater,
-            ViewGroup container,
-            Bundle savedInstanceState) {
+                             ViewGroup container,
+                             Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_base_emoji_keyboard, container, false);
         ButterKnife.inject(this, v);
         return v;
@@ -109,6 +116,22 @@ public abstract class BaseKeyboardFragment extends AbstractFragment
         mKeyboardDetector.addKeyboardStateChangedListener(this);
         mSelectionLayout.setVisibility(View.GONE);
         mRecycler.addOnItemTouchListener(new RecyclerItemClickListener(ctx, this));
+        mEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                mBtnRight.animate().alpha(editable.length() > 0 ? 1f : 0f).setDuration(150).start();
+            }
+        });
     }
 
     @Override
@@ -299,11 +322,36 @@ public abstract class BaseKeyboardFragment extends AbstractFragment
     }
 
     private void showSelectionToolbar() {
-        mSelectionLayout.setVisibility(View.VISIBLE);
+        mSelectionLayout.setTranslationY(50 * Constants.mDensity * -1);
+        mSelectionLayout.setAlpha(0f);
+        mSelectionLayout.animate()
+                .alpha(1f)
+                .translationY(0)
+                .setDuration(250)
+                .setInterpolator(new DecelerateInterpolator())
+                .setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationStart(Animator animation) {
+                        super.onAnimationStart(animation);
+                        mSelectionLayout.setVisibility(View.VISIBLE);
+                    }
+                }).start();
     }
 
     private void hideSelectionToolbar() {
-        mSelectionLayout.setVisibility(View.GONE);
+        mSelectionLayout.animate()
+                .alpha(0f)
+                .translationY(50 * Constants.mDensity * -1)
+                .setDuration(250)
+                .setInterpolator(new AccelerateInterpolator())
+                .setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        super.onAnimationEnd(animation);
+                        mSelectionLayout.setVisibility(View.GONE);
+                    }
+                }).start();
+
     }
 
     private void showSoftKeyboard() {

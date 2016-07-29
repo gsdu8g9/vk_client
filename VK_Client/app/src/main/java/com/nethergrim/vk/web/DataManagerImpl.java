@@ -3,12 +3,14 @@ package com.nethergrim.vk.web;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.github.pwittchen.reactivenetwork.library.ReactiveNetwork;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.android.gms.iid.InstanceID;
 import com.nethergrim.vk.Constants;
 import com.nethergrim.vk.MyApplication;
+import com.nethergrim.vk.caching.LongToLongModel;
 import com.nethergrim.vk.caching.Prefs;
-import com.nethergrim.vk.data.PersistingManager;
+import com.nethergrim.vk.data.Store;
 import com.nethergrim.vk.event.ConversationUpdatedEvent;
 import com.nethergrim.vk.event.ConversationsUpdatedEvent;
 import com.nethergrim.vk.event.FriendsUpdatedEvent;
@@ -23,9 +25,9 @@ import com.nethergrim.vk.models.ListOfUsers;
 import com.nethergrim.vk.models.StartupResponse;
 import com.nethergrim.vk.models.StickerDbItem;
 import com.nethergrim.vk.models.StockItemsResponse;
+import com.nethergrim.vk.models.WebResponse;
 import com.squareup.otto.Bus;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,6 +35,7 @@ import javax.inject.Inject;
 
 import io.realm.Realm;
 import rx.Observable;
+import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
 /**
@@ -43,7 +46,7 @@ import rx.schedulers.Schedulers;
  * <p>
  * By default every method of current class should return {@link rx.Observable} as result.
  *
- * @author andrej on 30.08.15 (c2q9450@gmail.com).
+ * @author Andrew Drobyazko - c2q9450@gmail.com - https://nethergrim.github.io on 30.08.15 (c2q9450@gmail.com).
  *         All rights reserved.
  */
 public class DataManagerImpl implements DataManager {
@@ -54,18 +57,20 @@ public class DataManagerImpl implements DataManager {
     @Inject
     Prefs mPrefs;
 
-
     @Inject
     WebRequestManager mWebRequestManager;
 
     @Inject
-    PersistingManager mPersistingManager;
+    Store mPersistingManager;
 
     @Inject
     Bus mBus;
 
     @Inject
     ImageLoader mImageLoader;
+
+    @Inject
+    Store mStore;
 
     public DataManagerImpl() {
         MyApplication.getInstance().getMainComponent().inject(this);
@@ -81,13 +86,13 @@ public class DataManagerImpl implements DataManager {
                     // prepare parameters
                     String token = mPrefs.getGcmToken();
                     if (TextUtils.isEmpty(token)) {
-                        InstanceID instanceID = InstanceID.getInstance(
-                                MyApplication.getInstance().getApplicationContext());
+
                         try {
-                            token = instanceID.getToken(Constants.GCM_SENDER_ID,
-                                    GoogleCloudMessaging.INSTANCE_ID_SCOPE, null);
-                        } catch (IOException e) {
+                            InstanceID instanceID = InstanceID.getInstance(MyApplication.getInstance().getApplicationContext());
+                            token = instanceID.getToken(Constants.GCM_SENDER_ID, GoogleCloudMessaging.INSTANCE_ID_SCOPE, null);
+                        } catch (Throwable e) {
                             e.printStackTrace();
+                            Log.e(TAG, "launchStartupTasksAndPersistToDb: ", e);
                         }
                         mPrefs.setGcmToken(token);
                     }
@@ -95,9 +100,7 @@ public class DataManagerImpl implements DataManager {
                 })
                 .flatMap(mWebRequestManager::launchStartupTasks)
                 .doOnNext(mPersistingManager::manage)
-                .doOnNext(startupResponse -> mBus.post(new MyUserUpdatedEvent()))
-                ;
-
+                .doOnNext(startupResponse -> mBus.post(new MyUserUpdatedEvent()));
     }
 
     @Override
@@ -117,8 +120,8 @@ public class DataManagerImpl implements DataManager {
 
     @Override
     public Observable<ConversationsUserObject> fetchConversationsUserAndPersist(int limit,
-            int offset,
-            boolean unreadOnly) {
+                                                                                int offset,
+                                                                                boolean unreadOnly) {
         return mWebRequestManager.getConversationsAndUsers(limit, offset, unreadOnly)
                 .doOnNext(conversationsUserObject -> mPersistingManager.manage(
                         conversationsUserObject, offset == 0))
@@ -130,9 +133,9 @@ public class DataManagerImpl implements DataManager {
 
     @Override
     public Observable<ListOfMessages> fetchMessagesHistory(int count,
-            int offset,
-            String userId,
-            long chatId) {
+                                                           int offset,
+                                                           String userId,
+                                                           long chatId) {
         return mWebRequestManager
                 .getChatHistory(offset, count, userId, chatId)
                 .doOnNext(listOfMessages -> {
@@ -165,12 +168,12 @@ public class DataManagerImpl implements DataManager {
                     if (stockItems == null || stockItems.getItems() == null) {
                         return null;
                     }
-                    List<StickerDbItem> result = new ArrayList<StickerDbItem>(
+                    List<StickerDbItem> result = new ArrayList<>(
                             stockItems.getItems().size());
                     for (int i = 0, size = stockItems.getItems().size(); i < size; i++) {
                         result.add(StickerDbItem.MAPPER.call(stockItems.getItems().get(i)));
                         String url = result.get(i).getPhoto();
-                        mImageLoader.cacheToMemory(url);
+                        mImageLoader.preCache(url);
                     }
                     return result;
                 })
@@ -182,5 +185,70 @@ public class DataManagerImpl implements DataManager {
                     realm.close();
 
                 });
+    }
+
+    @Override
+    public Observable<WebResponse> markMessagesAsRead(long conversationId, long lastMessageId) {
+        // add messages to sync in preference
+        // then sync messages read state
+        return Observable.fromCallable(() -> {
+            mPrefs.addConversationToSyncUnreadMessages(conversationId, lastMessageId);
+            return Boolean.TRUE;
+        }).flatMap(new Func1<Boolean, Observable<WebResponse>>() {
+            @Override
+            public Observable<WebResponse> call(Boolean aBoolean) {
+                return syncMessagesReadState();
+            }
+        });
+    }
+
+    @Override
+    public Observable<WebResponse> syncMessagesReadState() {
+        if (!mPrefs.markMessagesAsRead() && mPrefs.isDisplayingUnreadMessagesAsUnread()) {
+            // fake
+            return ReactiveNetwork.observeInternetConnectivity()
+                    .subscribeOn(Schedulers.io())
+                    .first()
+                    .filter(aBoolean -> aBoolean)
+                    .map(aBoolean -> mPrefs.getConversationsToSyncUnreadMessages())
+                    .filter(a -> !a.isEmpty())
+                    .flatMap(Observable::from, 4)
+                    .flatMap(new Func1<LongToLongModel, Observable<WebResponse>>() {
+                        @Override
+                        public Observable<WebResponse> call(LongToLongModel longToLongModel) {
+                            long conversationId = longToLongModel.getL1();
+                            long lastMessageId = longToLongModel.getL2();
+                            mStore.markMessagesAsRead(conversationId, lastMessageId);
+                            return Observable.empty();
+                        }
+                    }, 4)
+                    .doOnCompleted(() -> mPrefs.removeConversationToSyncUnreadMessages());
+
+
+        }
+        //real
+        return ReactiveNetwork.observeInternetConnectivity()
+                .subscribeOn(Schedulers.io())
+                .first()
+                .filter(aBoolean -> aBoolean)
+                .map(aBoolean -> mPrefs.getConversationsToSyncUnreadMessages())
+                .filter(a -> !a.isEmpty())
+                .flatMap(Observable::from, 4)
+                .flatMap(new Func1<LongToLongModel, Observable<WebResponse>>() {
+                    @Override
+                    public Observable<WebResponse> call(LongToLongModel longToLongModel) {
+                        long conversationId = longToLongModel.getL1();
+                        long lastMessageId = longToLongModel.getL2();
+                        return Observable.fromCallable(() -> {
+                            WebResponse webResponse = mWebRequestManager.markMessagesAsRead(conversationId, lastMessageId).first().toBlocking().first();
+                            if (webResponse.ok()) {
+                                mStore.markMessagesAsRead(conversationId, lastMessageId);
+                            }
+                            return webResponse;
+                        });
+                    }
+                }, 4)
+                .doOnCompleted(() -> mPrefs.removeConversationToSyncUnreadMessages());
+
     }
 }

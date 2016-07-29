@@ -16,7 +16,7 @@ import java.util.Set;
 import io.realm.RealmResults;
 
 /**
- * @author Andrew Drobyazko (c2q9450@gmail.com) on 05.09.15.
+ * @author Andrew Drobyazko - c2q9450@gmail.com - https://nethergrim.github.io on 05.09.15.
  */
 public class MultiUserAdapter extends RecyclerView.Adapter<MultiUserVH>
         implements View.OnClickListener {

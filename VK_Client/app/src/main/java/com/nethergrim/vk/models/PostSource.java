@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import io.realm.RealmObject;
 
 /**
- * @author andrej on 04.08.15.
+ * @author Andrew Drobyazko - c2q9450@gmail.com - https://nethergrim.github.io on 04.08.15.
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class PostSource extends RealmObject {

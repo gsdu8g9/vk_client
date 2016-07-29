@@ -1,6 +1,7 @@
 package com.nethergrim.vk.adapter;
 
 import android.text.format.DateUtils;
+import android.util.LongSparseArray;
 import android.view.View;
 
 import com.nethergrim.vk.MyApplication;
@@ -10,9 +11,6 @@ import com.nethergrim.vk.caching.Prefs;
 import com.nethergrim.vk.models.Message;
 import com.nethergrim.vk.models.User;
 import com.nethergrim.vk.utils.UserProvider;
-
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -38,7 +36,7 @@ public class ChatAdapter extends SelectableUltimateAdapter
     private RealmResults<Message> mMessages;
 
 
-    private Map<Long, User> mUsersMap; // key - Long, user id, value = user;
+    private LongSparseArray<User> mUsersMap; // key - Long, user id, value = user;
 
     private int mSelectedColor = -1;
     private int mUnreadColor;
@@ -48,8 +46,8 @@ public class ChatAdapter extends SelectableUltimateAdapter
         MyApplication.getInstance().getMainComponent().inject(this);
         this.mMessages = messages;
         setHasStableIds(true);
-        mUsersMap = new HashMap<>(20);
-        mUnreadColor = MyApplication.getInstance().getResources().getColor(R.color.primary_light);
+        mUsersMap = new LongSparseArray<>(20);
+        mUnreadColor = MyApplication.getInstance().getResources().getColor(R.color.primary_light_opacity);
     }
 
 
@@ -72,7 +70,7 @@ public class ChatAdapter extends SelectableUltimateAdapter
 
     @Override
     public long getDataId(int dataPosition) {
-        if (dataPosition >= mMessages.size()) {
+        if (dataPosition >= mMessages.size() || dataPosition < 0) {
             return -1;
         }
         return mMessages.get(dataPosition).getId();
@@ -119,16 +117,12 @@ public class ChatAdapter extends SelectableUltimateAdapter
         }
         chatViewHolder.textBody.setText(message.getBody());
         if (isSelected(dataPosition)) {
-            chatViewHolder.avatarOverlay.setVisibility(View.VISIBLE);
+            chatViewHolder.root.setBackgroundResource(R.color.green);
             chatViewHolder.textDate.setVisibility(View.GONE);
         } else {
-            chatViewHolder.avatarOverlay.setVisibility(View.GONE);
-            if (shouldDisplayDate) {
-                chatViewHolder.textDate.setVisibility(View.VISIBLE);
-            }
+            chatViewHolder.textDate.setVisibility(View.VISIBLE);
+            chatViewHolder.root.setBackgroundColor(message.isRead_state() == 0 ? mUnreadColor : 0);
         }
-        chatViewHolder.root.setBackgroundColor(
-                message.getOut() == 0 && message.isRead_state() == 0 ? mUnreadColor : 0);
     }
 
     @Override
@@ -186,6 +180,22 @@ public class ChatAdapter extends SelectableUltimateAdapter
             mUsersMap.put(id, user);
         }
         return user;
+    }
+
+    public RealmResults<Message> getMessages() {
+        return mMessages;
+    }
+
+    /**
+     * @return the ID of last message, or -1 if no messages in adapter.
+     */
+    public long getLastMessageId() {
+        if (mMessages == null || mMessages.isEmpty()) {
+            return -1L;
+        }
+        Message lastMessage = mMessages.get(0);
+        long id = lastMessage.getId();
+        return id;
     }
 
     public static class MyFooterVH extends FooterVH {

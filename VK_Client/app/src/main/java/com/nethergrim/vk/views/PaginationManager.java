@@ -4,7 +4,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
 /**
- * @author Andrew Drobyazko (c2q9450@gmail.com).
+ * @author Andrew Drobyazko - c2q9450@gmail.com - https://nethergrim.github.io.
  *         All rights reserved!
  */
 public class PaginationManager extends RecyclerView.OnScrollListener {

@@ -20,7 +20,7 @@ import butterknife.InjectView;
 import io.realm.RealmResults;
 
 /**
- * @author Andrew Drobyazko (c2q9450@gmail.com) on 05.09.15.
+ * @author Andrew Drobyazko - c2q9450@gmail.com - https://nethergrim.github.io on 05.09.15.
  */
 public class NewChatActivity extends AbstractActivity {
 
@@ -30,8 +30,6 @@ public class NewChatActivity extends AbstractActivity {
     RobotoEditText mEtSearch;
     @InjectView(R.id.recyclerView)
     RecyclerView mRecyclerView;
-
-    private MultiUserAdapter mAdapter;
 
     public static void start(Context context) {
         context.startActivity(new Intent(context, NewChatActivity.class));
@@ -65,7 +63,7 @@ public class NewChatActivity extends AbstractActivity {
 
     private void initRecyclerView() {
         RealmResults<User> results = mRealm.where(User.class).findAllSorted("firstName");
-        mAdapter = new MultiUserAdapter(results);
+        MultiUserAdapter mAdapter = new MultiUserAdapter(results);
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mRecyclerView.setHasFixedSize(true);

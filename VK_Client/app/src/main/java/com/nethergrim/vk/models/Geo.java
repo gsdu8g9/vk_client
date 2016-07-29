@@ -1,6 +1,7 @@
 package com.nethergrim.vk.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 

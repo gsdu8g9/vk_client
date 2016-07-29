@@ -11,7 +11,7 @@ import io.realm.annotations.Ignore;
 import io.realm.annotations.PrimaryKey;
 
 /**
- * @author andreydrobyazko on 3/20/15.
+ * @author Andrew Drobyazko - c2q9450@gmail.com - https://nethergrim.github.io on 3/20/15.
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Message extends RealmObject {
@@ -41,7 +41,7 @@ public class Message extends RealmObject {
      * статус сообщения (0 — не прочитано, 1 — прочитано, не возвращается для пересланных
      * сообщений).
      */
-    private int read_state;
+    private int read_state = 1;
 
     /**
      * тип сообщения (0 — полученное, 1 — отправленное, не возвращается для пересланных сообщений).

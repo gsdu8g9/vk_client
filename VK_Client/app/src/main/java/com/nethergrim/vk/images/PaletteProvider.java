@@ -13,7 +13,7 @@ import java.util.List;
  */
 public interface PaletteProvider {
 
-    void generateAndStorePalette(@NonNull User user);
+    void generateAndStorePaletteImmediately(@NonNull User user);
 
     void generateAndStorePalette(@NonNull List<User> userList);
 

@@ -1,7 +1,6 @@
 package com.nethergrim.vk.adapter;
 
 import android.content.Context;
-import android.net.Uri;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.view.View;
@@ -11,6 +10,7 @@ import com.nethergrim.vk.R;
 import com.nethergrim.vk.adapter.viewholders.ConversationViewHolder;
 import com.nethergrim.vk.caching.Prefs;
 import com.nethergrim.vk.fragment.ConversationsFragment;
+import com.nethergrim.vk.images.ImageLoader;
 import com.nethergrim.vk.models.Conversation;
 import com.nethergrim.vk.models.Message;
 import com.nethergrim.vk.models.User;
@@ -33,14 +33,17 @@ import io.realm.Sort;
  *         All rights reserved.
  */
 public class ConversationsAdapter extends UltimateAdapter
-        implements RealmChangeListener, UltimateAdapter.FooterInterface {
+        implements RealmChangeListener, UltimateAdapter.FooterInterface, View.OnClickListener {
 
     @Inject
     UserProvider mUserProvider;
     @Inject
+    ImageLoader imageLoader;
+    @Inject
     Prefs mPrefs;
 
-    Realm mRealm;
+    private Realm mRealm;
+    private ClickListener clickListener;
 
     private RealmResults<Conversation> mData;
 
@@ -48,8 +51,9 @@ public class ConversationsAdapter extends UltimateAdapter
     private int textColorSecondary;
 
 
-    public ConversationsAdapter() {
+    public ConversationsAdapter(ClickListener clickListener) {
         super();
+        this.clickListener = clickListener;
         MyApplication.getInstance().getMainComponent().inject(this);
         mRealm = Realm.getDefaultInstance();// FIXME: 15.10.15 remove realm from here
         mRealm.setAutoRefresh(true);
@@ -62,10 +66,9 @@ public class ConversationsAdapter extends UltimateAdapter
     }
 
     @Override
-    public void onChange() {
+    public void onChange(Object element) {
         notifyDataSetChanged();
     }
-
 
     public Conversation getData(int position) {
         return mData.get(position);
@@ -99,6 +102,8 @@ public class ConversationsAdapter extends UltimateAdapter
     @Override
     public void bindDataVH(DataVH vh, int i) {
         ConversationViewHolder conversationViewHolder = (ConversationViewHolder) vh;
+        conversationViewHolder.itemView.setTag(i);
+        conversationViewHolder.itemView.setOnClickListener(this);
         Conversation conversation = mData.get(i);
         Message message = conversation.getMessage();
         String details = "";
@@ -129,7 +134,7 @@ public class ConversationsAdapter extends UltimateAdapter
 
         if (ConversationUtils.isConversationAGroupChat(conversation)) {
 
-//            group chat
+            //            group chat
             conversationViewHolder.imageAvatar.displayGroupChat();
             conversationViewHolder.textName.setText(message.getTitle());
 
@@ -147,13 +152,12 @@ public class ConversationsAdapter extends UltimateAdapter
 
             conversationViewHolder.mOnlineIndicator.setVisibility(View.GONE);
         } else {
-//              regular chat
+            //              regular chat
             user = mUserProvider.getUser(conversation.getId());
 
             details = details + message.getBody();
             if (ConversationUtils.isMessageFromMe(message)) {
-                details = conversationViewHolder.itemView.getResources().getString(R.string.me_)
-                        + " " + details;
+                details = conversationViewHolder.itemView.getResources().getString(R.string.me_) + " " + details;
             }
 
             if (user != null) {
@@ -168,7 +172,7 @@ public class ConversationsAdapter extends UltimateAdapter
             details = details + "[ " + ctx.getString(R.string.sticker) + " ]";
             conversationViewHolder.mImageViewDetails.setVisibility(View.VISIBLE);
             String url = MessageUtils.getStickerFromMessage(message).getPhoto256();
-            conversationViewHolder.mImageViewDetails.setImageURI(Uri.parse(url));
+            imageLoader.loadCircleImage(url, conversationViewHolder.mImageViewDetails);
         } else {
             conversationViewHolder.mImageViewDetails.setVisibility(View.GONE);
         }
@@ -204,6 +208,16 @@ public class ConversationsAdapter extends UltimateAdapter
     @Override
     public void bindFooterVH(FooterVH vh) {
         // nothing to bind
+    }
+
+    @Override
+    public void onClick(View v) {
+        int index = (int) v.getTag();
+        clickListener.onConversationClicked(index, mData.get(index));
+    }
+
+    public interface ClickListener {
+        void onConversationClicked(int index, Conversation conversation);
     }
 
     public static class MyFooterVH extends FooterVH {

@@ -31,8 +31,9 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 
 /**
- * @author andrej on 28.07.15.
+ * @author Andrew Drobyazko - c2q9450@gmail.com - https://nethergrim.github.io on 28.07.15.
  */
+@SuppressWarnings({"deprecation", "unused"})
 public class FriendsFragment extends AbstractFragment
         implements FriendsAdapter.OnFriendClickedCallback {
 
@@ -63,8 +64,8 @@ public class FriendsFragment extends AbstractFragment
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater,
-            ViewGroup container,
-            Bundle savedInstanceState) {
+                             ViewGroup container,
+                             Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_friends, container, false);
         ButterKnife.inject(this, view);
         MyApplication.getInstance().getMainComponent().inject(this);
@@ -117,9 +118,8 @@ public class FriendsFragment extends AbstractFragment
         mAdapter = new FriendsAdapter(this);
         mList.setAdapter(mAdapter);
         mList.setHasFixedSize(true);
-        VarColumnGridLayoutManager manager = new VarColumnGridLayoutManager(context,
-                context.getResources()
-                        .getDimensionPixelSize(R.dimen.friends_screen_min_item_width));
+        VarColumnGridLayoutManager manager = new VarColumnGridLayoutManager(context, context.getResources()
+                .getDimensionPixelSize(R.dimen.friends_screen_min_item_width));
         mList.setLayoutManager(manager);
         mList.addOnScrollListener(new BasicRecyclerViewScroller(mToolbarScrollable));
 

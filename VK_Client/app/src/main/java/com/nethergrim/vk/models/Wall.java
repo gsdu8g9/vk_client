@@ -8,7 +8,7 @@ import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
 /**
- * @author andrej on 04.08.15.
+ * @author Andrew Drobyazko - c2q9450@gmail.com - https://nethergrim.github.io on 04.08.15.
  *         Запись на стене (type = wall)
  */
 @JsonIgnoreProperties(ignoreUnknown = true)

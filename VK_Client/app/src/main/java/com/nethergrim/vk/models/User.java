@@ -5,13 +5,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
-import io.realm.annotations.RealmClass;
 
 /**
- * @author andreydrobyazko on 4/6/15.
+ * @author Andrew Drobyazko - c2q9450@gmail.com - https://nethergrim.github.io on 4/6/15.
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-@RealmClass
 public class User extends RealmObject {
 
     @PrimaryKey
@@ -37,7 +35,7 @@ public class User extends RealmObject {
      * этом случае дополнительные поля fields не возвращаются.
      * */
     private int hidden;
-    @JsonProperty("photo_id")
+    @JsonProperty(Fields.photo_id)
     /**
      * id главной фотографии профиля пользователя в формате user_id+photo_id, например,
      * 6492_192164258. В некоторых случаях (если фотография была установлена очень давно) это
@@ -59,7 +57,7 @@ public class User extends RealmObject {
      * 0 — пол не указан.
      */
     private int sex;
-    @JsonProperty("bdate")
+    @JsonProperty(Fields.bdate)
     /**
      * дата рождения. Возвращается в формате DD.MM.YYYY или DD.MM (если год рождения скрыт). Если
      * дата рождения скрыта целиком, поле отсутствует в ответе.

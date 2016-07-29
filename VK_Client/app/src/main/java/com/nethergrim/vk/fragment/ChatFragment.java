@@ -34,18 +34,20 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
+import hugo.weaving.DebugLog;
 import io.realm.Realm;
+import io.realm.RealmQuery;
 import io.realm.RealmResults;
 import io.realm.Sort;
 
 /**
- * @author andrej on 07.08.15.
+ * @author Andrew Drobyazko - c2q9450@gmail.com - https://nethergrim.github.io on 07.08.15.
  */
 public class ChatFragment extends BaseKeyboardFragment implements Toolbar.OnMenuItemClickListener,
         PaginationManager.OnRecyclerViewScrolledToPageListener {
 
-    public static final String EXTRA_CONVERSATION_ID = Constants.PACKAGE_NAME + ".CONV_ID";
-    public static final int PAGE_SIZE = 50;
+    private static final String EXTRA_CONVERSATION_ID = Constants.PACKAGE_NAME + ".CONV_ID";
+    private static final int PAGE_SIZE = 50;
     @Inject
     WebIntentHandler mWebIntentHandler;
     @Inject
@@ -55,7 +57,7 @@ public class ChatFragment extends BaseKeyboardFragment implements Toolbar.OnMenu
     @Inject
     Bus mBus;
 
-    Realm mRealm;
+
     private long mConversationId;
     private boolean mIsGroupChat;
     private Conversation mConversation;
@@ -79,14 +81,8 @@ public class ChatFragment extends BaseKeyboardFragment implements Toolbar.OnMenu
         MyApplication.getInstance().getMainComponent().inject(this);
         setHasOptionsMenu(true);
         setRetainInstance(true);
-        mRealm = Realm.getDefaultInstance();
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        mRealm.close();
-    }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -143,13 +139,38 @@ public class ChatFragment extends BaseKeyboardFragment implements Toolbar.OnMenu
         return null;
     }
 
+    /**
+     * Should take id's of selected messages, then find messages by ids, then build a String from message body's.
+     *
+     * @return resulted String
+     */
+    @DebugLog
     @Override
     public String getSelectedText() {
-        return "TODO"; // TODO: 17.10.15 fixme
+        Set<Long> selectedMessageIds = mChatAdapter.getSelectedIds();
+        RealmQuery<Message> messageRealmQuery = mRealm.where(Message.class);
+        int i = 0;
+        int size = selectedMessageIds.size();
+        for (Long selectedMessageId : selectedMessageIds) {
+            messageRealmQuery.equalTo("id", selectedMessageId);
+            if (i + 1 < size) {
+                messageRealmQuery.or();
+            }
+            i++;
+        }
+        RealmResults<Message> messages = messageRealmQuery.findAllSorted("date", Sort.ASCENDING);
+        StringBuilder sb = new StringBuilder();
+        for (int i1 = 0, messagesSize = messages.size(); i1 < messagesSize; i1++) {
+            Message message = messages.get(i1);
+            sb.append(message.getBody()).append("\n");
+        }
+        sb.deleteCharAt(sb.length() - 1);
+        return sb.toString();
     }
 
     @Override
     protected SelectableUltimateAdapter getAdapter(Context context) {
+        mRealm = Realm.getDefaultInstance();
         mConversation = mRealm.where(Conversation.class).equalTo("id", mConversationId).findFirst();
         if (mConversation == null) {
             return null;
@@ -170,6 +191,7 @@ public class ChatFragment extends BaseKeyboardFragment implements Toolbar.OnMenu
                     .findAllSorted("date", Sort.DESCENDING);
         }
         mChatAdapter = new ChatAdapter(mMessages);
+        markMessagesAsRead();
         return mChatAdapter;
     }
 
@@ -185,6 +207,16 @@ public class ChatFragment extends BaseKeyboardFragment implements Toolbar.OnMenu
         return false;
     }
 
+    private void markMessagesAsRead() {
+        long convId;
+        if (mIsGroupChat) {
+            convId = getChatId() + 2000000000;
+        } else {
+            convId = mConversationId;
+        }
+        mWebIntentHandler.markMessagesAsRead(convId, mChatAdapter.getLastMessageId());
+    }
+
     @Subscribe
     public void onDataUpdated(ConversationUpdatedEvent e) {
         if (mIsGroupChat && e.getChatId() == getChatId() || !mIsGroupChat && e.getUserId().equals(
@@ -192,7 +224,13 @@ public class ChatFragment extends BaseKeyboardFragment implements Toolbar.OnMenu
             mDataCount = e.getCount();
             mChatAdapter.notifyDataSetChanged();
             mChatAdapter.setHeaderVisibility(View.GONE);
+            markMessagesAsRead();
         }
+    }
+
+    @Override
+    public void onChange(Object element) {
+        mChatAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -216,6 +254,9 @@ public class ChatFragment extends BaseKeyboardFragment implements Toolbar.OnMenu
     }
 
 
+    /**
+     * @return id of another user, if current chat is 1-1 conversation.
+     */
     private String getUserId() {
         if (mIsGroupChat) {
             return null;
@@ -223,6 +264,9 @@ public class ChatFragment extends BaseKeyboardFragment implements Toolbar.OnMenu
         return String.valueOf(mConversationId);
     }
 
+    /**
+     * @return id of group conversation if current chat is group conversation.
+     */
     private long getChatId() {
         if (!mIsGroupChat) {
             return -1;

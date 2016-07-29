@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import javax.inject.Inject;
 
 /**
- * @author Andrew Drobyazko (andrey.drobyazko@applikeysolutions.com) on 03.10.15.
+ * @author Andrew Drobyazko - c2q9450@gmail.com - https://nethergrim.github.io on 03.10.15.
  */
 public class KeyboardDetectorRelativeLayout extends RelativeLayout {
 

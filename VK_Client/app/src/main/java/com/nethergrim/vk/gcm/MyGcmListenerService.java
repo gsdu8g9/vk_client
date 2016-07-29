@@ -15,7 +15,7 @@ import com.nethergrim.vk.R;
 import com.nethergrim.vk.activity.ChatActivity;
 import com.nethergrim.vk.activity.MainActivity;
 import com.nethergrim.vk.caching.Prefs;
-import com.nethergrim.vk.data.PersistingManager;
+import com.nethergrim.vk.data.Store;
 import com.nethergrim.vk.images.ImageLoader;
 import com.nethergrim.vk.models.User;
 import com.nethergrim.vk.models.push.PushMessage;
@@ -57,7 +57,7 @@ public class MyGcmListenerService extends GcmListenerService {
     Prefs mPrefs;
 
     @Inject
-    PersistingManager mPersistingManager;
+    Store mPersistingManager;
 
     @Override
     public void onMessageReceived(String from, Bundle data) {

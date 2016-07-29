@@ -1,14 +1,16 @@
 package com.nethergrim.vk.inject;
 
+import android.content.Context;
+
 import com.nethergrim.vk.MyApplication;
 import com.nethergrim.vk.caching.DefaultPrefsImpl;
 import com.nethergrim.vk.caching.Prefs;
-import com.nethergrim.vk.data.PersistingManager;
-import com.nethergrim.vk.data.RealmPersistingManagerImpl;
+import com.nethergrim.vk.data.RealmStore;
+import com.nethergrim.vk.data.Store;
 import com.nethergrim.vk.images.ImageLoader;
 import com.nethergrim.vk.images.PaletteProvider;
 import com.nethergrim.vk.images.PaletteProviderImpl;
-import com.nethergrim.vk.images.PicassoImageLoaderImpl;
+import com.nethergrim.vk.images.ImageLoaderImpl;
 import com.nethergrim.vk.json.JacksonJsonDeserializerImpl;
 import com.nethergrim.vk.json.JsonDeserializer;
 import com.nethergrim.vk.utils.AndroidBus;
@@ -30,7 +32,7 @@ import dagger.Module;
 import dagger.Provides;
 
 /**
- * @author andreydrobyazko on 4/3/15.
+ * @author Andrew Drobyazko - c2q9450@gmail.com - https://nethergrim.github.io on 4/3/15.
  */
 @Module
 public class ProviderModule {
@@ -49,8 +51,8 @@ public class ProviderModule {
 
     @Provides
     @Singleton
-    ImageLoader provideImageLoader() {
-        return new PicassoImageLoaderImpl(MyApplication.getInstance());
+    ImageLoader provideImageLoader(Context context) {
+        return new ImageLoaderImpl(context);
     }
 
     @Provides
@@ -78,8 +80,14 @@ public class ProviderModule {
 
     @Provides
     @Singleton
-    WebIntentHandler provideWebIntentHandler() {
-        return new WebIntentHandlerImpl();
+    Context provideContext() {
+        return MyApplication.getInstance();
+    }
+
+    @Provides
+    @Singleton
+    WebIntentHandler provideWebIntentHandler(Prefs prefs, Context context) {
+        return new WebIntentHandlerImpl(prefs, context);
     }
 
     @Provides
@@ -96,8 +104,8 @@ public class ProviderModule {
 
     @Provides
     @Singleton
-    PersistingManager providePersistingManager() {
-        return new RealmPersistingManagerImpl();
+    Store providePersistingManager() {
+        return new RealmStore();
     }
 
 }

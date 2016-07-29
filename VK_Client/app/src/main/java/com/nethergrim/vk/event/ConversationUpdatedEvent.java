@@ -4,7 +4,7 @@ import com.nethergrim.vk.models.ConversationsUserObject;
 import com.nethergrim.vk.models.ListOfMessages;
 
 /**
- * @author Andrew Drobyazko (c2q9450@gmail.com).
+ * @author Andrew Drobyazko - c2q9450@gmail.com - https://nethergrim.github.io.
  *         All rights reserved!
  */
 public class ConversationUpdatedEvent extends ConversationsUserObject {

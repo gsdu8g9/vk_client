@@ -1,10 +1,11 @@
 package com.nethergrim.vk.fragment;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -13,7 +14,6 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.afollestad.materialdialogs.MaterialDialog;
 import com.github.clans.fab.FloatingActionButton;
 import com.nethergrim.vk.MyApplication;
 import com.nethergrim.vk.R;
@@ -40,13 +40,13 @@ import butterknife.OnClick;
 
 
 /**
- * @author andreydrobyazko on 3/20/15.
+ * @author Andrew Drobyazko - c2q9450@gmail.com - https://nethergrim.github.io on 3/20/15.
  */
 public class ConversationsFragment extends AbstractFragment
         implements PaginationManager.OnRecyclerViewScrolledToPageListener, ToolbarScrollable,
-        RecyclerItemClickListener.OnItemClickListener {
+        RecyclerItemClickListener.OnItemClickListener, ConversationsAdapter.ClickListener {
 
-    public static final int DEFAULT_PAGE_SIZE = 20;
+    private static final int DEFAULT_PAGE_SIZE = 20;
     @InjectView(R.id.list)
     RecyclerView mRecyclerView;
     @InjectView(R.id.progressBar2)
@@ -66,6 +66,7 @@ public class ConversationsFragment extends AbstractFragment
     private ToolbarScrollable mToolbarScrollable;
     private FabAnimationManager mFabAnimationManager;
 
+    @SuppressWarnings("deprecation")
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
@@ -77,14 +78,15 @@ public class ConversationsFragment extends AbstractFragment
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setRetainInstance(true);
         MyApplication.getInstance().getMainComponent().inject(this);
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater,
-            ViewGroup container,
-            Bundle savedInstanceState) {
+                             ViewGroup container,
+                             Bundle savedInstanceState) {
         mBus.register(this);
         View v = inflater.inflate(R.layout.fragment_messages, container, false);
         ButterKnife.inject(this, v);
@@ -97,13 +99,12 @@ public class ConversationsFragment extends AbstractFragment
         mFabAnimationManager = new FabAnimationManager(mFabNormal);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
         mRecyclerView.setHasFixedSize(true);
-        mAdapter = new ConversationsAdapter();
+        mAdapter = new ConversationsAdapter(this);
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.addOnScrollListener(new PaginationManager(DEFAULT_PAGE_SIZE, this,
                 DEFAULT_PAGE_SIZE / 2));
         mRecyclerView.addOnScrollListener(new BasicRecyclerViewScroller(this));
-        mRecyclerView.addOnItemTouchListener(new RecyclerItemClickListener(view.getContext(),
-                this));
+        mRecyclerView.addOnItemTouchListener(new RecyclerItemClickListener(view.getContext(), this));
         if (mAdapter.getItemCount() == 0) {
             mProgressBar.setVisibility(View.VISIBLE);
             mNothingHereTextView.setVisibility(View.GONE);
@@ -173,11 +174,12 @@ public class ConversationsFragment extends AbstractFragment
 
 
     @Override
+    public void onConversationClicked(int index, Conversation conversation) {
+        ChatActivity.start(getActivity(), conversation);
+    }
+
+    @Override
     public void onItemClick(View childView, int position) {
-        childView.postDelayed(() -> {
-            Conversation conversation = mAdapter.getData(position);
-            ChatActivity.start(getActivity(), conversation);
-        }, 20);
 
     }
 
@@ -185,23 +187,17 @@ public class ConversationsFragment extends AbstractFragment
     public void onItemLongPress(View childView, int position) {
         Conversation conversation = mAdapter.getData(position);
         Context ctx = childView.getContext();
-        MaterialDialog materialDialog = new MaterialDialog.Builder(ctx)
-                .title(R.string.delete_chat_with)
-                .content(R.string.are_you_sure)
-                .positiveText(R.string.yes)
-                .negativeText(R.string.no)
-                .negativeColor(Color.BLACK)
-                .callback(new MaterialDialog.ButtonCallback() {
-                    @Override
-                    public void onPositive(MaterialDialog dialog) {
-                        mWebIntentHandler.deleteConversation(conversation);
-                        dialog.dismiss();
-                        super.onPositive(dialog);
-                    }
+
+        Dialog dialog = new AlertDialog.Builder(ctx)
+                .setTitle(R.string.delete_chat_with)
+                .setMessage(R.string.are_you_sure)
+                .setPositiveButton(R.string.yes, (dialogInterface, i) -> {
+                    mWebIntentHandler.deleteConversation(conversation);
+                    dialogInterface.dismiss();
                 })
-                .positiveColor(ctx.getResources().getColor(R.color.primary))
-                .build();
-        materialDialog.show();
+                .setNegativeButton(R.string.no, (dialogInterface, i) -> dialogInterface.dismiss())
+                .create();
+        dialog.show();
     }
 
     private void loadPage(int pageNumber) {
@@ -212,5 +208,4 @@ public class ConversationsFragment extends AbstractFragment
         mWebIntentHandler.fetchConversationsAndUsers(DEFAULT_PAGE_SIZE,
                 pageNumber * DEFAULT_PAGE_SIZE, false);
     }
-
 }

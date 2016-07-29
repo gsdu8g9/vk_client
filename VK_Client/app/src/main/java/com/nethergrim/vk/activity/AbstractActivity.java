@@ -18,12 +18,12 @@ import io.realm.Realm;
  * Activity that should be superclass in every activity in the app.
  * Contains some basic functionality for all screens.
  *
- * @author andreydrobyazko on 3/20/15. (c2q9450@gmail.com).
+ * @author Andrew Drobyazko - c2q9450@gmail.com - https://nethergrim.github.io on 3/20/15. (c2q9450@gmail.com).
  *         All rights reserved.
  */
 public abstract class AbstractActivity extends AppCompatActivity {
 
-    protected Realm mRealm;
+    Realm mRealm;
     @Inject
     WebIntentHandler mWebIntentHandler;
 
@@ -45,6 +45,7 @@ public abstract class AbstractActivity extends AppCompatActivity {
         super.onDestroy();
         if (mRealm != null) {
             mRealm.close();
+            mRealm.removeAllChangeListeners();
             mRealm = null;
         }
         VKUIHelper.onDestroy(this); // FIXME: 22.08.15 remove
@@ -59,23 +60,21 @@ public abstract class AbstractActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        VKUIHelper.onResume(this);// FIXME: 22.08.15 remove fucking VK UI Helper, that leads to
-        // memory leak.
-
+        VKUIHelper.onResume(this);// FIXME: 22.08.15 remove fucking VK UI Helper, that leads to memory leak.
     }
 
     protected void showFragment(Fragment fragment,
-            boolean addToBackStack,
-            boolean animate,
-            int containerId) {
+                                boolean addToBackStack,
+                                boolean animate,
+                                int containerId) {
         String tag = fragment.getClass().getSimpleName();
-//        Fragment alreadyExistingFragment = getFragmentManager().findFragmentByTag(tag);
+        //        Fragment alreadyExistingFragment = getFragmentManager().findFragmentByTag(tag);
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
-//        if (alreadyExistingFragment != null) {
-//            transaction.show(alreadyExistingFragment);
-//        } else {
-//            transaction.add(containerId, fragment, tag);
-//        }
+        //        if (alreadyExistingFragment != null) {
+        //            transaction.show(alreadyExistingFragment);
+        //        } else {
+        //            transaction.add(containerId, fragment, tag);
+        //        }
         transaction.replace(containerId, fragment, tag);
         if (addToBackStack) {
             transaction.addToBackStack(tag);

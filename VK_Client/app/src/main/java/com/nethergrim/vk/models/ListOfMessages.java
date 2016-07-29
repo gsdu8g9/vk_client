@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
 
 /**
- * @author andrej on 05.08.15.
+ * @author Andrew Drobyazko - c2q9450@gmail.com - https://nethergrim.github.io on 05.08.15.
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ListOfMessages extends WebResponse {

@@ -8,7 +8,7 @@ import io.realm.annotations.PrimaryKey;
 import rx.functions.Func1;
 
 /**
- * @author Andrew Drobyazko (andrey.drobyazko@applikeysolutions.com) on 15.10.15.
+ * @author Andrew Drobyazko - c2q9450@gmail.com - https://nethergrim.github.io on 15.10.15.
  */
 public class StickerDbItem extends RealmObject {
 

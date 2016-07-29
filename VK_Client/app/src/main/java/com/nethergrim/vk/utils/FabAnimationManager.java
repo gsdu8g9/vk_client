@@ -8,11 +8,11 @@ import com.github.clans.fab.FloatingActionButton;
 import com.nethergrim.vk.Constants;
 
 /**
- * @author andrej on 08.08.15.
+ * @author Andrew Drobyazko - c2q9450@gmail.com - https://nethergrim.github.io on 08.08.15.
  */
 public class FabAnimationManager {
 
-    public static final float MAX_TRANSLATION_DELTA = 82 * Constants.mDensity;
+    private static final float MAX_TRANSLATION_DELTA = 82 * Constants.mDensity;
     private ValueAnimator mValueAnimator;
     private FloatingActionButton mFloatingActionButton;
     private boolean mIsHiding;
@@ -47,15 +47,12 @@ public class FabAnimationManager {
         }
         mValueAnimator = ValueAnimator.ofFloat(getCurrentRelatedTranslation(), to);
         mValueAnimator.setDuration(Constants.ANIMATION_DURATION);
-        mValueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator animation) {
-                float value = (float) animation.getAnimatedValue();
+        mValueAnimator.addUpdateListener(animation -> {
+            float value = (float) animation.getAnimatedValue();
 
-                // value from 0f to 1f
-                mFloatingActionButton.setTranslationY(getRelatedTranslation(value));
+            // value from 0f to 1f
+            mFloatingActionButton.setTranslationY(getRelatedTranslation(value));
 
-            }
         });
         mValueAnimator.addListener(new AnimatorListenerAdapter() {
             @Override
