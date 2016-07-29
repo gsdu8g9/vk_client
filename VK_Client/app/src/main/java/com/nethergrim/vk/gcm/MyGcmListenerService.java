@@ -151,7 +151,7 @@ public class MyGcmListenerService extends GcmListenerService {
             mWebRequestManager.getUsers(Collections.singletonList(message.getUserId()))
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(listOfUsers -> {
-                        mPersistingManager.manage(listOfUsers);
+                        mPersistingManager.persist(listOfUsers);
                         showNotification(message);
                     }, throwable -> Log.e(TAG, throwable.getMessage()))
             ;

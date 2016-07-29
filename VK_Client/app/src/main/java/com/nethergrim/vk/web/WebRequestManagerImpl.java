@@ -1,24 +1,29 @@
 package com.nethergrim.vk.web;
 
 import android.os.Build;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
 import com.nethergrim.vk.Constants;
 import com.nethergrim.vk.MyApplication;
 import com.nethergrim.vk.caching.Prefs;
+import com.nethergrim.vk.data.Store;
+import com.nethergrim.vk.event.ErrorDuringSendingMessageEvent;
 import com.nethergrim.vk.models.ConversationsUserObject;
 import com.nethergrim.vk.models.IntegerResponse;
 import com.nethergrim.vk.models.ListOfFriends;
 import com.nethergrim.vk.models.ListOfMessages;
 import com.nethergrim.vk.models.ListOfMessagesResponse;
 import com.nethergrim.vk.models.ListOfUsers;
+import com.nethergrim.vk.models.PendingMessage;
 import com.nethergrim.vk.models.StartupResponse;
 import com.nethergrim.vk.models.StockItemsResponse;
 import com.nethergrim.vk.models.WebResponse;
 import com.nethergrim.vk.utils.RetryWithDelay;
 import com.nethergrim.vk.utils.UserUtils;
 import com.nethergrim.vk.utils.Utils;
+import com.squareup.otto.Bus;
 
 import java.util.HashMap;
 import java.util.List;
@@ -27,6 +32,7 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
+import hugo.weaving.DebugLog;
 import retrofit.RestAdapter;
 import retrofit.client.OkClient;
 import retrofit.client.Response;
@@ -47,6 +53,12 @@ public class WebRequestManagerImpl implements WebRequestManager {
     private RetrofitInterface mRetrofitInterface;
     @Inject
     Prefs mPrefs;
+
+    @Inject
+    Store store;
+
+    @Inject
+    Bus bus;
     private Action1<WebResponse> mDefaultResponseChecker = webResponse -> {
         if (!webResponse.ok()) {
             throw new VkApiError(webResponse.getError());
@@ -249,6 +261,44 @@ public class WebRequestManagerImpl implements WebRequestManager {
                 .subscribeOn(getDefaultScheduler())
                 .doOnNext(mDefaultResponseChecker)
                 .retryWhen(RetryWithDelay.getInstance());
+    }
+
+    @Override
+    @DebugLog
+    public Observable<WebResponse> sendMessage(long peerId, @NonNull PendingMessage pendingMessage) {
+        Map<String, String> params = getDefaultParamsMap();
+        params.put("peer_id", String.valueOf(peerId));
+        params.put("random_id", String.valueOf(pendingMessage.getRandomId()));
+
+        String message = pendingMessage.getText();
+        if (message != null && message.length() > 0) {
+            params.put("message", message);
+        }
+
+        String forwarded = pendingMessage.getForwardedMessageIds();
+        if (forwarded != null && forwarded.length() > 0) {
+            params.put("forward_messages", forwarded);
+        }
+
+        try {
+            @SuppressWarnings("ConstantConditions") long stickerId = pendingMessage.getStickerId();
+            if (stickerId > 0) {
+                params.put("sticker_id", String.valueOf(stickerId));
+            }
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        }
+
+        return mRetrofitInterface.sendMessage(params)
+                .retryWhen(new RetryWithDelay(10, 250))
+                .doOnNext(webResponse -> {
+                    if (webResponse.ok()) {
+                        store.removePendingMessage(peerId, pendingMessage.getRandomId());
+                    } else {
+                        bus.post(new ErrorDuringSendingMessageEvent(webResponse));
+                    }
+                })
+                .doOnNext(mDefaultResponseChecker);
     }
 
     private Map<String, String> getDefaultParamsMap() {

@@ -166,6 +166,14 @@ public abstract class BaseKeyboardFragment extends AbstractFragment
         }
     }
 
+
+    @OnClick(R.id.btnRight)
+    public void onSendBtnClick(View v) {
+        String message = mEditText.getText().toString();
+        postText(message);
+        mEditText.setText(null);
+    }
+
     public abstract void initRecyclerView(RecyclerView recycler);
 
     public abstract void postText(String text);
@@ -194,11 +202,6 @@ public abstract class BaseKeyboardFragment extends AbstractFragment
         KeyEvent event = new KeyEvent(
                 0, 0, 0, KeyEvent.KEYCODE_DEL, 0, 0, 0, 0, KeyEvent.KEYCODE_ENDCALL);
         mEditText.dispatchKeyEvent(event);
-    }
-
-    @Override
-    public void onStickerClicked(long id) {
-        showToast("Clicked on sticker: " + id);
     }
 
     @Override
@@ -364,7 +367,7 @@ public abstract class BaseKeyboardFragment extends AbstractFragment
         mInputMethodManager.showSoftInput(mEditText, InputMethodManager.SHOW_IMPLICIT);
     }
 
-    private void hideEmojiKeyboard() {
+    protected void hideEmojiKeyboard() {
         if (mEmojiconsPopup != null) {
             mEmojiconsPopup.dismiss();
         }
@@ -379,7 +382,7 @@ public abstract class BaseKeyboardFragment extends AbstractFragment
         mShowingEmojiKeyboard = true;
     }
 
-    private void hideSoftKeyboard() {
+    protected void hideSoftKeyboard() {
         if (mEditText == null) {
             return;
         }

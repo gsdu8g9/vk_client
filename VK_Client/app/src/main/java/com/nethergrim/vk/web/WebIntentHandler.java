@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.UiThread;
 
 import com.nethergrim.vk.models.Conversation;
+import com.nethergrim.vk.models.PendingMessage;
 
 import java.util.ArrayList;
 
@@ -47,5 +48,9 @@ public interface WebIntentHandler {
     void markMessagesAsRead(long conversationId, long lastMessageId);
 
     void syncUnreadMessages();
+
+    void sendMessageToUser(@NonNull PendingMessage pendingMessage);
+
+    void sendMessageToGroupChat(@NonNull PendingMessage pendingMessage);
 
 }

@@ -18,8 +18,10 @@ import com.nethergrim.vk.adapter.ChatAdapter;
 import com.nethergrim.vk.adapter.SelectableUltimateAdapter;
 import com.nethergrim.vk.caching.Prefs;
 import com.nethergrim.vk.event.ConversationUpdatedEvent;
+import com.nethergrim.vk.event.ErrorDuringSendingMessageEvent;
 import com.nethergrim.vk.models.Conversation;
 import com.nethergrim.vk.models.Message;
+import com.nethergrim.vk.models.PendingMessage;
 import com.nethergrim.vk.models.User;
 import com.nethergrim.vk.models.outcoming_attachments.MessageAttachment;
 import com.nethergrim.vk.utils.ConversationUtils;
@@ -113,7 +115,25 @@ public class ChatFragment extends BaseKeyboardFragment implements Toolbar.OnMenu
 
     @Override
     public void postText(String text) {
-        // TODO: 03.10.15 implement
+        PendingMessage pendingMessage = new PendingMessage(PendingMessage.Companion.generateRandomId(), text, null, null, mIsGroupChat ? mConversationId + 2000000000 : mConversationId);
+        if (mIsGroupChat) {
+            mWebIntentHandler.sendMessageToGroupChat(pendingMessage);
+        } else {
+            mWebIntentHandler.sendMessageToUser(pendingMessage);
+        }
+
+    }
+
+    @Override
+    public void onStickerClicked(long stickerId) {
+        PendingMessage pendingMessage = new PendingMessage(PendingMessage.Companion.generateRandomId(), null, null, stickerId, mIsGroupChat ? mConversationId + 2000000000 : mConversationId);
+        if (mIsGroupChat) {
+            mWebIntentHandler.sendMessageToGroupChat(pendingMessage);
+        } else {
+            mWebIntentHandler.sendMessageToUser(pendingMessage);
+        }
+        hideSoftKeyboard();
+        hideEmojiKeyboard();
     }
 
     @Override
@@ -228,6 +248,11 @@ public class ChatFragment extends BaseKeyboardFragment implements Toolbar.OnMenu
         }
     }
 
+    @Subscribe
+    public void onErrorDuringSendingMessage(ErrorDuringSendingMessageEvent e) {
+        // TODO handle error
+    }
+
     @Override
     public void onChange(Object element) {
         mChatAdapter.notifyDataSetChanged();
@@ -242,6 +267,7 @@ public class ChatFragment extends BaseKeyboardFragment implements Toolbar.OnMenu
         }
     }
 
+
     private long getConversationIdFromExtras(Bundle extras) {
         Bundle args = getArguments();
         if (args != null && args.containsKey(EXTRA_CONVERSATION_ID)) {
@@ -252,7 +278,6 @@ public class ChatFragment extends BaseKeyboardFragment implements Toolbar.OnMenu
         } else
             return 0;
     }
-
 
     /**
      * @return id of another user, if current chat is 1-1 conversation.

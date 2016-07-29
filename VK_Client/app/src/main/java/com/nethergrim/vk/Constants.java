@@ -20,7 +20,6 @@ public class Constants {
     public static final String BASIC_API_URL = "https://api.vk.com/method/";
 
 
-
     public static final String[] PERMISSIONS = new String[]{
             VKScope.FRIENDS,
             VKScope.WALL,
@@ -47,6 +46,7 @@ public class Constants {
         String EXECUTE_GET_FRIENDS = "/execute.getFriends";
         String EXECUTE_POST_STARTUP = "/execute.startup";
         String EXECUTE_DELETE_CONVERSATION = "/execute.deleteConversation";
+        String SEND_MESSAGE = "/messages.send";
     }
 
 }

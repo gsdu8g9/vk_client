@@ -1,10 +1,13 @@
 package com.nethergrim.vk.web;
 
+import android.support.annotation.NonNull;
+
 import com.nethergrim.vk.models.ConversationsUserObject;
 import com.nethergrim.vk.models.IntegerResponse;
 import com.nethergrim.vk.models.ListOfFriends;
 import com.nethergrim.vk.models.ListOfMessages;
 import com.nethergrim.vk.models.ListOfUsers;
+import com.nethergrim.vk.models.PendingMessage;
 import com.nethergrim.vk.models.StartupResponse;
 import com.nethergrim.vk.models.StockItemsResponse;
 import com.nethergrim.vk.models.WebResponse;
@@ -44,5 +47,7 @@ public interface WebRequestManager {
     Observable<StockItemsResponse> getStickerStockItems();
 
     Observable<WebResponse> markMessagesAsRead(long peerId, long startMessageId);
+
+    Observable<WebResponse> sendMessage(long peerId, @NonNull PendingMessage pendingMessage);
 
 }

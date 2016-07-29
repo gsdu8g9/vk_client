@@ -5,12 +5,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.nethergrim.vk.Constants;
 import com.nethergrim.vk.MyApplication;
 import com.nethergrim.vk.caching.Prefs;
+import com.nethergrim.vk.models.PendingMessage;
 import com.nethergrim.vk.utils.DefaultLoggerObserver;
 import com.nethergrim.vk.utils.LoggerObserver;
 import com.nethergrim.vk.web.DataManager;
@@ -23,6 +25,7 @@ import javax.inject.Inject;
 /**
  * @author Andrew Drobyazko - c2q9450@gmail.com - https://nethergrim.github.io on 14.08.15.
  */
+@SuppressWarnings("UnusedParameters")
 public class WorkerService extends Service {
 
     public static final String TAG = WorkerService.class.getSimpleName();
@@ -34,6 +37,8 @@ public class WorkerService extends Service {
     private static final String ACTION_DELETE_CONVERSATION = Constants.PACKAGE_NAME + ".DELETE_CONVERSATION";
     private static final String ACTION_MARK_MESSAGES_AS_READ = Constants.PACKAGE_NAME + ".MARK_MESSAGES_AS_READ";
     private static final String ACTION_SYNC_MESSAGES_READ_STATE = Constants.PACKAGE_NAME + ".SYNC_READ_STATE";
+    private static final String ACTION_GET_MESSAGES_HISTORY = Constants.PACKAGE_NAME + ".GET_MESSAGES_HISTORY";
+    private static final String ACTION_SEND_MESSAGE = Constants.PACKAGE_NAME + ".SEND_MESSAGE";
     private static final String EXTRA_IDS = Constants.PACKAGE_NAME + ".IDS";
     private static final String EXTRA_COUNT = Constants.PACKAGE_NAME + ".COUNT";
     private static final String EXTRA_OFFSET = Constants.PACKAGE_NAME + ".OFFSET";
@@ -41,7 +46,8 @@ public class WorkerService extends Service {
     private static final String EXTRA_USER_ID = Constants.PACKAGE_NAME + ".USER_ID";
     private static final String EXTRA_CHAT_ID = Constants.PACKAGE_NAME + ".CHAT_ID";
     private static final String EXTRA_LAST_MESSAGE = Constants.PACKAGE_NAME + ".LAST_MESSAGE";
-    private static final String ACTION_GET_MESSAGES_HISTORY = Constants.PACKAGE_NAME + ".GET_MESSAGES_HISTORY";
+    private static final String EXTRA_PEER_ID = Constants.PACKAGE_NAME + ".PEER_ID";
+    private static final String EXTRA_PENDING_MESSAGE = Constants.PACKAGE_NAME + ".PENDING_MESSAGE";
 
 
     public static void fetchConversationsAndUsers(Context context,
@@ -119,6 +125,14 @@ public class WorkerService extends Service {
         c.startService(intent);
     }
 
+    public static void sendMessage(@NonNull Context c, long peerId, @NonNull PendingMessage pendingMessage) {
+        Intent intent = new Intent(c, WorkerService.class);
+        intent.setAction(ACTION_SEND_MESSAGE);
+        intent.putExtra(EXTRA_PEER_ID, peerId);
+        intent.putExtra(EXTRA_PENDING_MESSAGE, pendingMessage);
+        c.startService(intent);
+    }
+
     @Inject
     DataManager mDataManager;
 
@@ -133,7 +147,7 @@ public class WorkerService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        if (intent == null){
+        if (intent == null) {
             return START_NOT_STICKY;
         }
         String action = intent.getAction();
@@ -155,6 +169,8 @@ public class WorkerService extends Service {
             handleActionMarkMessagesAsRead(intent);
         } else if (ACTION_SYNC_MESSAGES_READ_STATE.equals(action)) {
             handleActionSyncMessagesState();
+        } else if (ACTION_SEND_MESSAGE.equals(action)) {
+            handleActionSendMessage(intent);
         }
         return START_NOT_STICKY;
     }
@@ -163,6 +179,14 @@ public class WorkerService extends Service {
     @Override
     public IBinder onBind(Intent intent) {
         return null;
+    }
+
+    private void handleActionSendMessage(Intent intent) {
+        Bundle args = intent.getExtras();
+        long peerId = args.getLong(EXTRA_PEER_ID);
+        PendingMessage pendingMessage = args.getParcelable(EXTRA_PENDING_MESSAGE);
+        assert pendingMessage != null;
+        mDataManager.sendMessageOrSchedule(peerId, pendingMessage).subscribe(DefaultLoggerObserver.getInstance());
     }
 
     private void handleActionMarkMessagesAsRead(Intent intent) {
@@ -214,6 +238,7 @@ public class WorkerService extends Service {
                 .subscribe(LoggerObserver.getInstance());
     }
 
+    @SuppressWarnings("unchecked")
     private void handleActionFetchUsers(Intent intent) {
         final ArrayList<Long> ids = (ArrayList<Long>) intent.getSerializableExtra(EXTRA_IDS);
         mDataManager.fetchUsersAndPersistToDB(ids).subscribe(LoggerObserver.getInstance());

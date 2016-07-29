@@ -20,8 +20,7 @@ public class DefaultLoggerObserver implements Observer<Object> {
 
     @Override
     public void onError(Throwable e) {
-        e.printStackTrace();
-        Log.e(TAG, e.getMessage());
+        Log.e(TAG, "Error", e);
     }
 
     @Override

@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 
 import com.nethergrim.vk.caching.Prefs;
 import com.nethergrim.vk.models.Conversation;
+import com.nethergrim.vk.models.PendingMessage;
 import com.nethergrim.vk.services.WorkerService;
 import com.nethergrim.vk.utils.ConversationUtils;
 
@@ -81,6 +82,16 @@ public class WebIntentHandlerImpl implements WebIntentHandler {
     @Override
     public void syncUnreadMessages() {
         WorkerService.syncMessagesReadState(mContext);
+    }
+
+    @Override
+    public void sendMessageToUser(@NonNull PendingMessage pendingMessage) {
+        WorkerService.sendMessage(mContext, pendingMessage.getPeerId(), pendingMessage);
+    }
+
+    @Override
+    public void sendMessageToGroupChat(@NonNull PendingMessage pendingMessage) {
+        WorkerService.sendMessage(mContext, pendingMessage.getPeerId(), pendingMessage);
     }
 
 }

@@ -14,7 +14,6 @@ import java.util.Map;
 
 import retrofit.client.Response;
 import retrofit.http.GET;
-import retrofit.http.POST;
 import retrofit.http.QueryMap;
 import rx.Observable;
 
@@ -29,10 +28,10 @@ public interface RetrofitInterface {
     @GET(Constants.Requests.GET_USERS)
     Observable<ListOfUsers> getUsersObservable(@QueryMap Map<String, String> options);
 
-    @POST(Constants.Requests.EXECUTE_POST_STARTUP)
+    @GET(Constants.Requests.EXECUTE_POST_STARTUP)
     Observable<StartupResponse> launchStartupTasks(@QueryMap Map<String, String> options);
 
-    @POST(Constants.Requests.ACCOUNT_UNREGISTER_DEVICE)
+    @GET(Constants.Requests.ACCOUNT_UNREGISTER_DEVICE)
     Observable<Response> unregisterFromPushes(@QueryMap Map<String, String> options);
 
     @GET(Constants.Requests.EXECUTE_GET_FRIENDS)
@@ -45,12 +44,15 @@ public interface RetrofitInterface {
     Observable<ConversationsUserObject> getConversationsAndUsers(
             @QueryMap Map<String, String> options);
 
-    @POST(Constants.Requests.EXECUTE_DELETE_CONVERSATION)
+    @GET(Constants.Requests.EXECUTE_DELETE_CONVERSATION)
     Observable<IntegerResponse> deleteConversation(@QueryMap Map<String, String> options);
 
-    @POST(Constants.Requests.GET_STICKER_PURCHASES)
+    @GET(Constants.Requests.GET_STICKER_PURCHASES)
     Observable<StockItemsResponse> getStickers(@QueryMap Map<String, String> options);
 
-    @POST(Constants.Requests.MESSAGES_MARK_AS_READ)
+    @GET(Constants.Requests.MESSAGES_MARK_AS_READ)
     Observable<WebResponse> markMessagesAsRead(@QueryMap Map<String, String> options);
+
+    @GET(Constants.Requests.SEND_MESSAGE)
+    Observable<WebResponse> sendMessage(@QueryMap Map<String, String> options);
 }

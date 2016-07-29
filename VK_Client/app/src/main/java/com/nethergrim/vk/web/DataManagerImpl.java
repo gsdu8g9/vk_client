@@ -1,5 +1,8 @@
 package com.nethergrim.vk.web;
 
+import android.os.Looper;
+import android.os.Process;
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -22,6 +25,7 @@ import com.nethergrim.vk.models.IntegerResponse;
 import com.nethergrim.vk.models.ListOfFriends;
 import com.nethergrim.vk.models.ListOfMessages;
 import com.nethergrim.vk.models.ListOfUsers;
+import com.nethergrim.vk.models.PendingMessage;
 import com.nethergrim.vk.models.StartupResponse;
 import com.nethergrim.vk.models.StickerDbItem;
 import com.nethergrim.vk.models.StockItemsResponse;
@@ -30,11 +34,13 @@ import com.squareup.otto.Bus;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executors;
 
 import javax.inject.Inject;
 
 import io.realm.Realm;
 import rx.Observable;
+import rx.Scheduler;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
@@ -72,10 +78,17 @@ public class DataManagerImpl implements DataManager {
     @Inject
     Store mStore;
 
+    private Scheduler singleThreadScheduler = Schedulers.from(Executors.newSingleThreadExecutor());
+
     public DataManagerImpl() {
         MyApplication.getInstance().getMainComponent().inject(this);
+        singleThreadScheduler.createWorker().schedule(() -> {
+            Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);
+            Thread.currentThread().setName("Messaging thread");
+        });
     }
 
+    @NonNull
     @Override
     public Observable<StartupResponse> launchStartupTasksAndPersistToDb() {
 
@@ -99,31 +112,34 @@ public class DataManagerImpl implements DataManager {
                     return token;
                 })
                 .flatMap(mWebRequestManager::launchStartupTasks)
-                .doOnNext(mPersistingManager::manage)
+                .doOnNext(mPersistingManager::persist)
                 .doOnNext(startupResponse -> mBus.post(new MyUserUpdatedEvent()));
     }
 
+    @NonNull
     @Override
     public Observable<ListOfFriends> fetchFriendsAndPersistToDb(int count, int offset) {
         return mWebRequestManager.getFriends(mPrefs.getCurrentUserId(), count, offset)
-                .doOnNext(listOfFriends -> mPersistingManager.manage(listOfFriends, offset))
+                .doOnNext(listOfFriends -> mPersistingManager.persist(listOfFriends, offset))
                 .doOnNext(listOfFriends -> mBus.post(new FriendsUpdatedEvent(count)))
                 ;
     }
 
+    @NonNull
     @Override
     public Observable<ListOfUsers> fetchUsersAndPersistToDB(List<Long> ids) {
-        return mWebRequestManager.getUsers(ids).doOnNext(mPersistingManager::manage)
+        return mWebRequestManager.getUsers(ids).doOnNext(mPersistingManager::persist)
                 .doOnNext(listOfUsers -> mBus.post(new UsersUpdatedEvent()))
                 ;
     }
 
+    @NonNull
     @Override
     public Observable<ConversationsUserObject> fetchConversationsUserAndPersist(int limit,
                                                                                 int offset,
                                                                                 boolean unreadOnly) {
         return mWebRequestManager.getConversationsAndUsers(limit, offset, unreadOnly)
-                .doOnNext(conversationsUserObject -> mPersistingManager.manage(
+                .doOnNext(conversationsUserObject -> mPersistingManager.persist(
                         conversationsUserObject, offset == 0))
                 .doOnNext(conversationsUserObject -> {
                     mBus.post(new ConversationsUpdatedEvent());
@@ -131,6 +147,7 @@ public class DataManagerImpl implements DataManager {
                 });
     }
 
+    @NonNull
     @Override
     public Observable<ListOfMessages> fetchMessagesHistory(int count,
                                                            int offset,
@@ -141,7 +158,7 @@ public class DataManagerImpl implements DataManager {
                 .doOnNext(listOfMessages -> {
                     Log.d(TAG, "fetched messages: \n" + "count: " + count + " offset: " + offset
                             + " userId: " + userId + " chatId: " + chatId);
-                    mPersistingManager.manage(listOfMessages);
+                    mPersistingManager.persist(listOfMessages);
                     ConversationUpdatedEvent conversationUpdatedEvent
                             = new ConversationUpdatedEvent(listOfMessages, userId, chatId);
                     mBus.post(conversationUpdatedEvent);
@@ -149,6 +166,7 @@ public class DataManagerImpl implements DataManager {
                 ;
     }
 
+    @NonNull
     @Override
     public Observable<IntegerResponse> deleteConversation(long userId, long chatId) {
         return mWebRequestManager.deleteConversation(userId, chatId)
@@ -160,6 +178,7 @@ public class DataManagerImpl implements DataManager {
                 ;
     }
 
+    @NonNull
     @Override
     public Observable<List<StickerDbItem>> getStickerItems() {
         return mWebRequestManager.getStickerStockItems()
@@ -187,6 +206,7 @@ public class DataManagerImpl implements DataManager {
                 });
     }
 
+    @NonNull
     @Override
     public Observable<WebResponse> markMessagesAsRead(long conversationId, long lastMessageId) {
         // add messages to sync in preference
@@ -202,6 +222,7 @@ public class DataManagerImpl implements DataManager {
         });
     }
 
+    @NonNull
     @Override
     public Observable<WebResponse> syncMessagesReadState() {
         if (!mPrefs.markMessagesAsRead() && mPrefs.isDisplayingUnreadMessagesAsUnread()) {
@@ -250,5 +271,53 @@ public class DataManagerImpl implements DataManager {
                 }, 4)
                 .doOnCompleted(() -> mPrefs.removeConversationToSyncUnreadMessages());
 
+    }
+
+    @NonNull
+    @Override
+    public Observable<WebResponse> sendMessageOrSchedule(long peerId, @NonNull PendingMessage pendingMessage) {
+        return ReactiveNetwork.observeInternetConnectivity()
+                .first()
+                .subscribeOn(singleThreadScheduler)
+                .observeOn(singleThreadScheduler)
+                .flatMap(new Func1<Boolean, Observable<WebResponse>>() {
+                    @Override
+                    public Observable<WebResponse> call(Boolean aBoolean) {
+                        return aBoolean ? sendMessage(peerId, pendingMessage) : scheduleMessageToSendLater(peerId, pendingMessage);
+                    }
+                });
+    }
+
+    @NonNull
+    @Override
+    public Observable<WebResponse> syncPendingMessages() {
+        return Observable.from(mStore.getUnsentMessages())
+                .subscribeOn(singleThreadScheduler)
+                .observeOn(singleThreadScheduler)
+                .flatMap(pendingMessage -> mWebRequestManager.sendMessage(pendingMessage.getPeerId(), pendingMessage))
+                .observeOn(singleThreadScheduler);
+    }
+
+    private Observable<WebResponse> sendMessage(long peerId, @NonNull PendingMessage pendingMessage) {
+        failIfOnMainThread();
+        mStore.savePendingMessage(peerId, pendingMessage);
+        return syncPendingMessages();
+    }
+
+
+    private Observable<WebResponse> scheduleMessageToSendLater(long peerId, @NonNull PendingMessage pendingMessage) {
+        failIfOnMainThread();
+        mStore.savePendingMessage(peerId, pendingMessage);
+        return Observable.empty();
+    }
+
+    private void failIfOnMainThread() {
+        if (mainThread()) {
+            throw new IllegalStateException("MAIN THREAD");
+        }
+    }
+
+    private boolean mainThread() {
+        return Looper.getMainLooper() == Looper.myLooper();
     }
 }

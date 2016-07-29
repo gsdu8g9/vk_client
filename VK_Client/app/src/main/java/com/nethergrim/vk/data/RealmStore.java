@@ -1,6 +1,7 @@
 package com.nethergrim.vk.data;
 
 import android.support.annotation.NonNull;
+import android.util.LongSparseArray;
 
 import com.nethergrim.vk.MyApplication;
 import com.nethergrim.vk.caching.Prefs;
@@ -17,15 +18,18 @@ import com.nethergrim.vk.models.ListOfFriends;
 import com.nethergrim.vk.models.ListOfMessages;
 import com.nethergrim.vk.models.ListOfUsers;
 import com.nethergrim.vk.models.Message;
+import com.nethergrim.vk.models.PendingMessage;
 import com.nethergrim.vk.models.StartupResponse;
 import com.nethergrim.vk.models.User;
 import com.nethergrim.vk.utils.DataHelper;
 import com.squareup.otto.Bus;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
 
+import hugo.weaving.DebugLog;
 import io.realm.Realm;
 import io.realm.RealmQuery;
 import io.realm.RealmResults;
@@ -53,7 +57,7 @@ public class RealmStore implements Store {
     }
 
     @Override
-    public void manage(@NonNull StartupResponse startupResponse) {
+    public void persist(@NonNull StartupResponse startupResponse) {
         mPrefs.setCurrentUserId(startupResponse.getResponse().getMe().getId());
         Realm realm = Realm.getDefaultInstance();
         realm.beginTransaction();
@@ -63,7 +67,7 @@ public class RealmStore implements Store {
     }
 
     @Override
-    public void manage(@NonNull ListOfFriends listOfFriends, int offset) {
+    public void persist(@NonNull ListOfFriends listOfFriends, int offset) {
         mPrefs.setFriendsCount(listOfFriends.getResponse().getCount());
 
         Realm realm = Realm.getDefaultInstance();
@@ -83,7 +87,7 @@ public class RealmStore implements Store {
     }
 
     @Override
-    public void manage(ListOfUsers listOfUsers) {
+    public void persist(ListOfUsers listOfUsers) {
         Realm realm = Realm.getDefaultInstance();
         realm.beginTransaction();
         realm.copyToRealmOrUpdate(listOfUsers.getResponse());
@@ -93,8 +97,8 @@ public class RealmStore implements Store {
     }
 
     @Override
-    public void manage(ConversationsUserObject conversationsUserObject,
-                       boolean clearDataBeforePersist) {
+    public void persist(ConversationsUserObject conversationsUserObject,
+                        boolean clearDataBeforePersist) {
         //saving conversations to db
         ConversationsList conversationsList
                 = conversationsUserObject.getResponse().getConversations();
@@ -122,7 +126,7 @@ public class RealmStore implements Store {
     }
 
     @Override
-    public void manage(ListOfMessages listOfMessages) {
+    public void persist(ListOfMessages listOfMessages) {
         Realm realm = Realm.getDefaultInstance();
         realm.beginTransaction();
         realm.copyToRealmOrUpdate(listOfMessages.getMessages());
@@ -179,5 +183,41 @@ public class RealmStore implements Store {
         }
         realm.commitTransaction();
         realm.close();
+    }
+
+
+    private LongSparseArray<PendingMessage> cache = new LongSparseArray<>();
+
+
+    @Override
+    @DebugLog
+    public void savePendingMessage(long peerId, @NonNull PendingMessage pendingMessage) {
+        // TODO impl
+
+        cache.put(peerId, pendingMessage);
+    }
+
+    @Override
+    @DebugLog
+    public List<PendingMessage> getUnsentMessages() {
+        // TODO impl
+
+
+        int size = cache.size();
+        List<PendingMessage> pendingMessages = new ArrayList<>(size);
+        for (int i = 0; i < size; i++) {
+            long key = cache.keyAt(i);
+            PendingMessage pendingMessage = cache.get(key);
+            pendingMessages.add(pendingMessage);
+        }
+        return pendingMessages;
+    }
+
+    @Override
+    @DebugLog
+    public void removePendingMessage(long peerId, long randomId) {
+        // TODO impl
+
+        cache.remove(peerId);
     }
 }
