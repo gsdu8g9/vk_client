@@ -7,7 +7,10 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.github.pwittchen.reactivenetwork.library.ReactiveNetwork;
+import com.google.android.gms.gcm.GcmNetworkManager;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
+import com.google.android.gms.gcm.OneoffTask;
+import com.google.android.gms.gcm.Task;
 import com.google.android.gms.iid.InstanceID;
 import com.nethergrim.vk.Constants;
 import com.nethergrim.vk.MyApplication;
@@ -30,6 +33,7 @@ import com.nethergrim.vk.models.StartupResponse;
 import com.nethergrim.vk.models.StickerDbItem;
 import com.nethergrim.vk.models.StockItemsResponse;
 import com.nethergrim.vk.models.WebResponse;
+import com.nethergrim.vk.services.OftenFiredGcmNetworkService;
 import com.squareup.otto.Bus;
 
 import java.util.ArrayList;
@@ -308,6 +312,15 @@ public class DataManagerImpl implements DataManager {
     private Observable<WebResponse> scheduleMessageToSendLater(long peerId, @NonNull PendingMessage pendingMessage) {
         failIfOnMainThread();
         mStore.savePendingMessage(peerId, pendingMessage);
+        OneoffTask oneoffTask = new OneoffTask.Builder()
+                .setService(OftenFiredGcmNetworkService.class)
+                .setPersisted(true)
+                .setRequiredNetwork(Task.NETWORK_STATE_CONNECTED)
+                .setUpdateCurrent(true)
+                .setExecutionWindow(5, Long.MAX_VALUE - 1)
+                .setTag(OftenFiredGcmNetworkService.class.getSimpleName())
+                .build();
+        GcmNetworkManager.getInstance(MyApplication.getInstance()).schedule(oneoffTask);
         return Observable.empty();
     }
 

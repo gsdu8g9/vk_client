@@ -12,7 +12,6 @@ import com.nethergrim.vk.inject.DaggerMainComponent;
 import com.nethergrim.vk.inject.MainComponent;
 import com.nethergrim.vk.inject.ProviderModule;
 import com.nethergrim.vk.services.GcmNetworkService;
-import com.nethergrim.vk.services.OftenFiredGcmNetworkService;
 import com.vk.sdk.VKAccessToken;
 import com.vk.sdk.VKSdk;
 import com.vk.sdk.VKSdkListener;
@@ -109,16 +108,7 @@ public class MyApplication extends MultiDexApplication {
                 .setTag(GcmNetworkService.class.getSimpleName())
                 .build();
 
-        PeriodicTask periodicTaskOften = new PeriodicTask.Builder()
-                .setService(OftenFiredGcmNetworkService.class)
-                .setPersisted(true)
-                .setRequiredNetwork(Task.NETWORK_STATE_CONNECTED)
-                .setPeriod(600) // at most every 10 minutes
-                .setFlex(600)
-                .setTag(OftenFiredGcmNetworkService.class.getSimpleName())
-                .build();
         GcmNetworkManager.getInstance(this).schedule(periodicTask);
-        GcmNetworkManager.getInstance(this).schedule(periodicTaskOften);
     }
 
     public MainComponent getMainComponent() {
