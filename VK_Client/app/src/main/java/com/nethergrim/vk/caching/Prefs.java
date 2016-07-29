@@ -5,7 +5,7 @@ import android.support.annotation.WorkerThread;
 import java.util.Set;
 
 /**
- * @author Andrew Drobyazko (c2q9450@gmail.com) on 3/20/15.
+ * @author Andrew Drobyazko - c2q9450@gmail.com - https://nethergrim.github.io on 3/20/15.
  */
 @SuppressWarnings("unused")
 public interface Prefs {

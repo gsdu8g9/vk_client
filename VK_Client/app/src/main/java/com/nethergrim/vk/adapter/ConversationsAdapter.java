@@ -66,10 +66,9 @@ public class ConversationsAdapter extends UltimateAdapter
     }
 
     @Override
-    public void onChange() {
+    public void onChange(Object element) {
         notifyDataSetChanged();
     }
-
 
     public Conversation getData(int position) {
         return mData.get(position);

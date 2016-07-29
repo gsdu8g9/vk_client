@@ -3,7 +3,7 @@ package com.nethergrim.vk.models;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * @author Andrew Drobyazko (c2q9450@gmail.com) on 12.09.15.
+ * @author Andrew Drobyazko - c2q9450@gmail.com - https://nethergrim.github.io on 12.09.15.
  */
 public class ListOfMessagesResponse extends WebResponse {
 

@@ -14,7 +14,7 @@ import com.nethergrim.vk.utils.UserUtils;
 import javax.inject.Inject;
 
 /**
- * @author Andrew Drobyazko (c2q9450@gmail.com) on 05.09.15.
+ * @author Andrew Drobyazko - c2q9450@gmail.com - https://nethergrim.github.io on 05.09.15.
  */
 
 @SuppressWarnings("WeakerAccess")

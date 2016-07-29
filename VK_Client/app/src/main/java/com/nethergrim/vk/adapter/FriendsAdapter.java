@@ -87,7 +87,7 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsViewHolder>
     }
 
     @Override
-    public void onChange() {
+    public void onChange(Object element) {
         notifyDataSetChanged();
     }
 

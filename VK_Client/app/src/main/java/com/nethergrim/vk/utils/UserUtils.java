@@ -13,6 +13,7 @@ import java.util.List;
  * @author Andrey Drobyazko (c2q9450@gmail.com).
  *         All rights reserved.
  */
+@SuppressWarnings("unused")
 public class UserUtils {
 
 
@@ -46,7 +47,7 @@ public class UserUtils {
     }
 
     public static boolean isUserACurrentOne(@NonNull User user) {
-        return user != null && user.getId() == MyApplication.getInstance()
+        return user.getId() == MyApplication.getInstance()
                 .getPrefs()
                 .getCurrentUserId();
     }

@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import javax.inject.Inject;
 
 /**
- * @author andrej on 14.08.15.
+ * @author Andrew Drobyazko - c2q9450@gmail.com - https://nethergrim.github.io on 14.08.15.
  */
 public class WorkerService extends Service {
 
@@ -133,6 +133,9 @@ public class WorkerService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        if (intent == null){
+            return START_NOT_STICKY;
+        }
         String action = intent.getAction();
         if (ACTION_FETCH_CONVERSATIONS_AND_USERS.equals(action)) {
             handleActionFetchConversationsAndUsers(intent);
@@ -153,7 +156,7 @@ public class WorkerService extends Service {
         } else if (ACTION_SYNC_MESSAGES_READ_STATE.equals(action)) {
             handleActionSyncMessagesState();
         }
-        return START_STICKY;
+        return START_NOT_STICKY;
     }
 
     @Nullable

@@ -21,7 +21,7 @@ import rx.Observable;
  * <p>
  * By default every method of current class should return {@link rx.Observable} as result.
  *
- * @author andrej on 30.08.15 (c2q9450@gmail.com).
+ * @author Andrew Drobyazko - c2q9450@gmail.com - https://nethergrim.github.io on 30.08.15 (c2q9450@gmail.com).
  *         All rights reserved.
  */
 public interface DataManager {

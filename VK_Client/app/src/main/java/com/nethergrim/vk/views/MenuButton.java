@@ -14,7 +14,7 @@ import com.nethergrim.vk.Constants;
 import com.nethergrim.vk.R;
 
 /**
- * @author andrej on 27.07.15.
+ * @author Andrew Drobyazko - c2q9450@gmail.com - https://nethergrim.github.io on 27.07.15.
  */
 public class MenuButton extends FrameLayout {
 

@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest
-    package="com.nethergrim.vk"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:installLocation="auto"> <!-- For gcm start -->
+    package="com.nethergrim.vk"
+    android:installLocation="auto">
 
 
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
-    <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.GET_ACCOUNTS"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE"/>
 
     <permission
         android:name="com.nethergrim.vk.permission.C2D_MESSAGE"
-        android:protectionLevel="signature" />
+        android:protectionLevel="signature"/>
 
-    <uses-permission android:name="com.nethergrim.vk.permission.C2D_MESSAGE" />
+    <uses-permission android:name="com.nethergrim.vk.permission.C2D_MESSAGE"/>
 
-    <android:uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <android:uses-permission android:name="android.permission.READ_PHONE_STATE" />
-    <android:uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
 
     <!-- For gcm finish -->
     <application
@@ -30,17 +30,18 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".activity.StartActivity"
+            android:theme="@style/SplashTheme"
             android:label="@string/app_name">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.MAIN"/>
 
-                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".activity.MainActivity" />
+        <activity android:name=".activity.MainActivity"/>
         <activity
             android:name=".activity.UserProfileActivity"
-            android:theme="@style/Theme.Transparent" />
+            android:theme="@style/Theme.Transparent"/>
 
         <!-- GCM starts here -->
 
@@ -49,10 +50,10 @@
             android:exported="true"
             android:permission="com.google.android.c2dm.permission.SEND">
             <intent-filter>
-                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
-                <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
+                <action android:name="com.google.android.c2dm.intent.RECEIVE"/>
+                <action android:name="com.google.android.c2dm.intent.REGISTRATION"/>
 
-                <category android:name="com.nethergrim.vk" />
+                <category android:name="com.nethergrim.vk"/>
             </intent-filter>
         </receiver>
 
@@ -60,14 +61,14 @@
             android:name=".gcm.MyGcmListenerService"
             android:exported="false">
             <intent-filter>
-                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+                <action android:name="com.google.android.c2dm.intent.RECEIVE"/>
             </intent-filter>
         </service>
         <service
             android:name=".gcm.MyInstanceIDListenerService"
             android:exported="false">
             <intent-filter>
-                <action android:name="com.google.android.gms.iid.InstanceID" />
+                <action android:name="com.google.android.gms.iid.InstanceID"/>
             </intent-filter>
         </service>
 
@@ -75,15 +76,27 @@
 
         <service
             android:name=".services.WorkerService"
-            android:exported="false" />
+            android:exported="false"/>
 
         <activity
             android:name=".activity.ChatActivity"
-            android:windowSoftInputMode="adjustResize|stateHidden" />
+            android:windowSoftInputMode="adjustResize|stateHidden"/>
 
         <activity
             android:name=".activity.NewChatActivity"
-            android:windowSoftInputMode="adjustResize|stateUnchanged" />
+            android:windowSoftInputMode="adjustResize|stateUnchanged"/>
+
+
+        <service
+            android:name=".services.GcmNetworkService"
+            android:exported="true"
+            android:permission="com.google.android.gms.permission.BIND_NETWORK_TASK_SERVICE">
+            <intent-filter>
+                <action android:name="com.google.android.gms.gcm.ACTION_TASK_READY"/>
+            </intent-filter>
+        </service>
+
+
     </application>
 
 </manifest>

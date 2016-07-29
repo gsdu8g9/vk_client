@@ -1,9 +1,7 @@
 package com.nethergrim.vk.activity;
 
 import android.content.Intent;
-import android.os.Bundle;
 import android.view.View;
-import android.view.WindowManager;
 import android.view.animation.AnticipateOvershootInterpolator;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -15,6 +13,7 @@ import com.vk.sdk.VKSdk;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
+import hugo.weaving.DebugLog;
 
 /**
  * Starter {@link AbstractActivity} that should launch at the app start.
@@ -38,16 +37,6 @@ public class StartActivity extends AbstractActivity {
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        getWindow().setBackgroundDrawable(null);
-        setContentView(R.layout.activity_start);
-        ButterKnife.inject(this);
-    }
-
-    @Override
     protected void onPostResume() {
         super.onPostResume();
         if (!mIsLoggedIn) {
@@ -63,16 +52,16 @@ public class StartActivity extends AbstractActivity {
     }
 
     @Override
+    @DebugLog
     protected void onResume() {
         super.onResume();
-        checkSession();
-    }
-
-    private void checkSession() {
         mIsLoggedIn = VKSdk.wakeUpSession(this);
         if (mIsLoggedIn) {
             startActivity(new Intent(this, MainActivity.class));
             finish();
+        } else {
+            setContentView(R.layout.activity_start);
+            ButterKnife.inject(this);
         }
     }
 }

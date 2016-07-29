@@ -1,7 +1,7 @@
 package com.nethergrim.vk.models.push;
 
 /**
- * @author andrej on 23.07.15.
+ * @author Andrew Drobyazko - c2q9450@gmail.com - https://nethergrim.github.io on 23.07.15.
  */
 public abstract class PushObject {
 

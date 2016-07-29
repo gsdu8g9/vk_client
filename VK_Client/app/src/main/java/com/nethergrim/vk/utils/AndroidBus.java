@@ -8,7 +8,7 @@ import com.squareup.otto.ThreadEnforcer;
 
 
 /**
- * @author andrej on 18.08.15.
+ * @author Andrew Drobyazko - c2q9450@gmail.com - https://nethergrim.github.io on 18.08.15.
  */
 public class AndroidBus extends Bus {
 

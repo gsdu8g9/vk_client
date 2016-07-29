@@ -6,7 +6,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * @author Andrew Drobyazko (c2q9450@gmail.com) on 16.10.15.
+ * @author Andrew Drobyazko - c2q9450@gmail.com - https://nethergrim.github.io on 16.10.15.
  *         All rights reserved.
  */
 public abstract class SelectableUltimateAdapter extends UltimateAdapter {

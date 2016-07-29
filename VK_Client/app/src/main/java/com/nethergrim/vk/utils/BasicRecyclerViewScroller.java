@@ -5,7 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import com.nethergrim.vk.callbacks.ToolbarScrollable;
 
 /**
- * @author andrej on 29.07.15.
+ * @author Andrew Drobyazko - c2q9450@gmail.com - https://nethergrim.github.io on 29.07.15.
  */
 public class BasicRecyclerViewScroller extends RecyclerView.OnScrollListener {
 

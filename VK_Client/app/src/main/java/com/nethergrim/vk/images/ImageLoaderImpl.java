@@ -17,7 +17,7 @@ import rx.Observable;
 import rx.schedulers.Schedulers;
 
 /**
- * @author Andrew Drobyazko (c2q9450@gmail.com) on 4/7/15.
+ * @author Andrew Drobyazko - c2q9450@gmail.com - https://nethergrim.github.io on 4/7/15.
  */
 public class ImageLoaderImpl implements ImageLoader {
 

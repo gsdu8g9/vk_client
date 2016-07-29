@@ -13,7 +13,7 @@ import java.util.ArrayList;
  * Inside, it will call web requests in {@link android.app.Service} in the background thread, to
  * process and persist all the data.
  *
- * @author andrej on 24.07.15.
+ * @author Andrew Drobyazko - c2q9450@gmail.com - https://nethergrim.github.io on 24.07.15.
  */
 @SuppressWarnings("unused")
 public interface WebIntentHandler {

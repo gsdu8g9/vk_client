@@ -14,7 +14,7 @@ import com.nethergrim.vk.models.StartupResponse;
  *
  * Only this class should be used to map and persist web request results.
  *
- * @author andrej on 30.08.15 (c2q9450@gmail.com).
+ * @author Andrew Drobyazko - c2q9450@gmail.com - https://nethergrim.github.io on 30.08.15 (c2q9450@gmail.com).
  * All rights reserved.
  */
 public interface Store {

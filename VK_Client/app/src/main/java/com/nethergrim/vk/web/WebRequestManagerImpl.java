@@ -11,6 +11,7 @@ import com.nethergrim.vk.models.ConversationsUserObject;
 import com.nethergrim.vk.models.IntegerResponse;
 import com.nethergrim.vk.models.ListOfFriends;
 import com.nethergrim.vk.models.ListOfMessages;
+import com.nethergrim.vk.models.ListOfMessagesResponse;
 import com.nethergrim.vk.models.ListOfUsers;
 import com.nethergrim.vk.models.StartupResponse;
 import com.nethergrim.vk.models.StockItemsResponse;
@@ -36,14 +37,14 @@ import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 
 /**
- * @author andrej on 12.08.15.
+ * @author Andrew Drobyazko - c2q9450@gmail.com - https://nethergrim.github.io on 12.08.15.
  */
 public class WebRequestManagerImpl implements WebRequestManager {
 
     public static final String TAG = WebRequestManagerImpl.class.getSimpleName();
     public static final int MAX_RETRY_COUNT = 10;
     public static final int MIN_RETRY_DELAY_MS = 800;
-    RetrofitInterface mRetrofitInterface;
+    private RetrofitInterface mRetrofitInterface;
     @Inject
     Prefs mPrefs;
     private Action1<WebResponse> mDefaultResponseChecker = webResponse -> {
@@ -65,7 +66,7 @@ public class WebRequestManagerImpl implements WebRequestManager {
         mRetrofitInterface = restAdapter.create(RetrofitInterface.class);
     }
 
-    public Scheduler getDefaultScheduler() {
+    private Scheduler getDefaultScheduler() {
         return Schedulers.io();
     }
 
@@ -147,8 +148,8 @@ public class WebRequestManagerImpl implements WebRequestManager {
 
     @Override
     public Observable<ConversationsUserObject> getConversationsAndUsers(int limit,
-            int offset,
-            boolean unread) {
+                                                                        int offset,
+                                                                        boolean unread) {
         Map<String, String> params = getDefaultParamsMap();
 
         if (offset > 0) {
@@ -169,9 +170,9 @@ public class WebRequestManagerImpl implements WebRequestManager {
 
     @Override
     public Observable<ListOfMessages> getChatHistory(int offset,
-            int count,
-            String userId,
-            long chatId
+                                                     int count,
+                                                     String userId,
+                                                     long chatId
     ) {
         Map<String, String> params = getDefaultParamsMap();
 
@@ -183,18 +184,14 @@ public class WebRequestManagerImpl implements WebRequestManager {
         }
 
         if (!TextUtils.isEmpty(userId)) {
-            params.put("user_id", userId);
+            params.put("peer_id", userId);
+        } else {
+            params.put("peer_id", String.valueOf(chatId + 2000000000));
         }
-        if (chatId > 0) {
-            params.put("chat_id", String.valueOf(chatId));
-        }
-        params.put("start_message_id", "0");
-        params.put("rev", "0");
-
         return mRetrofitInterface.getMessagesHistory(params)
                 .doOnNext(mDefaultResponseChecker)
                 .retryWhen(RetryWithDelay.getInstance())
-                .map(listOfMessagesResponse -> listOfMessagesResponse.getListOfMessages())
+                .map(ListOfMessagesResponse::getListOfMessages)
                 .observeOn(getDefaultScheduler())
                 .subscribeOn(getDefaultScheduler());
     }
@@ -232,8 +229,19 @@ public class WebRequestManagerImpl implements WebRequestManager {
                 .retryWhen(RetryWithDelay.getInstance());
     }
 
+    /**
+     * Should not fire request if marking messages as read is turned off.
+     *
+     * @param peerId         Id of user or conversation
+     * @param startMessageId Id of last message that should be marked as read.
+     * @return Observable of web request if marking messages as read is enabled.
+     * Empty observable if it's not allowed.
+     */
     @Override
     public Observable<WebResponse> markMessagesAsRead(long peerId, long startMessageId) {
+        if (!mPrefs.markMessagesAsRead()) {
+            return Observable.empty();
+        }
         Map<String, String> params = getDefaultParamsMap();
         params.put("peer_id", String.valueOf(peerId));
         params.put("start_message_id", String.valueOf(startMessageId));
@@ -246,7 +254,7 @@ public class WebRequestManagerImpl implements WebRequestManager {
     private Map<String, String> getDefaultParamsMap() {
         // TODO: 04.09.15 object pools?
         Map<String, String> defaultParamsMap = new HashMap<>();
-        defaultParamsMap.put("v", Constants.API_VERSION);
+        defaultParamsMap.put("v", Constants.VK_API_VERSION);
         defaultParamsMap.put("https", "1");
         defaultParamsMap.put("lang", Locale.getDefault().getDisplayCountry());
         defaultParamsMap.put("access_token", mPrefs.getToken());

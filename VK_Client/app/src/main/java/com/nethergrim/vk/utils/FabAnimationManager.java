@@ -8,7 +8,7 @@ import com.github.clans.fab.FloatingActionButton;
 import com.nethergrim.vk.Constants;
 
 /**
- * @author andrej on 08.08.15.
+ * @author Andrew Drobyazko - c2q9450@gmail.com - https://nethergrim.github.io on 08.08.15.
  */
 public class FabAnimationManager {
 

@@ -15,7 +15,7 @@ import butterknife.InjectView;
  * {@link android.support.v7.widget.RecyclerView.ViewHolder} for {@link
  * com.nethergrim.vk.adapter.ConversationsAdapter}.
  *
- * @author Andrew Drobyazko (c2q9450@gmail.com) on 4/6/15 (c2q9450@gmail.com).
+ * @author Andrew Drobyazko - c2q9450@gmail.com - https://nethergrim.github.io on 4/6/15 (c2q9450@gmail.com).
  *         All rights reserved.
  */
 public class ConversationViewHolder extends UltimateAdapter.DataVH {

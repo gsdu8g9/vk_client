@@ -46,7 +46,7 @@ import rx.schedulers.Schedulers;
  * <p>
  * By default every method of current class should return {@link rx.Observable} as result.
  *
- * @author andrej on 30.08.15 (c2q9450@gmail.com).
+ * @author Andrew Drobyazko - c2q9450@gmail.com - https://nethergrim.github.io on 30.08.15 (c2q9450@gmail.com).
  *         All rights reserved.
  */
 public class DataManagerImpl implements DataManager {
@@ -68,6 +68,9 @@ public class DataManagerImpl implements DataManager {
 
     @Inject
     ImageLoader mImageLoader;
+
+    @Inject
+    Store mStore;
 
     public DataManagerImpl() {
         MyApplication.getInstance().getMainComponent().inject(this);
@@ -201,6 +204,29 @@ public class DataManagerImpl implements DataManager {
 
     @Override
     public Observable<WebResponse> syncMessagesReadState() {
+        if (!mPrefs.markMessagesAsRead() && mPrefs.isDisplayingUnreadMessagesAsUnread()) {
+            // fake
+            return ReactiveNetwork.observeInternetConnectivity()
+                    .subscribeOn(Schedulers.io())
+                    .first()
+                    .filter(aBoolean -> aBoolean)
+                    .map(aBoolean -> mPrefs.getConversationsToSyncUnreadMessages())
+                    .filter(a -> !a.isEmpty())
+                    .flatMap(Observable::from, 4)
+                    .flatMap(new Func1<LongToLongModel, Observable<WebResponse>>() {
+                        @Override
+                        public Observable<WebResponse> call(LongToLongModel longToLongModel) {
+                            long conversationId = longToLongModel.getL1();
+                            long lastMessageId = longToLongModel.getL2();
+                            mStore.markMessagesAsRead(conversationId, lastMessageId);
+                            return Observable.empty();
+                        }
+                    }, 4)
+                    .doOnCompleted(() -> mPrefs.removeConversationToSyncUnreadMessages());
+
+
+        }
+        //real
         return ReactiveNetwork.observeInternetConnectivity()
                 .subscribeOn(Schedulers.io())
                 .first()
@@ -215,7 +241,9 @@ public class DataManagerImpl implements DataManager {
                         long lastMessageId = longToLongModel.getL2();
                         return Observable.fromCallable(() -> {
                             WebResponse webResponse = mWebRequestManager.markMessagesAsRead(conversationId, lastMessageId).first().toBlocking().first();
-
+                            if (webResponse.ok()) {
+                                mStore.markMessagesAsRead(conversationId, lastMessageId);
+                            }
                             return webResponse;
                         });
                     }

@@ -34,12 +34,14 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
+import hugo.weaving.DebugLog;
 import io.realm.Realm;
+import io.realm.RealmQuery;
 import io.realm.RealmResults;
 import io.realm.Sort;
 
 /**
- * @author andrej on 07.08.15.
+ * @author Andrew Drobyazko - c2q9450@gmail.com - https://nethergrim.github.io on 07.08.15.
  */
 public class ChatFragment extends BaseKeyboardFragment implements Toolbar.OnMenuItemClickListener,
         PaginationManager.OnRecyclerViewScrolledToPageListener {
@@ -137,9 +139,33 @@ public class ChatFragment extends BaseKeyboardFragment implements Toolbar.OnMenu
         return null;
     }
 
+    /**
+     * Should take id's of selected messages, then find messages by ids, then build a String from message body's.
+     *
+     * @return resulted String
+     */
+    @DebugLog
     @Override
     public String getSelectedText() {
-        return "TODO"; // TODO: 17.10.15 fixme
+        Set<Long> selectedMessageIds = mChatAdapter.getSelectedIds();
+        RealmQuery<Message> messageRealmQuery = mRealm.where(Message.class);
+        int i = 0;
+        int size = selectedMessageIds.size();
+        for (Long selectedMessageId : selectedMessageIds) {
+            messageRealmQuery.equalTo("id", selectedMessageId);
+            if (i + 1 < size) {
+                messageRealmQuery.or();
+            }
+            i++;
+        }
+        RealmResults<Message> messages = messageRealmQuery.findAllSorted("date", Sort.ASCENDING);
+        StringBuilder sb = new StringBuilder();
+        for (int i1 = 0, messagesSize = messages.size(); i1 < messagesSize; i1++) {
+            Message message = messages.get(i1);
+            sb.append(message.getBody()).append("\n");
+        }
+        sb.deleteCharAt(sb.length() - 1);
+        return sb.toString();
     }
 
     @Override
@@ -181,9 +207,9 @@ public class ChatFragment extends BaseKeyboardFragment implements Toolbar.OnMenu
         return false;
     }
 
-    private void markMessagesAsRead(){
+    private void markMessagesAsRead() {
         long convId;
-        if (mIsGroupChat){
+        if (mIsGroupChat) {
             convId = getChatId() + 2000000000;
         } else {
             convId = mConversationId;
@@ -203,8 +229,7 @@ public class ChatFragment extends BaseKeyboardFragment implements Toolbar.OnMenu
     }
 
     @Override
-    public void onChange() {
-        super.onChange();
+    public void onChange(Object element) {
         mChatAdapter.notifyDataSetChanged();
     }
 

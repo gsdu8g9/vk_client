@@ -19,7 +19,7 @@ import retrofit.http.QueryMap;
 import rx.Observable;
 
 /**
- * @author andrej on 12.08.15.
+ * @author Andrew Drobyazko - c2q9450@gmail.com - https://nethergrim.github.io on 12.08.15.
  */
 public interface RetrofitInterface {
 
@@ -48,9 +48,9 @@ public interface RetrofitInterface {
     @POST(Constants.Requests.EXECUTE_DELETE_CONVERSATION)
     Observable<IntegerResponse> deleteConversation(@QueryMap Map<String, String> options);
 
-    @GET(Constants.Requests.GET_STICKER_PURCHASES)
+    @POST(Constants.Requests.GET_STICKER_PURCHASES)
     Observable<StockItemsResponse> getStickers(@QueryMap Map<String, String> options);
 
-    @GET(Constants.Requests.MESSAGES_MARK_AS_READ)
+    @POST(Constants.Requests.MESSAGES_MARK_AS_READ)
     Observable<WebResponse> markMessagesAsRead(@QueryMap Map<String, String> options);
 }

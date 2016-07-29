@@ -22,7 +22,7 @@ import butterknife.InjectView;
 import github.ankushsachdeva.emojicon.EmojiconGridView;
 
 /**
- * @author Andrew Drobyazko (c2q9450@gmail.com) on 15.10.15.
+ * @author Andrew Drobyazko - c2q9450@gmail.com - https://nethergrim.github.io on 15.10.15.
  */
 @SuppressWarnings("WeakerAccess")
 @SuppressLint("ViewConstructor")

@@ -32,7 +32,7 @@ import io.realm.RealmResults;
 import io.realm.Sort;
 
 /**
- * @author andrej on 30.08.15.
+ * @author Andrew Drobyazko - c2q9450@gmail.com - https://nethergrim.github.io on 30.08.15.
  */
 public class RealmStore implements Store {
 
@@ -106,7 +106,7 @@ public class RealmStore implements Store {
         realm.beginTransaction();
 
         if (clearDataBeforePersist) {
-            realm.clear(Conversation.class);
+            realm.delete(Conversation.class);
         }
 
         realm.copyToRealmOrUpdate(conversationsList.getResults());
@@ -149,9 +149,9 @@ public class RealmStore implements Store {
         RealmResults<Message> messages = messageRealmQuery.findAll();
 
         for (int i = messages.size() - 1; i >= 0; i--) {
-            messages.get(i).removeFromRealm();
+            messages.get(i).deleteFromRealm();
         }
-        conversation.removeFromRealm();
+        conversation.deleteFromRealm();
 
         realm.commitTransaction();
         realm.close();

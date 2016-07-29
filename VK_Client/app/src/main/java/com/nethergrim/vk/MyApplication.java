@@ -4,11 +4,14 @@ import android.support.multidex.MultiDexApplication;
 import android.util.Log;
 
 import com.bumptech.glide.request.target.ViewTarget;
+import com.google.android.gms.gcm.GcmNetworkManager;
+import com.google.android.gms.gcm.PeriodicTask;
+import com.google.android.gms.gcm.Task;
 import com.nethergrim.vk.caching.Prefs;
 import com.nethergrim.vk.inject.DaggerMainComponent;
 import com.nethergrim.vk.inject.MainComponent;
 import com.nethergrim.vk.inject.ProviderModule;
-import com.nethergrim.vk.utils.UserUtils;
+import com.nethergrim.vk.services.GcmNetworkService;
 import com.vk.sdk.VKAccessToken;
 import com.vk.sdk.VKSdk;
 import com.vk.sdk.VKSdkListener;
@@ -17,11 +20,12 @@ import com.vk.sdk.util.VKUtil;
 
 import javax.inject.Inject;
 
+import hugo.weaving.DebugLog;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 
 /**
- * @author Andrew Drobyazko (c2q9450@gmail.com) on 3/20/15.
+ * @author Andrew Drobyazko - c2q9450@gmail.com - https://nethergrim.github.io on 3/20/15.
  */
 public class MyApplication extends MultiDexApplication {
 
@@ -38,13 +42,14 @@ public class MyApplication extends MultiDexApplication {
     }
 
     @Override
+    @DebugLog
     public void onCreate() {
         super.onCreate();
         _app = this;
         ViewTarget.setTagId(R.id.glide_tag);
         Constants.mDensity = getResources().getDisplayMetrics().density;
 
-        Log.e("FIELDS", UserUtils.getDefaultUserFieldsAsString());
+//        Log.e("FIELDS", UserUtils.getDefaultUserFieldsAsString());
 
         VKSdkListener vkSdkListener = new VKSdkListener() {
             @Override
@@ -84,9 +89,25 @@ public class MyApplication extends MultiDexApplication {
             }
         };
         VKSdk.initialize(vkSdkListener, Constants.VK_APP_ID);
-        logFingerPrints();
+//        logFingerPrints();
         initDagger2();
         initRealm();
+        scheduleGcmNetworkManager();
+    }
+
+    /**
+     * Will schedule triggering of GcmNetworkManager that will launch {@link com.nethergrim.vk.services.GcmNetworkService}
+     */
+    public void scheduleGcmNetworkManager() {
+        PeriodicTask periodicTask = new PeriodicTask.Builder()
+                .setService(GcmNetworkService.class)
+                .setPersisted(true)
+                .setRequiredNetwork(Task.NETWORK_STATE_CONNECTED)
+                .setPeriod(3 * 60 * 60) // at most every 3 hours
+                .setFlex(600)
+                .setTag(GcmNetworkService.class.getSimpleName())
+                .build();
+        GcmNetworkManager.getInstance(this).schedule(periodicTask);
     }
 
     public MainComponent getMainComponent() {

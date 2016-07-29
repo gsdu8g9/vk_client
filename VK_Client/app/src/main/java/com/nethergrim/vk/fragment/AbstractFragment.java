@@ -9,7 +9,7 @@ import io.realm.Realm;
 import io.realm.RealmChangeListener;
 
 /**
- * @author Andrew Drobyazko (c2q9450@gmail.com) on 3/20/15.
+ * @author Andrew Drobyazko - c2q9450@gmail.com - https://nethergrim.github.io on 3/20/15.
  */
 public abstract class AbstractFragment extends Fragment implements RealmChangeListener {
 
@@ -20,6 +20,7 @@ public abstract class AbstractFragment extends Fragment implements RealmChangeLi
     public void onStart() {
         super.onStart();
         mRealm = Realm.getDefaultInstance();
+        mRealm.setAutoRefresh(true);
         mRealm.addChangeListener(this);
     }
 
@@ -53,7 +54,7 @@ public abstract class AbstractFragment extends Fragment implements RealmChangeLi
     }
 
     @Override
-    public void onChange() {
+    public void onChange(Object element) {
 
     }
 }

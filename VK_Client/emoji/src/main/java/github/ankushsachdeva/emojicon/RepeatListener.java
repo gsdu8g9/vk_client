@@ -6,7 +6,7 @@ import android.view.MotionEvent;
 import android.view.View;
 
 /**
- * @author Andrew Drobyazko (c2q9450@gmail.com) on 16.10.15.
+ * @author Andrew Drobyazko - c2q9450@gmail.com - https://nethergrim.github.io on 16.10.15.
  */
 public class RepeatListener implements View.OnTouchListener {
 

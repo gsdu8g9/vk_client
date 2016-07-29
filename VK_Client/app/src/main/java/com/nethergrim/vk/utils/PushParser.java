@@ -6,7 +6,7 @@ import android.support.annotation.NonNull;
 import com.nethergrim.vk.models.push.PushObject;
 
 /**
- * @author andrej on 23.07.15.
+ * @author Andrew Drobyazko - c2q9450@gmail.com - https://nethergrim.github.io on 23.07.15.
  */
 public interface PushParser {
 
