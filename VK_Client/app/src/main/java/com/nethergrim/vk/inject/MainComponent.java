@@ -21,6 +21,7 @@ import com.nethergrim.vk.gcm.MyGcmListenerService;
 import com.nethergrim.vk.gcm.MyInstanceIDListenerService;
 import com.nethergrim.vk.images.PaletteProviderImpl;
 import com.nethergrim.vk.services.GcmNetworkService;
+import com.nethergrim.vk.services.OftenFiredGcmNetworkService;
 import com.nethergrim.vk.services.WorkerService;
 import com.nethergrim.vk.utils.DataHelper;
 import com.nethergrim.vk.utils.PushParserImpl;
@@ -107,4 +108,6 @@ public interface MainComponent {
     void inject(StickersLayoutView stickersLayoutView);
 
     void inject(GcmNetworkService gcmNetworkService);
+
+    void inject(OftenFiredGcmNetworkService oftenFiredGcmNetworkService);
 }
