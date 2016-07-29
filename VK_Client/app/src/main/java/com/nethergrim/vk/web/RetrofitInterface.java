@@ -21,6 +21,7 @@ import rx.Observable;
 /**
  * @author Andrew Drobyazko - c2q9450@gmail.com - https://nethergrim.github.io on 12.08.15.
  */
+@SuppressWarnings("unused")
 public interface RetrofitInterface {
 
     @GET(Constants.Requests.GET_USERS)
