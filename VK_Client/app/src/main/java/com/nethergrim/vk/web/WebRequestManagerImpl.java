@@ -27,10 +27,7 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-import retrofit.RestAdapter;
-import retrofit.client.OkClient;
 import retrofit.client.Response;
-import retrofit.converter.JacksonConverter;
 import rx.Observable;
 import rx.Scheduler;
 import rx.functions.Action1;
@@ -44,9 +41,13 @@ public class WebRequestManagerImpl implements WebRequestManager {
     public static final String TAG = WebRequestManagerImpl.class.getSimpleName();
     public static final int MAX_RETRY_COUNT = 10;
     public static final int MIN_RETRY_DELAY_MS = 800;
-    private RetrofitInterface mRetrofitInterface;
+
+    @Inject
+    RetrofitInterface mRetrofitInterface;
     @Inject
     Prefs mPrefs;
+
+
     private Action1<WebResponse> mDefaultResponseChecker = webResponse -> {
         if (!webResponse.ok()) {
             throw new VkApiError(webResponse.getError());
@@ -57,13 +58,6 @@ public class WebRequestManagerImpl implements WebRequestManager {
     public WebRequestManagerImpl() {
         MyApplication.getInstance().getMainComponent().inject(this);
 
-        RestAdapter restAdapter = new RestAdapter.Builder()
-                .setEndpoint(Constants.BASIC_API_URL)
-                .setLogLevel(RestAdapter.LogLevel.NONE)
-                .setConverter(new JacksonConverter())
-                .setClient(new OkClient())
-                .build();
-        mRetrofitInterface = restAdapter.create(RetrofitInterface.class);
     }
 
     private Scheduler getDefaultScheduler() {

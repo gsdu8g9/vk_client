@@ -4,6 +4,8 @@ import android.support.multidex.MultiDexApplication;
 import android.util.Log;
 
 import com.bumptech.glide.request.target.ViewTarget;
+import com.facebook.stetho.Stetho;
+import com.frogermcs.androiddevmetrics.AndroidDevMetrics;
 import com.google.android.gms.gcm.GcmNetworkManager;
 import com.google.android.gms.gcm.PeriodicTask;
 import com.google.android.gms.gcm.Task;
@@ -12,6 +14,7 @@ import com.nethergrim.vk.inject.DaggerMainComponent;
 import com.nethergrim.vk.inject.MainComponent;
 import com.nethergrim.vk.inject.ProviderModule;
 import com.nethergrim.vk.services.GcmNetworkService;
+import com.squareup.leakcanary.LeakCanary;
 import com.vk.sdk.VKAccessToken;
 import com.vk.sdk.VKSdk;
 import com.vk.sdk.VKSdkListener;
@@ -48,7 +51,11 @@ public class MyApplication extends MultiDexApplication {
         _app = this;
         ViewTarget.setTagId(R.id.glide_tag);
         Constants.mDensity = getResources().getDisplayMetrics().density;
-
+        Stetho.initializeWithDefaults(this);
+        LeakCanary.install(this);
+        if (BuildConfig.DEBUG) {
+            AndroidDevMetrics.initWith(this);
+        }
 //        Log.e("FIELDS", UserUtils.getDefaultUserFieldsAsString());
 
         VKSdkListener vkSdkListener = new VKSdkListener() {
@@ -93,6 +100,7 @@ public class MyApplication extends MultiDexApplication {
         initDagger2();
         initRealm();
         scheduleGcmNetworkManager();
+
     }
 
     /**
@@ -129,7 +137,7 @@ public class MyApplication extends MultiDexApplication {
     }
 
     private void initDagger2() {
-        mMainComponent = DaggerMainComponent.builder().providerModule(new ProviderModule()).build();
+        mMainComponent = DaggerMainComponent.builder().providerModule(new ProviderModule(this)).build();
         mMainComponent.inject(this);
     }
 
