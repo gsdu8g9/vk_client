@@ -3,8 +3,8 @@ package com.nethergrim.vk.utils;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
+import android.support.design.widget.FloatingActionButton;
 
-import com.github.clans.fab.FloatingActionButton;
 import com.nethergrim.vk.Constants;
 
 /**

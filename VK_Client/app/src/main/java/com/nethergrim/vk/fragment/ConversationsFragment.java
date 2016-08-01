@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -14,7 +15,7 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.github.clans.fab.FloatingActionButton;
+
 import com.nethergrim.vk.MyApplication;
 import com.nethergrim.vk.R;
 import com.nethergrim.vk.activity.ChatActivity;
@@ -28,7 +29,7 @@ import com.nethergrim.vk.utils.FabAnimationManager;
 import com.nethergrim.vk.utils.RecyclerItemClickListener;
 import com.nethergrim.vk.views.PaginationManager;
 import com.nethergrim.vk.web.WebIntentHandler;
-import com.rey.material.widget.ProgressView;
+
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 
@@ -46,7 +47,7 @@ public class ConversationsFragment extends AbstractFragment
         implements PaginationManager.OnRecyclerViewScrolledToPageListener, ToolbarScrollable,
         RecyclerItemClickListener.OnItemClickListener, ConversationsAdapter.ClickListener {
 
-    private static final int DEFAULT_PAGE_SIZE = 20;
+    private static final int DEFAULT_PAGE_SIZE = 190;
     @InjectView(R.id.list)
     RecyclerView mRecyclerView;
     @InjectView(R.id.progressBar2)
@@ -60,7 +61,7 @@ public class ConversationsFragment extends AbstractFragment
     @InjectView(R.id.fab_normal)
     FloatingActionButton mFabNormal;
     @InjectView(R.id.progressBottom)
-    ProgressView mProgressBottom;
+    ProgressBar mProgressBottom;
     private ConversationsAdapter mAdapter;
 
     private ToolbarScrollable mToolbarScrollable;
@@ -132,7 +133,7 @@ public class ConversationsFragment extends AbstractFragment
 
     @Subscribe
     public void onDataUpdated(ConversationsUpdatedEvent event) {
-        mProgressBottom.stop();
+        mProgressBottom.setVisibility(View.GONE);
         mAdapter.setFooterVisibility(View.GONE);
         if (mProgressBar != null) {
             mProgressBar.setVisibility(View.GONE);
@@ -202,7 +203,7 @@ public class ConversationsFragment extends AbstractFragment
 
     private void loadPage(int pageNumber) {
         if (pageNumber == 0) {
-            mProgressBottom.start();
+            mProgressBottom.setVisibility(View.VISIBLE);
         }
         mAdapter.setFooterVisibility(View.VISIBLE);
         mWebIntentHandler.fetchConversationsAndUsers(DEFAULT_PAGE_SIZE,

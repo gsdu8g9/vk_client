@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+             xmlns:app="http://schemas.android.com/apk/res-auto"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent">
 
 
     <ProgressBar
@@ -10,7 +10,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:visibility="gone" />
+        android:visibility="gone"/>
 
     <TextView
         android:id="@+id/textViewNothingHere"
@@ -18,7 +18,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:text="@string/nothing_here_yet"
-        android:visibility="gone" />
+        android:visibility="gone"/>
 
 
     <android.support.v7.widget.RecyclerView
@@ -26,31 +26,25 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clipToPadding="false"
-        android:paddingTop="@dimen/action_bar_height" />
+        android:paddingTop="@dimen/action_bar_height"/>
 
 
-    <com.github.clans.fab.FloatingActionButton
+    <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab_normal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|right"
         android:layout_marginBottom="12dp"
         android:layout_marginRight="12dp"
-        android:src="@drawable/ic_add_white_24dp"
-        app:fab_colorNormal="@color/primary"
-        app:fab_colorPressed="@color/primary_light"
-        app:fab_colorRipple="@color/white_opacity_30" />
+        android:src="@drawable/ic_add_white_24dp"/>
 
-    <com.rey.material.widget.ProgressView
+    <ProgressBar
         android:id="@+id/progressBottom"
+        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
         android:layout_width="match_parent"
         android:layout_height="3dp"
         android:layout_gravity="bottom"
-        app:lpd_outAnimDuration="900"
-        app:lpd_strokeSize="3dp"
-        app:pv_autostart="true"
-        app:pv_circular="false"
-        app:pv_progressMode="indeterminate" />
+        android:indeterminate="true"/>
 
 
 </FrameLayout>
