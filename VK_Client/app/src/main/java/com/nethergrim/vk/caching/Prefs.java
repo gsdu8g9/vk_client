@@ -73,5 +73,5 @@ public interface Prefs {
     void removeConversationToSyncUnreadMessages();
 
     @WorkerThread
-    Set<LongToLongModel> getConversationsToSyncUnreadMessages();
+    Set<MarkConversationReadTask> getConversationsToSyncUnreadMessages();
 }

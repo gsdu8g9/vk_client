@@ -12,7 +12,7 @@ import com.google.android.gms.gcm.Task;
 import com.google.android.gms.iid.InstanceID;
 import com.nethergrim.vk.Constants;
 import com.nethergrim.vk.MyApplication;
-import com.nethergrim.vk.caching.LongToLongModel;
+import com.nethergrim.vk.caching.MarkConversationReadTask;
 import com.nethergrim.vk.caching.Prefs;
 import com.nethergrim.vk.data.Store;
 import com.nethergrim.vk.event.ConversationUpdatedEvent;
@@ -236,11 +236,11 @@ public class DataManagerImpl implements DataManager {
                     .map(aBoolean -> mPrefs.getConversationsToSyncUnreadMessages())
                     .filter(a -> !a.isEmpty())
                     .flatMap(Observable::from, 4)
-                    .flatMap(new Func1<LongToLongModel, Observable<WebResponse>>() {
+                    .flatMap(new Func1<MarkConversationReadTask, Observable<WebResponse>>() {
                         @Override
-                        public Observable<WebResponse> call(LongToLongModel longToLongModel) {
-                            long conversationId = longToLongModel.getL1();
-                            long lastMessageId = longToLongModel.getL2();
+                        public Observable<WebResponse> call(MarkConversationReadTask longToLongModel) {
+                            long conversationId = longToLongModel.getConversationId();
+                            long lastMessageId = longToLongModel.getToTime();
                             mStore.markMessagesAsRead(conversationId, lastMessageId);
                             return Observable.empty();
                         }
@@ -257,11 +257,11 @@ public class DataManagerImpl implements DataManager {
                 .map(aBoolean -> mPrefs.getConversationsToSyncUnreadMessages())
                 .filter(a -> !a.isEmpty())
                 .flatMap(Observable::from, 4)
-                .flatMap(new Func1<LongToLongModel, Observable<WebResponse>>() {
+                .flatMap(new Func1<MarkConversationReadTask, Observable<WebResponse>>() {
                     @Override
-                    public Observable<WebResponse> call(LongToLongModel longToLongModel) {
-                        long conversationId = longToLongModel.getL1();
-                        long lastMessageId = longToLongModel.getL2();
+                    public Observable<WebResponse> call(MarkConversationReadTask longToLongModel) {
+                        long conversationId = longToLongModel.getConversationId();
+                        long lastMessageId = longToLongModel.getToTime();
                         return Observable.fromCallable(() -> {
                             WebResponse webResponse = mWebRequestManager.markMessagesAsRead(conversationId, lastMessageId).first().toBlocking().single();
                             if (webResponse.ok()) {

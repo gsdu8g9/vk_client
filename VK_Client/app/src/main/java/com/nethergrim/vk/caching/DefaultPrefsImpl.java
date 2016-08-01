@@ -2,16 +2,18 @@ package com.nethergrim.vk.caching;
 
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.annotation.WorkerThread;
 
 import com.nethergrim.vk.MyApplication;
 import com.nethergrim.vk.enums.MainActivityState;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
+import io.realm.Realm;
 import rx.Observable;
-import rx.schedulers.Schedulers;
 
 /**
  * @author Andrew Drobyazko - c2q9450@gmail.com - https://nethergrim.github.io on 3/20/15.
@@ -28,7 +30,6 @@ public class DefaultPrefsImpl implements Prefs {
     private static final String KEY_EMOJI_TAB = "emoji_tab";
     private static final String KEY_MARK_MESSAGES_AS_READ = "mark_as_read";
     private static final String KEY_DISPLAY_UNREAD_AS_UNREAD = "display_unread_as_unread";
-    private static final String KEY_SYNC_MARK_MESSAGES_TO_READ = "sync_mark_read";
     private static final String KEY_TOKEN = "token";
     private SharedPreferences mPrefs;
 
@@ -153,45 +154,46 @@ public class DefaultPrefsImpl implements Prefs {
     }
 
     @Override
+    @WorkerThread
     public synchronized void addConversationToSyncUnreadMessages(long conversationId, long toTime) {
-        Set<LongToLongModel> data = getConversationsToSyncUnreadMessages();
-        data.add(new LongToLongModel(conversationId, toTime));
-        setLongToLongSet(data, KEY_SYNC_MARK_MESSAGES_TO_READ);
+        Set<MarkConversationReadTask> data = getConversationsToSyncUnreadMessages();
+        data.add(new MarkConversationReadTask(conversationId, toTime));
+        setLongToLongSet(data);
     }
 
     @Override
+    @WorkerThread
     public synchronized void removeConversationToSyncUnreadMessages() {
-        setLongToLongSet(null, KEY_SYNC_MARK_MESSAGES_TO_READ);
+        setLongToLongSet(null);
     }
 
     @Override
-    public synchronized Set<LongToLongModel> getConversationsToSyncUnreadMessages() {
-        return getLongToLong(KEY_SYNC_MARK_MESSAGES_TO_READ)
+    @WorkerThread
+    public synchronized Set<MarkConversationReadTask> getConversationsToSyncUnreadMessages() {
+        return getUnsyncedConversationsReadTask()
                 .toList()
                 .map(HashSet::new)
                 .toBlocking()
                 .first();
+
     }
 
 
-    private Observable<LongToLongModel> getLongToLong(@NonNull String key) {
-        return Observable.from(mPrefs.getStringSet(key, new HashSet<>(0)))
-                .subscribeOn(Schedulers.io())
-                .map(LongToLongModel::fromString);
+    private Observable<MarkConversationReadTask> getUnsyncedConversationsReadTask() {
+        Realm realm = Realm.getDefaultInstance();
+        List<MarkConversationReadTask> result = realm.copyFromRealm(realm.where(MarkConversationReadTask.class).findAll());
+        realm.close();
+        return Observable.from(result);
     }
 
-    private void setLongToLongSet(Set<LongToLongModel> data, @NonNull String key) {
-        if (data == null) {
-            mPrefs.edit().putStringSet(key, null).apply();
-            return;
-        }
-        Observable.from(data)
-                .subscribeOn(Schedulers.io())
-                .map(LongToLongModel::toString)
-                .toList()
-                .map(HashSet::new)
-                .doOnNext(strings -> mPrefs.edit().putStringSet(key, strings).apply())
-                .subscribe();
+    private void setLongToLongSet(@Nullable Set<MarkConversationReadTask> data) {
+        Realm realm = Realm.getDefaultInstance();
+        realm.executeTransactionAsync(realm1 -> {
+            realm1.delete(MarkConversationReadTask.class);
+            if (data != null) {
+                realm1.copyToRealmOrUpdate(data);
+            }
+        });
     }
 
 }
