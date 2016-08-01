@@ -11,6 +11,7 @@ import com.nethergrim.vk.models.PendingMessage;
 import com.nethergrim.vk.models.StartupResponse;
 import com.nethergrim.vk.models.StockItemsResponse;
 import com.nethergrim.vk.models.WebResponse;
+import com.nethergrim.vk.models.response.SendMessageResponse;
 
 import java.util.List;
 
@@ -48,6 +49,6 @@ public interface WebRequestManager {
 
     Observable<WebResponse> markMessagesAsRead(long peerId, long startMessageId);
 
-    Observable<WebResponse> sendMessage(long peerId, @NonNull PendingMessage pendingMessage);
+    Observable<SendMessageResponse> sendMessage(long peerId, @NonNull PendingMessage pendingMessage);
 
 }

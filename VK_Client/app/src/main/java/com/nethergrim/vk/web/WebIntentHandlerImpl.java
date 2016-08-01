@@ -22,6 +22,7 @@ import java.util.ArrayList;
 public class WebIntentHandlerImpl implements WebIntentHandler {
 
 
+    private static final String TAG = "WebIntentHandlerImpl";
     private Prefs mPrefs;
     private Context mContext;
 

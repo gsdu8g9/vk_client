@@ -62,7 +62,8 @@ public interface Store {
     /**
      * @param peerId   id of user or id of conversation.
      * @param randomId random ID generated per each outgoing message
+     * @param listOfMessages list of messages from server, that should be saved to the local store instead of old pending message
      */
     @WorkerThread
-    void removePendingMessage(long peerId, long randomId);
+    void removePendingMessage(long peerId, long randomId, ListOfMessages listOfMessages);
 }

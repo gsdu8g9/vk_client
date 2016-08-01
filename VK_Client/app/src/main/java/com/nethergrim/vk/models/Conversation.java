@@ -1,16 +1,22 @@
 package com.nethergrim.vk.models;
 
+import android.util.Log;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-import io.realm.RealmObject;
+import io.realm.RealmModel;
 import io.realm.annotations.PrimaryKey;
+import io.realm.annotations.RealmClass;
 
 /**
  * @author Andrew Drobyazko - c2q9450@gmail.com - https://nethergrim.github.io on 3/20/15.
  */
+@SuppressWarnings({"unused", "WeakerAccess"})
 @JsonIgnoreProperties(ignoreUnknown = true)
+@RealmClass
+public class Conversation implements RealmModel {
 
-public class Conversation extends RealmObject {
+    private static final String TAG = "Conversation";
 
     /**
      * count of unread messages in this conversation
@@ -56,5 +62,21 @@ public class Conversation extends RealmObject {
 
     public void setDate(long date) {
         this.date = date;
+    }
+
+    public boolean isAGroupChat(){
+        if (message == null){
+            Log.e(TAG, "isAGroupChat: MESSAGE IS NULL");
+            return false;
+        }
+        return message.isAGroupChat();
+    }
+
+    public long getPeerId(){
+        if (message == null){
+            Log.e(TAG, "isAGroupChat: MESSAGE IS NULL");
+            return -1;
+        }
+        return message.getPeerId();
     }
 }

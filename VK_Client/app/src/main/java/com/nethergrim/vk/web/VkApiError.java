@@ -20,4 +20,11 @@ public class VkApiError extends Error {
     public void setWebError(WebError webError) {
         mWebError = webError;
     }
+
+    @Override
+    public String toString() {
+        return "VkApiError{" +
+                "mWebError=" + mWebError +
+                '}';
+    }
 }

@@ -10,7 +10,6 @@ import com.nethergrim.vk.enums.MainActivityState;
 import java.util.HashSet;
 import java.util.Set;
 
-import hugo.weaving.DebugLog;
 import rx.Observable;
 import rx.schedulers.Schedulers;
 
@@ -154,7 +153,6 @@ public class DefaultPrefsImpl implements Prefs {
     }
 
     @Override
-    @DebugLog
     public synchronized void addConversationToSyncUnreadMessages(long conversationId, long toTime) {
         Set<LongToLongModel> data = getConversationsToSyncUnreadMessages();
         data.add(new LongToLongModel(conversationId, toTime));
@@ -162,13 +160,11 @@ public class DefaultPrefsImpl implements Prefs {
     }
 
     @Override
-    @DebugLog
     public synchronized void removeConversationToSyncUnreadMessages() {
         setLongToLongSet(null, KEY_SYNC_MARK_MESSAGES_TO_READ);
     }
 
     @Override
-    @DebugLog
     public synchronized Set<LongToLongModel> getConversationsToSyncUnreadMessages() {
         return getLongToLong(KEY_SYNC_MARK_MESSAGES_TO_READ)
                 .toList()
@@ -177,14 +173,13 @@ public class DefaultPrefsImpl implements Prefs {
                 .first();
     }
 
-    @DebugLog
+
     private Observable<LongToLongModel> getLongToLong(@NonNull String key) {
         return Observable.from(mPrefs.getStringSet(key, new HashSet<>(0)))
                 .subscribeOn(Schedulers.io())
                 .map(LongToLongModel::fromString);
     }
 
-    @DebugLog
     private void setLongToLongSet(Set<LongToLongModel> data, @NonNull String key) {
         if (data == null) {
             mPrefs.edit().putStringSet(key, null).apply();

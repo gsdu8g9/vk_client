@@ -11,6 +11,8 @@ import com.nethergrim.vk.models.Message;
  */
 public class ConversationUtils {
 
+    public static final long GROUP_CHAT_ADDITIONAL_VALUE = 2000000000;
+
     public static boolean isConversationAGroupChat(@NonNull Conversation conversation) {
         return conversation.getMessage().getChat_id() > 0;
     }
@@ -22,5 +24,17 @@ public class ConversationUtils {
     public static boolean isMessageFromMe(@NonNull Message message) {
         long out = message.getOut();
         return out > 0;
+    }
+
+    public static boolean isPeerIdAGroupChat(long peerId){
+        return peerId > GROUP_CHAT_ADDITIONAL_VALUE;
+    }
+
+    public static long getConversationIdFromPeerId(long peerId) {
+        return peerId - GROUP_CHAT_ADDITIONAL_VALUE;
+    }
+
+    public static long getUserIdFromPeerId(long peerId){
+        return peerId;
     }
 }

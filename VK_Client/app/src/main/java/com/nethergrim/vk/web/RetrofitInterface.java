@@ -9,6 +9,7 @@ import com.nethergrim.vk.models.ListOfUsers;
 import com.nethergrim.vk.models.StartupResponse;
 import com.nethergrim.vk.models.StockItemsResponse;
 import com.nethergrim.vk.models.WebResponse;
+import com.nethergrim.vk.models.response.SendMessageResponse;
 
 import java.util.Map;
 
@@ -54,5 +55,5 @@ public interface RetrofitInterface {
     Observable<WebResponse> markMessagesAsRead(@QueryMap Map<String, String> options);
 
     @GET(Constants.Requests.SEND_MESSAGE)
-    Observable<WebResponse> sendMessage(@QueryMap Map<String, String> options);
+    Observable<SendMessageResponse> sendMessage(@QueryMap Map<String, String> options);
 }

@@ -27,6 +27,7 @@ import com.nethergrim.vk.models.outcoming_attachments.MessageAttachment;
 import com.nethergrim.vk.utils.ConversationUtils;
 import com.nethergrim.vk.utils.UserProvider;
 import com.nethergrim.vk.views.PaginationManager;
+import com.nethergrim.vk.web.DataManager;
 import com.nethergrim.vk.web.WebIntentHandler;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
@@ -58,6 +59,8 @@ public class ChatFragment extends BaseKeyboardFragment implements Toolbar.OnMenu
     Prefs mPrefs;
     @Inject
     Bus mBus;
+    @Inject
+    DataManager dataManager;
 
 
     private long mConversationId;
@@ -83,6 +86,7 @@ public class ChatFragment extends BaseKeyboardFragment implements Toolbar.OnMenu
         MyApplication.getInstance().getMainComponent().inject(this);
         setHasOptionsMenu(true);
         setRetainInstance(true);
+        dataManager.syncPendingMessages();
     }
 
 
@@ -114,6 +118,7 @@ public class ChatFragment extends BaseKeyboardFragment implements Toolbar.OnMenu
     }
 
     @Override
+    @DebugLog
     public void postText(String text) {
         PendingMessage pendingMessage = new PendingMessage(PendingMessage.Companion.generateRandomId(), text, null, null, mIsGroupChat ? mConversationId + 2000000000 : mConversationId);
         if (mIsGroupChat) {
@@ -121,7 +126,6 @@ public class ChatFragment extends BaseKeyboardFragment implements Toolbar.OnMenu
         } else {
             mWebIntentHandler.sendMessageToUser(pendingMessage);
         }
-
     }
 
     @Override
@@ -250,6 +254,7 @@ public class ChatFragment extends BaseKeyboardFragment implements Toolbar.OnMenu
 
     @Subscribe
     public void onErrorDuringSendingMessage(ErrorDuringSendingMessageEvent e) {
+
         // TODO handle error
     }
 

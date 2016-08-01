@@ -1,12 +1,10 @@
 package com.nethergrim.vk.web;
 
 import android.os.Looper;
-import android.os.Process;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.github.pwittchen.reactivenetwork.library.ReactiveNetwork;
 import com.google.android.gms.gcm.GcmNetworkManager;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.android.gms.gcm.OneoffTask;
@@ -19,6 +17,7 @@ import com.nethergrim.vk.caching.Prefs;
 import com.nethergrim.vk.data.Store;
 import com.nethergrim.vk.event.ConversationUpdatedEvent;
 import com.nethergrim.vk.event.ConversationsUpdatedEvent;
+import com.nethergrim.vk.event.ErrorDuringSendingMessageEvent;
 import com.nethergrim.vk.event.FriendsUpdatedEvent;
 import com.nethergrim.vk.event.MyUserUpdatedEvent;
 import com.nethergrim.vk.event.UsersUpdatedEvent;
@@ -33,15 +32,17 @@ import com.nethergrim.vk.models.StartupResponse;
 import com.nethergrim.vk.models.StickerDbItem;
 import com.nethergrim.vk.models.StockItemsResponse;
 import com.nethergrim.vk.models.WebResponse;
+import com.nethergrim.vk.models.response.SendMessageResponse;
 import com.nethergrim.vk.services.OftenFiredGcmNetworkService;
+import com.nethergrim.vk.utils.ConversationUtils;
 import com.squareup.otto.Bus;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Executors;
 
 import javax.inject.Inject;
 
+import hugo.weaving.DebugLog;
 import io.realm.Realm;
 import rx.Observable;
 import rx.Scheduler;
@@ -82,14 +83,11 @@ public class DataManagerImpl implements DataManager {
     @Inject
     Store mStore;
 
-    private Scheduler singleThreadScheduler = Schedulers.from(Executors.newSingleThreadExecutor());
+    @Inject
+    Scheduler singleThreadScheduler;
 
     public DataManagerImpl() {
         MyApplication.getInstance().getMainComponent().inject(this);
-        singleThreadScheduler.createWorker().schedule(() -> {
-            Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);
-            Thread.currentThread().setName("Messaging thread");
-        });
     }
 
     @NonNull
@@ -231,7 +229,7 @@ public class DataManagerImpl implements DataManager {
     public Observable<WebResponse> syncMessagesReadState() {
         if (!mPrefs.markMessagesAsRead() && mPrefs.isDisplayingUnreadMessagesAsUnread()) {
             // fake
-            return ReactiveNetwork.observeInternetConnectivity()
+            return Observable.just(true)
                     .subscribeOn(Schedulers.io())
                     .first()
                     .filter(aBoolean -> aBoolean)
@@ -252,7 +250,7 @@ public class DataManagerImpl implements DataManager {
 
         }
         //real
-        return ReactiveNetwork.observeInternetConnectivity()
+        return Observable.just(true)
                 .subscribeOn(Schedulers.io())
                 .first()
                 .filter(aBoolean -> aBoolean)
@@ -265,7 +263,7 @@ public class DataManagerImpl implements DataManager {
                         long conversationId = longToLongModel.getL1();
                         long lastMessageId = longToLongModel.getL2();
                         return Observable.fromCallable(() -> {
-                            WebResponse webResponse = mWebRequestManager.markMessagesAsRead(conversationId, lastMessageId).first().toBlocking().first();
+                            WebResponse webResponse = mWebRequestManager.markMessagesAsRead(conversationId, lastMessageId).first().toBlocking().single();
                             if (webResponse.ok()) {
                                 mStore.markMessagesAsRead(conversationId, lastMessageId);
                             }
@@ -279,45 +277,65 @@ public class DataManagerImpl implements DataManager {
 
     @NonNull
     @Override
-    public Observable<WebResponse> sendMessageOrSchedule(long peerId, @NonNull PendingMessage pendingMessage) {
-        return ReactiveNetwork.observeInternetConnectivity()
-                .first()
-                .subscribeOn(singleThreadScheduler)
+    @DebugLog
+    public Observable<SendMessageResponse> sendMessageOrSchedule(long peerId, @NonNull PendingMessage pendingMessage) {
+        return Observable.fromCallable(() -> {
+            failIfOnMainThread();
+            mStore.savePendingMessage(peerId, pendingMessage);
+            return Boolean.TRUE;
+        }).subscribeOn(singleThreadScheduler)
                 .observeOn(singleThreadScheduler)
-                .flatMap(new Func1<Boolean, Observable<WebResponse>>() {
-                    @Override
-                    public Observable<WebResponse> call(Boolean aBoolean) {
-                        return aBoolean ? sendMessage(peerId, pendingMessage) : scheduleMessageToSendLater(peerId, pendingMessage);
-                    }
-                });
+                .flatMap(aBoolean -> syncPendingMessages())
+                .doOnError(throwable -> scheduleMessageToSendLater());
     }
 
     @NonNull
     @Override
-    public Observable<WebResponse> syncPendingMessages() {
-        return Observable.from(mStore.getUnsentMessages())
+    @DebugLog
+    public Observable<SendMessageResponse> syncPendingMessages() {
+        //        return Observable.defer(() -> Observable.just(mStore.getUnsentMessages()))
+        //        return Observable.fromCallable(() -> mStore.getUnsentMessages())
+        //        return Observable.from(mStore.getUnsentMessages())
+        return Observable.just(true)
                 .subscribeOn(singleThreadScheduler)
                 .observeOn(singleThreadScheduler)
+                .map(aBoolean -> mStore.getUnsentMessages())
+                .flatMap(Observable::from)
+                .observeOn(singleThreadScheduler)
                 .flatMap(pendingMessage -> mWebRequestManager.sendMessage(pendingMessage.getPeerId(), pendingMessage))
+                .observeOn(singleThreadScheduler)
+                .doOnNext(webResponse -> {
+                    if (webResponse.ok()) {
+                        // if message was sent successfully
+                        String userId = null;
+                        long chatId = 0;
+                        long peerId = webResponse.getPeerId();
+                        if (ConversationUtils.isPeerIdAGroupChat(peerId)) {
+                            chatId = ConversationUtils.getConversationIdFromPeerId(peerId);
+                        } else {
+                            userId = String.valueOf(ConversationUtils.getUserIdFromPeerId(peerId));
+                        }
+                        // update the current chat, fetch last messages from chat
+                        ListOfMessages listOfMessages = mWebRequestManager.getChatHistory(0, 3, userId, chatId).toBlocking().first();
+                        // store new messages, and delete pending (temporary) messages
+                        mStore.removePendingMessage(webResponse.getPeerId(), webResponse.getRandomId(), listOfMessages);
+                    } else {
+                        // send an error
+                        mBus.post(new ErrorDuringSendingMessageEvent(webResponse));
+                    }
+                })
                 .observeOn(singleThreadScheduler);
     }
 
-    private Observable<WebResponse> sendMessage(long peerId, @NonNull PendingMessage pendingMessage) {
-        failIfOnMainThread();
-        mStore.savePendingMessage(peerId, pendingMessage);
-        return syncPendingMessages();
-    }
 
-
-    private Observable<WebResponse> scheduleMessageToSendLater(long peerId, @NonNull PendingMessage pendingMessage) {
-        failIfOnMainThread();
-        mStore.savePendingMessage(peerId, pendingMessage);
+    @DebugLog
+    private Observable<SendMessageResponse> scheduleMessageToSendLater() {
         OneoffTask oneoffTask = new OneoffTask.Builder()
                 .setService(OftenFiredGcmNetworkService.class)
                 .setPersisted(true)
                 .setRequiredNetwork(Task.NETWORK_STATE_CONNECTED)
                 .setUpdateCurrent(true)
-                .setExecutionWindow(5, Long.MAX_VALUE - 1)
+                .setExecutionWindow(1, Long.MAX_VALUE - 1)
                 .setTag(OftenFiredGcmNetworkService.class.getSimpleName())
                 .build();
         GcmNetworkManager.getInstance(MyApplication.getInstance()).schedule(oneoffTask);

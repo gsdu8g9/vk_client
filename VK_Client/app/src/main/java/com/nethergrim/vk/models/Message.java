@@ -2,19 +2,23 @@ package com.nethergrim.vk.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.nethergrim.vk.utils.ConversationUtils;
 
 import java.util.List;
 
 import io.realm.RealmList;
-import io.realm.RealmObject;
+import io.realm.RealmModel;
 import io.realm.annotations.Ignore;
 import io.realm.annotations.PrimaryKey;
+import io.realm.annotations.RealmClass;
 
 /**
  * @author Andrew Drobyazko - c2q9450@gmail.com - https://nethergrim.github.io on 3/20/15.
  */
+@SuppressWarnings("unused")
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Message extends RealmObject {
+@RealmClass
+public class Message implements RealmModel {
 
     @PrimaryKey
     /**
@@ -138,6 +142,12 @@ public class Message extends RealmObject {
      * строка
      */
     private String photo_200;
+
+    /**
+     * Local only!
+     * Indicates if this message is pending
+     */
+    private boolean pending = false;
 
     @Ignore
     @JsonProperty("chat_active")
@@ -381,4 +391,31 @@ public class Message extends RealmObject {
         this.deleted = deleted;
     }
 
+    @SuppressWarnings("WeakerAccess")
+    public boolean isAGroupChat(){
+        return getChat_id() > 0;
+    }
+
+    public long getPeerId(){
+
+        if (isAGroupChat()){
+            return getChat_id() + ConversationUtils.GROUP_CHAT_ADDITIONAL_VALUE;
+        }
+        return getUser_id();
+    }
+
+    public boolean isPending() {
+        return pending;
+    }
+
+    public void setPending(boolean pending) {
+        this.pending = pending;
+    }
+
+    public long getConversationId(){
+        if (isAGroupChat()){
+            return getChat_id();
+        }
+        return getUser_id();
+    }
 }

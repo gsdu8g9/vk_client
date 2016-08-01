@@ -31,6 +31,7 @@ import java.util.Collections;
 
 import javax.inject.Inject;
 
+import rx.Scheduler;
 import rx.android.schedulers.AndroidSchedulers;
 
 /**
@@ -55,7 +56,8 @@ public class MyGcmListenerService extends GcmListenerService {
     Bus mBus;
     @Inject
     Prefs mPrefs;
-
+    @Inject
+    Scheduler scheduler;
     @Inject
     Store mPersistingManager;
 
@@ -149,7 +151,7 @@ public class MyGcmListenerService extends GcmListenerService {
             Log.d(TAG, "user is null, fetching it");
             // fetch user from backend
             mWebRequestManager.getUsers(Collections.singletonList(message.getUserId()))
-                    .observeOn(AndroidSchedulers.mainThread())
+                    .observeOn(scheduler)
                     .subscribe(listOfUsers -> {
                         mPersistingManager.persist(listOfUsers);
                         showNotification(message);

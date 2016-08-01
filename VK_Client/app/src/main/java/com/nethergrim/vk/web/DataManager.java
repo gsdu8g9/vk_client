@@ -11,6 +11,7 @@ import com.nethergrim.vk.models.PendingMessage;
 import com.nethergrim.vk.models.StartupResponse;
 import com.nethergrim.vk.models.StickerDbItem;
 import com.nethergrim.vk.models.WebResponse;
+import com.nethergrim.vk.models.response.SendMessageResponse;
 
 import java.util.List;
 
@@ -70,12 +71,12 @@ public interface DataManager {
      * @return web response (if any)
      */
     @NonNull
-    Observable<WebResponse> sendMessageOrSchedule(long peerId, @NonNull PendingMessage pendingMessage);
+    Observable<SendMessageResponse> sendMessageOrSchedule(long peerId, @NonNull PendingMessage pendingMessage);
 
 
     /**
      * Should send all unsent pending messages in background;
      */
     @NonNull
-    Observable<WebResponse> syncPendingMessages();
+    Observable<SendMessageResponse> syncPendingMessages();
 }

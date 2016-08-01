@@ -109,7 +109,10 @@ public abstract class BaseKeyboardFragment extends AbstractFragment
         mInputMethodManager = (InputMethodManager) ctx.getSystemService(
                 Context.INPUT_METHOD_SERVICE);
         mAdapter = getAdapter(ctx);
+        mRecycler.setHasFixedSize(true);
         mRecycler.setAdapter(mAdapter);
+        mRecycler.setItemAnimator(null);
+
         initRecyclerView(mRecycler);
         preInitToolbar(mToolbar);
         initToolbar(mToolbar);

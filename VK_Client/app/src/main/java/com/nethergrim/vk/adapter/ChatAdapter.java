@@ -26,9 +26,9 @@ import io.realm.RealmResults;
 public class ChatAdapter extends SelectableUltimateAdapter
         implements UltimateAdapter.FooterInterface {
 
-    public static final int TYPE_MY = 1;
-    public static final int TYPE_NOT_MINE = 0;
-    public static final long MAX_DELAY_TO_GROUP_MESSAGES_S = 90;
+    private static final int TYPE_MY = 1;
+    private static final int TYPE_NOT_MINE = 0;
+    private static final long MAX_DELAY_TO_GROUP_MESSAGES_S = 90;
     @Inject
     UserProvider mUserProvider;
     @Inject
@@ -42,6 +42,7 @@ public class ChatAdapter extends SelectableUltimateAdapter
     private int mUnreadColor;
 
 
+    @SuppressWarnings("deprecation")
     public ChatAdapter(RealmResults<Message> messages) {
         MyApplication.getInstance().getMainComponent().inject(this);
         this.mMessages = messages;
@@ -166,11 +167,8 @@ public class ChatAdapter extends SelectableUltimateAdapter
         }
         Message messageAfterCurrent = mMessages.get(position - 1);
         long timeFutureDelta = Math.abs(currentMessage.getDate() - messageAfterCurrent.getDate());
-        if (messageAfterCurrent.getFrom_id() == currentMessage.getFrom_id()
-                && timeFutureDelta < MAX_DELAY_TO_GROUP_MESSAGES_S) {
-            return false;
-        }
-        return true;
+        return !(messageAfterCurrent.getFrom_id() == currentMessage.getFrom_id()
+                && timeFutureDelta < MAX_DELAY_TO_GROUP_MESSAGES_S);
     }
 
     private User getUserById(long id) {
@@ -194,13 +192,12 @@ public class ChatAdapter extends SelectableUltimateAdapter
             return -1L;
         }
         Message lastMessage = mMessages.get(0);
-        long id = lastMessage.getId();
-        return id;
+        return lastMessage.getId();
     }
 
-    public static class MyFooterVH extends FooterVH {
+    private static class MyFooterVH extends FooterVH {
 
-        public MyFooterVH(View itemView) {
+        MyFooterVH(View itemView) {
             super(itemView);
         }
     }

@@ -8,6 +8,8 @@ import com.nethergrim.vk.web.DataManager;
 
 import javax.inject.Inject;
 
+import hugo.weaving.DebugLog;
+
 /**
  * Created on 29.07.16.
  */
@@ -26,6 +28,7 @@ public class OftenFiredGcmNetworkService extends GcmTaskService {
     }
 
     @Override
+    @DebugLog
     public int onRunTask(TaskParams taskParams) {
         dataManager.syncPendingMessages().toBlocking().last();
         return GcmNetworkManager.RESULT_SUCCESS;
