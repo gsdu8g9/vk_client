@@ -1,6 +1,6 @@
 package com.nethergrim.vk;
 
-import android.support.multidex.MultiDexApplication;
+import android.app.Application;
 import android.util.Log;
 
 import com.bumptech.glide.request.target.ViewTarget;
@@ -27,7 +27,7 @@ import io.realm.RealmConfiguration;
 /**
  * @author Andrew Drobyazko - c2q9450@gmail.com - https://nethergrim.github.io on 3/20/15.
  */
-public class MyApplication extends MultiDexApplication {
+public class MyApplication extends Application {
 
     public static final String TAG = MyApplication.class.getName();
     private static MyApplication _app;

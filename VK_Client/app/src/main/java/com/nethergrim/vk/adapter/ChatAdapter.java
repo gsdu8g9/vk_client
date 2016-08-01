@@ -191,8 +191,13 @@ public class ChatAdapter extends SelectableUltimateAdapter
         if (mMessages == null || mMessages.isEmpty()) {
             return -1L;
         }
-        Message lastMessage = mMessages.get(0);
-        return lastMessage.getId();
+        for (int i = 0, mMessagesSize = mMessages.size(); i < mMessagesSize; i++) {
+            Message mMessage = mMessages.get(i);
+            if (!mMessage.isPending()) {
+                return mMessage.getId();
+            }
+        }
+        return -1L;
     }
 
     private static class MyFooterVH extends FooterVH {

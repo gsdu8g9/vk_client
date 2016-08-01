@@ -293,9 +293,6 @@ public class DataManagerImpl implements DataManager {
     @Override
     @DebugLog
     public Observable<SendMessageResponse> syncPendingMessages() {
-        //        return Observable.defer(() -> Observable.just(mStore.getUnsentMessages()))
-        //        return Observable.fromCallable(() -> mStore.getUnsentMessages())
-        //        return Observable.from(mStore.getUnsentMessages())
         return Observable.just(true)
                 .subscribeOn(singleThreadScheduler)
                 .observeOn(singleThreadScheduler)

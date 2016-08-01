@@ -197,25 +197,23 @@ public class RealmStore implements Store {
     @Override
     @DebugLog
     public synchronized void savePendingMessage(long peerId, @NonNull PendingMessage pendingMessage) {
-        executor.execute(() -> {
-            if (messagingRealm == null) {
-                messagingRealm = Realm.getDefaultInstance();
-            }
-            messagingRealm.beginTransaction();
-            Message message = pendingMessage.mapToMessage(mPrefs.getCurrentUserId());
-            long id = message.getConversationId();
 
-            message = messagingRealm.copyToRealmOrUpdate(message);
+        if (messagingRealm == null) {
+            messagingRealm = Realm.getDefaultInstance();
+        }
+        messagingRealm.beginTransaction();
+        Message message = pendingMessage.mapToMessage(mPrefs.getCurrentUserId());
+        long id = message.getConversationId();
 
-            Conversation conversation = messagingRealm.where(Conversation.class).equalTo("id", id).findFirst();
-            conversation.setMessage(message);
-            conversation.setDate(message.getDate());
+        message = messagingRealm.copyToRealmOrUpdate(message);
 
-            messagingRealm.copyToRealmOrUpdate(conversation);
-            mBus.post(new ConversationsUpdatedEvent());
-            messagingRealm.commitTransaction();
-        });
+        Conversation conversation = messagingRealm.where(Conversation.class).equalTo("id", id).findFirst();
+        conversation.setMessage(message);
+        conversation.setDate(message.getDate());
 
+        messagingRealm.copyToRealmOrUpdate(conversation);
+        mBus.post(new ConversationsUpdatedEvent());
+        messagingRealm.commitTransaction();
     }
 
     @Override
@@ -229,15 +227,14 @@ public class RealmStore implements Store {
     @Override
     @DebugLog
     public synchronized void removePendingMessage(long peerId, long randomId, ListOfMessages listOfMessages) {
-        executor.execute(() -> {
-            if (messagingRealm == null) {
-                messagingRealm = Realm.getDefaultInstance();
-            }
-            messagingRealm.beginTransaction();
-            RealmObject.deleteFromRealm(messagingRealm.where(Message.class).equalTo("id", randomId).findFirst());
-            messagingRealm.copyToRealmOrUpdate(listOfMessages.getMessages());
-            messagingRealm.commitTransaction();
-        });
+
+        if (messagingRealm == null) {
+            messagingRealm = Realm.getDefaultInstance();
+        }
+        messagingRealm.beginTransaction();
+        RealmObject.deleteFromRealm(messagingRealm.where(Message.class).equalTo("id", randomId).findFirst());
+        messagingRealm.copyToRealmOrUpdate(listOfMessages.getMessages());
+        messagingRealm.commitTransaction();
 
     }
 }
