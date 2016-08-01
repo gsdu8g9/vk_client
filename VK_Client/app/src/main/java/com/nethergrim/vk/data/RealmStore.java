@@ -20,6 +20,7 @@ import com.nethergrim.vk.models.Message;
 import com.nethergrim.vk.models.PendingMessage;
 import com.nethergrim.vk.models.StartupResponse;
 import com.nethergrim.vk.models.User;
+import com.nethergrim.vk.utils.ConversationUtils;
 import com.nethergrim.vk.utils.DataHelper;
 import com.squareup.otto.Bus;
 
@@ -55,11 +56,9 @@ public class RealmStore implements Store {
     @Inject
     Executor executor;
 
-    private Realm messagingRealm;
 
     public RealmStore() {
         MyApplication.getInstance().getMainComponent().inject(this);
-        executor.execute(() -> messagingRealm = Realm.getDefaultInstance());
     }
 
     @Override
@@ -176,65 +175,63 @@ public class RealmStore implements Store {
             convId = convId - 2000000000L;
             isGroupChat = true;
         }
-        Realm realm = Realm.getDefaultInstance();
-        realm.beginTransaction();
-        RealmQuery<Message> messageRealmQuery = realm.where(Message.class);
-        if (isGroupChat) {
-            messageRealmQuery = messageRealmQuery.equalTo("chat_id", convId).equalTo("out", 0);
-        } else {
-            messageRealmQuery = messageRealmQuery.equalTo("user_id", convId).equalTo("out", 0);
-        }
-        RealmResults<Message> messagesToBeMarkedAsRead = messageRealmQuery.lessThanOrEqualTo("id", lastReadMessage).findAllSorted("date", Sort.ASCENDING);
-        for (int i = 0, messagesToBeMarkedAsReadSize = messagesToBeMarkedAsRead.size(); i < messagesToBeMarkedAsReadSize; i++) {
-            Message message = messagesToBeMarkedAsRead.get(i);
-            message.setRead_state(1);
-        }
-        realm.commitTransaction();
-        realm.close();
+        boolean finalIsGroupChat = isGroupChat;
+        long finalConvId = convId;
+        Realm.getDefaultInstance().executeTransaction(realm -> {
+            RealmQuery<Message> messageRealmQuery = realm.where(Message.class);
+            if (finalIsGroupChat) {
+                messageRealmQuery = messageRealmQuery.equalTo("chat_id", finalConvId).equalTo("out", 0);
+            } else {
+                messageRealmQuery = messageRealmQuery.equalTo("user_id", finalConvId).equalTo("out", 0);
+            }
+            RealmResults<Message> messagesToBeMarkedAsRead = messageRealmQuery.lessThanOrEqualTo("id", lastReadMessage).findAllSorted("date", Sort.ASCENDING);
+            for (int i = 0, messagesToBeMarkedAsReadSize = messagesToBeMarkedAsRead.size(); i < messagesToBeMarkedAsReadSize; i++) {
+                Message message = messagesToBeMarkedAsRead.get(i);
+                message.setRead_state(1);
+            }
+            realm.where(Conversation.class).equalTo("id", finalConvId).findFirst().setUnread(0);
+        });
     }
 
 
     @Override
     @DebugLog
     public synchronized void savePendingMessage(long peerId, @NonNull PendingMessage pendingMessage) {
+        Realm.getDefaultInstance().executeTransaction(realm -> {
+            Message message = pendingMessage.mapToMessage(mPrefs.getCurrentUserId());
+            long id = message.getConversationId();
 
-        if (messagingRealm == null) {
-            messagingRealm = Realm.getDefaultInstance();
-        }
-        messagingRealm.beginTransaction();
-        Message message = pendingMessage.mapToMessage(mPrefs.getCurrentUserId());
-        long id = message.getConversationId();
+            message = realm.copyToRealmOrUpdate(message);
 
-        message = messagingRealm.copyToRealmOrUpdate(message);
+            Conversation conversation = realm.where(Conversation.class).equalTo("id", id).findFirst();
+            conversation.setMessage(message);
+            conversation.setDate(message.getDate());
 
-        Conversation conversation = messagingRealm.where(Conversation.class).equalTo("id", id).findFirst();
-        conversation.setMessage(message);
-        conversation.setDate(message.getDate());
-
-        messagingRealm.copyToRealmOrUpdate(conversation);
-        mBus.post(new ConversationsUpdatedEvent());
-        messagingRealm.commitTransaction();
+            realm.copyToRealmOrUpdate(conversation);
+            mBus.post(new ConversationsUpdatedEvent());
+        });
     }
 
     @Override
     @DebugLog
     public List<PendingMessage> getUnsentMessages() {
         RealmResults<Message> unsentMessages = Realm.getDefaultInstance().where(Message.class).equalTo("pending", true).findAllSorted("date", Sort.ASCENDING);
-        List<Message> result = messagingRealm.copyFromRealm(unsentMessages);
+        List<Message> result = Realm.getDefaultInstance().copyFromRealm(unsentMessages);
         return PendingMessage.Companion.fromMessages(result);
     }
 
     @Override
     @DebugLog
-    public synchronized void removePendingMessage(long peerId, long randomId, ListOfMessages listOfMessages) {
-
-        if (messagingRealm == null) {
-            messagingRealm = Realm.getDefaultInstance();
-        }
-        messagingRealm.beginTransaction();
-        RealmObject.deleteFromRealm(messagingRealm.where(Message.class).equalTo("id", randomId).findFirst());
-        messagingRealm.copyToRealmOrUpdate(listOfMessages.getMessages());
-        messagingRealm.commitTransaction();
-
+    public void removePendingMessage(long peerId, long randomId, ListOfMessages listOfMessages, long newMessageId) {
+        Realm.getDefaultInstance().executeTransaction(realm -> {
+            RealmQuery<Message> messageRealmQuery = realm.where(Message.class);
+            if (ConversationUtils.isPeerIdAGroupChat(peerId)) {
+                messageRealmQuery.equalTo("chat_id", ConversationUtils.getConversationIdFromPeerId(peerId));
+            } else {
+                messageRealmQuery.equalTo("user_id", ConversationUtils.getUserIdFromPeerId(peerId));
+            }
+            messageRealmQuery.equalTo("id", randomId).equalTo("pending", true).findAll().deleteAllFromRealm();
+            realm.copyToRealmOrUpdate(listOfMessages.getMessages());
+        });
     }
 }

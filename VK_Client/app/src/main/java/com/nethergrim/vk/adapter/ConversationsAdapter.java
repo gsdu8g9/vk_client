@@ -18,12 +18,11 @@ import com.nethergrim.vk.utils.ConversationUtils;
 import com.nethergrim.vk.utils.MessageUtils;
 import com.nethergrim.vk.utils.UserProvider;
 
+import java.util.List;
+
 import javax.inject.Inject;
 
-import io.realm.Realm;
 import io.realm.RealmChangeListener;
-import io.realm.RealmResults;
-import io.realm.Sort;
 
 /**
  * {@link android.support.v7.widget.RecyclerView.Adapter} that should be used to display list of
@@ -44,21 +43,18 @@ public class ConversationsAdapter extends UltimateAdapter
 
     private ClickListener clickListener;
 
-    private RealmResults<Conversation> mData;
+    private List<Conversation> mData;
 
     private int textColorPrimary;
     private int textColorSecondary;
 
 
-    public ConversationsAdapter(ClickListener clickListener) {
+    @SuppressWarnings("deprecation")
+    public ConversationsAdapter(ClickListener clickListener, List<Conversation> data) {
         super();
         this.clickListener = clickListener;
+        this.mData = data;
         MyApplication.getInstance().getMainComponent().inject(this);
-        Realm mRealm = Realm.getDefaultInstance();
-        mRealm.setAutoRefresh(true);
-        this.mData = mRealm.where(Conversation.class)
-                .equalTo("message.deleted", 0)
-                .findAllSorted("date", Sort.DESCENDING);
         Context ctx = MyApplication.getInstance();
         textColorPrimary = ctx.getResources().getColor(R.color.primary_text);
         textColorSecondary = ctx.getResources().getColor(R.color.secondary_text);
@@ -214,10 +210,8 @@ public class ConversationsAdapter extends UltimateAdapter
         void onConversationClicked(int index, Conversation conversation);
     }
 
-    public static class MyFooterVH extends FooterVH {
-
-
-        public MyFooterVH(View itemView) {
+    private static class MyFooterVH extends FooterVH {
+        MyFooterVH(View itemView) {
             super(itemView);
         }
     }

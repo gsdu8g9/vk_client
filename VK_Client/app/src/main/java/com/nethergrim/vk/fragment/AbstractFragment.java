@@ -2,6 +2,7 @@ package com.nethergrim.vk.fragment;
 
 import android.app.Fragment;
 import android.content.Context;
+import android.os.Bundle;
 import android.support.annotation.StringRes;
 import android.widget.Toast;
 
@@ -17,7 +18,7 @@ public abstract class AbstractFragment extends Fragment implements RealmChangeLi
     protected Realm mRealm;
 
     @Override
-    public void onStart() {
+    public void onCreate(Bundle b) {
         super.onStart();
         mRealm = Realm.getDefaultInstance();
         mRealm.setAutoRefresh(true);
@@ -25,7 +26,7 @@ public abstract class AbstractFragment extends Fragment implements RealmChangeLi
     }
 
     @Override
-    public void onStop() {
+    public void onDestroy() {
         super.onStop();
         mRealm.removeChangeListener(this);
         mRealm.close();

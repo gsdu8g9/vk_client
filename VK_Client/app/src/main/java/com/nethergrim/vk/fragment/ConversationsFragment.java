@@ -15,7 +15,6 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-
 import com.nethergrim.vk.MyApplication;
 import com.nethergrim.vk.R;
 import com.nethergrim.vk.activity.ChatActivity;
@@ -29,15 +28,17 @@ import com.nethergrim.vk.utils.FabAnimationManager;
 import com.nethergrim.vk.utils.RecyclerItemClickListener;
 import com.nethergrim.vk.views.PaginationManager;
 import com.nethergrim.vk.web.WebIntentHandler;
-
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
+
+import java.util.List;
 
 import javax.inject.Inject;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
+import io.realm.Sort;
 
 
 /**
@@ -66,6 +67,7 @@ public class ConversationsFragment extends AbstractFragment
 
     private ToolbarScrollable mToolbarScrollable;
     private FabAnimationManager mFabAnimationManager;
+
 
     @SuppressWarnings("deprecation")
     @Override
@@ -100,7 +102,13 @@ public class ConversationsFragment extends AbstractFragment
         mFabAnimationManager = new FabAnimationManager(mFabNormal);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
         mRecyclerView.setHasFixedSize(true);
-        mAdapter = new ConversationsAdapter(this);
+
+        List<Conversation> data = mRealm.where(Conversation.class)
+                .equalTo("message.deleted", 0)
+                .findAllSorted("date", Sort.DESCENDING);
+
+
+        mAdapter = new ConversationsAdapter(this, data);
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.addOnScrollListener(new PaginationManager(DEFAULT_PAGE_SIZE, this,
                 DEFAULT_PAGE_SIZE / 2));
@@ -114,10 +122,19 @@ public class ConversationsFragment extends AbstractFragment
     }
 
     @Override
+    public void onChange(Object element) {
+        super.onChange(element);
+        if (mAdapter != null) {
+            mAdapter.notifyDataSetChanged();
+        }
+    }
+
+    @Override
     public void onDestroyView() {
         super.onDestroyView();
         ButterKnife.reset(this);
         mBus.unregister(this);
+
     }
 
     @Override

@@ -158,8 +158,6 @@ public class DataManagerImpl implements DataManager {
         return mWebRequestManager
                 .getChatHistory(offset, count, userId, chatId)
                 .doOnNext(listOfMessages -> {
-                    Log.d(TAG, "fetched messages: \n" + "count: " + count + " offset: " + offset
-                            + " userId: " + userId + " chatId: " + chatId);
                     mPersistingManager.persist(listOfMessages);
                     ConversationUpdatedEvent conversationUpdatedEvent
                             = new ConversationUpdatedEvent(listOfMessages, userId, chatId);
@@ -210,6 +208,7 @@ public class DataManagerImpl implements DataManager {
 
     @NonNull
     @Override
+    @DebugLog
     public Observable<WebResponse> markMessagesAsRead(long conversationId, long lastMessageId) {
         // add messages to sync in preference
         // then sync messages read state
@@ -226,6 +225,7 @@ public class DataManagerImpl implements DataManager {
 
     @NonNull
     @Override
+    @DebugLog
     public Observable<WebResponse> syncMessagesReadState() {
         if (!mPrefs.markMessagesAsRead() && mPrefs.isDisplayingUnreadMessagesAsUnread()) {
             // fake
@@ -235,7 +235,7 @@ public class DataManagerImpl implements DataManager {
                     .filter(aBoolean -> aBoolean)
                     .map(aBoolean -> mPrefs.getConversationsToSyncUnreadMessages())
                     .filter(a -> !a.isEmpty())
-                    .flatMap(Observable::from, 4)
+                    .flatMap(Observable::from, 1)
                     .flatMap(new Func1<MarkConversationReadTask, Observable<WebResponse>>() {
                         @Override
                         public Observable<WebResponse> call(MarkConversationReadTask longToLongModel) {
@@ -244,7 +244,7 @@ public class DataManagerImpl implements DataManager {
                             mStore.markMessagesAsRead(conversationId, lastMessageId);
                             return Observable.empty();
                         }
-                    }, 4)
+                    }, 1)
                     .doOnCompleted(() -> mPrefs.removeConversationToSyncUnreadMessages());
 
 
@@ -315,7 +315,7 @@ public class DataManagerImpl implements DataManager {
                         // update the current chat, fetch last messages from chat
                         ListOfMessages listOfMessages = mWebRequestManager.getChatHistory(0, 3, userId, chatId).toBlocking().first();
                         // store new messages, and delete pending (temporary) messages
-                        mStore.removePendingMessage(webResponse.getPeerId(), webResponse.getRandomId(), listOfMessages);
+                        mStore.removePendingMessage(webResponse.getPeerId(), webResponse.getRandomId(), listOfMessages, webResponse.getResponse());
                     } else {
                         // send an error
                         mBus.post(new ErrorDuringSendingMessageEvent(webResponse));

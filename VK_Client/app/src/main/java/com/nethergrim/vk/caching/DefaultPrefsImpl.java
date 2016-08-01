@@ -188,7 +188,7 @@ public class DefaultPrefsImpl implements Prefs {
 
     private void setLongToLongSet(@Nullable Set<MarkConversationReadTask> data) {
         Realm realm = Realm.getDefaultInstance();
-        realm.executeTransactionAsync(realm1 -> {
+        realm.executeTransaction(realm1 -> {
             realm1.delete(MarkConversationReadTask.class);
             if (data != null) {
                 realm1.copyToRealmOrUpdate(data);

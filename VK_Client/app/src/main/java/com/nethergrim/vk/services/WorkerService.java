@@ -22,8 +22,6 @@ import java.util.ArrayList;
 
 import javax.inject.Inject;
 
-import hugo.weaving.DebugLog;
-
 /**
  * @author Andrew Drobyazko - c2q9450@gmail.com - https://nethergrim.github.io on 14.08.15.
  */
@@ -148,7 +146,6 @@ public class WorkerService extends Service {
     }
 
     @Override
-    @DebugLog
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (intent == null) {
             return START_NOT_STICKY;
@@ -184,7 +181,6 @@ public class WorkerService extends Service {
         return null;
     }
 
-    @DebugLog
     private void handleActionSendMessage(Intent intent) {
         Bundle args = intent.getExtras();
         long peerId = args.getLong(EXTRA_PEER_ID);
