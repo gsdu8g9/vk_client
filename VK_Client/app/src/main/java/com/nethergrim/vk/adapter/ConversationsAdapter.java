@@ -33,7 +33,7 @@ import io.realm.Sort;
  *         All rights reserved.
  */
 public class ConversationsAdapter extends UltimateAdapter
-        implements RealmChangeListener, UltimateAdapter.FooterInterface, View.OnClickListener {
+        implements RealmChangeListener, UltimateAdapter.FooterInterface {
 
     @Inject
     UserProvider mUserProvider;
@@ -42,7 +42,6 @@ public class ConversationsAdapter extends UltimateAdapter
     @Inject
     Prefs mPrefs;
 
-    private Realm mRealm;
     private ClickListener clickListener;
 
     private RealmResults<Conversation> mData;
@@ -55,7 +54,7 @@ public class ConversationsAdapter extends UltimateAdapter
         super();
         this.clickListener = clickListener;
         MyApplication.getInstance().getMainComponent().inject(this);
-        mRealm = Realm.getDefaultInstance();// FIXME: 15.10.15 remove realm from here
+        Realm mRealm = Realm.getDefaultInstance();
         mRealm.setAutoRefresh(true);
         this.mData = mRealm.where(Conversation.class)
                 .equalTo("message.deleted", 0)
@@ -103,7 +102,7 @@ public class ConversationsAdapter extends UltimateAdapter
     public void bindDataVH(DataVH vh, int i) {
         ConversationViewHolder conversationViewHolder = (ConversationViewHolder) vh;
         conversationViewHolder.itemView.setTag(i);
-        conversationViewHolder.itemView.setOnClickListener(this);
+        conversationViewHolder.itemView.setOnClickListener(view -> clickListener.onConversationClicked(i, mData.get(i)));
         Conversation conversation = mData.get(i);
         Message message = conversation.getMessage();
         String details = "";
@@ -210,11 +209,6 @@ public class ConversationsAdapter extends UltimateAdapter
         // nothing to bind
     }
 
-    @Override
-    public void onClick(View v) {
-        int index = (int) v.getTag();
-        clickListener.onConversationClicked(index, mData.get(index));
-    }
 
     public interface ClickListener {
         void onConversationClicked(int index, Conversation conversation);

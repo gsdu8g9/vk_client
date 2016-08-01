@@ -1,6 +1,7 @@
 package com.nethergrim.vk.adapter.viewholders;
 
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Space;
 import android.widget.TextView;
@@ -33,8 +34,11 @@ public class ChatViewHolder extends UltimateAdapter.DataVH {
     @InjectView(R.id.root)
     public RelativeLayout root;
 
+    public ProgressBar pb;
+
     public ChatViewHolder(View itemView) {
         super(itemView);
         ButterKnife.inject(this, itemView);
+        pb = (ProgressBar) itemView.findViewById(R.id.progressBar4);
     }
 }

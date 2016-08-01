@@ -25,6 +25,7 @@ import com.nethergrim.vk.models.PendingMessage;
 import com.nethergrim.vk.models.User;
 import com.nethergrim.vk.models.outcoming_attachments.MessageAttachment;
 import com.nethergrim.vk.utils.ConversationUtils;
+import com.nethergrim.vk.utils.SafeTimer;
 import com.nethergrim.vk.utils.UserProvider;
 import com.nethergrim.vk.views.PaginationManager;
 import com.nethergrim.vk.web.DataManager;
@@ -69,6 +70,7 @@ public class ChatFragment extends BaseKeyboardFragment implements Toolbar.OnMenu
     private User mAnotherUser;
     private ChatAdapter mChatAdapter;
     private long mDataCount;
+    private SafeTimer refreshTimer;
 
     public static ChatFragment getInstance(long conversationId, boolean isAGroupChat) {
         ChatFragment chatFragment = new ChatFragment();
@@ -87,6 +89,8 @@ public class ChatFragment extends BaseKeyboardFragment implements Toolbar.OnMenu
         setHasOptionsMenu(true);
         setRetainInstance(true);
         dataManager.syncPendingMessages();
+        refreshTimer = new SafeTimer(this::loadLastMessages, 1);
+        refreshTimer.setDelayMS(1500);
     }
 
 
@@ -99,6 +103,18 @@ public class ChatFragment extends BaseKeyboardFragment implements Toolbar.OnMenu
         } else {
             menu.removeItem(R.id.action_group_conversation_details);
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        refreshTimer.start();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        refreshTimer.finish();
     }
 
     @Override

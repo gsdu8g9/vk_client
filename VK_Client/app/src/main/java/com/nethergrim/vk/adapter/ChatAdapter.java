@@ -28,7 +28,7 @@ public class ChatAdapter extends SelectableUltimateAdapter
 
     private static final int TYPE_MY = 1;
     private static final int TYPE_NOT_MINE = 0;
-    private static final long MAX_DELAY_TO_GROUP_MESSAGES_S = 90;
+    private static final long MAX_DELAY_TO_GROUP_MESSAGES_S = 60 * 10;
     @Inject
     UserProvider mUserProvider;
     @Inject
@@ -124,6 +124,11 @@ public class ChatAdapter extends SelectableUltimateAdapter
             chatViewHolder.textDate.setVisibility(View.VISIBLE);
             chatViewHolder.root.setBackgroundColor(message.isRead_state() == 0 ? mUnreadColor : 0);
         }
+        if (message.isPending() && chatViewHolder.pb != null) {
+            chatViewHolder.pb.setVisibility(View.VISIBLE);
+        } else if (chatViewHolder.pb != null) {
+            chatViewHolder.pb.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -166,7 +171,7 @@ public class ChatAdapter extends SelectableUltimateAdapter
             return true;
         }
         Message messageAfterCurrent = mMessages.get(position - 1);
-        long timeFutureDelta = Math.abs(currentMessage.getDate() - messageAfterCurrent.getDate());
+        long timeFutureDelta = currentMessage.getDate() - messageAfterCurrent.getDate();
         return !(messageAfterCurrent.getFrom_id() == currentMessage.getFrom_id()
                 && timeFutureDelta < MAX_DELAY_TO_GROUP_MESSAGES_S);
     }

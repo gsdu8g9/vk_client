@@ -10,13 +10,17 @@ import android.os.Looper;
 public class SafeTimer extends Handler {
 
     private Runnable mRunnable;
-    private int mDelaySec;
+    private int mDelayMS;
     private Runnable mMyRunnable;
 
     public SafeTimer(Runnable runnable, int delayInSec) {
         super(Looper.getMainLooper());
         mRunnable = runnable;
-        mDelaySec = delayInSec;
+        mDelayMS = delayInSec * 1000;
+    }
+
+    public void setDelayMS(int ms) {
+        this.mDelayMS = ms;
     }
 
     /**
@@ -28,7 +32,7 @@ public class SafeTimer extends Handler {
                 @Override
                 public void run() {
                     mRunnable.run();
-                    postDelayed(this, mDelaySec * 1000);
+                    postDelayed(this, mDelayMS);
                 }
             };
         }

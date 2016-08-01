@@ -76,5 +76,15 @@
         android:layout_height="2dp"
         android:layout_below="@+id/content_layout"/>
 
+    <ProgressBar
+        android:id="@+id/progressBar4"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"
+        android:paddingLeft="16dp"/>
+
 
 </RelativeLayout>
