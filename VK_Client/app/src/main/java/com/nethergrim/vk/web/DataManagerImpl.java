@@ -72,7 +72,7 @@ public class DataManagerImpl implements DataManager {
     WebRequestManager mWebRequestManager;
 
     @Inject
-    Store mPersistingManager;
+    Store store;
 
     @Inject
     Bus mBus;
@@ -114,7 +114,7 @@ public class DataManagerImpl implements DataManager {
                     return token;
                 })
                 .flatMap(mWebRequestManager::launchStartupTasks)
-                .doOnNext(mPersistingManager::persist)
+                .doOnNext(store::persist)
                 .doOnNext(startupResponse -> mBus.post(new MyUserUpdatedEvent()));
     }
 
@@ -122,7 +122,7 @@ public class DataManagerImpl implements DataManager {
     @Override
     public Observable<ListOfFriends> fetchFriendsAndPersistToDb(int count, int offset) {
         return mWebRequestManager.getFriends(mPrefs.getCurrentUserId(), count, offset)
-                .doOnNext(listOfFriends -> mPersistingManager.persist(listOfFriends, offset))
+                .doOnNext(listOfFriends -> store.persist(listOfFriends, offset))
                 .doOnNext(listOfFriends -> mBus.post(new FriendsUpdatedEvent(count)))
                 ;
     }
@@ -130,7 +130,7 @@ public class DataManagerImpl implements DataManager {
     @NonNull
     @Override
     public Observable<ListOfUsers> fetchUsersAndPersistToDB(List<Long> ids) {
-        return mWebRequestManager.getUsers(ids).doOnNext(mPersistingManager::persist)
+        return mWebRequestManager.getUsers(ids).doOnNext(store::persist)
                 .doOnNext(listOfUsers -> mBus.post(new UsersUpdatedEvent()))
                 ;
     }
@@ -141,7 +141,7 @@ public class DataManagerImpl implements DataManager {
                                                                                 int offset,
                                                                                 boolean unreadOnly) {
         return mWebRequestManager.getConversationsAndUsers(limit, offset, unreadOnly)
-                .doOnNext(conversationsUserObject -> mPersistingManager.persist(
+                .doOnNext(conversationsUserObject -> store.persist(
                         conversationsUserObject, offset == 0))
                 .doOnNext(conversationsUserObject -> {
                     mBus.post(new ConversationsUpdatedEvent());
@@ -158,7 +158,7 @@ public class DataManagerImpl implements DataManager {
         return mWebRequestManager
                 .getChatHistory(offset, count, userId, chatId)
                 .doOnNext(listOfMessages -> {
-                    mPersistingManager.persist(listOfMessages);
+                    store.persist(listOfMessages);
                     ConversationUpdatedEvent conversationUpdatedEvent
                             = new ConversationUpdatedEvent(listOfMessages, userId, chatId);
                     mBus.post(conversationUpdatedEvent);
@@ -172,7 +172,7 @@ public class DataManagerImpl implements DataManager {
         return mWebRequestManager.deleteConversation(userId, chatId)
                 .doOnNext(integerResponse -> {
                     // delete conversation from local database
-                    mPersistingManager.deleteConversation(userId, chatId);
+                    store.deleteConversation(userId, chatId);
                     mBus.post(new ConversationsUpdatedEvent());
                 })
                 ;
@@ -315,7 +315,8 @@ public class DataManagerImpl implements DataManager {
                         // update the current chat, fetch last messages from chat
                         ListOfMessages listOfMessages = mWebRequestManager.getChatHistory(0, 3, userId, chatId).toBlocking().first();
                         // store new messages, and delete pending (temporary) messages
-                        mStore.removePendingMessage(webResponse.getPeerId(), webResponse.getRandomId(), listOfMessages, webResponse.getResponse());
+                        mStore.replacePendingMessages(webResponse.getPeerId(), webResponse.getRandomId(), listOfMessages, webResponse.getResponse());
+                        fetchConversationsUserAndPersist(3, 0, false).toBlocking().first();
                     } else {
                         // send an error
                         mBus.post(new ErrorDuringSendingMessageEvent(webResponse));

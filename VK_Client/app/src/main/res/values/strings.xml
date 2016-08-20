@@ -31,4 +31,5 @@
     <string name="yes">Да</string>
     <string name="no">Нет</string>
     <string name="text_copied_to_clipboard">Текст скопирован в буфер обмена.</string>
+    <string name="error_during_sending_a_message">Ошибка во время отправки сообщения</string>
 </resources>

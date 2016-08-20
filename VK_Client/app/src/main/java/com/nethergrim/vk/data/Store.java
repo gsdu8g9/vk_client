@@ -65,5 +65,5 @@ public interface Store {
      * @param listOfMessages list of messages from server, that should be saved to the local store instead of old pending message
      */
     @WorkerThread
-    void removePendingMessage(long peerId, long randomId, ListOfMessages listOfMessages, long newMessageId);
+    void replacePendingMessages(long peerId, long randomId, ListOfMessages listOfMessages, long newMessageId);
 }

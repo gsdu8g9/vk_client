@@ -2,6 +2,7 @@ package com.nethergrim.vk.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -49,6 +50,7 @@ import io.realm.Sort;
  */
 public class ChatFragment extends BaseKeyboardFragment implements Toolbar.OnMenuItemClickListener,
         PaginationManager.OnRecyclerViewScrolledToPageListener {
+    private static final String TAG = "ChatFragment";
 
     private static final String EXTRA_CONVERSATION_ID = Constants.PACKAGE_NAME + ".CONV_ID";
     private static final int PAGE_SIZE = 50;
@@ -270,8 +272,8 @@ public class ChatFragment extends BaseKeyboardFragment implements Toolbar.OnMenu
 
     @Subscribe
     public void onErrorDuringSendingMessage(ErrorDuringSendingMessageEvent e) {
-
-        // TODO handle error
+        Log.e(TAG, "errorDuringSendingMessage: " + e.getWebResponse().toString());
+        Snackbar.make(getView(), R.string.error_during_sending_a_message, Snackbar.LENGTH_LONG).show();
     }
 
     @Override

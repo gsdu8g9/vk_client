@@ -200,12 +200,14 @@ public class RealmStore implements Store {
         Realm.getDefaultInstance().executeTransaction(realm -> {
             Message message = pendingMessage.mapToMessage(mPrefs.getCurrentUserId());
             long id = message.getConversationId();
-
+            message.setDeleted(0);
             message = realm.copyToRealmOrUpdate(message);
 
+
             Conversation conversation = realm.where(Conversation.class).equalTo("id", id).findFirst();
+            conversation.setUnread(0);
             conversation.setMessage(message);
-            conversation.setDate(message.getDate());
+            conversation.setDate(System.currentTimeMillis() / 1000);
 
             realm.copyToRealmOrUpdate(conversation);
             mBus.post(new ConversationsUpdatedEvent());
@@ -222,7 +224,7 @@ public class RealmStore implements Store {
 
     @Override
     @DebugLog
-    public void removePendingMessage(long peerId, long randomId, ListOfMessages listOfMessages, long newMessageId) {
+    public void replacePendingMessages(long peerId, long randomId, ListOfMessages listOfMessages, long newMessageId) {
         Realm.getDefaultInstance().executeTransaction(realm -> {
             RealmQuery<Message> messageRealmQuery = realm.where(Message.class);
             if (ConversationUtils.isPeerIdAGroupChat(peerId)) {
