@@ -1,7 +1,6 @@
 package com.nethergrim.vk.adapter.viewholders;
 
 import android.view.View;
-import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Space;
 import android.widget.TextView;
@@ -12,6 +11,7 @@ import com.nethergrim.vk.views.imageViews.UserImageView;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import butterknife.Optional;
 
 /**
  * {@link android.support.v7.widget.RecyclerView.ViewHolder} for {@link
@@ -26,6 +26,7 @@ public class ChatViewHolder extends UltimateAdapter.DataVH {
     @InjectView(R.id.textBody)
     public TextView textBody;
     @InjectView(R.id.avatar)
+    @Optional
     public UserImageView imageAvatar;
     @InjectView(R.id.textDate)
     public TextView textDate;
@@ -34,11 +35,20 @@ public class ChatViewHolder extends UltimateAdapter.DataVH {
     @InjectView(R.id.root)
     public RelativeLayout root;
 
-    public ProgressBar pb;
-
     public ChatViewHolder(View itemView) {
         super(itemView);
         ButterKnife.inject(this, itemView);
-        pb = (ProgressBar) itemView.findViewById(R.id.progressBar4);
+    }
+
+    public void hideAvatar() {
+        if (imageAvatar != null) {
+            imageAvatar.setVisibility(View.INVISIBLE);
+        }
+    }
+
+    public void showAvatar() {
+        if (imageAvatar != null) {
+            imageAvatar.setVisibility(View.VISIBLE);
+        }
     }
 }

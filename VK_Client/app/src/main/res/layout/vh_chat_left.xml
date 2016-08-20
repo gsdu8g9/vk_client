@@ -9,7 +9,7 @@
     android:layout_height="wrap_content"
     android:clickable="true"
     android:foreground="?android:attr/selectableItemBackground"
-    android:paddingBottom="2dp">
+    android:paddingBottom="3dp">
 
     <Space
         android:id="@+id/top"
@@ -34,41 +34,39 @@
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/avatar"
         android:layout_marginLeft="8dp"
+        android:layout_marginRight="56dp"
         android:layout_toEndOf="@+id/avatar"
         android:layout_toRightOf="@+id/avatar"
         android:background="@drawable/rounded_background_primary"
         android:minHeight="@dimen/chat.row.avatar.size"
-        android:orientation="vertical"
-        android:padding="6dp">
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:paddingTop="8dp">
 
 
         <com.devspark.robototextview.widget.RobotoTextView
             android:id="@+id/textBody"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:maxWidth="220dp"
+            android:layout_marginBottom="18dp"
             android:textColor="@android:color/white"
-            android:textSize="15sp"
+            android:textSize="16sp"
             app:typeface="roboto_regular"
-            tools:text="f asdf asd fsad f asfas fa sdf s"/>
+            tools:text="f asdf asd fsad f asfas fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa sdf s"/>
+
+        <com.devspark.robototextview.widget.RobotoTextView
+            android:id="@+id/textDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left|bottom"
+            android:gravity="center"
+            android:layout_marginBottom="4dp"
+            android:textColor="#c8ffffff"
+            android:textSize="12sp"
+            app:typeface="roboto_thin"
+            tools:text="Yesterday"/>
 
 
     </FrameLayout>
-
-
-    <com.devspark.robototextview.widget.RobotoTextView
-        android:id="@+id/textDate"
-        android:layout_width="@dimen/chat.row.date_text_width"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/content_layout"
-        android:layout_toRightOf="@+id/content_layout"
-        android:gravity="bottom|left"
-        android:padding="4dp"
-        android:textColor="@color/secondary_text"
-        android:textSize="14sp"
-        app:typeface="roboto_thin"
-        tools:text="Hi there"/>
-
-
 
 </RelativeLayout>

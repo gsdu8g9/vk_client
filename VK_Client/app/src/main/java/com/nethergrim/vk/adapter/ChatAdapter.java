@@ -26,8 +26,8 @@ import io.realm.RealmResults;
 public class ChatAdapter extends SelectableUltimateAdapter
         implements UltimateAdapter.FooterInterface {
 
-    private static final int TYPE_MY = 1;
-    private static final int TYPE_NOT_MINE = 0;
+    private static final int TYPE_MY = R.layout.vh_chat_right;
+    private static final int TYPE_NOT_MINE = R.layout.vh_chat_left;
     private static final long MAX_DELAY_TO_GROUP_MESSAGES_S = 60 * 10;
     @Inject
     UserProvider mUserProvider;
@@ -59,14 +59,7 @@ public class ChatAdapter extends SelectableUltimateAdapter
 
     @Override
     public int getDataViewResId(int viewType) {
-        switch (viewType) {
-            case TYPE_MY:
-                return R.layout.vh_chat_right;
-            case TYPE_NOT_MINE:
-                return R.layout.vh_chat_left;
-            default:
-                return 0;
-        }
+        return viewType;
     }
 
     @Override
@@ -80,7 +73,7 @@ public class ChatAdapter extends SelectableUltimateAdapter
     @Override
     public int getDataViewType(int dataPosition) {
         if (dataPosition >= mMessages.size()) {
-            return -5;
+            return TYPE_MY;
         }
         Message message = mMessages.get(dataPosition);
         return message.getOut() == 1 ? TYPE_MY : TYPE_NOT_MINE;
@@ -95,40 +88,50 @@ public class ChatAdapter extends SelectableUltimateAdapter
     }
 
     @Override
-    public void bindDataVH(DataVH vh, int dataPosition) {
-        ChatViewHolder chatViewHolder = (ChatViewHolder) vh;
+    public void bindDataVH(DataVH viewHolder, int dataPosition) {
+        ChatViewHolder vh = (ChatViewHolder) viewHolder;
         Message message = mMessages.get(dataPosition);
         User user = getUserById(message.getFrom_id());
+        vh.textBody.setText(message.getBody());
         boolean displayAvatarAndSpace = shouldDisplaySpaceAndAvatar(dataPosition, message);
-        boolean shouldDisplayDate = shouldDisplayDate(dataPosition, message);
+
         if (displayAvatarAndSpace) {
-            chatViewHolder.imageAvatar.setVisibility(View.VISIBLE);
-            chatViewHolder.spaceTop.setVisibility(View.VISIBLE);
-            chatViewHolder.imageAvatar.display(user, true);
+            vh.showAvatar();
+            vh.spaceTop.setVisibility(View.VISIBLE);
+            if (vh.imageAvatar != null) {
+                vh.imageAvatar.display(user, true);
+            }
         } else {
-            chatViewHolder.spaceTop.setVisibility(View.GONE);
-            chatViewHolder.imageAvatar.setVisibility(View.INVISIBLE);
+            vh.hideAvatar();
+            vh.spaceTop.setVisibility(View.GONE);
         }
-        if (shouldDisplayDate) {
-            chatViewHolder.textDate.setVisibility(View.VISIBLE);
-            chatViewHolder.textDate.setText(
-                    DateUtils.getRelativeTimeSpanString(message.getDate() * 1000));
-        } else {
-            chatViewHolder.textDate.setVisibility(View.INVISIBLE);
-        }
-        chatViewHolder.textBody.setText(message.getBody());
+
         if (isSelected(dataPosition)) {
-            chatViewHolder.root.setBackgroundResource(R.color.green);
-            chatViewHolder.textDate.setVisibility(View.GONE);
+            vh.root.setBackgroundResource(R.color.green);
+            vh.textDate.setVisibility(View.GONE);
         } else {
-            chatViewHolder.textDate.setVisibility(View.VISIBLE);
-            chatViewHolder.root.setBackgroundColor(message.isRead_state() == 0 ? mUnreadColor : 0);
+            vh.textDate.setVisibility(View.VISIBLE);
+            if (!message.isMine()) {
+                vh.root.setBackgroundColor(message.isRead_state() == 0 ? mUnreadColor : 0);
+            }
+
+            if (message.isMine()) {
+                if (message.isPending()) {
+                    // pending
+                    vh.textDate.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_present_to_all_black_16px, 0);
+                } else if (message.isRead_state() == 1) {
+                    // read
+                    vh.textDate.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_done_all_black_24px, 0);
+                } else {
+                    // sent
+                    vh.textDate.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_done_black_24px, 0);
+                }
+            }
         }
-        if (message.isPending() && chatViewHolder.pb != null) {
-            chatViewHolder.pb.setVisibility(View.VISIBLE);
-        } else if (chatViewHolder.pb != null) {
-            chatViewHolder.pb.setVisibility(View.GONE);
-        }
+
+
+        vh.textDate.setVisibility(View.VISIBLE);
+        vh.textDate.setText(DateUtils.getRelativeTimeSpanString(message.getDate() * 1000));
     }
 
     @Override

@@ -56,8 +56,8 @@ public class ConversationsAdapter extends UltimateAdapter
         this.mData = data;
         MyApplication.getInstance().getMainComponent().inject(this);
         Context ctx = MyApplication.getInstance();
-        textColorPrimary = ctx.getResources().getColor(R.color.primary_text);
-        textColorSecondary = ctx.getResources().getColor(R.color.secondary_text);
+        textColorPrimary = ctx.getResources().getColor(R.color.textColorPrimary);
+        textColorSecondary = ctx.getResources().getColor(R.color.textColorSecondary);
     }
 
     @Override

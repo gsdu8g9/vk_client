@@ -1,6 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -9,7 +7,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:clickable="true"
-    android:foreground="?android:attr/selectableItemBackground">
+    android:foreground="?android:attr/selectableItemBackground"
+    tools:background="@android:color/holo_orange_light">
 
     <Space
         android:id="@+id/top"
@@ -18,73 +17,56 @@
         android:layout_alignParentTop="true"/>
 
 
-    <com.nethergrim.vk.views.imageViews.UserImageView
-        android:id="@+id/avatar"
-        android:layout_width="@dimen/chat.row.avatar.size"
-        android:layout_height="@dimen/chat.row.avatar.size"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_below="@+id/top"
-        android:layout_marginEnd="@dimen/chat.row.margins"
-        android:layout_marginRight="@dimen/chat.row.margins"
-        tools:background="@drawable/green_dot"/>
-
-
     <FrameLayout
         android:id="@+id/content_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
         android:layout_alignTop="@+id/avatar"
+        android:layout_marginLeft="56dp"
         android:layout_marginRight="8dp"
-        android:layout_toLeftOf="@+id/avatar"
+        android:layout_marginTop="4dp"
         android:background="@drawable/rounded_background_white"
-        android:minHeight="@dimen/chat.row.avatar.size"
-        android:padding="6dp">
-
+        android:minHeight="48dp"
+        android:minWidth="100dp"
+        android:paddingRight="8dp"
+        android:paddingTop="8dp">
 
         <com.devspark.robototextview.widget.RobotoTextView
             android:id="@+id/textBody"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:maxWidth="220dp"
-            android:textColor="@color/primary_text"
-            android:textSize="15sp"
+            android:layout_gravity="top|right"
+            android:paddingBottom="18dp"
+            android:paddingLeft="8dp"
+            android:textColor="@color/textColorPrimary"
+            android:textSize="16sp"
             app:typeface="roboto_regular"
             tools:text="Text here"/>
+
+        <com.devspark.robototextview.widget.RobotoTextView
+            android:id="@+id/textDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|right"
+            android:drawablePadding="4dp"
+            android:drawableRight="@drawable/ic_done_black_24px"
+            android:gravity="center"
+            android:padding="4dp"
+            android:textColor="@color/textColorSecondary"
+            android:textSize="12sp"
+            app:typeface="roboto_thin"
+            tools:text="Yesterday"/>
 
 
     </FrameLayout>
 
 
-    <com.devspark.robototextview.widget.RobotoTextView
-        android:id="@+id/textDate"
-        android:layout_width="@dimen/chat.row.date_text_width"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/content_layout"
-        android:layout_alignTop="@id/content_layout"
-        android:layout_toLeftOf="@+id/content_layout"
-        android:gravity="bottom|right"
-        android:padding="4dp"
-        android:textColor="@color/secondary_text"
-        android:textSize="14sp"
-        app:typeface="roboto_thin"
-        tools:text="Hi "/>
-
     <Space
         android:id="@+id/bottomLayout"
         android:layout_width="match_parent"
-        android:layout_height="2dp"
+        android:layout_height="3dp"
         android:layout_below="@+id/content_layout"/>
-
-    <ProgressBar
-        android:id="@+id/progressBar4"
-        style="?android:attr/progressBarStyle"
-        android:layout_width="36dp"
-        android:layout_height="36dp"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_centerVertical="true"
-        android:paddingLeft="16dp"/>
 
 
 </RelativeLayout>

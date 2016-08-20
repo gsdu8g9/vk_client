@@ -8,11 +8,11 @@
     <color name="accent">#FBC02D</color>
     <color name="accent_dark">#FBC02D</color>
 
-    <color name="primary_text">#212121</color>
-    <color name="secondary_text">#727272</color>
-    <color name="hint_text">#bdbdbd</color>
+    <color name="textColorPrimary">#212121</color>
+    <color name="textColorSecondary">#727272</color>
+    <color name="textHint">#bdbdbd</color>
 
-    <color name="divider_color">#1e000000</color>
+    <color name="dividerColor">#1e000000</color>
 
     <color name="chat_background_color">#eeeeee</color>
     <color name="white_opacity_30">#4cffffff</color>

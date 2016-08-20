@@ -295,6 +295,10 @@ public class Message implements RealmModel {
         this.id = id;
     }
 
+    public boolean isMine(){
+        return out == 1;
+    }
+
     public long getUser_id() {
         return user_id;
     }

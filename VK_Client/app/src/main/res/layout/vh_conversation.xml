@@ -63,7 +63,7 @@
         android:layout_toStartOf="@+id/imageViewDetails"
         android:ellipsize="end"
         android:maxLines="@integer/conversation_item_max_message_lines"
-        android:textColor="@color/secondary_text"
+        android:textColor="@color/textColorSecondary"
         android:textSize="@dimen/text_size_small"
         android:visibility="gone"
         app:typeface="roboto_regular"/>
@@ -79,7 +79,7 @@
         android:layout_toStartOf="@+id/imageViewDetails"
         android:ellipsize="end"
         android:singleLine="true"
-        android:textColor="@color/secondary_text"
+        android:textColor="@color/textColorSecondary"
         android:textSize="@dimen/text_size_small"
         app:typeface="roboto_light"
         tools:text="Yesterday"/>

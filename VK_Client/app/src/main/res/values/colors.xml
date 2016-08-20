@@ -11,16 +11,16 @@
     <color name="accent">#058C42</color>
     <color name="accent_dark">#04471C</color>
 
-    <color name="primary_text">#212121</color>
-    <color name="secondary_text">#727272</color>
-    <color name="hint_text">#bdbdbd</color>
+    <color name="textColorPrimary">#212121</color>
+    <color name="textColorSecondary">#727272</color>
+    <color name="textHint">#bdbdbd</color>
 
-    <color name="divider_color">#B6B6B6</color>
+    <color name="dividerColor">#B6B6B6</color>
 
     <color name="chat_background_color">#eeeeee</color>
     <color name="white_opacity_30">#4cffffff</color>
 
-    <color name="icons_color">#ff4c4c4c</color>
+    <color name="icons_color">#4c4c4c</color>
 
     <color name="green">#16DB65</color>
     <color name="red">#ff1744</color>
