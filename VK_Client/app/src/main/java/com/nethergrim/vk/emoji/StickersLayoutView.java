@@ -13,7 +13,7 @@ import com.nethergrim.vk.MyApplication;
 import com.nethergrim.vk.R;
 import com.nethergrim.vk.adapter.StickerAdapter;
 import com.nethergrim.vk.images.ImageLoader;
-import com.nethergrim.vk.models.StickerDbItem;
+import com.nethergrim.vk.models.StickersCollectionLocal;
 
 import javax.inject.Inject;
 
@@ -36,11 +36,12 @@ public class StickersLayoutView extends FrameLayout implements AdapterView.OnIte
     @Inject
     ImageLoader imageLoader;
 
-    private StickerDbItem mSticker;
+    private StickerAdapter stickerAdapter;
+    private StickersCollectionLocal mSticker;
     private EmojiconGridView.OnEmojiconClickedListener mCallback;
 
     public StickersLayoutView(Context context,
-                              StickerDbItem stickerId,
+                              StickersCollectionLocal stickerId,
                               EmojiconGridView.OnEmojiconClickedListener callback) {
         super(context);
         this.mCallback = callback;
@@ -53,7 +54,7 @@ public class StickersLayoutView extends FrameLayout implements AdapterView.OnIte
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         if (mCallback != null) {
-            mCallback.onStickerClicked(mSticker.getStickerIds().get(position).getData());
+            mCallback.onStickerClicked(stickerAdapter.getItem(position).getId());
         }
     }
 
@@ -63,7 +64,8 @@ public class StickersLayoutView extends FrameLayout implements AdapterView.OnIte
         View v = LayoutInflater.from(context).inflate(R.layout.fragment_stickers, this, true);
         ButterKnife.inject(this, v);
         imageLoader.loadImage(mSticker.getBackground(), mBackgroundDraweeView);
-        StickerAdapter stickerAdapter = new StickerAdapter(context, mSticker);
+
+        stickerAdapter = new StickerAdapter(context, mSticker);
         mGrid.setNumColumns(GridView.AUTO_FIT);
         int spacing = context.getResources().getDimensionPixelSize(R.dimen.chat_sticker_spacing);
         mGrid.setVerticalSpacing(spacing);

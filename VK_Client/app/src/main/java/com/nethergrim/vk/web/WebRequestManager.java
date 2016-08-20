@@ -9,7 +9,7 @@ import com.nethergrim.vk.models.ListOfMessages;
 import com.nethergrim.vk.models.ListOfUsers;
 import com.nethergrim.vk.models.PendingMessage;
 import com.nethergrim.vk.models.StartupResponse;
-import com.nethergrim.vk.models.StockItemsResponse;
+import com.nethergrim.vk.models.StickersResponse;
 import com.nethergrim.vk.models.WebResponse;
 import com.nethergrim.vk.models.response.SendMessageResponse;
 
@@ -45,7 +45,7 @@ public interface WebRequestManager {
 
     Observable<IntegerResponse> deleteConversation(long userId, long chatId);
 
-    Observable<StockItemsResponse> getStickerStockItems();
+    Observable<StickersResponse> getStickers();
 
     Observable<WebResponse> markMessagesAsRead(long peerId, long startMessageId);
 

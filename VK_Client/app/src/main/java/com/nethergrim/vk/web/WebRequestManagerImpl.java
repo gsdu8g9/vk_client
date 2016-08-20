@@ -9,7 +9,7 @@ import android.util.Log;
 import com.nethergrim.vk.Constants;
 import com.nethergrim.vk.MyApplication;
 import com.nethergrim.vk.caching.Prefs;
-import com.nethergrim.vk.data.Store;
+import com.nethergrim.vk.caching.Store;
 import com.nethergrim.vk.models.ConversationsUserObject;
 import com.nethergrim.vk.models.IntegerResponse;
 import com.nethergrim.vk.models.ListOfFriends;
@@ -18,7 +18,8 @@ import com.nethergrim.vk.models.ListOfMessagesResponse;
 import com.nethergrim.vk.models.ListOfUsers;
 import com.nethergrim.vk.models.PendingMessage;
 import com.nethergrim.vk.models.StartupResponse;
-import com.nethergrim.vk.models.StockItemsResponse;
+import com.nethergrim.vk.models.StickerLocal;
+import com.nethergrim.vk.models.StickersResponse;
 import com.nethergrim.vk.models.WebResponse;
 import com.nethergrim.vk.models.response.SendMessageResponse;
 import com.nethergrim.vk.utils.RetryWithDelay;
@@ -34,8 +35,6 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import hugo.weaving.DebugLog;
-import retrofit.RestAdapter;
-import retrofit.client.OkClient;
 import retrofit.client.Response;
 import rx.Observable;
 import rx.Scheduler;
@@ -228,7 +227,7 @@ public class WebRequestManagerImpl implements WebRequestManager {
     }
 
     @Override
-    public Observable<StockItemsResponse> getStickerStockItems() {
+    public Observable<StickersResponse> getStickers() {
 
         Map<String, String> params = getDefaultParamsMap();
 
@@ -256,7 +255,7 @@ public class WebRequestManagerImpl implements WebRequestManager {
         }
         Map<String, String> params = getDefaultParamsMap();
         params.put("peer_id", String.valueOf(peerId));
-        if (startMessageId <= 0){
+        if (startMessageId <= 0) {
             Log.e(TAG, "markMessagesAsRead: NEGATIVE VALUE of Start Message");
             return Observable.empty();
         }
@@ -284,12 +283,9 @@ public class WebRequestManagerImpl implements WebRequestManager {
             params.put("forward_messages", forwarded);
         }
 
-        try {
-            @SuppressWarnings("ConstantConditions") long stickerId = pendingMessage.getStickerId();
-            if (stickerId > 0) {
-                params.put("sticker_id", String.valueOf(stickerId));
-            }
-        } catch (NullPointerException ignored) {
+        StickerLocal stickerLocal = pendingMessage.getSticker();
+        if (stickerLocal != null) {
+            params.put("sticker_id", String.valueOf(stickerLocal.getId()));
         }
 
         return mRetrofitInterface.sendMessage(params)

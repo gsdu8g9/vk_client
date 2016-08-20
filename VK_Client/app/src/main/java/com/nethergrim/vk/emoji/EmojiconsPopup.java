@@ -33,7 +33,7 @@ import com.nethergrim.vk.MyApplication;
 import com.nethergrim.vk.R;
 import com.nethergrim.vk.caching.Prefs;
 import com.nethergrim.vk.images.ImageLoader;
-import com.nethergrim.vk.models.StickerDbItem;
+import com.nethergrim.vk.models.StickersCollectionLocal;
 
 import java.util.List;
 
@@ -141,7 +141,7 @@ public class EmojiconsPopup extends PopupWindow implements ViewPager.OnPageChang
         TabLayout tabLayout = (TabLayout) view.findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(emojisPager);
         Resources res = mContext.getResources();
-        List<StickerDbItem> stickers = adapter.getStickerDbItems();
+        List<StickersCollectionLocal> stickers = adapter.getStickerDbItems();
         for (int i = 0; i < tabLayout.getTabCount(); i++) {
             if (i == 0) {
                 tabLayout.getTabAt(0).setIcon(R.drawable.ic_emoji_people_light_activated);

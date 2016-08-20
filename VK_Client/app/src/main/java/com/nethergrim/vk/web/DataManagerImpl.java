@@ -14,7 +14,7 @@ import com.nethergrim.vk.Constants;
 import com.nethergrim.vk.MyApplication;
 import com.nethergrim.vk.caching.MarkConversationReadTask;
 import com.nethergrim.vk.caching.Prefs;
-import com.nethergrim.vk.data.Store;
+import com.nethergrim.vk.caching.Store;
 import com.nethergrim.vk.event.ConversationUpdatedEvent;
 import com.nethergrim.vk.event.ConversationsUpdatedEvent;
 import com.nethergrim.vk.event.ErrorDuringSendingMessageEvent;
@@ -29,8 +29,8 @@ import com.nethergrim.vk.models.ListOfMessages;
 import com.nethergrim.vk.models.ListOfUsers;
 import com.nethergrim.vk.models.PendingMessage;
 import com.nethergrim.vk.models.StartupResponse;
-import com.nethergrim.vk.models.StickerDbItem;
-import com.nethergrim.vk.models.StockItemsResponse;
+import com.nethergrim.vk.models.StickersCollectionLocal;
+import com.nethergrim.vk.models.StickersResponse;
 import com.nethergrim.vk.models.WebResponse;
 import com.nethergrim.vk.models.response.SendMessageResponse;
 import com.nethergrim.vk.services.OftenFiredGcmNetworkService;
@@ -180,17 +180,18 @@ public class DataManagerImpl implements DataManager {
 
     @NonNull
     @Override
-    public Observable<List<StickerDbItem>> getStickerItems() {
-        return mWebRequestManager.getStickerStockItems()
-                .map(StockItemsResponse::getStockItems)
-                .map(stockItems -> {
-                    if (stockItems == null || stockItems.getItems() == null) {
+    public Observable<List<StickersCollectionLocal>> fetchAndPersistStickers() {
+        return mWebRequestManager.getStickers()
+                .observeOn(Schedulers.io())
+                .map(StickersResponse::getStockItems)
+                .map(response -> {
+                    if (response == null || response.getItems() == null) {
                         return null;
                     }
-                    List<StickerDbItem> result = new ArrayList<>(
-                            stockItems.getItems().size());
-                    for (int i = 0, size = stockItems.getItems().size(); i < size; i++) {
-                        result.add(StickerDbItem.MAPPER.call(stockItems.getItems().get(i)));
+                    int size = response.getItems().size();
+                    List<StickersCollectionLocal> result = new ArrayList<>(size);
+                    for (int i = 0; i < size; i++) {
+                        result.add(StickersCollectionLocal.MAPPER.call(response.getItems().get(i)));
                         String url = result.get(i).getPhoto();
                         mImageLoader.preCache(url);
                     }
@@ -198,11 +199,7 @@ public class DataManagerImpl implements DataManager {
                 })
                 .doOnNext(stickerDbItems -> {
                     Realm realm = Realm.getDefaultInstance();
-                    realm.beginTransaction();
-                    realm.copyToRealmOrUpdate(stickerDbItems);
-                    realm.commitTransaction();
-                    realm.close();
-
+                    realm.executeTransaction(realm1 -> realm1.copyToRealmOrUpdate(stickerDbItems));
                 });
     }
 

@@ -3,28 +3,20 @@ package com.nethergrim.vk.models;
 import java.util.List;
 
 import io.realm.RealmList;
-import io.realm.RealmObject;
+import io.realm.RealmModel;
 import io.realm.annotations.PrimaryKey;
+import io.realm.annotations.RealmClass;
 import rx.functions.Func1;
 
 /**
  * @author Andrew Drobyazko - c2q9450@gmail.com - https://nethergrim.github.io on 15.10.15.
  */
-public class StickerDbItem extends RealmObject {
+@RealmClass
+public class StickersCollectionLocal implements RealmModel {
 
-    private String baseUrl;
-    private boolean purchased;
-    private boolean active;
-    private String title;
-    private String photo;
-    private String background;
-    private RealmList<RealmLong> stickerIds;
-    private RealmList<RealmString> urls;
-    @PrimaryKey
-    private long id;
-    public static final Func1<StockItem, StickerDbItem> MAPPER
+    public static final Func1<StickersCollection, StickersCollectionLocal> MAPPER
             = stockItem -> {
-        StickerDbItem stickerDbItem = new StickerDbItem();
+        StickersCollectionLocal stickerDbItem = new StickersCollectionLocal();
         stickerDbItem.setBaseUrl(stockItem.getProduct().getStickers().getBaseUrl());
         stickerDbItem.setActive(stockItem.getProduct().getActive() == 1);
         stickerDbItem.setPurchased(stockItem.getProduct().getPurchased() == 1);
@@ -34,28 +26,35 @@ public class StickerDbItem extends RealmObject {
         stickerDbItem.setPhoto(stockItem.getProduct().getBaseUrl() + "thumb_102.png");
         stickerDbItem.setBackground(stockItem.getBackground());
         List<Long> ids = stockItem.getProduct().getStickers().getStickerIds();
-        RealmList<RealmLong> stickerIds = new RealmList<>();
-        RealmList<RealmString> urls = new RealmList<>();
+        RealmList<StickerLocal> stickerIds = new RealmList<>();
+
 
         for (int i = 0, size = ids.size(); i < size; i++) {
             Long id = ids.get(i);
-            stickerIds.add(new RealmLong(id));
-            urls.add(new RealmString(stickerDbItem.getBaseUrl() + id + "/352b.png"));
+            StickerLocal stickerLocal = new StickerLocal();
+            stickerLocal.setId(id);
+            stickerLocal.setUrl(stickerDbItem.getBaseUrl() + id + "/352b.png");
+            stickerIds.add(stickerLocal);
         }
-
-        stickerDbItem.setStickerIds(stickerIds);
-        stickerDbItem.setUrls(urls);
-
-
+        stickerDbItem.setStickersList(stickerIds);
         return stickerDbItem;
     };
+    private String baseUrl;
+    private boolean purchased;
+    private boolean active;
+    private String title;
+    private String photo;
+    private String background;
+    private RealmList<StickerLocal> stickersList;
+    @PrimaryKey
+    private long id;
 
-    public RealmList<RealmString> getUrls() {
-        return urls;
+    public RealmList<StickerLocal> getStickersList() {
+        return stickersList;
     }
 
-    public void setUrls(RealmList<RealmString> urls) {
-        this.urls = urls;
+    public void setStickersList(RealmList<StickerLocal> stickersList) {
+        this.stickersList = stickersList;
     }
 
     public String getBackground() {
@@ -106,13 +105,7 @@ public class StickerDbItem extends RealmObject {
         this.photo = photo;
     }
 
-    public RealmList<RealmLong> getStickerIds() {
-        return stickerIds;
-    }
 
-    public void setStickerIds(RealmList<RealmLong> stickerIds) {
-        this.stickerIds = stickerIds;
-    }
 
     public long getId() {
         return id;

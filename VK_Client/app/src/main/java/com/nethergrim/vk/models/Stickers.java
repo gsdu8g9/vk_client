@@ -1,16 +1,11 @@
 package com.nethergrim.vk.models;
 
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
-import com.fasterxml.jackson.annotation.JsonAnySetter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.annotation.Generated;
 
@@ -29,8 +24,7 @@ public class Stickers {
     private String baseUrl;
     @JsonProperty("sticker_ids")
     private List<Long> stickerIds = new ArrayList<Long>();
-    @JsonIgnore
-    private Map<String, Object> additionalProperties = new HashMap<String, Object>();
+
 
     /**
      * @return The baseUrl
@@ -62,16 +56,6 @@ public class Stickers {
     @JsonProperty("sticker_ids")
     public void setStickerIds(List<Long> stickerIds) {
         this.stickerIds = stickerIds;
-    }
-
-    @JsonAnyGetter
-    public Map<String, Object> getAdditionalProperties() {
-        return this.additionalProperties;
-    }
-
-    @JsonAnySetter
-    public void setAdditionalProperty(String name, Object value) {
-        this.additionalProperties.put(name, value);
     }
 
 }

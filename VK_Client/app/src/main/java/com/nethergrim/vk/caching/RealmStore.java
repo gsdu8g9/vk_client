@@ -1,9 +1,9 @@
-package com.nethergrim.vk.data;
+package com.nethergrim.vk.caching;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.nethergrim.vk.MyApplication;
-import com.nethergrim.vk.caching.Prefs;
 import com.nethergrim.vk.event.ConversationsUpdatedEvent;
 import com.nethergrim.vk.event.FriendsUpdatedEvent;
 import com.nethergrim.vk.event.MyUserUpdatedEvent;
@@ -19,6 +19,7 @@ import com.nethergrim.vk.models.ListOfUsers;
 import com.nethergrim.vk.models.Message;
 import com.nethergrim.vk.models.PendingMessage;
 import com.nethergrim.vk.models.StartupResponse;
+import com.nethergrim.vk.models.StickerLocal;
 import com.nethergrim.vk.models.User;
 import com.nethergrim.vk.utils.ConversationUtils;
 import com.nethergrim.vk.utils.DataHelper;
@@ -219,7 +220,7 @@ public class RealmStore implements Store {
     public List<PendingMessage> getUnsentMessages() {
         RealmResults<Message> unsentMessages = Realm.getDefaultInstance().where(Message.class).equalTo("pending", true).findAllSorted("date", Sort.ASCENDING);
         List<Message> result = Realm.getDefaultInstance().copyFromRealm(unsentMessages);
-        return PendingMessage.Companion.fromMessages(result);
+        return PendingMessage.fromMessages(result);
     }
 
     @Override
@@ -235,5 +236,18 @@ public class RealmStore implements Store {
             messageRealmQuery.equalTo("id", randomId).equalTo("pending", true).findAll().deleteAllFromRealm();
             realm.copyToRealmOrUpdate(listOfMessages.getMessages());
         });
+    }
+
+    @Nullable
+    @Override
+    public String getStickerUrl(long stickerId) {
+        StickerLocal stickerLocal = Realm.getDefaultInstance()
+                .where(StickerLocal.class)
+                .equalTo("id", stickerId)
+                .findFirst();
+        if (stickerLocal != null) {
+            return stickerLocal.getUrl();
+        }
+        return null;
     }
 }

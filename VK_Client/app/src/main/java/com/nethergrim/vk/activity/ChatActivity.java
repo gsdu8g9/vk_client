@@ -12,7 +12,7 @@ import com.nethergrim.vk.models.Conversation;
 import com.nethergrim.vk.models.push.PushMessage;
 import com.nethergrim.vk.utils.ConversationUtils;
 
-import org.parceler.Parcels;
+
 
 /**
  * Activity for screen with conversation. By default will open {@link ChatFragment} as a main
@@ -29,7 +29,7 @@ public class ChatActivity extends AbstractActivity {
 
     public static Intent getIntentForReplyAction(Context context, PushMessage pushMessage) {
         Intent intent = new Intent(context, ChatActivity.class);
-        intent.putExtra(EXTRA_PUSH_MESSAGE, Parcels.wrap(pushMessage));
+        intent.putExtra(EXTRA_PUSH_MESSAGE, pushMessage);
         return intent;
     }
 
@@ -66,8 +66,7 @@ public class ChatActivity extends AbstractActivity {
                 showFragment(ChatFragment.getInstance(mConversationId, isGroupConversation), false,
                         false, R.id.root);
             } else if (extras.containsKey(EXTRA_PUSH_MESSAGE)) {
-                handleExtrasForReplyToPush(
-                        Parcels.unwrap(extras.getParcelable(EXTRA_PUSH_MESSAGE)));
+                handleExtrasForReplyToPush(extras.getParcelable(EXTRA_PUSH_MESSAGE));
             }
         }
 

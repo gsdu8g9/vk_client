@@ -15,7 +15,7 @@ import com.nethergrim.vk.R;
 import com.nethergrim.vk.activity.ChatActivity;
 import com.nethergrim.vk.activity.MainActivity;
 import com.nethergrim.vk.caching.Prefs;
-import com.nethergrim.vk.data.Store;
+import com.nethergrim.vk.caching.Store;
 import com.nethergrim.vk.images.ImageLoader;
 import com.nethergrim.vk.models.User;
 import com.nethergrim.vk.models.push.PushMessage;

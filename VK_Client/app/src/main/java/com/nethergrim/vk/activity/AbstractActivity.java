@@ -48,19 +48,19 @@ public abstract class AbstractActivity extends AppCompatActivity {
             mRealm.removeAllChangeListeners();
             mRealm = null;
         }
-        VKUIHelper.onDestroy(this); // FIXME: 22.08.15 remove
+        VKUIHelper.onDestroy(this);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        VKUIHelper.onActivityResult(this, requestCode, resultCode, data); // FIXME: 22.08.15 remove
+        VKUIHelper.onActivityResult(this, requestCode, resultCode, data);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        VKUIHelper.onResume(this);// FIXME: 22.08.15 remove fucking VK UI Helper, that leads to memory leak.
+        VKUIHelper.onResume(this);
     }
 
     protected void showFragment(Fragment fragment,

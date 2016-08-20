@@ -9,13 +9,13 @@ import java.util.List;
  * @author Andrew Drobyazko (andrey.drobyazko@agmail.com) on 15.10.15.
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class StockItems extends WebResponse {
+public class StickersList extends WebResponse {
 
     @JsonProperty("count")
     public int count;
 
     @JsonProperty("items")
-    public List<StockItem> items;
+    private List<StickersCollection> items;
 
     public int getCount() {
         return count;
@@ -25,11 +25,8 @@ public class StockItems extends WebResponse {
         this.count = count;
     }
 
-    public List<StockItem> getItems() {
+    public List<StickersCollection> getItems() {
         return items;
     }
 
-    public void setItems(List<StockItem> items) {
-        this.items = items;
-    }
 }

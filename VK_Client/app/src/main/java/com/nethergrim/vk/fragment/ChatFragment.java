@@ -138,7 +138,7 @@ public class ChatFragment extends BaseKeyboardFragment implements Toolbar.OnMenu
     @Override
     @DebugLog
     public void postText(String text) {
-        PendingMessage pendingMessage = new PendingMessage(PendingMessage.Companion.generateRandomId(), text, null, null, mIsGroupChat ? mConversationId + 2000000000 : mConversationId);
+        PendingMessage pendingMessage = new PendingMessage(PendingMessage.generateRandomId(), text, null, -1, mIsGroupChat ? mConversationId + 2000000000 : mConversationId);
         if (mIsGroupChat) {
             mWebIntentHandler.sendMessageToGroupChat(pendingMessage);
         } else {
@@ -148,7 +148,7 @@ public class ChatFragment extends BaseKeyboardFragment implements Toolbar.OnMenu
 
     @Override
     public void onStickerClicked(long stickerId) {
-        PendingMessage pendingMessage = new PendingMessage(PendingMessage.Companion.generateRandomId(), null, null, stickerId, mIsGroupChat ? mConversationId + 2000000000 : mConversationId);
+        PendingMessage pendingMessage = new PendingMessage(PendingMessage.generateRandomId(), null, null, stickerId, mIsGroupChat ? mConversationId + 2000000000 : mConversationId);
         if (mIsGroupChat) {
             mWebIntentHandler.sendMessageToGroupChat(pendingMessage);
         } else {

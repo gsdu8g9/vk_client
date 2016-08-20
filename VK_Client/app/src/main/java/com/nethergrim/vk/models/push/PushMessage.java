@@ -1,19 +1,31 @@
 package com.nethergrim.vk.models.push;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
-import org.parceler.Parcel;
 
 /**
  * @author Andrew Drobyazko - c2q9450@gmail.com - https://nethergrim.github.io on 23.07.15.
  */
-@Parcel
+
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class PushMessage extends PushObject {
+public class PushMessage extends PushObject implements Parcelable {
 
 //        Bundle[{msg_id=8345, uid=69621580, text=lol, type=msg, badge=1, collapse_key=msg}]
 
+    public static final Creator<PushMessage> CREATOR = new Creator<PushMessage>() {
+        @Override
+        public PushMessage createFromParcel(Parcel in) {
+            return new PushMessage(in);
+        }
+
+        @Override
+        public PushMessage[] newArray(int size) {
+            return new PushMessage[size];
+        }
+    };
     @JsonProperty("msg_id")
 
     String msgId;
@@ -27,7 +39,17 @@ public class PushMessage extends PushObject {
     String badge;
     @JsonProperty("collapse_key")
     String collapseKey;
+
     public PushMessage() {
+    }
+
+    protected PushMessage(Parcel in) {
+        msgId = in.readString();
+        uid = in.readString();
+        text = in.readString();
+        type = in.readString();
+        badge = in.readString();
+        collapseKey = in.readString();
     }
 
     public String getMsgId() {
@@ -97,5 +119,20 @@ public class PushMessage extends PushObject {
                 ", badge='" + badge + '\'' +
                 ", collapseKey='" + collapseKey + '\'' +
                 '}';
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(msgId);
+        parcel.writeString(uid);
+        parcel.writeString(text);
+        parcel.writeString(type);
+        parcel.writeString(badge);
+        parcel.writeString(collapseKey);
     }
 }

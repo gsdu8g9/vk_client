@@ -3,13 +3,12 @@ package com.nethergrim.vk.inject;
 import android.content.Context;
 import android.os.Process;
 
-import com.facebook.stetho.okhttp.StethoInterceptor;
 import com.nethergrim.vk.Constants;
 import com.nethergrim.vk.MyApplication;
 import com.nethergrim.vk.caching.DefaultPrefsImpl;
 import com.nethergrim.vk.caching.Prefs;
-import com.nethergrim.vk.data.RealmStore;
-import com.nethergrim.vk.data.Store;
+import com.nethergrim.vk.caching.RealmStore;
+import com.nethergrim.vk.caching.Store;
 import com.nethergrim.vk.images.ImageLoader;
 import com.nethergrim.vk.images.ImageLoaderImpl;
 import com.nethergrim.vk.images.PaletteProvider;
@@ -34,7 +33,6 @@ import com.squareup.otto.Bus;
 
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
-
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Singleton;
@@ -140,7 +138,6 @@ public class ProviderModule {
         okHttpClient.setWriteTimeout(5, TimeUnit.SECONDS);
         okHttpClient.setRetryOnConnectionFailure(true);
         okHttpClient.setCache(new Cache(app.getCacheDir(), 1024 * 1024 * 200));
-        okHttpClient.networkInterceptors().add(new StethoInterceptor());
         return okHttpClient;
     }
 

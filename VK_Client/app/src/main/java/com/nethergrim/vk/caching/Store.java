@@ -1,6 +1,7 @@
-package com.nethergrim.vk.data;
+package com.nethergrim.vk.caching;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.annotation.WorkerThread;
 
 import com.nethergrim.vk.models.ConversationsUserObject;
@@ -66,4 +67,7 @@ public interface Store {
      */
     @WorkerThread
     void replacePendingMessages(long peerId, long randomId, ListOfMessages listOfMessages, long newMessageId);
+
+    @Nullable
+    String getStickerUrl(@NonNull long stickerId);
 }

@@ -1,5 +1,4 @@
 apply plugin: 'com.android.library'
-apply plugin: 'kotlin-android'
 
 android {
     compileSdkVersion 24
@@ -25,7 +24,6 @@ dependencies {
     compile 'com.android.support:support-v4:24.1.1'
     compile 'com.github.johnkil.android-robototextview:robototextview:2.4.0'
     compile 'com.android.support:design:24.1.1'
-    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 }
 repositories {
     mavenCentral()

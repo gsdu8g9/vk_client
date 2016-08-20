@@ -10,7 +10,7 @@ import com.nethergrim.vk.adapter.ChatAdapter;
 import com.nethergrim.vk.adapter.ConversationsAdapter;
 import com.nethergrim.vk.adapter.FriendsAdapter;
 import com.nethergrim.vk.adapter.StickerAdapter;
-import com.nethergrim.vk.data.RealmStore;
+import com.nethergrim.vk.caching.RealmStore;
 import com.nethergrim.vk.emoji.EmojiPagerAdapter;
 import com.nethergrim.vk.emoji.EmojiconsPopup;
 import com.nethergrim.vk.emoji.StickersLayoutView;

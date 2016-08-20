@@ -1,16 +1,11 @@
 package com.nethergrim.vk.models;
 
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
-import com.fasterxml.jackson.annotation.JsonAnySetter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.annotation.Generated;
 
@@ -34,10 +29,10 @@ import javax.annotation.Generated;
         "background",
         "demo_photos_560"
 })
-public class StockItem {
+public class StickersCollection {
 
     @JsonProperty("product")
-    private Product product;
+    private StickerProduct product;
     @JsonProperty("description")
     private String description;
     @JsonProperty("author")
@@ -62,14 +57,13 @@ public class StockItem {
     private String background;
     @JsonProperty("demo_photos_560")
     private List<String> demoPhotos560 = new ArrayList<String>();
-    @JsonIgnore
-    private Map<String, Object> additionalProperties = new HashMap<String, Object>();
+
 
     /**
      * @return The product
      */
     @JsonProperty("product")
-    public Product getProduct() {
+    public StickerProduct getProduct() {
         return product;
     }
 
@@ -77,7 +71,7 @@ public class StockItem {
      * @param product The product
      */
     @JsonProperty("product")
-    public void setProduct(Product product) {
+    public void setProduct(StickerProduct product) {
         this.product = product;
     }
 
@@ -273,14 +267,5 @@ public class StockItem {
         this.demoPhotos560 = demoPhotos560;
     }
 
-    @JsonAnyGetter
-    public Map<String, Object> getAdditionalProperties() {
-        return this.additionalProperties;
-    }
-
-    @JsonAnySetter
-    public void setAdditionalProperty(String name, Object value) {
-        this.additionalProperties.put(name, value);
-    }
 
 }

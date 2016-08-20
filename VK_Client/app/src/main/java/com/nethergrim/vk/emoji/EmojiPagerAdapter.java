@@ -6,7 +6,7 @@ import android.view.ViewGroup;
 
 import com.nethergrim.vk.MyApplication;
 import com.nethergrim.vk.images.ImageLoader;
-import com.nethergrim.vk.models.StickerDbItem;
+import com.nethergrim.vk.models.StickersCollectionLocal;
 
 import java.util.List;
 
@@ -23,18 +23,18 @@ public class EmojiPagerAdapter extends PagerAdapter {
     @Inject
     ImageLoader mImageLoader;
     private EmojiconGridView.OnEmojiconClickedListener mCallback;
-    private List<StickerDbItem> stickerDbItems;
+    private List<StickersCollectionLocal> stickerDbItems;
 
     public EmojiPagerAdapter(EmojiconGridView.OnEmojiconClickedListener callback) {
         MyApplication.getInstance().getMainComponent().inject(this);
         this.mCallback = callback;
         Realm realm = Realm.getDefaultInstance();
 
-        stickerDbItems = realm.where(StickerDbItem.class).findAll();
+        stickerDbItems = realm.where(StickersCollectionLocal.class).findAll();
         realm.close();
     }
 
-    public List<StickerDbItem> getStickerDbItems() {
+    public List<StickersCollectionLocal> getStickerDbItems() {
         return stickerDbItems;
     }
 

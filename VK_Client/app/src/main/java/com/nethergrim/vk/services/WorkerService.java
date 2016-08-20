@@ -48,7 +48,10 @@ public class WorkerService extends Service {
     private static final String EXTRA_LAST_MESSAGE = Constants.PACKAGE_NAME + ".LAST_MESSAGE";
     private static final String EXTRA_PEER_ID = Constants.PACKAGE_NAME + ".PEER_ID";
     private static final String EXTRA_PENDING_MESSAGE = Constants.PACKAGE_NAME + ".PENDING_MESSAGE";
-
+    @Inject
+    DataManager mDataManager;
+    @Inject
+    Prefs mPrefs;
 
     public static void fetchConversationsAndUsers(Context context,
                                                   int count,
@@ -133,12 +136,6 @@ public class WorkerService extends Service {
         c.startService(intent);
     }
 
-    @Inject
-    DataManager mDataManager;
-
-    @Inject
-    Prefs mPrefs;
-
     @Override
     public void onCreate() {
         super.onCreate();
@@ -202,7 +199,7 @@ public class WorkerService extends Service {
     }
 
     private void handleActionFetchStickers(Intent intent) {
-        mDataManager.getStickerItems()
+        mDataManager.fetchAndPersistStickers()
                 .subscribe(stickerDbItems -> {
                 }, e -> {
                     if (!(e instanceof UnknownHostException)) {
